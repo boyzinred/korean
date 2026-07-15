@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="latte">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Korean Study Hub</title>
+  <style>
+    :root[data-theme="latte"] {
+      --base: #eff1f5;
+      --mantle: #e6e9ef;
+      --crust: #dce0e8;
+      --surface0: #ccd0da;
+      --surface1: #bcc0cc;
+      --surface2: #acb0be;
+      --text: #4c4f69;
+      --subtext0: #6c6f85;
+      --subtext1: #5c5f77;
+      --blue: #1e66f5;
+      --green: #40a02b;
+      --red: #d20f39;
+      --yellow: #df8e1d;
+      --mauve: #8839ef;
+      --peach: #fe640b;
+      --overlay: rgba(76, 79, 105, 0.12);
+    }
+
+    :root[data-theme="mocha"] {
+      --base: #1e1e2e;
+      --mantle: #181825;
+      --crust: #11111b;
+      --surface0: #313244;
+      --surface1: #45475a;
+      --surface2: #585b70;
+      --text: #cdd6f4;
+      --subtext0: #a6adc8;
+      --subtext1: #bac2de;
+      --blue: #89b4fa;
+      --green: #a6e3a1;
+      --red: #f38ba8;
+      --yellow: #f9e2af;
+      --mauve: #cba6f7;
+      --peach: #fab387;
+      --overlay: rgba(205, 214, 244, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--blue), transparent 78%), transparent 34rem),
+        radial-gradient(circle at bottom right, color-mix(in srgb, var(--mauve), transparent 82%), transparent 34rem),
+        linear-gradient(135deg, var(--base), var(--mantle));
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 88px;
+    }
+
+    .hero {
+      background: color-mix(in srgb, var(--base), var(--crust) 18%);
+      border: 1px solid var(--surface0);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 24px 70px var(--overlay);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--mauve), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: color-mix(in srgb, var(--green), transparent 82%);
+      color: var(--text);
+      border: 1px solid color-mix(in srgb, var(--green), transparent 45%);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(34px, 5vw, 58px);
+      letter-spacing: -0.04em;
+      line-height: 0.98;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--subtext0);
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+      align-items: center;
+    }
+
+    .theme-toggle, .toc-link, .back-top, .button-link {
+      border: 1px solid var(--surface1);
+      background: var(--surface0);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .theme-toggle:hover, .toc-link:hover, .back-top:hover, .button-link:hover {
+      transform: translateY(-1px);
+      border-color: var(--blue);
+    }
+
+    .theme-toggle {
+      background: var(--blue);
+      color: var(--crust);
+      border-color: transparent;
+    }
+
+    .small {
+      color: var(--subtext0);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .panel {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--base), var(--crust) 14%);
+      border: 1px solid var(--surface0);
+      box-shadow: 0 16px 40px var(--overlay);
+    }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .toc-link {
+      border-radius: 16px;
+      padding: 14px 16px;
+      background: var(--mantle);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .toc-link span:last-child {
+      color: var(--subtext0);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .section {
+      margin-top: 24px;
+      border: 1px solid var(--surface0);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--base), var(--crust) 12%);
+      overflow: hidden;
+      box-shadow: 0 16px 40px var(--overlay);
+      scroll-margin-top: 20px;
+    }
+
+    .section-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--surface0);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .count-badge {
+      border: 1px solid var(--surface1);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--subtext0);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .card-grid {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 190px;
+      padding: 20px;
+      border-radius: 20px;
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--blue);
+      background: color-mix(in srgb, var(--mantle), var(--blue) 8%);
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      bottom: -44px;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--blue), transparent 82%);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      background: color-mix(in srgb, var(--mauve), transparent 82%);
+      border: 1px solid color-mix(in srgb, var(--mauve), transparent 45%);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card p {
+      margin: 12px 0 0;
+      color: var(--subtext0);
+      line-height: 1.55;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--subtext0);
+      font-size: 13px;
+      font-weight: 800;
+      position: relative;
+      z-index: 1;
+    }
+
+    details.edit-help {
+      margin-top: 24px;
+      border: 1px solid var(--surface0);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--base), var(--crust) 12%);
+      overflow: hidden;
+      box-shadow: 0 16px 40px var(--overlay);
+    }
+
+    details.edit-help > summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 22px 24px;
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      border-bottom: 1px solid var(--surface0);
+    }
+
+    details.edit-help > summary::-webkit-details-marker { display: none; }
+
+    details.edit-help > summary::after {
+      content: "Collapse";
+      font-size: 13px;
+      color: var(--subtext0);
+      font-weight: 800;
+      border: 1px solid var(--surface1);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+
+    details.edit-help:not([open]) > summary::after {
+      content: "Expand";
+    }
+
+    .edit-body {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      border-radius: 18px;
+      padding: 18px;
+      background: var(--crust);
+      border: 1px solid var(--surface0);
+      color: var(--subtext1);
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .back-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 5;
+      background: var(--peach);
+      color: var(--crust);
+      border: none;
+      box-shadow: 0 14px 35px var(--overlay);
+    }
+
+    .empty {
+      padding: 24px;
+      color: var(--subtext0);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      .wrap {
+        width: min(100% - 20px, 1180px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 24px;
+        border-radius: 22px;
+      }
+
+      .panel, .card-grid, .edit-body {
+        padding: 18px;
+      }
+
+      .section-header, details.edit-help > summary {
+        padding: 18px;
+      }
+
+      .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .back-top {
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="back-top" href="#top">Back to top</a>
+
+  <div class="wrap" id="top">
+    <header class="hero">
+      <div class="hero-content">
+        <div class="pill">Korean study hub</div>
+        <h1>Korean Practice Pages</h1>
+        <p class="subtitle">
+          Use this page as the homepage for your GitHub Pages site. Add, remove, or edit the page links in the <strong>PAGES</strong> list near the bottom of this file.
+        </p>
+        <div class="hero-actions">
+          <button class="theme-toggle" id="themeToggle">Switch to dark mode</button>
+          <a class="button-link" href="#edit">How to edit links</a>
+          <span class="small">All links are relative, so they work well on GitHub Pages.</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="panel" id="toc">
+      <h2>Table of Contents</h2>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <main id="sections"></main>
+
+    <details class="edit-help" id="edit" open>
+      <summary>How to Edit This Index Page</summary>
+      <div class="edit-body">
+        <p class="small">
+          Open this file in a text editor and find <strong>const PAGES = [...]</strong> near the bottom. Edit the <strong>title</strong>, <strong>href</strong>, <strong>description</strong>, <strong>group</strong>, and <strong>tag</strong> values. For GitHub Pages, keep links relative, like <strong>quiz.html</strong> or <strong>folder/quiz.html</strong>.
+        </p>
+        <pre><code>{
+  title: "TOPIK I Vocabulary Quiz",
+  href: "tutoring-topik-1-vocab-2-updated-romanization.html",
+  description: "Full vocabulary quiz hub with all sections.",
+  group: "Quizzes",
+  tag: "Vocabulary"
+}</code></pre>
+        <p class="small">
+          To add another page, copy one object, paste it below, and change the values. Use the same <strong>group</strong> name to place multiple cards in the same section.
+        </p>
+      </div>
+    </details>
+  </div>
+
+  <script>
+    /*
+      EDIT YOUR LINKS HERE.
+
+      href examples:
+      - "tutoring-topik-1-vocab-2-updated-romanization.html"
+      - "family.html"
+      - "quizzes/numbers.html"
+
+      Keep these as relative links when using GitHub Pages.
+    */
+    const PAGES = [
+      {
+        title: "TOPIK I Vocabulary Quiz",
+        href: "tutoring-topik-1-vocab-2-updated-romanization.html",
+        description: "Full vocabulary quiz hub with section quizzes, all-words mode, romanization, English, and Korean question types.",
+        group: "Quizzes",
+        tag: "Vocabulary"
+      },
+      {
+        title: "Family Members Quiz",
+        href: "korean_family_members_romanization_no_dashes_quiz.html",
+        description: "Focused practice for family vocabulary.",
+        group: "Quizzes",
+        tag: "Family"
+      },
+      {
+        title: "Personal Information and People Quiz",
+        href: "korean_personal_information_people_romanization_quiz.html",
+        description: "Focused practice for names, people, jobs, and basic personal information.",
+        group: "Quizzes",
+        tag: "People"
+      },
+      {
+        title: "Future Page",
+        href: "#",
+        description: "Replace this card with your next HTML page link.",
+        group: "Future Pages",
+        tag: "Template"
+      }
+    ];
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function slugify(text) {
+      return String(text)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    function groupPages() {
+      const groups = {};
+      for (const page of PAGES) {
+        const group = page.group || "Pages";
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(page);
+      }
+      return groups;
+    }
+
+    function renderTOC(groups) {
+      const grid = document.getElementById("tocGrid");
+      grid.innerHTML = Object.entries(groups).map(([group, pages]) => `
+        <a class="toc-link" href="#${esc(slugify(group))}">
+          <span>${esc(group)}</span>
+          <span>${pages.length} page${pages.length === 1 ? "" : "s"}</span>
+        </a>
+      `).join("");
+    }
+
+    function renderSections(groups) {
+      const container = document.getElementById("sections");
+
+      if (!PAGES.length) {
+        container.innerHTML = `
+          <section class="section">
+            <div class="empty">No pages yet. Add entries to the PAGES list near the bottom of this file.</div>
+          </section>
+        `;
+        return;
+      }
+
+      container.innerHTML = Object.entries(groups).map(([group, pages]) => `
+        <section class="section" id="${esc(slugify(group))}">
+          <div class="section-header">
+            <h2>${esc(group)}</h2>
+            <span class="count-badge">${pages.length} page${pages.length === 1 ? "" : "s"}</span>
+          </div>
+          <div class="card-grid">
+            ${pages.map(page => `
+              <a class="card" href="${esc(page.href)}">
+                <div class="card-top">
+                  <span class="tag">${esc(page.tag || "Page")}</span>
+                </div>
+                <h3>${esc(page.title)}</h3>
+                <p>${esc(page.description || "Open this page.")}</p>
+                <div class="card-footer">
+                  <span>Open page</span>
+                  <span>→</span>
+                </div>
+              </a>
+            `).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function setupTheme() {
+      const saved = localStorage.getItem("koreanIndexTheme") || "latte";
+      document.documentElement.dataset.theme = saved;
+      updateThemeButton();
+
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "latte" ? "mocha" : "latte";
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("koreanIndexTheme", next);
+        updateThemeButton();
+      });
+    }
+
+    function updateThemeButton() {
+      const btn = document.getElementById("themeToggle");
+      const theme = document.documentElement.dataset.theme;
+      btn.textContent = theme === "latte" ? "Switch to dark mode" : "Switch to light mode";
+    }
+
+    setupTheme();
+    const groups = groupPages();
+    renderTOC(groups);
+    renderSections(groups);
+  </script>
+</body>
+</html>
