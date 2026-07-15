@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="latte">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Korean Vocabulary Quiz Hub</title>
+  <style>
+    :root[data-theme="latte"] {
+      --base: #eff1f5;
+      --mantle: #e6e9ef;
+      --crust: #dce0e8;
+      --surface0: #ccd0da;
+      --surface1: #bcc0cc;
+      --surface2: #acb0be;
+      --text: #4c4f69;
+      --subtext0: #6c6f85;
+      --subtext1: #5c5f77;
+      --blue: #1e66f5;
+      --green: #40a02b;
+      --red: #d20f39;
+      --yellow: #df8e1d;
+      --mauve: #8839ef;
+      --peach: #fe640b;
+      --overlay: rgba(76, 79, 105, 0.12);
+    }
+    :root[data-theme="mocha"] {
+      --base: #1e1e2e;
+      --mantle: #181825;
+      --crust: #11111b;
+      --surface0: #313244;
+      --surface1: #45475a;
+      --surface2: #585b70;
+      --text: #cdd6f4;
+      --subtext0: #a6adc8;
+      --subtext1: #bac2de;
+      --blue: #89b4fa;
+      --green: #a6e3a1;
+      --red: #f38ba8;
+      --yellow: #f9e2af;
+      --mauve: #cba6f7;
+      --peach: #fab387;
+      --overlay: rgba(205, 214, 244, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--blue), transparent 78%), transparent 34rem),
+        linear-gradient(135deg, var(--base), var(--mantle));
+      color: var(--text);
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 80px;
+    }
+    .hero {
+      background: color-mix(in srgb, var(--base), var(--crust) 18%);
+      border: 1px solid var(--surface0);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 24px 70px var(--overlay);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--mauve), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: -0.04em;
+      line-height: 0.98;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--subtext0);
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 780px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+      align-items: center;
+    }
+    .theme-toggle, .toc-link, .back-toc, .btn {
+      border: 1px solid var(--surface1);
+      background: var(--surface0);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    .theme-toggle:hover, .toc-link:hover, .back-toc:hover, .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--blue);
+    }
+    .theme-toggle {
+      background: var(--blue);
+      color: var(--crust);
+      border-color: transparent;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: color-mix(in srgb, var(--green), transparent 82%);
+      color: var(--text);
+      border: 1px solid color-mix(in srgb, var(--green), transparent 45%);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    #toc {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--base), var(--crust) 14%);
+      border: 1px solid var(--surface0);
+    }
+    #toc h2, .block h2 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .toc-link {
+      border-radius: 16px;
+      padding: 14px 16px;
+      background: var(--mantle);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .toc-link span:last-child {
+      color: var(--subtext0);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .block {
+      margin-top: 24px;
+      border: 1px solid var(--surface0);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--base), var(--crust) 12%);
+      overflow: hidden;
+      box-shadow: 0 16px 40px var(--overlay);
+    }
+    details.block > summary, details.quiz-section > summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 22px 24px;
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      border-bottom: 1px solid var(--surface0);
+    }
+    details.block > summary::-webkit-details-marker,
+    details.quiz-section > summary::-webkit-details-marker {
+      display: none;
+    }
+    details.block > summary::after,
+    details.quiz-section > summary::after {
+      content: "Collapse";
+      font-size: 13px;
+      color: var(--subtext0);
+      font-weight: 800;
+      border: 1px solid var(--surface1);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+    details.block:not([open]) > summary::after,
+    details.quiz-section:not([open]) > summary::after {
+      content: "Expand";
+    }
+    .block-inner {
+      padding: 24px;
+    }
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .guide-card, .note-card {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .guide-card h3, .note-card h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+    }
+    .guide-card p, .note-card p, .note-card li {
+      color: var(--subtext0);
+      line-height: 1.55;
+    }
+    .mini-list {
+      display: grid;
+      gap: 7px;
+      font-size: 14px;
+      color: var(--subtext0);
+    }
+    .ref-section {
+      margin-top: 18px;
+      border: 1px solid var(--surface0);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--mantle);
+    }
+    .ref-section summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 16px 18px;
+      font-weight: 900;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ref-section summary::-webkit-details-marker { display: none; }
+    .table-wrap {
+      overflow-x: auto;
+      border-top: 1px solid var(--surface0);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--surface0);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface0), transparent 25%);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    td {
+      color: var(--subtext1);
+      font-size: 16px;
+    }
+    .roman {
+      font-weight: 900;
+      color: var(--blue);
+    }
+    .hangul {
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--text);
+    }
+    .quiz-section {
+      margin-top: 24px;
+      border: 1px solid var(--surface0);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--base), var(--crust) 12%);
+      overflow: hidden;
+      box-shadow: 0 16px 40px var(--overlay);
+      scroll-margin-top: 20px;
+    }
+    .quiz-body {
+      padding: 24px;
+    }
+    .section-meta {
+      color: var(--subtext0);
+      margin: -4px 0 18px;
+      line-height: 1.55;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .control-card {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .control-label {
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: var(--subtext1);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .mode-btn {
+      border: 1px solid var(--surface1);
+      background: var(--surface0);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: var(--blue);
+      color: var(--crust);
+      border-color: transparent;
+    }
+    .quiz-card {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 22px;
+      padding: 22px;
+    }
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      color: var(--subtext0);
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+    .progress {
+      height: 10px;
+      background: var(--surface0);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--blue), var(--mauve));
+      transition: width 0.25s ease;
+    }
+    .prompt-label {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 12px;
+      color: var(--subtext0);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .prompt {
+      font-size: clamp(30px, 6vw, 52px);
+      font-weight: 950;
+      line-height: 1.1;
+      min-height: 1.2em;
+      margin: 0 0 22px;
+      letter-spacing: -0.03em;
+    }
+    .answer-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+    .answer-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--surface1);
+      border-radius: 16px;
+      background: var(--base);
+      color: var(--text);
+      font-size: 22px;
+      outline: none;
+    }
+    .answer-input:focus {
+      border-color: var(--blue);
+    }
+    .primary-btn {
+      border: none;
+      border-radius: 16px;
+      background: var(--blue);
+      color: var(--crust);
+      font-size: 16px;
+      font-weight: 950;
+      padding: 0 22px;
+      cursor: pointer;
+    }
+    .secondary-btn {
+      border: 1px solid var(--surface1);
+      border-radius: 16px;
+      background: var(--surface0);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 950;
+      padding: 14px 18px;
+      cursor: pointer;
+    }
+    .restart-top-btn {
+      border: 1px solid var(--surface1);
+      border-radius: 12px;
+      background: var(--surface0);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 900;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .feedback {
+      display: none;
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.55;
+      margin-bottom: 14px;
+      border: 1px solid transparent;
+      color: var(--text);
+    }
+    .feedback.good {
+      display: block;
+      background: color-mix(in srgb, var(--green), transparent 82%);
+      border-color: color-mix(in srgb, var(--green), transparent 42%);
+    }
+    .feedback.bad {
+      display: block;
+      background: color-mix(in srgb, var(--red), transparent 84%);
+      border-color: color-mix(in srgb, var(--red), transparent 42%);
+    }
+    .answer-key {
+      display: inline-block;
+      color: var(--blue);
+      font-weight: 950;
+      font-size: 22px;
+    }
+    .review {
+      margin-top: 18px;
+      border-top: 1px solid var(--surface0);
+      padding-top: 16px;
+      max-height: 320px;
+      overflow: auto;
+    }
+    .review-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--surface0);
+    }
+    .small {
+      color: var(--subtext0);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .finish-card {
+      display: none;
+      text-align: center;
+      border: 1px solid var(--surface0);
+      background: var(--base);
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    .finish-card h3 {
+      font-size: 28px;
+      margin: 0 0 8px;
+    }
+    .back-toc {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 5;
+      background: var(--peach);
+      color: var(--crust);
+      border: none;
+      box-shadow: 0 14px 35px var(--overlay);
+    }
+    .hidden { display: none !important; }
+    @media (max-width: 720px) {
+      .wrap { width: min(100% - 20px, 1180px); padding-top: 12px; }
+      .hero { padding: 24px; border-radius: 22px; }
+      #toc, .block-inner, .quiz-body { padding: 18px; }
+      .controls, .answer-form, .review-row { grid-template-columns: 1fr; }
+      .primary-btn { padding: 14px 18px; }
+      details.block > summary, details.quiz-section > summary { padding: 18px; font-size: 18px; }
+      .back-toc { right: 12px; bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="back-toc" href="#toc">Back to TOC</a>
+
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-content">
+        <div class="pill">Korean vocab quiz hub</div>
+        <h1>Korean Vocabulary Practice</h1>
+        <p class="subtitle">
+          Each section has its own quiz. Questions are one at a time, scored immediately, and generated as 2 × N questions, where N is the number of vocabulary items in that section. Repeated items are never placed back to back.
+        </p>
+        <div class="hero-actions">
+          <button class="theme-toggle" id="themeToggle">Switch to dark mode</button>
+          <span class="small">Romanization uses no syllable dashes. Spaces are used only between Korean word units.</span>
+        </div>
+      </div>
+    </header>
+
+    <nav id="toc">
+      <h2>Table of Contents</h2>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <details class="block" id="reference" open>
+      <summary>Definitions, Romanization, and Korean Reference</summary>
+      <div class="block-inner">
+        <div class="guide-grid">
+          <div class="guide-card">
+            <h3>Romanization Rules Used Here</h3>
+            <p>All syllable dashes from the source sheets were removed. Spaces appear only between separate Korean words, such as <strong>annyeonghi gaseyo</strong>.</p>
+            <p>Quiz checking ignores capitalization, dashes, extra spaces, and most punctuation for romanization answers.</p>
+          </div>
+          <div class="guide-card">
+            <h3>Sound Guide</h3>
+            <div class="mini-list">
+              <div>ㄱ k/g · ㄷ t/d · ㅂ p/b · ㅈ ch/j · ㅅ s/sh before i/y</div>
+              <div>ㄲ kk · ㄸ tt · ㅃ pp · ㅆ ss · ㅉ jj</div>
+              <div>ㅋ k · ㅌ t · ㅍ p · ㅊ ch · ㅎ h</div>
+              <div>ㅏ a · ㅓ eo · ㅗ o · ㅜ u · ㅡ eu · ㅣ i · ㅐ/ㅔ ae/e</div>
+            </div>
+          </div>
+        </div>
+        <div id="referenceTables"></div>
+      </div>
+    </details>
+
+    <main id="quizSections"></main>
+  </div>
+
+  <script>
+    const SECTIONS = [{"id": "question-adverbs","title": "Question Words, Frequency, and Adverbs","items": [{"korean": "언제","romanization": "eonje","meaning": "when"},{"korean": "왜","romanization": "wae","meaning": "why"},{"korean": "어떻게","romanization": "eotteohge","meaning": "how"},{"korean": "어느","romanization": "eoneu","meaning": "which"},{"korean": "몇","romanization": "myeot","meaning": "how many"},{"korean": "항상","romanization": "hangsang","meaning": "always"},{"korean": "자주","romanization": "jaju","meaning": "often"},{"korean": "가끔","romanization": "gakkeum","meaning": "sometimes"},{"korean": "보통","romanization": "botong","meaning": "usually"},{"korean": "다시","romanization": "dasi","meaning": "again"},{"korean": "같이","romanization": "gati","meaning": "together"},{"korean": "빨리","romanization": "ppalri","meaning": "quickly"},{"korean": "천천히","romanization": "cheoncheonhi","meaning": "slowly"},{"korean": "잘","romanization": "jal","meaning": "well"},{"korean": "많이","romanization": "manhi","meaning": "a lot"},{"korean": "조금","romanization": "jogeum","meaning": "a little"}]},{"id": "actions-descriptive","title": "Actions and Descriptive Words","items": [{"korean": "가다","romanization": "gada","meaning": "to go"},{"korean": "오다","romanization": "oda","meaning": "to come"},{"korean": "먹다","romanization": "meokda","meaning": "to eat"},{"korean": "마시다","romanization": "masida","meaning": "to drink"},{"korean": "보다","romanization": "boda","meaning": "to see / watch"},{"korean": "듣다","romanization": "deutda","meaning": "to listen"},{"korean": "읽다","romanization": "ilkda","meaning": "to read"},{"korean": "쓰다","romanization": "sseuda","meaning": "to write"},{"korean": "말하다","romanization": "malhada","meaning": "to speak"},{"korean": "공부하다","romanization": "gongbuhada","meaning": "to study"},{"korean": "일하다","romanization": "ilhada","meaning": "to work"},{"korean": "자다","romanization": "jada","meaning": "to sleep"},{"korean": "일어나다","romanization": "ileonada","meaning": "to get up"},{"korean": "앉다","romanization": "anjda","meaning": "to sit"},{"korean": "서다","romanization": "seoda","meaning": "to stand"},{"korean": "만나다","romanization": "mannada","meaning": "to meet"},{"korean": "배우다","romanization": "baeuda","meaning": "to learn"},{"korean": "만들다","romanization": "mandeulda","meaning": "to make"},{"korean": "좋아하다","romanization": "johahada","meaning": "to like"},{"korean": "싫어하다","romanization": "silheohada","meaning": "to dislike"},{"korean": "좋다","romanization": "johda","meaning": "good"},{"korean": "나쁘다","romanization": "nappeuda","meaning": "bad"},{"korean": "크다","romanization": "keuda","meaning": "big"},{"korean": "작다","romanization": "jakda","meaning": "small"},{"korean": "많다","romanization": "manhda","meaning": "many"},{"korean": "적다","romanization": "jeokda","meaning": "few"},{"korean": "빠르다","romanization": "ppareuda","meaning": "fast"},{"korean": "느리다","romanization": "neurida","meaning": "slow"},{"korean": "쉽다","romanization": "swipda","meaning": "easy"},{"korean": "어렵다","romanization": "eoryeopda","meaning": "difficult"},{"korean": "예쁘다","romanization": "yeppeuda","meaning": "pretty"},{"korean": "맛있다","romanization": "matitda","meaning": "delicious"},{"korean": "재미있다","romanization": "jaemiitda","meaning": "interesting"},{"korean": "누구","romanization": "nugu","meaning": "who"},{"korean": "무엇/뭐","romanization": "mueot / mwo","meaning": "what","romanization_alts": ["mueot","mwo"]},{"korean": "어디","romanization": "eodi","meaning": "where"}]},{"id": "food-shopping-weather","title": "Food, Shopping, Colors, and Weather","items": [{"korean": "밥","romanization": "bap","meaning": "rice / meal"},{"korean": "물","romanization": "mul","meaning": "water"},{"korean": "커피","romanization": "keopi","meaning": "coffee"},{"korean": "차","romanization": "cha","meaning": "tea / car"},{"korean": "우유","romanization": "uyu","meaning": "milk"},{"korean": "빵","romanization": "ppang","meaning": "bread"},{"korean": "과일","romanization": "gwail","meaning": "fruit"},{"korean": "사과","romanization": "sagwa","meaning": "apple"},{"korean": "바나나","romanization": "banana","meaning": "banana"},{"korean": "고기","romanization": "gogi","meaning": "meat"},{"korean": "생선","romanization": "saengseon","meaning": "fish"},{"korean": "김치","romanization": "gimchi","meaning": "kimchi"},{"korean": "라면","romanization": "ramyeon","meaning": "instant noodles"},{"korean": "떡","romanization": "tteok","meaning": "rice cake"},{"korean": "가게","romanization": "gage","meaning": "store"},{"korean": "가격","romanization": "gagyeok","meaning": "price"},{"korean": "돈","romanization": "don","meaning": "money"},{"korean": "카드","romanization": "kadeu","meaning": "card"},{"korean": "현금","romanization": "hyeongeum","meaning": "cash"},{"korean": "얼마","romanization": "eolma","meaning": "how much"},{"korean": "싸다","romanization": "ssada","meaning": "cheap"},{"korean": "비싸다","romanization": "bissada","meaning": "expensive"},{"korean": "빨간색","romanization": "ppalgansaek","meaning": "red"},{"korean": "파란색","romanization": "paransaek","meaning": "blue"},{"korean": "노란색","romanization": "noransaek","meaning": "yellow"},{"korean": "초록색","romanization": "choroksaek","meaning": "green"},{"korean": "검은색","romanization": "geomeunsaek","meaning": "black"},{"korean": "흰색","romanization": "huinsaek","meaning": "white"},{"korean": "날씨","romanization": "nalssi","meaning": "weather"},{"korean": "비","romanization": "bi","meaning": "rain"},{"korean": "눈","romanization": "nun","meaning": "snow / eye"},{"korean": "바람","romanization": "baram","meaning": "wind"},{"korean": "덥다","romanization": "deopda","meaning": "hot"},{"korean": "춥다","romanization": "chupda","meaning": "cold"},{"korean": "맑다","romanization": "malkda","meaning": "clear / sunny"},{"korean": "흐리다","romanization": "heurida","meaning": "cloudy"}]},{"id": "places-transportation","title": "Places and Transportation","items": [{"korean": "집","romanization": "jip","meaning": "house / home"},{"korean": "학교","romanization": "hakgyo","meaning": "school"},{"korean": "회사","romanization": "hoesa","meaning": "company"},{"korean": "병원","romanization": "byeongwon","meaning": "hospital"},{"korean": "은행","romanization": "eunhaeng","meaning": "bank"},{"korean": "우체국","romanization": "ucheguk","meaning": "post office"},{"korean": "식당","romanization": "sikdang","meaning": "restaurant"},{"korean": "카페","romanization": "kape","meaning": "cafe"},{"korean": "공원","romanization": "gongwon","meaning": "park"},{"korean": "시장","romanization": "sijang","meaning": "market"},{"korean": "백화점","romanization": "baekhwajeom","meaning": "department store"},{"korean": "도서관","romanization": "doseogwan","meaning": "library"},{"korean": "약국","romanization": "yakguk","meaning": "pharmacy"},{"korean": "공항","romanization": "gonghang","meaning": "airport"},{"korean": "호텔","romanization": "hotel","meaning": "hotel"},{"korean": "버스","romanization": "beoseu","meaning": "bus"},{"korean": "지하철","romanization": "jihacheol","meaning": "subway"},{"korean": "택시","romanization": "taeksi","meaning": "taxi"},{"korean": "기차","romanization": "gicha","meaning": "train"},{"korean": "비행기","romanization": "bihaenggi","meaning": "airplane"},{"korean": "자동차","romanization": "jadongcha","meaning": "car"},{"korean": "자전거","romanization": "jajeongeo","meaning": "bicycle"}]},{"id": "days-time","title": "Days and Time","notes": ["Months: Sino-Korean number + 월.","Days: Sino-Korean number + 일.","Years: Sino-Korean number + 년."],"items": [{"korean": "오늘","romanization": "oneul","meaning": "today"},{"korean": "내일","romanization": "naeil","meaning": "tomorrow"},{"korean": "어제","romanization": "eoje","meaning": "yesterday"},{"korean": "아침","romanization": "achim","meaning": "morning / breakfast"},{"korean": "점심","romanization": "jeomsim","meaning": "lunch / noon"},{"korean": "저녁","romanization": "jeonyeok","meaning": "evening / dinner"},{"korean": "밤","romanization": "bam","meaning": "night"},{"korean": "오전","romanization": "ojeon","meaning": "A.M."},{"korean": "오후","romanization": "ohu","meaning": "P.M."},{"korean": "지금","romanization": "jigeum","meaning": "now"},{"korean": "시간","romanization": "sigan","meaning": "time"},{"korean": "시","romanization": "si","meaning": "hour / o'clock"},{"korean": "분","romanization": "bun","meaning": "minute"},{"korean": "월요일","romanization": "wolyoil","meaning": "Monday"},{"korean": "화요일","romanization": "hwayoil","meaning": "Tuesday"},{"korean": "수요일","romanization": "suyoil","meaning": "Wednesday"},{"korean": "목요일","romanization": "mokyoil","meaning": "Thursday"},{"korean": "금요일","romanization": "geumyoil","meaning": "Friday"},{"korean": "토요일","romanization": "toyoil","meaning": "Saturday"},{"korean": "일요일","romanization": "ilyoil","meaning": "Sunday"}]},{"id": "numbers","title": "Numbers","notes": ["Native Korean numbers 1–4 change before counters: 하나→한, 둘→두, 셋→세, 넷→네.","Romanization answers accept both the base form and before-counter form for native 1–4."],"items": [{"korean": "하나","romanization": "hana","meaning": "one, native","romanization_alts": ["han"],"korean_alts": ["한"]},{"korean": "둘","romanization": "dul","meaning": "two, native","romanization_alts": ["du"],"korean_alts": ["두"]},{"korean": "셋","romanization": "set","meaning": "three, native","romanization_alts": ["se"],"korean_alts": ["세"]},{"korean": "넷","romanization": "net","meaning": "four, native","romanization_alts": ["ne"],"korean_alts": ["네"]},{"korean": "다섯","romanization": "daseot","meaning": "five, native"},{"korean": "여섯","romanization": "yeoseot","meaning": "six, native"},{"korean": "일곱","romanization": "ilgop","meaning": "seven, native"},{"korean": "여덟","romanization": "yeodeolb","meaning": "eight, native"},{"korean": "아홉","romanization": "ahop","meaning": "nine, native"},{"korean": "열","romanization": "yeol","meaning": "ten, native"},{"korean": "일","romanization": "il","meaning": "one, Sino-Korean"},{"korean": "이","romanization": "i","meaning": "two, Sino-Korean"},{"korean": "삼","romanization": "sam","meaning": "three, Sino-Korean"},{"korean": "사","romanization": "sa","meaning": "four, Sino-Korean"},{"korean": "오","romanization": "o","meaning": "five, Sino-Korean"},{"korean": "육","romanization": "yuk","meaning": "six, Sino-Korean"},{"korean": "칠","romanization": "chil","meaning": "seven, Sino-Korean"},{"korean": "팔","romanization": "pal","meaning": "eight, Sino-Korean"},{"korean": "구","romanization": "gu","meaning": "nine, Sino-Korean"},{"korean": "십","romanization": "sip","meaning": "ten, Sino-Korean"}]},{"id": "family-members","title": "Family Members","items": [{"korean": "아버지","romanization": "abeoji","meaning": "father"},{"korean": "어머니","romanization": "eomeoni","meaning": "mother"},{"korean": "부모님","romanization": "bumonim","meaning": "parents"},{"korean": "형","romanization": "hyeong","meaning": "older brother, male speaker"},{"korean": "오빠","romanization": "oppa","meaning": "older brother, female speaker"},{"korean": "누나","romanization": "nuna","meaning": "older sister, male speaker"},{"korean": "언니","romanization": "eonni","meaning": "older sister, female speaker"},{"korean": "남동생","romanization": "namdongsaeng","meaning": "younger brother"},{"korean": "여동생","romanization": "yeodongsaeng","meaning": "younger sister"},{"korean": "할아버지","romanization": "halabeoji","meaning": "grandfather"},{"korean": "할머니","romanization": "halmeoni","meaning": "grandmother"},{"korean": "아들","romanization": "adeul","meaning": "son"},{"korean": "딸","romanization": "ttal","meaning": "daughter"}]},{"id": "greetings","title": "Greetings and Basic Expressions","items": [{"korean": "안녕하세요","romanization": "annyeonghaseyo","meaning": "Hello"},{"korean": "안녕히 가세요","romanization": "annyeonghi gaseyo","meaning": "Goodbye to someone leaving"},{"korean": "안녕히 계세요","romanization": "annyeonghi gyeseyo","meaning": "Goodbye to someone staying"},{"korean": "감사합니다","romanization": "gamsahapnida","meaning": "Thank you"},{"korean": "고맙습니다","romanization": "gomapseupnida","meaning": "Thank you"},{"korean": "죄송합니다","romanization": "joesonghapnida","meaning": "I am sorry"},{"korean": "미안합니다","romanization": "mianhapnida","meaning": "Sorry"},{"korean": "괜찮아요","romanization": "gwaenchanhayo","meaning": "It is okay"},{"korean": "네","romanization": "ne","meaning": "Yes"},{"korean": "아니요","romanization": "aniyo","meaning": "No"},{"korean": "맞아요","romanization": "matayo","meaning": "That is right"},{"korean": "아니에요","romanization": "anieyo","meaning": "It is not"},{"korean": "처음 뵙겠습니다","romanization": "cheoeum boepgetseupnida","meaning": "Nice to meet you"},{"korean": "반갑습니다","romanization": "bangapseupnida","meaning": "Nice to meet you"}]},{"id": "personal-information-people","title": "Personal Information and People","items": [{"korean": "이름","romanization": "ireum","meaning": "name"},{"korean": "성","romanization": "seong","meaning": "family name"},{"korean": "나이","romanization": "nai","meaning": "age"},{"korean": "생일","romanization": "saengil","meaning": "birthday"},{"korean": "국적","romanization": "gukjeok","meaning": "nationality"},{"korean": "사람","romanization": "saram","meaning": "person"},{"korean": "학생","romanization": "haksaeng","meaning": "student"},{"korean": "선생님","romanization": "seonsaengnim","meaning": "teacher"},{"korean": "회사원","romanization": "hoesawon","meaning": "office worker"},{"korean": "의사","romanization": "uisa","meaning": "doctor"},{"korean": "간호사","romanization": "ganhosa","meaning": "nurse"},{"korean": "경찰","romanization": "gyeongchal","meaning": "police officer"},{"korean": "가족","romanization": "gajok","meaning": "family"},{"korean": "친구","romanization": "chingu","meaning": "friend"},{"korean": "남자","romanization": "namja","meaning": "man"},{"korean": "여자","romanization": "yeoja","meaning": "woman"}]}];
+    const ALL_WORDS_SECTION = {
+      id: "all-words",
+      title: "All Words Together",
+      items: SECTIONS.flatMap(section => section.items)
+    };
+    const QUIZ_SECTIONS = [...SECTIONS, ALL_WORDS_SECTION];
+    const MODES = [
+      { key: "english", label: "English" },
+      { key: "romanization", label: "Romanization" },
+      { key: "korean", label: "Korean" }
+    ];
+    const states = {};
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeRomanization(text) {
+      return String(text ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[’']/g, "")
+        .replace(/[^a-z]/g, "");
+    }
+
+    function normalizeEnglish(text) {
+      return String(text ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[’']/g, "")
+        .replace(/&/g, "and")
+        .replace(/\ba\.?m\.?\b/g, "am")
+        .replace(/\bp\.?m\.?\b/g, "pm")
+        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function normalizeKorean(text) {
+      return String(text ?? "")
+        .replace(/\s+/g, "")
+        .trim();
+    }
+
+    function splitMeaning(meaning) {
+      const exact = String(meaning);
+      const pieces = exact
+        .split("/")
+        .flatMap(part => part.split(","))
+        .map(s => s.trim())
+        .filter(Boolean);
+      return [...new Set([exact, ...pieces])];
+    }
+
+    function displayValue(item, mode) {
+      if (mode === "english") return item.meaning;
+      if (mode === "romanization") return item.romanization;
+      return item.korean;
+    }
+
+    function answerValues(item, mode) {
+      if (mode === "english") return splitMeaning(item.meaning);
+      if (mode === "romanization") {
+        return [...new Set([item.romanization, ...(item.romanization_alts || [])])];
+      }
+      return [...new Set([item.korean, ...(item.korean_alts || [])])];
+    }
+
+    function normalizeByMode(value, mode) {
+      if (mode === "english") return normalizeEnglish(value);
+      if (mode === "romanization") return normalizeRomanization(value);
+      return normalizeKorean(value);
+    }
+
+    function acceptedAnswers(section, item, qMode, aMode) {
+      const promptValue = normalizeByMode(displayValue(item, qMode), qMode);
+      const matchingItems = section.items.filter(other =>
+        normalizeByMode(displayValue(other, qMode), qMode) === promptValue
+      );
+      const answers = matchingItems.flatMap(other => answerValues(other, aMode));
+      return [...new Set(answers)];
+    }
+
+    function isCorrect(section, item, qMode, aMode, userText) {
+      const normalizedUser = normalizeByMode(userText, aMode);
+      return acceptedAnswers(section, item, qMode, aMode)
+        .some(ans => normalizeByMode(ans, aMode) === normalizedUser);
+    }
+
+    function modeLabel(mode) {
+      return MODES.find(m => m.key === mode)?.label || mode;
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function validNoBackToBack(list) {
+      for (let i = 1; i < list.length; i++) {
+        if (list[i].id === list[i - 1].id) return false;
+      }
+      return true;
+    }
+
+    function buildQuestionList(section) {
+      const base = section.items.map((item, i) => ({ ...item, id: `${section.id}-${i}` }));
+      const doubled = [...base, ...base];
+
+      for (let attempt = 0; attempt < 300; attempt++) {
+        const candidate = shuffle(doubled);
+        if (validNoBackToBack(candidate)) return candidate;
+      }
+
+      const remaining = shuffle(doubled);
+      const result = [];
+      while (remaining.length) {
+        let index = remaining.findIndex(item => !result.length || item.id !== result[result.length - 1].id);
+        if (index === -1) index = 0;
+        result.push(remaining.splice(index, 1)[0]);
+      }
+      return result;
+    }
+
+    function setupTheme() {
+      const saved = localStorage.getItem("koreanQuizTheme") || "latte";
+      document.documentElement.dataset.theme = saved;
+      updateThemeButton();
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "latte" ? "mocha" : "latte";
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("koreanQuizTheme", next);
+        updateThemeButton();
+      });
+    }
+
+    function updateThemeButton() {
+      const btn = document.getElementById("themeToggle");
+      const theme = document.documentElement.dataset.theme;
+      btn.textContent = theme === "latte" ? "Switch to dark mode" : "Switch to light mode";
+    }
+
+    function renderTOC() {
+      const grid = document.getElementById("tocGrid");
+      grid.innerHTML = `
+        <a class="toc-link" href="#reference"><span>Reference Tables</span><span>all vocab</span></a>
+        ${QUIZ_SECTIONS.map(section => `
+          <a class="toc-link" href="#quiz-${section.id}">
+            <span>${esc(section.title)}</span>
+            <span>${section.items.length} words · ${section.items.length * 2} Qs</span>
+          </a>
+        `).join("")}
+      `;
+    }
+
+    function renderReference() {
+      const container = document.getElementById("referenceTables");
+      container.innerHTML = SECTIONS.map(section => `
+        <details class="ref-section" open>
+          <summary>
+            <span>${esc(section.title)}</span>
+            <span class="small">${section.items.length} words</span>
+          </summary>
+          ${section.notes ? `
+            <div class="note-card" style="margin: 14px;">
+              <h3>Notes</h3>
+              <ul>${section.notes.map(note => `<li>${esc(note)}</li>`).join("")}</ul>
+            </div>
+          ` : ""}
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>English</th>
+                  <th>Romanization</th>
+                  <th>Korean</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${section.items.map(item => `
+                  <tr>
+                    <td>${esc(item.meaning)}</td>
+                    <td><span class="roman">${esc(item.romanization)}</span>${item.romanization_alts ? `<div class="small">Also accepted: ${esc(item.romanization_alts.join(", "))}</div>` : ""}</td>
+                    <td><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<div class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</div>` : ""}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      `).join("");
+    }
+
+    function renderModeButtons(sectionId, type, activeMode) {
+      return MODES.map(mode => `
+        <button
+          type="button"
+          class="mode-btn ${mode.key === activeMode ? "active" : ""}"
+          data-section="${sectionId}"
+          data-type="${type}"
+          data-mode="${mode.key}">
+          ${mode.label}
+        </button>
+      `).join("");
+    }
+
+    function renderQuizSections() {
+      const container = document.getElementById("quizSections");
+      container.innerHTML = QUIZ_SECTIONS.map((section, index) => {
+        states[section.id] = {
+          questionMode: "english",
+          answerMode: "romanization",
+          questions: buildQuestionList(section),
+          index: 0,
+          score: 0,
+          answered: false,
+          results: []
+        };
+
+        return `
+          <details class="quiz-section" id="quiz-${section.id}" ${index === 0 ? "open" : ""}>
+            <summary>${esc(section.title)} Quiz</summary>
+            <div class="quiz-body">
+              <p class="section-meta">
+                ${section.items.length} vocabulary items → ${section.items.length * 2} questions. No repeated word appears back to back.
+              </p>
+
+              <div class="controls">
+                <div class="control-card">
+                  <div class="control-label">Question shown as</div>
+                  <div class="segmented mode-group" id="q-modes-${section.id}">
+                    ${renderModeButtons(section.id, "question", "english")}
+                  </div>
+                </div>
+                <div class="control-card">
+                  <div class="control-label">Answer typed as</div>
+                  <div class="segmented mode-group" id="a-modes-${section.id}">
+                    ${renderModeButtons(section.id, "answer", "romanization")}
+                  </div>
+                </div>
+              </div>
+
+              <div class="quiz-card" id="quiz-card-${section.id}">
+                <div class="status-row">
+                  <div id="question-number-${section.id}"></div>
+                  <div id="score-${section.id}"></div>
+                  <button class="restart-top-btn" id="restart-top-${section.id}" type="button" data-section="${section.id}">Restart</button>
+                </div>
+                <div class="progress"><div class="progress-fill" id="progress-${section.id}"></div></div>
+                <div class="prompt-label" id="prompt-label-${section.id}"></div>
+                <p class="prompt" id="prompt-${section.id}"></p>
+
+                <form class="answer-form" data-section="${section.id}">
+                  <input class="answer-input" id="input-${section.id}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer" />
+                  <button class="primary-btn" id="check-${section.id}" type="submit">Check</button>
+                </form>
+
+                <div class="feedback" id="feedback-${section.id}"></div>
+                <button class="secondary-btn hidden" id="next-${section.id}" type="button" data-section="${section.id}">Next</button>
+
+                <div class="finish-card" id="finish-${section.id}">
+                  <h3>Quiz Complete</h3>
+                  <p id="final-score-${section.id}"></p>
+                  <button class="secondary-btn" id="restart-${section.id}" type="button" data-section="${section.id}">Restart This Quiz</button>
+                  <div class="review" id="review-${section.id}"></div>
+                </div>
+              </div>
+            </div>
+          </details>
+        `;
+      }).join("");
+
+      attachQuizListeners();
+      QUIZ_SECTIONS.forEach(section => showQuestion(section.id));
+    }
+
+    function sectionById(id) {
+      return QUIZ_SECTIONS.find(s => s.id === id);
+    }
+
+    function itemAnswerDisplay(item, mode) {
+      return answerValues(item, mode).join(" / ");
+    }
+
+    function refreshModeButtons(sectionId) {
+      const state = states[sectionId];
+      document.querySelectorAll(`[data-section="${sectionId}"][data-type="question"]`).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.questionMode);
+      });
+      document.querySelectorAll(`[data-section="${sectionId}"][data-type="answer"]`).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.answerMode);
+      });
+    }
+
+    function resetQuiz(sectionId) {
+      const state = states[sectionId];
+      const section = sectionById(sectionId);
+      state.questions = buildQuestionList(section);
+      state.index = 0;
+      state.score = 0;
+      state.answered = false;
+      state.results = [];
+      document.getElementById(`finish-${sectionId}`).style.display = "none";
+      document.getElementById(`quiz-card-${sectionId}`).querySelector(".answer-form").classList.remove("hidden");
+      document.getElementById(`next-${sectionId}`).classList.add("hidden");
+      showQuestion(sectionId);
+    }
+
+    function showQuestion(sectionId) {
+      const state = states[sectionId];
+      const section = sectionById(sectionId);
+      const item = state.questions[state.index];
+      state.answered = false;
+
+      document.getElementById(`question-number-${sectionId}`).textContent =
+        `Question ${state.index + 1} / ${state.questions.length}`;
+      document.getElementById(`score-${sectionId}`).textContent =
+        `Score: ${state.score}`;
+      document.getElementById(`progress-${sectionId}`).style.width =
+        `${(state.index / state.questions.length) * 100}%`;
+      document.getElementById(`prompt-label-${sectionId}`).textContent =
+        modeLabel(state.questionMode);
+      document.getElementById(`prompt-${sectionId}`).textContent =
+        displayValue(item, state.questionMode);
+
+      const input = document.getElementById(`input-${sectionId}`);
+      input.value = "";
+      input.disabled = false;
+      document.getElementById(`check-${sectionId}`).disabled = false;
+      document.getElementById(`feedback-${sectionId}`).className = "feedback";
+      document.getElementById(`feedback-${sectionId}`).innerHTML = "";
+      document.getElementById(`next-${sectionId}`).classList.add("hidden");
+      document.getElementById(`finish-${sectionId}`).style.display = "none";
+      input.focus();
+    }
+
+    function completeQuestion(sectionId, userAnswer) {
+      const state = states[sectionId];
+      const section = sectionById(sectionId);
+      const item = state.questions[state.index];
+      const correct = isCorrect(section, item, state.questionMode, state.answerMode, userAnswer);
+      const feedback = document.getElementById(`feedback-${sectionId}`);
+      state.answered = true;
+
+      if (correct) {
+        state.score += 1;
+        feedback.className = "feedback good";
+        feedback.innerHTML = `Correct. <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>`;
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = `
+          Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span><br>
+          <span class="small">Full entry: ${esc(item.meaning)} · ${esc(item.romanization)} · ${esc(item.korean)}</span>
+        `;
+      }
+
+      state.results.push({
+        promptMode: state.questionMode,
+        answerMode: state.answerMode,
+        prompt: displayValue(item, state.questionMode),
+        expected: itemAnswerDisplay(item, state.answerMode),
+        full: `${item.meaning} · ${item.romanization} · ${item.korean}`,
+        userAnswer,
+        correct
+      });
+
+      document.getElementById(`score-${sectionId}`).textContent = `Score: ${state.score}`;
+      document.getElementById(`input-${sectionId}`).disabled = true;
+      document.getElementById(`check-${sectionId}`).disabled = true;
+      const next = document.getElementById(`next-${sectionId}`);
+      next.textContent = state.index === state.questions.length - 1 ? "Finish" : "Next";
+      next.classList.remove("hidden");
+      next.focus();
+    }
+
+    function showFinish(sectionId) {
+      const state = states[sectionId];
+      document.getElementById(`progress-${sectionId}`).style.width = "100%";
+      document.getElementById(`finish-${sectionId}`).style.display = "block";
+      document.getElementById(`final-score-${sectionId}`).innerHTML =
+        `Final score: <strong>${state.score} / ${state.questions.length}</strong> (${Math.round((state.score / state.questions.length) * 100)}%)`;
+      document.getElementById(`review-${sectionId}`).innerHTML = `
+        <h3>Review</h3>
+        ${state.results.map((r, i) => `
+          <div class="review-row">
+            <div>
+              <strong>${i + 1}. ${esc(r.prompt)}</strong><br>
+              <span class="small">Your answer: ${esc(r.userAnswer || "(blank)")}</span>
+            </div>
+            <div>
+              ${r.correct ? "✅" : "❌"} <strong>${esc(r.expected)}</strong><br>
+              <span class="small">${esc(r.full)}</span>
+            </div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function attachQuizListeners() {
+      document.querySelectorAll(".mode-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sectionId = btn.dataset.section;
+          const state = states[sectionId];
+          if (btn.dataset.type === "question") {
+            state.questionMode = btn.dataset.mode;
+            if (state.answerMode === state.questionMode) {
+              state.answerMode = state.questionMode === "english" ? "romanization" : "english";
+            }
+          } else {
+            state.answerMode = btn.dataset.mode;
+            if (state.answerMode === state.questionMode) {
+              state.questionMode = state.answerMode === "english" ? "romanization" : "english";
+            }
+          }
+          refreshModeButtons(sectionId);
+          resetQuiz(sectionId);
+        });
+      });
+
+      document.querySelectorAll(".answer-form").forEach(form => {
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+          const sectionId = form.dataset.section;
+          const state = states[sectionId];
+          if (state.answered) return;
+          completeQuestion(sectionId, document.getElementById(`input-${sectionId}`).value);
+        });
+      });
+
+      document.querySelectorAll("[id^='next-']").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sectionId = btn.dataset.section;
+          const state = states[sectionId];
+          if (state.index < state.questions.length - 1) {
+            state.index += 1;
+            showQuestion(sectionId);
+          } else {
+            btn.classList.add("hidden");
+            showFinish(sectionId);
+          }
+        });
+      });
+
+      document.querySelectorAll("[id^='restart-']").forEach(btn => {
+        btn.addEventListener("click", () => {
+          resetQuiz(btn.dataset.section);
+        });
+      });
+    }
+
+    setupTheme();
+    renderTOC();
+    renderReference();
+    renderQuizSections();
+  </script>
+</body>
+</html>
