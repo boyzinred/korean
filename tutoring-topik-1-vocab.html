@@ -244,10 +244,38 @@
       padding: 16px 18px;
       font-weight: 900;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
     .ref-section summary::-webkit-details-marker { display: none; }
+    
+    .ref-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ref-summary-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .reset-stars-btn {
+      border: 1px solid var(--surface2);
+      border-radius: 8px;
+      background: var(--surface0);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .reset-stars-btn:hover {
+      background: var(--surface1);
+    }
+    
     .table-wrap {
       overflow-x: auto;
       border-top: 1px solid var(--surface0);
@@ -261,7 +289,7 @@
       padding: 12px 14px;
       border-bottom: 1px solid var(--surface0);
       text-align: left;
-      vertical-align: top;
+      vertical-align: middle;
     }
     th {
       color: var(--text);
@@ -283,6 +311,29 @@
       font-size: 18px;
       color: var(--text);
     }
+
+    /* Star Rating System CSS */
+    .stars-container {
+      display: inline-flex;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .star {
+      font-size: 22px;
+      color: var(--surface2);
+      transition: transform 0.1s ease, color 0.2s ease;
+    }
+    .star:hover {
+      transform: scale(1.2);
+    }
+    .stars-container[data-rating="1"] .star:nth-child(1) { color: var(--red); }
+    .stars-container[data-rating="2"] .star:nth-child(1),
+    .stars-container[data-rating="2"] .star:nth-child(2) { color: var(--yellow); }
+    .stars-container[data-rating="3"] .star:nth-child(1),
+    .stars-container[data-rating="3"] .star:nth-child(2),
+    .stars-container[data-rating="3"] .star:nth-child(3) { color: var(--green); }
+
     .quiz-section {
       margin-top: 24px;
       border: 1px solid var(--surface0);
@@ -575,6 +626,9 @@
     ];
     const states = {};
 
+    // Load persisted ratings (red=1, yellow=2, green=3)
+    let vocabRatings = JSON.parse(localStorage.getItem("koreanVocabRatings") || "{}");
+
     function esc(value) {
       return String(value ?? "")
         .replaceAll("&", "&amp;")
@@ -731,8 +785,13 @@
       container.innerHTML = SECTIONS.map(section => `
         <details class="ref-section" open>
           <summary>
-            <span>${esc(section.title)}</span>
-            <span class="small">${section.items.length} words</span>
+            <div class="ref-summary-left">
+              <span>${esc(section.title)}</span>
+            </div>
+            <div class="ref-summary-right">
+              <span class="small">${section.items.length} words</span>
+              <button class="reset-stars-btn" data-section="${section.id}" title="Reset stars for this section">Reset Stars</button>
+            </div>
           </summary>
           ${section.notes ? `
             <div class="note-card" style="margin: 14px;">
@@ -747,6 +806,7 @@
                   <th>English</th>
                   <th>Romanization</th>
                   <th>Korean</th>
+                  <th>Familiarity</th>
                 </tr>
               </thead>
               <tbody>
@@ -755,6 +815,13 @@
                     <td>${esc(item.meaning)}</td>
                     <td><span class="roman">${esc(item.romanization)}</span>${item.romanization_alts ? `<div class="small">Also accepted: ${esc(item.romanization_alts.join(", "))}</div>` : ""}</td>
                     <td><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<div class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</div>` : ""}</td>
+                    <td>
+                      <div class="stars-container" data-word="${esc(item.korean)}" data-rating="${vocabRatings[item.korean] || 0}">
+                        <span class="star" data-val="1" title="1 - Needs work">★</span>
+                        <span class="star" data-val="2" title="2 - Familiar">★</span>
+                        <span class="star" data-val="3" title="3 - Mastered">★</span>
+                      </div>
+                    </td>
                   </tr>
                 `).join("")}
               </tbody>
@@ -762,6 +829,51 @@
           </div>
         </details>
       `).join("");
+
+      attachStarListeners();
+    }
+
+    function attachStarListeners() {
+      // Handle individual star clicks
+      document.querySelectorAll(".stars-container .star").forEach(starEl => {
+        starEl.addEventListener("click", (e) => {
+          const container = e.target.closest(".stars-container");
+          const word = container.dataset.word;
+          const clickedVal = parseInt(e.target.dataset.val);
+          const currentVal = parseInt(container.dataset.rating);
+
+          // If clicking the currently active highest star, toggle it back to 0
+          const newVal = (clickedVal === currentVal) ? 0 : clickedVal;
+
+          container.dataset.rating = newVal;
+          vocabRatings[word] = newVal;
+          localStorage.setItem("koreanVocabRatings", JSON.stringify(vocabRatings));
+        });
+      });
+
+      // Handle section reset buttons
+      document.querySelectorAll(".reset-stars-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation(); // Prevents the <details> accordion from collapsing
+          
+          const sectionId = btn.dataset.section;
+          const section = SECTIONS.find(s => s.id === sectionId);
+          if (!section) return;
+
+          // Clear from localStorage model
+          section.items.forEach(item => {
+            delete vocabRatings[item.korean];
+          });
+          localStorage.setItem("koreanVocabRatings", JSON.stringify(vocabRatings));
+
+          // Reset DOM visually without forcing a full re-render
+          const detailsEl = btn.closest("details");
+          detailsEl.querySelectorAll(".stars-container").forEach(container => {
+            container.dataset.rating = "0";
+          });
+        });
+      });
     }
 
     function renderModeButtons(sectionId, type, activeMode) {
