@@ -302,6 +302,42 @@
       color: var(--subtext1);
       font-size: 16px;
     }
+    
+    .th-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .blur-btn {
+      border: 1px solid var(--surface2);
+      border-radius: 6px;
+      background: var(--surface0);
+      color: var(--text);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .blur-btn:hover { background: var(--surface1); }
+    .blur-btn.active {
+      background: var(--mauve);
+      color: var(--crust);
+      border-color: var(--mauve);
+    }
+    .blur-cell {
+      transition: filter 0.2s ease;
+    }
+    .blur-cell.is-blurred {
+      filter: blur(6px);
+      user-select: none;
+    }
+    .blur-cell.is-blurred:hover {
+      filter: blur(0);
+    }
+
     .roman {
       font-weight: 900;
       color: var(--blue);
@@ -803,18 +839,45 @@
             <table>
               <thead>
                 <tr>
-                  <th>English</th>
-                  <th>Romanization</th>
-                  <th>Korean</th>
+                  <th>
+                    <div class="th-content">
+                      English
+                      <button class="blur-btn" data-section="${section.id}" data-col="english">Blur</button>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      Romanization
+                      <button class="blur-btn" data-section="${section.id}" data-col="romanization">Blur</button>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      Korean
+                      <button class="blur-btn" data-section="${section.id}" data-col="korean">Blur</button>
+                    </div>
+                  </th>
                   <th>Familiarity</th>
                 </tr>
               </thead>
               <tbody>
                 ${section.items.map(item => `
                   <tr>
-                    <td>${esc(item.meaning)}</td>
-                    <td><span class="roman">${esc(item.romanization)}</span>${item.romanization_alts ? `<div class="small">Also accepted: ${esc(item.romanization_alts.join(", "))}</div>` : ""}</td>
-                    <td><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<div class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</div>` : ""}</td>
+                    <td>
+                      <div class="blur-cell col-english-${section.id}">
+                        ${esc(item.meaning)}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="blur-cell col-romanization-${section.id}">
+                        <span class="roman">${esc(item.romanization)}</span>${item.romanization_alts ? `<div class="small">Also accepted: ${esc(item.romanization_alts.join(", "))}</div>` : ""}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="blur-cell col-korean-${section.id}">
+                        <span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<div class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</div>` : ""}
+                      </div>
+                    </td>
                     <td>
                       <div class="stars-container" data-word="${esc(item.korean)}" data-rating="${vocabRatings[item.korean] || 0}">
                         <span class="star" data-val="1" title="1 - Needs work">★</span>
@@ -830,10 +893,10 @@
         </details>
       `).join("");
 
-      attachStarListeners();
+      attachReferenceListeners();
     }
 
-    function attachStarListeners() {
+    function attachReferenceListeners() {
       // Handle individual star clicks
       document.querySelectorAll(".stars-container .star").forEach(starEl => {
         starEl.addEventListener("click", (e) => {
@@ -871,6 +934,25 @@
           const detailsEl = btn.closest("details");
           detailsEl.querySelectorAll(".stars-container").forEach(container => {
             container.dataset.rating = "0";
+          });
+        });
+      });
+
+      // Handle column blur toggles
+      document.querySelectorAll(".blur-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          btn.classList.toggle("active");
+          const isBlurred = btn.classList.contains("active");
+          btn.textContent = isBlurred ? "Unblur" : "Blur";
+          
+          const sectionId = btn.dataset.section;
+          const col = btn.dataset.col;
+          
+          document.querySelectorAll(`.col-${col}-${sectionId}`).forEach(cell => {
+            cell.classList.toggle("is-blurred", isBlurred);
           });
         });
       });
