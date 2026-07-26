@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+  <script id="flat-theme-init">
+    (() => {
+      try {
+        const saved = localStorage.getItem("flatDesignTheme");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Korean Study Hub</title>
@@ -464,6 +474,258 @@
       * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
     }
   </style>
+  <style id="flat-dark-mode">
+    .theme-toggle {
+      min-height: 44px;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 15px;
+      color: var(--foreground);
+      background: var(--muted);
+      border: 0;
+      border-radius: var(--radius-md);
+      font: inherit;
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      color: #FFFFFF;
+      background: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .theme-toggle__icon {
+      width: 1.2em;
+      display: inline-grid;
+      place-items: center;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --background: #111827;
+      --foreground: #F9FAFB;
+      --primary: #60A5FA;
+      --primary-hover: #3B82F6;
+      --secondary: #34D399;
+      --accent: #FBBF24;
+      --muted: #1F2937;
+      --muted-strong: #374151;
+      --border: #374151;
+      --blue-soft: #172554;
+      --green-soft: #052E2B;
+      --amber-soft: #451A03;
+      --secondary-soft: #052E2B;
+      --accent-soft: #451A03;
+      --bg: var(--background);
+      --fg: var(--foreground);
+      --line: var(--border);
+      --field: var(--muted);
+      --subtle: #CBD5E1;
+      --correct-bg: var(--secondary);
+      --correct-fg: #052E2B;
+      --text: var(--foreground);
+      --subtext1: #CBD5E1;
+      --subtext0: #94A3B8;
+      --surface0: var(--muted);
+      --surface1: var(--muted-strong);
+      --surface2: var(--border);
+      --base: var(--background);
+      --mantle: #0F172A;
+      --crust: #020617;
+      --blue: var(--primary);
+      --mauve: var(--primary);
+      --red: #FB7185;
+      --green: var(--secondary);
+      --peach: #FB923C;
+      --yellow: var(--accent);
+    }
+
+    html[data-theme="dark"] body { background: #0B1220; }
+
+    html[data-theme="dark"] .site-header,
+    html[data-theme="dark"] body > .shell > header,
+    html[data-theme="dark"] main,
+    html[data-theme="dark"] .shell,
+    html[data-theme="dark"] .section,
+    html[data-theme="dark"] .section-card,
+    html[data-theme="dark"] .block,
+    html[data-theme="dark"] .quiz-section,
+    html[data-theme="dark"] .section-content,
+    html[data-theme="dark"] .block-inner,
+    html[data-theme="dark"] .quiz-body,
+    html[data-theme="dark"] .card-grid,
+    html[data-theme="dark"] .guide-card,
+    html[data-theme="dark"] .note-card,
+    html[data-theme="dark"] .control-card,
+    html[data-theme="dark"] .quiz-card,
+    html[data-theme="dark"] .exercise-card,
+    html[data-theme="dark"] .ref-section,
+    html[data-theme="dark"] .review-answer-grid > div,
+    html[data-theme="dark"] .timer-panel > div:first-child,
+    html[data-theme="dark"] .timed-stage {
+      color: var(--foreground);
+      background: var(--background);
+    }
+
+    html[data-theme="dark"] .panel,
+    html[data-theme="dark"] #toc,
+    html[data-theme="dark"] .toc-card,
+    html[data-theme="dark"] .exercise-head,
+    html[data-theme="dark"] .meta,
+    html[data-theme="dark"] .ref-section summary,
+    html[data-theme="dark"] details.edit-help {
+      color: #F9FAFB;
+      background: #0F172A;
+    }
+
+    html[data-theme="dark"] .toc-link,
+    html[data-theme="dark"] .toc-list a {
+      color: #F9FAFB;
+      background: #1E293B;
+    }
+
+    html[data-theme="dark"] .toc-link:hover,
+    html[data-theme="dark"] .toc-list a:hover {
+      color: #052E2B;
+      background: var(--secondary);
+    }
+
+    html[data-theme="dark"] .hero-art { background: #0F172A; }
+
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .quiz-card:nth-child(1) { background: var(--background); }
+
+    html[data-theme="dark"] .card:nth-child(3n+2) { background: var(--blue-soft); }
+    html[data-theme="dark"] .card:nth-child(3n+3) { background: var(--green-soft); }
+    html[data-theme="dark"] .card:hover,
+    html[data-theme="dark"] .quiz-card:hover { background: var(--amber-soft); }
+
+    html[data-theme="dark"] .answer-input,
+    html[data-theme="dark"] .timed-answer,
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] select,
+    html[data-theme="dark"] textarea,
+    html[data-theme="dark"] .option-btn,
+    html[data-theme="dark"] .mode-row,
+    html[data-theme="dark"] .review-panel,
+    html[data-theme="dark"] .review-row,
+    html[data-theme="dark"] .empty,
+    html[data-theme="dark"] .mode-btn,
+    html[data-theme="dark"] .restart-top-btn {
+      color: var(--foreground);
+      background: var(--muted);
+    }
+
+    html[data-theme="dark"] .answer-input:focus,
+    html[data-theme="dark"] .timed-answer:focus,
+    html[data-theme="dark"] input:focus,
+    html[data-theme="dark"] select:focus,
+    html[data-theme="dark"] textarea:focus {
+      color: var(--foreground);
+      background: var(--background);
+      border-color: var(--primary);
+    }
+
+    html[data-theme="dark"] .answer-input:disabled,
+    html[data-theme="dark"] .timed-answer:disabled {
+      color: #94A3B8;
+      background: var(--muted-strong);
+    }
+
+    html[data-theme="dark"] .small,
+    html[data-theme="dark"] .brand-copy span,
+    html[data-theme="dark"] .card p,
+    html[data-theme="dark"] .quiz-card p,
+    html[data-theme="dark"] .guide-card p,
+    html[data-theme="dark"] .note-card p,
+    html[data-theme="dark"] .note-card li,
+    html[data-theme="dark"] .mini-list,
+    html[data-theme="dark"] .section-meta,
+    html[data-theme="dark"] .status-row,
+    html[data-theme="dark"] td,
+    html[data-theme="dark"] .source-note,
+    html[data-theme="dark"] .timed-placeholder,
+    html[data-theme="dark"] .control-label {
+      color: #CBD5E1;
+    }
+
+    html[data-theme="dark"] .section-title,
+    html[data-theme="dark"] details.block > summary,
+    html[data-theme="dark"] #quizSections > details:nth-child(3n+1) > summary,
+    html[data-theme="dark"] #quizSections > details:nth-child(3n+3) > summary,
+    html[data-theme="dark"] .section-card:nth-of-type(3n+2) .section-header,
+    html[data-theme="dark"] .section-card:nth-of-type(3n+3) .section-header,
+    html[data-theme="dark"] #sections .section:nth-child(3n+1) .section-header,
+    html[data-theme="dark"] #sections .section:nth-child(3n+2) .section-header {
+      color: #111827;
+    }
+
+    html[data-theme="dark"] #quizSections > details:nth-child(3n+2) > summary,
+    html[data-theme="dark"] .section-card:nth-of-type(3n+4) .section-header,
+    html[data-theme="dark"] #sections .section:nth-child(3n+3) .section-header {
+      color: #FFFFFF;
+    }
+
+    html[data-theme="dark"] .score-pill,
+    html[data-theme="dark"] .set-pill,
+    html[data-theme="dark"] .btn-accent,
+    html[data-theme="dark"] .btn-warning,
+    html[data-theme="dark"] .secondary-btn,
+    html[data-theme="dark"] .timer-box.danger,
+    html[data-theme="dark"] .option-btn.correct-choice,
+    html[data-theme="dark"] .option-btn.wrong-choice {
+      color: #111827;
+    }
+
+    html[data-theme="dark"] .system-badge,
+    html[data-theme="dark"] .theme-toggle { background: var(--muted); }
+
+    html[data-theme="dark"] .button-link:hover,
+    html[data-theme="dark"] .home-link:hover,
+    html[data-theme="dark"] .back-top:hover,
+    html[data-theme="dark"] .back-toc:hover {
+      color: #FFFFFF;
+      background: #0F172A;
+    }
+
+    html[data-theme="dark"] th {
+      color: #F9FAFB;
+      background: var(--amber-soft);
+    }
+
+    html[data-theme="dark"] pre {
+      color: #F9FAFB;
+      background: var(--amber-soft);
+    }
+
+    html[data-theme="dark"] .collapse-btn,
+    html[data-theme="dark"] .pill,
+    html[data-theme="dark"] .chip,
+    html[data-theme="dark"] .count-badge,
+    html[data-theme="dark"] details.block > summary::after,
+    html[data-theme="dark"] details.quiz-section > summary::after,
+    html[data-theme="dark"] details.edit-help > summary::after {
+      color: #111827;
+      background: #F9FAFB;
+    }
+
+    html[data-theme="dark"] .progress,
+    html[data-theme="dark"] .progress-track { background: var(--border); }
+
+    @media (max-width: 680px) {
+      .theme-toggle { flex: 1; }
+    }
+  </style>
 </head>
 <body>
   <a class="back-top" href="#top">Back to top</a>
@@ -478,6 +740,7 @@
         </p>
         <div class="hero-actions">
           <a class="button-link" href="#edit">How to edit links</a>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false"><span class="theme-toggle__icon" aria-hidden="true">◐</span><span class="theme-toggle__label">Dark mode</span></button>
           <span class="small">All links are relative, so they work well on GitHub Pages.</span>
         </div>
       </div>
@@ -633,6 +896,55 @@
     const groups = groupPages();
     renderTOC(groups);
     renderSections(groups);
+  </script>
+  <script id="flat-theme-controller">
+    (() => {
+      const STORAGE_KEY = "flatDesignTheme";
+      const root = document.documentElement;
+      const toggle = document.getElementById("themeToggle");
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+
+        if (toggle) {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.querySelector(".theme-toggle__icon").textContent = dark ? "☀" : "◐";
+          toggle.querySelector(".theme-toggle__label").textContent = dark ? "Light mode" : "Dark mode";
+        }
+
+        document.querySelectorAll(".system-badge").forEach(badge => {
+          badge.textContent = next === "dark" ? "Flat dark" : "Flat light";
+        });
+        document.querySelectorAll(".note").forEach(note => {
+          if (/Flat Design/i.test(note.textContent)) {
+            note.textContent = `Flat Design / Outfit / ${next === "dark" ? "Dark" : "Light"}`;
+          }
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+
+      toggle?.addEventListener("click", () => {
+        applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+      });
+
+      const followSystem = event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      };
+      media.addEventListener?.("change", followSystem);
+    })();
   </script>
 </body>
 </html>
