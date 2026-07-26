@@ -1,224 +1,1023 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TOPIK I Grammar Quiz</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    :root{
-      --bg:#FFFFFF;--surface:#FFFFFF;--muted:#F3F4F6;--muted2:#E5E7EB;--fg:#111827;--sub:#475569;
-      --primary:#3B82F6;--primary2:#2563EB;--secondary:#10B981;--secondary2:#059669;--accent:#F59E0B;
-      --danger:#DC2626;--success:#047857;--blueTint:#EFF6FF;--greenTint:#ECFDF5;--amberTint:#FFFBEB;
-      --border:#E5E7EB;
-    }
-    html[data-theme="dark"]{
-      --bg:#0B1220;--surface:#111827;--muted:#1F2937;--muted2:#374151;--fg:#F9FAFB;--sub:#CBD5E1;
-      --primary:#60A5FA;--primary2:#3B82F6;--secondary:#34D399;--secondary2:#10B981;--accent:#FBBF24;
-      --danger:#F87171;--success:#34D399;--blueTint:#172554;--greenTint:#052E2B;--amberTint:#451A03;
-      --border:#374151;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    .hero{position:relative;overflow:hidden;background:var(--primary);color:white;padding:56px 24px 44px}
-    .hero:before,.hero:after{content:"";position:absolute;background:rgba(255,255,255,.09)}
-    .hero:before{width:260px;height:260px;border-radius:50%;right:-60px;top:-90px}
-    .hero:after{width:170px;height:170px;left:-45px;bottom:-80px;transform:rotate(24deg)}
-    .wrap{max-width:1180px;margin:0 auto;position:relative;z-index:1}
-    h1{font-size:clamp(2.3rem,5vw,4.8rem);line-height:.95;letter-spacing:-.04em;margin:0 0 18px;font-weight:800;max-width:850px}
-    .hero p{font-size:1.1rem;max-width:760px;margin:0 0 24px;color:#EFF6FF}
-    .hero-grid{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}
-    .score-board{display:grid;grid-template-columns:repeat(3,minmax(95px,1fr));gap:10px;background:#111827;padding:14px;border-radius:8px;min-width:310px}
-    .stat{background:#1F2937;padding:12px;border-radius:6px;text-align:center}.stat strong{display:block;font-size:1.7rem}.stat span{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#CBD5E1}
-    .toolbar{background:var(--surface);padding:20px 24px;position:sticky;top:0;z-index:20;border-bottom:2px solid var(--border)}
-    .toolbar-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:end}
-    .field label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;color:var(--sub)}
-    select,input[type=text]{width:100%;background:var(--muted);color:var(--fg);border:2px solid transparent;border-radius:6px;padding:13px 14px;outline:none}
-    select:focus,input[type=text]:focus{background:var(--surface);border-color:var(--primary)}
-    .theme-btn,.btn{border:0;border-radius:6px;font-weight:700;min-height:48px;padding:0 16px;transition:.2s ease;background:var(--muted);color:var(--fg)}
-    .theme-btn:hover,.btn:hover{transform:scale(1.04)}
-    .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary2)}
-    .btn-green{background:var(--secondary);color:#052e2b}.btn-outline{background:transparent;border:4px solid var(--primary);color:var(--primary)}
-    .layout{max-width:1180px;margin:auto;padding:30px 24px 90px;display:grid;grid-template-columns:280px 1fr;gap:26px}
-    .side{position:sticky;top:105px;align-self:start;display:grid;gap:18px}
-    .panel{background:var(--muted);padding:20px;border-radius:8px}
-    .panel h2{margin:0 0 12px;font-size:1.15rem;letter-spacing:-.02em}
-    .toc{max-height:50vh;overflow:auto;display:grid;gap:6px}.toc a{color:var(--fg);text-decoration:none;padding:8px 10px;border-radius:6px;background:var(--surface);font-size:.9rem}.toc a:hover{background:var(--primary);color:white;transform:translateX(3px)}
-    .bank{display:flex;flex-wrap:wrap;gap:7px}.bank a{text-decoration:none;background:var(--surface);color:var(--fg);padding:6px 9px;border-radius:999px;font-size:.78rem;font-weight:600}.bank a:hover{background:var(--accent);color:#111827}
-    .content{display:grid;gap:22px}
-    .section-card{background:var(--surface);border-radius:8px;overflow:hidden}
-    .section-head{padding:22px 24px;background:var(--blueTint);display:flex;justify-content:space-between;gap:14px;align-items:center}
-    .section-card:nth-child(3n+2) .section-head{background:var(--greenTint)}
-    .section-card:nth-child(3n) .section-head{background:var(--amberTint)}
-    .section-title{display:flex;gap:14px;align-items:center}.number{width:48px;height:48px;border-radius:50%;background:var(--primary);color:white;display:grid;place-items:center;font-weight:800}.section-card:nth-child(3n+2) .number{background:var(--secondary);color:#052e2b}.section-card:nth-child(3n) .number{background:var(--accent);color:#111827}
-    .section-title h2{margin:0;font-size:1.35rem;letter-spacing:-.02em}.section-title p{margin:3px 0 0;color:var(--sub);font-size:.9rem}
-    .collapse{border:0;background:var(--surface);color:var(--fg);border-radius:6px;padding:10px 12px;font-weight:700}
-    .section-body{padding:24px;background:var(--surface)}
-    .exercise-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .exercise{background:var(--muted);border-radius:8px;padding:18px;min-height:285px}
-    .exercise h3{margin:0 0 6px;font-size:1.05rem}.tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:800;padding:4px 7px;border-radius:999px;background:var(--primary);color:white;margin-bottom:12px}
-    .prompt{font-size:1.05rem;font-weight:600;min-height:56px;margin:0 0 14px}
-    .input-row{display:grid;grid-template-columns:1fr auto;gap:9px}
-    .options{display:grid;gap:9px}.option{border:0;border-radius:6px;background:var(--surface);color:var(--fg);padding:12px;text-align:left;font-weight:600;transition:.2s}.option:hover{transform:scale(1.015);background:var(--primary);color:white}.option:disabled{cursor:default;opacity:.85}.option.correct{background:var(--secondary);color:#052e2b}.option.wrong{background:var(--danger);color:white}
-    .feedback{margin-top:13px;padding:13px;border-radius:6px;background:var(--surface);min-height:72px;font-size:.92rem}.feedback strong{display:block;margin-bottom:4px}.feedback.good{border-left:6px solid var(--secondary)}.feedback.bad{border-left:6px solid var(--danger)}
-    .restart-row{display:flex;justify-content:flex-end;margin-top:16px}.restart{background:var(--fg);color:var(--bg);border:0;border-radius:6px;padding:10px 14px;font-weight:700}.restart:hover{transform:scale(1.04)}
-    .hidden{display:none!important}.float-toc{position:fixed;right:20px;bottom:20px;z-index:30;background:var(--accent);color:#111827;text-decoration:none;border-radius:6px;padding:13px 15px;font-weight:800;transition:.2s}.float-toc:hover{transform:scale(1.06)}
-    .note{font-size:.85rem;color:var(--sub);margin-top:9px}.lang-line{display:grid;grid-template-columns:110px 1fr;gap:8px}.lang-line b{color:var(--sub)}
-    @media (max-width:900px){.layout{grid-template-columns:1fr}.side{position:static}.hero-grid{grid-template-columns:1fr}.score-board{min-width:0}.toolbar-inner{grid-template-columns:1fr 1fr}.theme-btn{grid-column:1/-1}.exercise-grid{grid-template-columns:1fr}}
-    @media (max-width:560px){.toolbar-inner{grid-template-columns:1fr}.theme-btn{grid-column:auto}.layout{padding-inline:14px}.hero{padding-inline:18px}.section-head{align-items:flex-start}.section-title h2{font-size:1.05rem}.number{width:40px;height:40px;flex:0 0 auto}.input-row{grid-template-columns:1fr}.float-toc{right:12px;bottom:12px}}
-  </style>
-</head>
-<body>
-  <header class="hero" id="toc-top">
-    <div class="wrap hero-grid">
-      <div>
-        <div class="tag" style="background:#111827">TOPIK I • 32 Grammar Points</div>
-        <h1>TYPE IT. CHOOSE IT. MASTER IT.</h1>
-        <p>Practice every grammar point with strict typing and multiple choice. Romanization uses literal Hangul-based spelling with syllable dashes.</p>
-      </div>
-      <div class="score-board" aria-live="polite">
-        <div class="stat"><strong id="scoreCorrect">0</strong><span>Correct</span></div>
-        <div class="stat"><strong id="scoreAnswered">0</strong><span>Answered</span></div>
-        <div class="stat"><strong id="scorePct">0%</strong><span>Score</span></div>
-      </div>
-    </div>
-  </header>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TOPIK I Grammar Translation Quiz</title>
 
-  <div class="toolbar">
-    <div class="toolbar-inner">
-      <div class="field"><label for="questionLang">Question language</label><select id="questionLang"><option value="en">English</option><option value="ro">Romanization</option><option value="ko">Korean</option></select></div>
-      <div class="field"><label for="answerLang">Answer language</label><select id="answerLang"><option value="ro">Romanization</option><option value="ko">Korean</option><option value="en">English</option></select></div>
-      <button class="theme-btn" id="themeBtn"><i data-lucide="moon"></i> Theme</button>
-    </div>
-  </div>
+    <style>
+      /* ==============================
+         Design tokens and global styles
+         ============================== */
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
+      :root {
+        --bg: #f3f4f6;
+        --surface: #fff;
+        --fg: #111827;
+        --muted: #6b7280;
+        --primary: #3b82f6;
+        --secondary: #10b981;
+        --accent: #f59e0b;
+        --border: #e5e7eb;
+        --blue-soft: #dbeafe;
+        --green-soft: #d1fae5;
+        --amber-soft: #fef3c7
+      }
 
-  <main class="layout">
-    <aside class="side">
-      <section class="panel"><h2>Table of Contents</h2><nav class="toc" id="toc"></nav></section>
-      <section class="panel"><h2>Grammar Bank</h2><div class="bank" id="bank"></div></section>
-    </aside>
-    <section class="content" id="content"></section>
-  </main>
-  <a class="float-toc" href="#toc-top">↑ Back to TOC</a>
+      html[data-theme=dark] {
+        --bg: #0b1220;
+        --surface: #111827;
+        --fg: #f9fafb;
+        --muted: #cbd5e1;
+        --primary: #60a5fa;
+        --secondary: #34d399;
+        --accent: #fbbf24;
+        --border: #374151;
+        --blue-soft: #172554;
+        --green-soft: #052e2b;
+        --amber-soft: #451a03
+      }
 
-<script>
-const points = [
-['은/는','Topic particle','저는 학생이에요.','jeo-neun hak-ssaeng-i-e-yo','I am a student.','저__ 학생이에요.','jeo-__ hak-ssaeng-i-e-yo','I __ a student.','는','neun','topic marker after a vowel',['는','은','가','를']],
-['이/가','Subject particle','누가 왔어요?','nu-ga wa-sseo-yo','Who came?','누__ 왔어요?','nu-__ wa-sseo-yo','Who __ came?','가','ga','subject marker after a vowel',['가','는','를','에']],
-['을/를','Object particle','커피를 마셔요.','keo-pi-reul ma-syeo-yo','I drink coffee.','커피__ 마셔요.','keo-pi-__ ma-syeo-yo','I drink __ coffee.','를','reul','object marker after a vowel',['를','가','는','에서']],
-['에','Place / destination / time','집에 있어요.','ji-be i-sseo-yo','I am at home.','집__ 있어요.','jip-__ i-sseo-yo','I am __ home.','에','e','location particle',['에','에서','를','는']],
-['에서','Place of action','카페에서 커피를 마셔요.','ka-pe-e-seo keo-pi-reul ma-syeo-yo','I drink coffee at a café.','카페__ 커피를 마셔요.','ka-pe-__ keo-pi-reul ma-syeo-yo','I drink coffee __ a café.','에서','e-seo','place of action',['에서','에','이','을']],
-['이다','To be (noun)','학생이에요.','hak-ssaeng-i-e-yo','I am a student.','학생___.','hak-ssaeng-___.','I ___ a student.','이에요','i-e-yo','polite noun ending after consonant',['이에요','예요','있어요','좋아요']],
-['있다 / 없다','Existence / possession','책이 있어요.','chae-gi i-sseo-yo','There is a book.','책이 ___.','chae-gi ___.','There ___ a book.','있어요','i-sseo-yo','there is / have',['있어요','없어요','이에요','가요']],
-['안 + V/A','Short negation','안 먹어요.','an meo-geo-yo','I do not eat.','__ 먹어요.','__ meo-geo-yo','I __ eat.','안','an','not (choice)',['안','못','없','아니']],
-['못 + V','Inability','매운 음식을 못 먹어요.','mae-un eum-shi-geul mot meo-geo-yo','I cannot eat spicy food.','매운 음식을 __ 먹어요.','mae-un eum-shi-geul __ meo-geo-yo','I __ eat spicy food.','못','mot','cannot (inability)',['못','안','없','아니']],
-['-아/어/해요','Present tense','공부해요.','gong-bu-hae-yo','I study.','공부하다 → ___','gong-bu-ha-da → ___','to study → ___','공부해요','gong-bu-hae-yo','polite present',['공부해요','공부했어요','공부할 거예요','공부하세요']],
-['-았/었/했어요','Past tense','어제 갔어요.','eo-je ga-sseo-yo','I went yesterday.','가다 → ___','ga-da → ___','to go → ___','갔어요','ga-sseo-yo','polite past',['갔어요','가요','갈 거예요','가세요']],
-['-(으)ㄹ 거예요','Future tense','내일 공부할 거예요.','nae-il gong-bu-hal geo-ye-yo','I will study tomorrow.','공부하다 → ___','gong-bu-ha-da → ___','to study → ___','공부할 거예요','gong-bu-hal geo-ye-yo','polite future',['공부할 거예요','공부해요','공부했어요','공부하고 싶어요']],
-['-(으)세요','Polite request','읽으세요.','il-geu-se-yo','Please read.','읽다 → ___','ik-tta → ___','to read → ___','읽으세요','il-geu-se-yo','polite request',['읽으세요','읽어요','읽었어요','읽읍시다']],
-['-(으)십시오','Formal command','기다리십시오.','gi-da-ri-ship-ssi-o','Please wait.','기다리다 → ___','gi-da-ri-da → ___','to wait → ___','기다리십시오','gi-da-ri-ship-ssi-o','formal command',['기다리십시오','기다리세요','기다려요','기다립시다']],
-['-(으)ㅂ시다','Let’s','먹읍시다.','meo-geup-ssi-da','Let’s eat.','먹다 → ___','meok-tta → ___','to eat → ___','먹읍시다','meo-geup-ssi-da','formal-ish let’s',['먹읍시다','먹으세요','먹을까요','먹어요']],
-['-(으)ㄹ까요?','Shall we?','점심 먹을까요?','jeom-shim meo-geul-kka-yo','Shall we have lunch?','먹다 → ___?','meok-tta → ___?','to eat → ___?','먹을까요','meo-geul-kka-yo','soft suggestion',['먹을까요','먹읍시다','먹으세요','먹어요']],
-['-고','And / then','공부하고 자요.','gong-bu-ha-go ja-yo','I study and then sleep.','공부하다 + 자다 → 공부하__ 자요.','gong-bu-ha-da + ja-da → gong-bu-ha-__ ja-yo','study + sleep → study __ sleep.','고','go','connector: and/then',['고','지만','면','서']],
-['-아서/어서','Because / then','피곤해서 쉬어요.','pi-gon-hae-seo swi-eo-yo','I am tired, so I rest.','피곤하다 → 피곤__ 쉬어요.','pi-gon-ha-da → pi-gon-__ swi-eo-yo','tired → tired, __ I rest.','해서','hae-seo','because / natural sequence',['해서','하고','하지만','하면']],
-['-지만','But / although','어렵지만 재미있어요.','eo-ryeop-ji-man jae-mi-i-sseo-yo','It is difficult but interesting.','어렵다 → 어렵__ 재미있어요.','eo-ryeop-tta → eo-ryeop-__ jae-mi-i-sseo-yo','difficult → difficult __ interesting.','지만','ji-man','contrast connector',['지만','고','면','어서']],
-['-(으)면','If / when','비가 오면 집에 있어요.','bi-ga o-myeon ji-be i-sseo-yo','If it rains, I stay home.','오다 → 오__','o-da → o-__','to come/rain → if it ___','면','myeon','if/when after vowel',['면','으면','지만','고']],
-['-(으)려고 하다','Intention / plan','책을 사려고 해요.','chae-geul sa-ryeo-go hae-yo','I plan to buy a book.','사다 → 사__ 해요.','sa-da → sa-__ hae-yo','to buy → plan to buy','려고','ryeo-go','plan/intention after vowel',['려고','으려고','고 싶어','러']],
-['-고 싶다','Want to','친구를 만나고 싶어요.','chin-gu-reul man-na-go shi-peo-yo','I want to meet my friend.','만나다 → 만나__ 싶어요.','man-na-da → man-na-__ shi-peo-yo','to meet → want to meet','고','go','want to connector',['고','러','려고','면']],
-['-(으)러 가다/오다','Purpose of movement','친구를 만나러 왔어요.','chin-gu-reul man-na-reo wa-sseo-yo','I came to meet a friend.','만나다 → 만나__ 왔어요.','man-na-da → man-na-__ wa-sseo-yo','to meet → came in order to meet','러','reo','purpose before movement verb',['러','려고','고','면']],
-['-아/어 보다','Try / experience','읽어 보세요.','il-geo bo-se-yo','Please try reading it.','읽다 → 읽__ 보세요.','ik-tta → il-__ bo-se-yo','to read → try reading','어','eo','try doing',['어','고','면','지만']],
-['-아/어도 되다','Permission','사진 찍어도 돼요?','sa-jin jji-geo-do dwae-yo','May I take a photo?','찍다 → 찍__ 돼요?','jjik-tta → jji-__ dwae-yo','to take → may I take?','어도','eo-do','permission ending',['어도','으면','지만','고']],
-['-(으)면 안 되다','Prohibition','여기서 담배를 피우면 안 돼요.','yeo-gi-seo dam-bae-reul pi-u-myeon an dwae-yo','You must not smoke here.','피우다 → 피우__ 안 돼요.','pi-u-da → pi-u-__ an dwae-yo','to smoke → must not smoke','면','myeon','prohibition condition',['면','어도','고','지만']],
-['-(으)ㄴ 후에','After','밥을 먹은 후에 공부해요.','ba-beul meo-geun hu-e gong-bu-hae-yo','I study after eating.','먹다 → 먹__ 후에','meok-tta → meo-__ hu-e','to eat → after eating','은','eun','past modifier after consonant',['은','는','을','이']],
-['-기 전에','Before','자기 전에 책을 읽어요.','ja-gi jeo-ne chae-geul il-geo-yo','I read a book before sleeping.','자다 → 자__ 전에','ja-da → ja-__ jeo-ne','to sleep → before sleeping','기','gi','nominalizer before 전에',['기','고','면','러']],
-['-(으)ㄹ 수 있다/없다','Can / cannot','한국어를 읽을 수 있어요.','han-gu-geo-reul il-geul su i-sseo-yo','I can read Korean.','읽다 → 읽__ 수 있어요.','ik-tta → il-__ su i-sseo-yo','to read → can read','을','eul','ability ending after consonant',['을','는','은','이']],
-['-네요','Realization','사람이 많네요.','sa-ra-mi man-ne-yo','Oh, there are many people.','많다 → 많__','man-ta → man-__','many → oh, it is many','네요','ne-yo','soft realization',['네요','군요','어요','지만']],
-['-군요 / -네요','Discovery / surprise','정말 빠르네요!','jeong-mal ppa-reu-ne-yo','Wow, it is really fast!','빠르다 → 빠르__!','ppa-reu-da → ppa-reu-__!','fast → wow, it is fast!','네요','ne-yo','softer everyday reaction',['네요','군요','어요','겠어요']],
-['-(으)ㄴ/는 것 같다','I think / it seems','학생인 것 같아요.','hak-ssaeng-in geot ga-ta-yo','I think he/she is a student.','학생이다 → 학생__ 것 같아요.','hak-ssaeng-i-da → hak-ssaeng-__ geot ga-ta-yo','to be a student → seems to be a student','인','in','noun modifier before 것 같다',['인','는','은','을']]
-];
+      * {
+        box-sizing: border-box
+      }
 
-const state={correct:0,answered:0,done:{}};
-const langs={en:'English',ro:'Romanization',ko:'Korean'};
-function qText(p,kind,lang){
-  if(kind==='type') return lang==='ko'?p[5]:lang==='ro'?p[6]:p[7];
-  return lang==='ko'?p[2]:lang==='ro'?p[3]:p[4];
-}
-function ansText(p,lang){return lang==='ko'?p[8]:lang==='ro'?p[9]:p[10]}
-function sentence(p,lang){return lang==='ko'?p[2]:lang==='ro'?p[3]:p[4]}
-function normalize(v,lang){
-  let s=v.trim().toLowerCase().replace(/[.?!]/g,'');
-  if(lang==='ro') s=s.replace(/\s+/g,'-').replace(/-+/g,'-');
-  else s=s.replace(/\s+/g,' ');
-  return s;
-}
-function render(){
-  const content=document.getElementById('content'),toc=document.getElementById('toc'),bank=document.getElementById('bank');
-  content.innerHTML='';toc.innerHTML='';bank.innerHTML='';
-  points.forEach((p,i)=>{
-    const id='g'+(i+1);
-    toc.insertAdjacentHTML('beforeend',`<a href="#${id}">G${i+1}. ${p[0]}</a>`);
-    bank.insertAdjacentHTML('beforeend',`<a href="#${id}" title="${p[1]}">${p[0]}</a>`);
-    const sec=document.createElement('article');sec.className='section-card';sec.id=id;
-    sec.innerHTML=`
-      <div class="section-head">
-        <div class="section-title"><div class="number">${i+1}</div><div><h2>${p[0]}</h2><p>${p[1]}</p></div></div>
-        <button class="collapse" aria-expanded="true"><i data-lucide="chevron-up"></i> Collapse</button>
-      </div>
-      <div class="section-body">
-        <div class="exercise-grid">
-          <div class="exercise">
-            <span class="tag">Typing</span><h3>Produce the exact answer</h3>
-            <p class="prompt type-prompt"></p>
-            <div class="input-row"><input type="text" class="type-input" autocomplete="off" spellcheck="false" placeholder="Type your answer"><button class="btn btn-primary check-type">Check</button></div>
-            <p class="note">In romanization mode, pressing Space inserts a dash. Spelling is strict.</p>
-            <div class="feedback type-feedback">Answer feedback will appear here.</div>
-          </div>
-          <div class="exercise">
-            <span class="tag" style="background:var(--secondary);color:#052e2b">Multiple choice</span><h3>Select the correct answer</h3>
-            <p class="prompt mc-prompt"></p>
-            <div class="options"></div>
-            <div class="feedback mc-feedback">Answer feedback will appear here.</div>
-          </div>
+      html {
+        scroll-behavior: smooth
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.55 Outfit,sans-serif
+      }
+
+      .page-shell {
+        width: min(1250px,calc(100% - 28px));
+        margin: auto;
+        padding: 22px 0 80px
+      }
+
+      /* Hero */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        background: var(--primary);
+        color: white;
+        padding: 60px;
+        border-radius: 8px;
+        min-height: 420px;
+        display: flex;
+        align-items: center
+      }
+
+      .hero:before {
+        content: "";
+        position: absolute;
+        width: 330px;
+        height: 330px;
+        border-radius: 50%;
+        background: var(--secondary);
+        right: -70px;
+        top: -120px
+      }
+
+      .hero:after {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        background: var(--accent);
+        right: 150px;
+        bottom: -160px;
+        transform: rotate(14deg)
+      }
+
+      .hero>div {
+        position: relative;
+        z-index: 1;
+        max-width: 830px
+      }
+
+      .hero-tag {
+        display: inline-block;
+        background: white;
+        color: #111827;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: .75rem;
+        letter-spacing: .1em;
+        text-transform: uppercase
+      }
+
+      h1 {
+        font-size: clamp(3rem,7vw,6.8rem);
+        line-height: .88;
+        letter-spacing: -.045em;
+        margin: 20px 0;
+        max-width: 10ch
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+        color: #eff6ff
+      }
+
+      .btn {
+        min-height: 50px;
+        border: 0;
+        border-radius: 6px;
+        padding: 0 16px;
+        font-weight: 800;
+        cursor: pointer;
+        background: var(--primary);
+        color: white;
+        transition: .2s
+      }
+
+      .btn:hover {
+        transform: scale(1.04)
+      }
+
+      .light {
+        background: white;
+        color: #111827
+      }
+
+      .dark {
+        background: #111827;
+        color: white
+      }
+
+      .muted {
+        background: var(--border);
+        color: var(--fg)
+      }
+
+      .accent {
+        background: var(--accent);
+        color: #111827
+      }
+
+      .panel,.section {
+        margin-top: 22px;
+        background: var(--surface);
+        border-radius: 8px;
+        overflow: hidden
+      }
+
+      .panel-header {
+        background: #111827;
+        color: white;
+        padding: 26px 32px
+      }
+
+      .panel-header h2 {
+        margin: 0
+      }
+
+      .panel-body {
+        padding: 26px
+      }
+
+      .grammar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(285px,1fr));
+        gap: 13px
+      }
+
+      .grammar-card,.info-card,/* Exercise interface */
+      .exercise {
+        background: var(--surface);
+        padding: 18px;
+        border-radius: 8px
+      }
+
+      .grammar-card {
+        background: var(--bg)
+      }
+
+      .grammar-card h3 {
+        margin: 0 0 8px
+      }
+
+      .grammar-card p,.info-card p {
+        color: var(--muted)
+      }
+
+      .example {
+        background: var(--surface);
+        padding: 10px;
+        border-radius: 6px
+      }
+
+      .roman {
+        color: var(--primary);
+        font-weight: 800
+      }
+
+      #tocGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+        gap: 9px
+      }
+
+      .toc-link {
+        background: #1f2937;
+        color: white;
+        text-decoration: none;
+        padding: 13px 15px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-weight: 700
+      }
+
+      .toc-link:hover {
+        background: var(--secondary);
+        color: #052e2b
+      }
+
+      .toc-link small {
+        color: var(--accent)
+      }
+
+      .nav-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px
+      }
+
+      .nav-actions .btn {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center
+      }
+
+      /* Grammar quiz sections */
+      details summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 26px 30px;
+        font-size: clamp(1.7rem,4vw,3.2rem);
+        font-weight: 800;
+        background: var(--accent);
+        color: #111827;
+        display: flex;
+        justify-content: space-between;
+        gap: 14px
+      }
+
+      details: nth-of-type(3n+1) summary {
+        background: var(--primary);
+        color: white
+      }
+
+      details: nth-of-type(3n+2) summary {
+        background: var(--secondary);
+        color: #052e2b
+      }
+
+      details summary::-webkit-details-marker {
+        display: none
+      }
+
+      details summary:after {
+        content: "Collapse";
+        font-size: .68rem;
+        background: white;
+        color: #111827;
+        padding: 8px 10px;
+        border-radius: 999px;
+        align-self: center
+      }
+
+      details: not([open]) summary:after {
+        content: "Expand"
+      }
+
+      .section-body {
+        background: var(--bg);
+        padding: 22px
+      }
+
+      .section-intro {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px
+      }
+
+      .exercise-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px
+      }
+
+      .exercise-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: start
+      }
+
+      .exercise-header h3 {
+        margin: 6px 0
+      }
+
+      .badge {
+        background: var(--blue-soft);
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: .72rem;
+        font-weight: 800
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin: 12px 0
+      }
+
+      .controls label {
+        display: block;
+        color: var(--muted);
+        font-size: .7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em
+      }
+
+      .controls select,input {
+        width: 100%;
+        min-height: 46px;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--fg);
+        padding: 0 10px
+      }
+
+      .controls select:focus,input:focus {
+        outline: 0;
+        border-color: var(--primary);
+        background: var(--surface)
+      }
+
+      .status {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-weight: 800;
+        font-size: .86rem
+      }
+
+      .progress {
+        height: 9px;
+        background: var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 9px 0 16px
+      }
+
+      .progress div {
+        height: 100%;
+        background: var(--secondary);
+        width: 0
+      }
+
+      .prompt-label {
+        font-size: .7rem;
+        color: var(--primary);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .1em
+      }
+
+      .prompt {
+        font-size: clamp(1.55rem,3.2vw,2.55rem);
+        font-weight: 800;
+        line-height: 1.08;
+        min-height: 72px;
+        margin: 6px 0 16px
+      }
+
+      .answer-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px
+      }
+
+      .choices {
+        display: grid;
+        gap: 8px
+      }
+
+      .choice {
+        min-height: 48px;
+        border: 0;
+        border-radius: 6px;
+        text-align: left;
+        padding: 0 12px;
+        background: var(--bg);
+        color: var(--fg);
+        font-weight: 700;
+        cursor: pointer
+      }
+
+      .choice.correct {
+        background: var(--secondary);
+        color: #052e2b
+      }
+
+      .choice.wrong {
+        background: var(--accent);
+        color: #111827
+      }
+
+      .feedback {
+        display: none;
+        margin-top: 12px;
+        padding: 13px;
+        border-radius: 6px
+      }
+
+      .feedback.good {
+        display: block;
+        background: var(--green-soft)
+      }
+
+      .feedback.bad {
+        display: block;
+        background: var(--amber-soft)
+      }
+
+      .next {
+        margin-top: 10px
+      }
+
+      .finish {
+        display: none;
+        margin-top: 14px;
+        padding: 18px;
+        background: var(--blue-soft);
+        border-radius: 8px
+      }
+
+      .finish h4 {
+        margin: 0;
+        font-size: 1.45rem
+      }
+
+      .reviewnav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 12px 0
+      }
+
+      .reviewnav button {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 6px;
+        background: var(--border);
+        color: var(--fg);
+        font-weight: 800
+      }
+
+      .reviewnav button.active {
+        background: var(--primary);
+        color: white
+      }
+
+      .reviewbox {
+        background: var(--surface);
+        padding: 12px;
+        border-radius: 6px
+      }
+
+      .hidden {
+        display: none!important
+      }
+
+      .back-to-toc {
+        position: fixed;
+        right: 14px;
+        bottom: 14px;
+        background: var(--accent);
+        color: #111827;
+        padding: 12px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 800;
+        z-index: 10
+      }
+
+      /* Responsive layout */
+      @media(max-width:900px) {
+        .exercise-grid,.section-intro {
+          grid-template-columns: 1fr
+        }
+
+        .page-shell {
+          width: 100%;
+          padding-top: 0
+        }
+
+        .hero,.panel,.section {
+          border-radius: 0;
+          margin-top: 0
+        }
+
+      }
+
+      @media(max-width:600px) {
+        .hero {
+          padding: 36px 22px
+        }
+
+        .panel-body,.section-body {
+          padding: 16px
+        }
+
+        .controls {
+          grid-template-columns: 1fr
+        }
+
+        .answer-row {
+          grid-template-columns: 1fr
+        }
+
+        details summary {
+          padding: 20px 16px;
+          flex-direction: column;
+          align-items: flex-start
+        }
+
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="back-to-toc" href="#toc">Back to TOC</a>
+
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <span class="hero-tag">TOPIK I Grammar Translation</span>
+          <h1>Grammar Through Translation</h1>
+          <p>
+            Each grammar point has one typed exercise and one multiple-choice exercise.
+            Every exercise uses 10 newly randomized vocabulary combinations, immediate
+            trilingual feedback, an independent score, restart control, final summary,
+            and navigable answer review.
+          </p>
         </div>
-        <div class="restart-row"><button class="restart"><i data-lucide="rotate-ccw"></i> Restart section</button></div>
-      </div>`;
-    content.appendChild(sec);
-    bindSection(sec,p,i);
-  });
-  lucide.createIcons();
-}
-function bindSection(sec,p,i){
-  const ql=document.getElementById('questionLang').value,al=document.getElementById('answerLang').value;
-  sec.querySelector('.type-prompt').textContent=qText(p,'type',ql);
-  sec.querySelector('.mc-prompt').textContent=qText(p,'mc',ql);
-  const opts=sec.querySelector('.options');
-  const choices=p[11].map(x=>({ko:x,ro:romanizeChoice(p,x),en:englishChoice(p,x)}));
-  choices.forEach((c,idx)=>{const b=document.createElement('button');b.className='option';b.textContent=c[al];b.dataset.correct=idx===0?'1':'0';b.addEventListener('click',()=>checkMC(sec,p,i,b));opts.appendChild(b)});
-  const inp=sec.querySelector('.type-input');
-  inp.addEventListener('keydown',e=>{if(e.key===' '&&document.getElementById('answerLang').value==='ro'){e.preventDefault();const s=inp.selectionStart;inp.value=inp.value.slice(0,s)+'-'+inp.value.slice(inp.selectionEnd);inp.selectionStart=inp.selectionEnd=s+1}if(e.key==='Enter')checkType(sec,p,i)});
-  sec.querySelector('.check-type').addEventListener('click',()=>checkType(sec,p,i));
-  sec.querySelector('.restart').addEventListener('click',()=>restartSection(sec,i));
-  sec.querySelector('.collapse').addEventListener('click',e=>{const body=sec.querySelector('.section-body');body.classList.toggle('hidden');const open=!body.classList.contains('hidden');e.currentTarget.setAttribute('aria-expanded',open);e.currentTarget.innerHTML=`<i data-lucide="chevron-${open?'up':'down'}"></i> ${open?'Collapse':'Expand'}`;lucide.createIcons()});
-}
-function romanizeChoice(p,x){if(x===p[8])return p[9];const map={'은':'eun','는':'neun','이':'i','가':'ga','을':'eul','를':'reul','에':'e','에서':'e-seo','안':'an','못':'mot','고':'go','지만':'ji-man','면':'myeon','으면':'eu-myeon','러':'reo','려고':'ryeo-go','으려고':'eu-ryeo-go','어':'eo','어도':'eo-do','은':'eun','기':'gi','네요':'ne-yo','군요':'gun-yo','인':'in'};return map[x]||x}
-function englishChoice(p,x){if(x===p[8])return p[10];const map={'은':'topic marker after consonant','는':'topic marker after vowel','이':'subject marker after consonant','가':'subject marker after vowel','을':'object/ending after consonant','를':'object marker after vowel','에':'at/to','에서':'at (action place)','안':'not','못':'cannot','고':'and/connector','지만':'but','면':'if/when','으면':'if/when after consonant','러':'purpose of movement','려고':'plan to','으려고':'plan to after consonant','어':'connector','어도':'even if / permission','기':'verb nominalizer','네요':'soft realization','군요':'formal discovery','인':'noun modifier'};return map[x]||x}
-function feedbackHTML(p,correct){const selected=[...document.querySelectorAll('#questionLang,#answerLang')];const langsToShow=['en','ro','ko'];return `<strong>${correct?'Correct':'Not quite'}</strong>${langsToShow.map(l=>`<div class="lang-line"><b>${langs[l]}</b><span>${sentence(p,l)}</span></div>`).join('')}`}
-function mark(key,ok){if(state.done[key])return;state.done[key]=true;state.answered++;if(ok)state.correct++;updateScore()}
-function checkType(sec,p,i){const lang=document.getElementById('answerLang').value,inp=sec.querySelector('.type-input'),fb=sec.querySelector('.type-feedback');const ok=normalize(inp.value,lang)===normalize(ansText(p,lang),lang);fb.className='feedback type-feedback '+(ok?'good':'bad');fb.innerHTML=feedbackHTML(p,ok);inp.disabled=true;sec.querySelector('.check-type').disabled=true;mark(`t${i}`,ok)}
-function checkMC(sec,p,i,btn){const ok=btn.dataset.correct==='1';sec.querySelectorAll('.option').forEach(b=>{b.disabled=true;if(b.dataset.correct==='1')b.classList.add('correct')});if(!ok)btn.classList.add('wrong');const fb=sec.querySelector('.mc-feedback');fb.className='feedback mc-feedback '+(ok?'good':'bad');fb.innerHTML=feedbackHTML(p,ok);mark(`m${i}`,ok)}
-function restartSection(sec,i){['t'+i,'m'+i].forEach(k=>{if(state.done[k]){state.answered--;if(sec.querySelector(k[0]==='t'?'.type-feedback':'.mc-feedback').classList.contains('good'))state.correct--;delete state.done[k]}});updateScore();const p=points[i];const body=sec.querySelector('.section-body');body.classList.remove('hidden');sec.querySelector('.type-input').disabled=false;sec.querySelector('.type-input').value='';sec.querySelector('.check-type').disabled=false;sec.querySelector('.type-feedback').className='feedback type-feedback';sec.querySelector('.type-feedback').textContent='Answer feedback will appear here.';sec.querySelector('.mc-feedback').className='feedback mc-feedback';sec.querySelector('.mc-feedback').textContent='Answer feedback will appear here.';const opts=sec.querySelector('.options');opts.innerHTML='';const al=document.getElementById('answerLang').value;p[11].forEach((x,idx)=>{const b=document.createElement('button');b.className='option';b.textContent=al==='ko'?x:al==='ro'?romanizeChoice(p,x):englishChoice(p,x);b.dataset.correct=idx===0?'1':'0';b.addEventListener('click',()=>checkMC(sec,p,i,b));opts.appendChild(b)})}
-function updateScore(){document.getElementById('scoreCorrect').textContent=state.correct;document.getElementById('scoreAnswered').textContent=state.answered;document.getElementById('scorePct').textContent=state.answered?Math.round(state.correct/state.answered*100)+'%':'0%'}
-function refreshLanguages(){document.querySelectorAll('.section-card').forEach((sec,i)=>restartSection(sec,i));render();}
-document.getElementById('questionLang').addEventListener('change',refreshLanguages);document.getElementById('answerLang').addEventListener('change',refreshLanguages);
-const saved=localStorage.getItem('topik-theme');const prefers=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.dataset.theme=saved||prefers;
-document.getElementById('themeBtn').addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('topik-theme',next)});
-render();updateScore();
-</script>
-</body>
+      </header>
+
+      <nav class="panel" id="toc" aria-labelledby="toc-title">
+        <div class="panel-header">
+          <h2 id="toc-title">Table of Contents</h2>
+        </div>
+
+        <div class="panel-body">
+          <div class="nav-actions">
+            <a class="btn dark" href="https://boyzinred.github.io/korean/index.html">
+              Back to Home
+            </a>
+            <button class="btn light" id="themeToggle" type="button">
+              Toggle Theme
+            </button>
+          </div>
+
+          <div id="tocGrid"></div>
+        </div>
+      </nav>
+
+      <section class="panel" id="bank" aria-labelledby="grammar-bank-title">
+        <div class="panel-header">
+          <h2 id="grammar-bank-title">Grammar Bank</h2>
+        </div>
+        <div class="panel-body">
+          <div class="grammar-grid" id="grammarGrid"></div>
+        </div>
+      </section>
+
+      <main id="sections"></main>
+    </div>
+
+    <script>
+      // Vocabulary entries use: [Korean, dashed romanization, English]
+      const VOCABULARY_BANK= {
+        people:[["학생", "hak-ssaeng", "student"],
+        ["선생님", "seon-saeng-nim", "teacher"],
+        ["의사", "ui-sa", "doctor"],
+        ["간호사", "gan-ho-sa", "nurse"],
+        ["회사원", "hoe-sa-won", "office worker"],
+        ["친구", "chin-gu", "friend"],
+        ["어머니", "eo-meo-ni", "mother"],
+        ["아버지", "a-beo-ji", "father"]],
+        places:[["학교", "hak-kkyo", "school"],
+        ["회사", "hoe-sa", "company"],
+        ["병원", "byeong-won", "hospital"],
+        ["은행", "eun-haeng", "bank"],
+        ["식당", "shik-ttang", "restaurant"],
+        ["카페", "ka-pe", "cafe"],
+        ["공원", "gong-won", "park"],
+        ["시장", "shi-jang", "market"],
+        ["도서관", "do-seo-gwan", "library"],
+        ["집", "jip", "home"]],
+        food:[["밥", "bap", "a meal"],
+        ["물", "mul", "water"],
+        ["커피", "keo-pi", "coffee"],
+        ["차", "cha", "tea"],
+        ["우유", "u-yu", "milk"],
+        ["빵", "ppang", "bread"],
+        ["과일", "gwa-il", "fruit"],
+        ["사과", "sa-gwa", "an apple"],
+        ["고기", "go-gi", "meat"],
+        ["김치", "gim-chi", "kimchi"],
+        ["라면", "ra-myeon", "instant noodles"]],
+        objects:[["책", "chaek", "a book"],
+        ["사진", "sa-jin", "a photo"],
+        ["카드", "ka-deu", "a card"],
+        ["돈", "don", "money"],
+        ["자동차", "ja-dong-cha", "a car"],
+        ["자전거", "ja-jeon-geo", "a bicycle"]],
+        time:[["오늘", "o-neul", "today"],
+        ["내일", "nae-il", "tomorrow"],
+        ["어제", "eo-je", "yesterday"],
+        ["아침", "a-chim", "in the morning"],
+        ["점심", "jeom-shim", "at lunch"],
+        ["저녁", "jeo-nyeok", "in the evening"],
+        ["밤", "bam", "at night"],
+        ["지금", "ji-geum", "now"]],
+        adjectives:[["좋다", "jo-ta", "good"],
+        ["나쁘다", "na-ppeu-da", "bad"],
+        ["크다", "keu-da", "big"],
+        ["작다", "jak-tta", "small"],
+        ["많다", "man-ta", "many"],
+        ["빠르다", "ppa-reu-da", "fast"],
+        ["느리다", "neu-ri-da", "slow"],
+        ["쉽다", "swip-tta", "easy"],
+        ["어렵다", "eo-ryeop-tta", "difficult"],
+        ["예쁘다", "ye-ppeu-da", "pretty"],
+        ["맛있다", "ma-shit-tta", "delicious"],
+        ["재미있다", "jae-mi-it-tta", "interesting"]],
+        verbs:[["가다", "ga-da", "go"],
+        ["오다", "o-da", "come"],
+        ["먹다", "meok-tta", "eat"],
+        ["마시다", "ma-shi-da", "drink"],
+        ["보다", "bo-da", "watch"],
+        ["듣다", "deut-tta", "listen"],
+        ["읽다", "ik-tta", "read"],
+        ["쓰다", "sseu-da", "write"],
+        ["말하다", "mal-ha-da", "speak"],
+        ["공부하다", "gong-bu-ha-da", "study"],
+        ["일하다", "il-ha-da", "work"],
+        ["자다", "ja-da", "sleep"],
+        ["만나다", "man-na-da", "meet"],
+        ["배우다", "bae-u-da", "learn"],
+        ["만들다", "man-deul-da", "make"],
+        ["좋아하다", "jo-a-ha-da", "like"]]
+      };
+      // Grammar entries use: [id, form, title, explanation, Korean, romanization, English]
+      const GRAMMAR_POINTS=[["g1", "은/는", "Topic particle", "Marks the topic or contrast. Use 은 after a consonant and 는 after a vowel.", "저는 학생이에요.", "jeo-neun hak-ssaeng-i-e-yo", "I am a student."],
+      ["g2", "이/가", "Subject particle", "Marks a new, focused, or identified subject.", "고양이가 귀여워요.", "go-yang-i-ga gwi-yeo-wo-yo", "The cat is cute."],
+      ["g3", "을/를", "Object particle", "Marks the direct object of an action verb.", "커피를 마셔요.", "keo-pi-reul ma-syeo-yo", "I drink coffee."],
+      ["g4", "에", "Destination, location, or time", "Use 에 for destination, static location, or time.", "학교에 가요.", "hak-kkyo-e ga-yo", "I go to school."],
+      ["g5", "에서", "Place of action", "Use 에서 where an action happens or where movement starts.", "카페에서 공부해요.", "ka-pe-e-seo gong-bu-hae-yo", "I study at a cafe."],
+      ["g6", "이다", "To be", "Attach 이에요/예요 or 입니다 directly to a noun.", "친구예요.", "chin-gu-ye-yo", "He or she is a friend."],
+      ["g7", "있다 / 없다", "Existence and possession", "있다 means exist or have; 없다 means not exist or not have.", "시간이 있어요.", "si-ga-ni i-sseo-yo", "I have time."],
+      ["g8", "안 + verb", "Short negation", "Place 안 before a verb or adjective.", "안 가요.", "an ga-yo", "I do not go."],
+      ["g9", "못 + verb", "Inability", "Use 못 when ability or circumstances prevent an action.", "오늘 못 가요.", "o-neul mot ga-yo", "I cannot go today."],
+      ["g10", "-아/어/해요", "Present tense", "Basic everyday polite present tense.", "밥을 먹어요.", "ba-beul meo-geo-yo", "I eat a meal."],
+      ["g11", "-았/었/했어요", "Past tense", "Marks a completed past action or state.", "어제 공부했어요.", "eo-je gong-bu-hae-sseo-yo", "I studied yesterday."],
+      ["g12", "-(으)ㄹ 거예요", "Future tense", "Expresses a future plan, intention, or prediction.", "내일 갈 거예요.", "nae-il gal geo-ye-yo", "I will go tomorrow."],
+      ["g13", "-(으)세요", "Polite request", "A polite everyday request or command.", "앉으세요.", "an-jeu-se-yo", "Please sit down."],
+      ["g14", "-(으)십시오", "Formal command", "A formal command used in instructions or announcements.", "기다리십시오.", "gi-da-ri-ship-ssi-o", "Please wait."],
+      ["g15", "-(으)ㅂ시다", "Let’s", "Makes a formal-sounding suggestion.", "같이 갑시다.", "ga-chi gap-ssi-da", "Let’s go together."],
+      ["g16", "-(으)ㄹ까요?", "Shall we?", "A soft suggestion or request for an opinion.", "점심 먹을까요?", "jeom-shim meo-geul-kka-yo", "Shall we eat lunch?"],
+      ["g17", "-고", "And / then", "Connects actions or descriptions without expressing cause.", "밥을 먹고 공부해요.", "ba-beul meok-kko gong-bu-hae-yo", "I eat and then study."],
+      ["g18", "-아서/어서", "Because / then", "Connects clauses by reason or natural sequence.", "피곤해서 쉬어요.", "pi-go-nae-seo swi-eo-yo", "I am tired, so I rest."],
+      ["g19", "-지만", "But / although", "Connects contrasting clauses.", "비싸지만 좋아요.", "bi-ssa-ji-man jo-a-yo", "It is expensive, but good."],
+      ["g20", "-(으)면", "If / when", "Expresses a condition.", "시간이 있으면 만나요.", "si-ga-ni i-sseu-myeon man-na-yo", "If you have time, let’s meet."],
+      ["g21", "-(으)려고 하다", "Intention / plan", "Means intend to, plan to, or be about to.", "책을 사려고 해요.", "chae-geul sa-ryeo-go hae-yo", "I plan to buy a book."],
+      ["g22", "-고 싶다", "Want to", "Expresses the speaker’s desire.", "친구를 만나고 싶어요.", "chin-gu-reul man-na-go shi-peo-yo", "I want to meet a friend."],
+      ["g23", "-(으)러 가다/오다", "Purpose of movement", "Go or come in order to do an action.", "운동하러 공원에 가요.", "un-dong-ha-reo gong-wo-ne ga-yo", "I go to the park to exercise."],
+      ["g24", "-아/어 보다", "Try / experience", "Try doing or have the experience of doing.", "한국 음식을 먹어 봤어요.", "han-guk eum-shi-geul meo-geo bwa-sseo-yo", "I have tried Korean food."],
+      ["g25", "-아/어도 되다", "Permission", "Means may, be allowed to, or it is okay to.", "사진 찍어도 돼요?", "sa-jin jji-geo-do dwae-yo", "May I take a photo?"],
+      ["g26", "-(으)면 안 되다", "Prohibition", "Means must not or should not.", "여기서 뛰면 안 돼요.", "yeo-gi-seo ttwi-myeon an dwae-yo", "You must not run here."],
+      ["g27", "-(으)ㄴ 후에", "After", "One action finishes before another starts.", "밥을 먹은 후에 공부해요.", "ba-beul meo-geun hu-e gong-bu-hae-yo", "I study after eating."],
+      ["g28", "-기 전에", "Before", "One action happens before another.", "자기 전에 책을 읽어요.", "ja-gi jeo-ne chae-geul il-geo-yo", "I read a book before sleeping."],
+      ["g29", "-(으)ㄹ 수 있다/없다", "Can / cannot", "Expresses ability or possibility.", "한국어를 읽을 수 있어요.", "han-gu-geo-reul il-geul su i-sseo-yo", "I can read Korean."],
+      ["g30", "-네요", "Realization / admiration", "A soft reaction after noticing something.", "날씨가 좋네요.", "nal-ssi-ga jon-ne-yo", "Oh, the weather is nice."],
+      ["g31", "-군요 / -네요", "Surprise / discovery", "Both express discovery; -네요 is softer.", "정말 빠르군요!", "jeong-mal ppa-reu-gun-yo", "It is really fast, I see!"],
+      ["g32", "-(으)ㄴ/는 것 같다", "I think / it seems", "Softens a guess or impression.", "비가 오는 것 같아요.", "bi-ga o-neun geot ga-ta-yo", "I think it is raining."]];
+      // Question-generation helpers
+      const randomItem=(array)=>array[Math.floor(Math.random()*array.length)];
+      const CONSONANT_ENDING_WORDS=new Set(["학생", "선생님", "의사", "간호사", "회사원", "친구", "어머니", "아버지", "집", "학교", "회사", "병원", "은행", "식당", "카페", "공원", "시장", "도서관", "밥", "물", "빵", "과일", "고기", "김치", "라면", "책", "사진", "카드", "돈"]);
+      const chooseParticle=(word, consonantForm, vowelForm)=>CONSONANT_ENDING_WORDS.has(word)?consonantForm:vowelForm;
+      const createQuestion=(english, romanization, korean)=>( {
+        english, romanization, korean
+      });
+      // Core conjugation lookup tables
+      const PRESENT_CONJUGATIONS= {
+        가다:["가요", "ga-yo"],
+        오다:["와요", "wa-yo"],
+        먹다:["먹어요", "meo-geo-yo"],
+        마시다:["마셔요", "ma-syeo-yo"],
+        보다:["봐요", "bwa-yo"],
+        듣다:["들어요", "deu-reo-yo"],
+        읽다:["읽어요", "il-geo-yo"],
+        쓰다:["써요", "sseo-yo"],
+        말하다:["말해요", "mal-hae-yo"],
+        공부하다:["공부해요", "gong-bu-hae-yo"],
+        일하다:["일해요", "il-hae-yo"],
+        자다:["자요", "ja-yo"],
+        만나다:["만나요", "man-na-yo"],
+        배우다:["배워요", "bae-wo-yo"],
+        만들다:["만들어요", "man-deu-reo-yo"],
+        좋아하다:["좋아해요", "jo-a-hae-yo"]
+      };
+      const PAST_CONJUGATIONS= {
+        가다:["갔어요", "ga-sseo-yo"],
+        오다:["왔어요", "wa-sseo-yo"],
+        먹다:["먹었어요", "meo-geo-sseo-yo"],
+        마시다:["마셨어요", "ma-syeo-sseo-yo"],
+        보다:["봤어요", "bwa-sseo-yo"],
+        듣다:["들었어요", "deu-reo-sseo-yo"],
+        읽다:["읽었어요", "il-geo-sseo-yo"],
+        쓰다:["썼어요", "sseo-sseo-yo"],
+        말하다:["말했어요", "mal-hae-sseo-yo"],
+        공부하다:["공부했어요", "gong-bu-hae-sseo-yo"],
+        일하다:["일했어요", "il-hae-sseo-yo"],
+        자다:["잤어요", "ja-sseo-yo"],
+        만나다:["만났어요", "man-na-sseo-yo"],
+        배우다:["배웠어요", "bae-wo-sseo-yo"],
+        만들다:["만들었어요", "man-deu-reo-sseo-yo"],
+        좋아하다:["좋아했어요", "jo-a-hae-sseo-yo"]
+      };
+      const FUTURE_CONJUGATIONS= {
+        가다:["갈 거예요", "gal geo-ye-yo"],
+        오다:["올 거예요", "ol geo-ye-yo"],
+        먹다:["먹을 거예요", "meo-geul geo-ye-yo"],
+        마시다:["마실 거예요", "ma-shil geo-ye-yo"],
+        보다:["볼 거예요", "bol geo-ye-yo"],
+        듣다:["들을 거예요", "deu-reul geo-ye-yo"],
+        읽다:["읽을 거예요", "il-geul geo-ye-yo"],
+        쓰다:["쓸 거예요", "sseul geo-ye-yo"],
+        말하다:["말할 거예요", "mal-hal geo-ye-yo"],
+        공부하다:["공부할 거예요", "gong-bu-hal geo-ye-yo"],
+        일하다:["일할 거예요", "il-hal geo-ye-yo"],
+        자다:["잘 거예요", "jal geo-ye-yo"],
+        만나다:["만날 거예요", "man-nal geo-ye-yo"],
+        배우다:["배울 거예요", "bae-ul geo-ye-yo"],
+        만들다:["만들 거예요", "man-deul geo-ye-yo"],
+        좋아하다:["좋아할 거예요", "jo-a-hal geo-ye-yo"]
+      };
+      // Tuple aliases: p=person, pl=place, f=food, o=object, t=time, a=adjective, v=verb
+      // Build one randomized trilingual question for a grammar point
+      function generateQuestion(id) {
+        let p=randomItem(VOCABULARY_BANK.people),
+        pl=randomItem(VOCABULARY_BANK.places),
+        f=randomItem(VOCABULARY_BANK.food),
+        o=randomItem(VOCABULARY_BANK.objects),
+        t=randomItem(VOCABULARY_BANK.time),
+        a=randomItem(VOCABULARY_BANK.adjectives),
+        v=randomItem(VOCABULARY_BANK.verbs),
+        pn=chooseParticle(p[0],
+        "은", "는"),
+        pg=chooseParticle(p[0],
+        "이", "가"),
+        fo=chooseParticle(f[0],
+        "을", "를"),
+        rn=pn==="은"?"eun":"neun",
+        rg=pg==="이"?"i":"ga",
+        fro=fo==="을"?"eul":"reul",
+        vp=PRESENT_CONJUGATIONS[v[0]],
+        va=PAST_CONJUGATIONS[v[0]],
+        vf=FUTURE_CONJUGATIONS[v[0]];
+        let M= {
+          g1:()=>createQuestion(`As for the ${p[2]}, he or she is at the ${pl[2]}.`, `${p[1]}-${rn} ${pl[1]}-e i-sseo-yo`, `${p[0]}${pn} ${pl[0]}에 있어요.`),
+          g2:()=>createQuestion(`The ${p[2]} came today.`, `${p[1]}-${rg} o-neul wa-sseo-yo`, `${p[0]}${pg} 오늘 왔어요.`),
+          g3:()=>createQuestion(`I ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${vp[1]}`, `${f[0]}${fo} ${vp[0]}.`),
+          g4:()=>createQuestion(`I go to the ${pl[2]} ${t[2]}.`, `${t[1]} ${pl[1]}-e ga-yo`, `${t[0]} ${pl[0]}에 가요.`),
+          g5:()=>createQuestion(`I study at the ${pl[2]}.`, `${pl[1]}-e-seo gong-bu-hae-yo`, `${pl[0]}에서 공부해요.`),
+          g6:()=>createQuestion(`He or she is a ${p[2]}.`, `${p[1]}-${chooseParticle(p[0],"i-e-yo","ye-yo")}`, `${p[0]}${chooseParticle(p[0],"이에요","예요")}.`),
+          g7:()=>createQuestion(`There is ${f[2]} at the ${pl[2]}.`, `${pl[1]}-e ${f[1]}-${chooseParticle(f[0],"i","ga")} i-sseo-yo`, `${pl[0]}에 ${f[0]}${chooseParticle(f[0],"이","가")} 있어요.`),
+          g8:()=>createQuestion(`I do not ${v[2]} ${t[2]}.`, `${t[1]} an ${vp[1]}`, `${t[0]} 안 ${vp[0]}.`),
+          g9:()=>createQuestion(`I cannot ${v[2]} ${t[2]}.`, `${t[1]} mot ${vp[1]}`, `${t[0]} 못 ${vp[0]}.`),
+          g10:()=>createQuestion(`I ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${vp[1]}`, `${f[0]}${fo} ${vp[0]}.`),
+          g11:()=>createQuestion(`I did ${v[2]} ${t[2]}.`, `${t[1]} ${va[1]}`, `${t[0]} ${va[0]}.`),
+          g12:()=>createQuestion(`I will ${v[2]} ${t[2]}.`, `${t[1]} ${vf[1]}`, `${t[0]} ${vf[0]}.`),
+          g13:()=>createQuestion(`Please ${v[2]}.`, `${vp[1].replace(/-yo$/,"-se-yo")}`, `${vp[0].replace("요","세요")}.`),
+          g14:()=>createQuestion(`Please ${v[2]}.`, `${vp[1].replace(/-yo$/,"-ship-ssi-o")}`, `${vp[0].replace("요","십시오")}.`),
+          g15:()=>createQuestion(`Let's ${v[2]} together.`, `ga-chi ${vf[1].split(" ")[0]}-p-ssi-da`, `같이 ${vf[0].replace(" 거예요","ㅂ시다")}.`),
+          g16:()=>createQuestion(`Shall we ${v[2]} together?`, `ga-chi ${vf[1].replace(" geo-ye-yo","-kka-yo")}`, `같이 ${vf[0].replace(" 거예요","까요")}?`),
+          g17:()=>createQuestion(`I ${v[2]} and then go to the ${pl[2]}.`, `${v[1].replace(/-da$/,"-go")} ${pl[1]}-e ga-yo`, `${v[0].slice(0,-1)}고 ${pl[0]}에 가요.`),
+          g18:()=>createQuestion(`Because it is ${a[2]}, I rest.`, `${a[1].replace(/-da$/,"-seo")} swi-eo-yo`, `${a[0].slice(0,-1)}서 쉬어요.`),
+          g19:()=>createQuestion(`It is ${a[2]}, but interesting.`, `${a[1].replace(/-da$/,"-ji-man")} jae-mi-i-sseo-yo`, `${a[0].slice(0,-1)}지만 재미있어요.`),
+          g20:()=>createQuestion(`If I have ${o[2]}, I will go to the ${pl[2]}.`, `${o[1]}-${chooseParticle(o[0],"i","ga")} i-sseu-myeon ${pl[1]}-e gal geo-ye-yo`, `${o[0]}${chooseParticle(o[0],"이","가")} 있으면 ${pl[0]}에 갈 거예요.`),
+          g21:()=>createQuestion(`I plan to ${v[2]} ${t[2]}.`, `${t[1]} ${vf[1].replace(" geo-ye-yo","-ryeo-go hae-yo")}`, `${t[0]} ${vf[0].replace(" 거예요","려고 해요")}.`),
+          g22:()=>createQuestion(`I want to ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${v[1].replace(/-da$/,"-go shi-peo-yo")}`, `${f[0]}${fo} ${v[0].slice(0,-1)}고 싶어요.`),
+          g23:()=>createQuestion(`I go to the ${pl[2]} in order to ${v[2]}.`, `${v[1].replace(/-da$/,"-reo")} ${pl[1]}-e ga-yo`, `${v[0].slice(0,-1)}러 ${pl[0]}에 가요.`),
+          g24:()=>createQuestion(`I have tried ${v[2]}ing ${f[2]}.`, `${f[1]}-${fro} ${vp[1].replace(/-yo$/," bwa-sseo-yo")}`, `${f[0]}${fo} ${vp[0].replace("요"," 봤어요")}.`),
+          g25:()=>createQuestion(`May I ${v[2]} here?`, `yeo-gi-seo ${vp[1].replace(/-yo$/,"-do dwae-yo")}`, `여기서 ${vp[0].replace("요","도 돼요")}?`),
+          g26:()=>createQuestion(`You must not ${v[2]} here.`, `yeo-gi-seo ${vf[1].split(" ")[0]}-myeon an dwae-yo`, `여기서 ${vf[0].replace(" 거예요","면 안 돼요")}.`),
+          g27:()=>createQuestion(`I go to the ${pl[2]} after ${v[2]}ing.`, `${va[1].replace(/-sseo-yo$/,"-eun hu-e")} ${pl[1]}-e ga-yo`, `${va[0].replace("었어요","은 후에").replace("았어요","ㄴ 후에").replace("했어요","한 후에")} ${pl[0]}에 가요.`),
+          g28:()=>createQuestion(`I ${v[2]} before going to the ${pl[2]}.`, `${pl[1]}-e ga-gi jeo-ne ${vp[1]}`, `${pl[0]}에 가기 전에 ${vp[0]}.`),
+          g29:()=>createQuestion(`I can ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${vf[1].replace(" geo-ye-yo"," su i-sseo-yo")}`, `${f[0]}${fo} ${vf[0].replace(" 거예요"," 수 있어요")}.`),
+          g30:()=>createQuestion(`Oh, the ${f[2]} is delicious.`, `${f[1]}-${chooseParticle(f[0],"i","ga")} ma-shin-ne-yo`, `${f[0]}${chooseParticle(f[0],"이","가")} 맛있네요.`),
+          g31:()=>createQuestion(`Wow, it is really ${a[2]}!`, `jeong-mal ${a[1].replace(/-da$/,"-gun-yo")}`, `정말 ${a[0].slice(0,-1)}군요!`),
+          g32:()=>createQuestion(`I think the ${p[2]} is at the ${pl[2]}.`, `${p[1]}-${rg} ${pl[1]}-e in-neun geot ga-ta-yo`, `${p[0]}${pg} ${pl[0]}에 있는 것 같아요.`)
+        };
+        return M[id]()
+      }
+      // Quiz state and answer utilities
+      const exerciseStates= {
+      };
+      const grammarGrid=document.getElementById("grammarGrid");
+      const tocGrid=document.getElementById("tocGrid");
+      const sections=document.getElementById("sections");
+      const themeToggle=document.getElementById("themeToggle");
+
+      function escapeHtml(s) {
+        return String(s??"").replace(/[&<>"']/g, m=>( {
+          "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+        }
+        [m]))
+      }
+      function normalizeAnswer(s, m) {
+        s=String(s??"").trim().toLowerCase();
+        return m==="korean"?s.replace(/\s+/g, "").replace(/[.?!]/g, ""):s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim()
+      }
+      function feedbackMarkup(q) {
+        return `<b>${escapeHtml(q.english)}</b><br><span class="roman">${escapeHtml(q.romanization)}</span><br>${escapeHtml(q.korean)}`
+      }
+      // Rendering
+      function renderApp() {
+        grammarGrid.innerHTML=GRAMMAR_POINTS.map(x=>`<article class="grammar-card"><h3>${x[1]} · ${x[2]}</h3><p>${x[3]}</p><div class="example"><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</div></article>`).join("");
+        tocGrid.innerHTML=`<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a>`+GRAMMAR_POINTS.map(x=>`<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span><small>2 × 10</small></a>`).join("");
+        sections.innerHTML=GRAMMAR_POINTS.map((x, i)=>`<details class="section" id="${x[0]}" ${i===0?"open":""}><summary>${x[1]} · ${x[2]}</summary><div class="section-body"><div class="section-intro"><div class="info-card"><h3>How it works</h3><p>${x[3]}</p></div><div class="info-card"><h3>Model example</h3><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</div></div><div class="exercise-grid">${exerciseTemplate(x[0],"typed","Typed translation")}${exerciseTemplate(x[0],"mc","Multiple choice translation")}</div></div></details>`).join("");
+        GRAMMAR_POINTS.forEach(x=>["typed", "mc"].forEach(t=>initializeExercise(x[0],
+        t)))
+      }
+      function exerciseTemplate(id, t, title) {
+        return `<section class="exercise" id="${id}-${t}"><div class="exercise-header"><div><span class="badge">${t==="typed"?"TYPE":"SELECT"}</span><h3>${title}</h3></div><button class="btn muted restart">Restart</button></div><div class="controls"><label>Question language<select class="question-mode"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="answer-mode"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><div class="status"><span class="count"></span><span class="score"></span></div><div class="progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback"></div><button class="btn accent next hidden">Next</button><div class="finish"><h4>Exercise complete</h4><p class="sum"></p><div class="reviewnav"></div><div class="reviewbox"></div><button class="btn muted restart">Restart exercise</button></div></section>`
+      }
+      // Exercise lifecycle
+      function initializeExercise(id, t) {
+        let e=document.getElementById(`${id}-${t}`),
+        qm=e.querySelector(".question-mode"),
+        am=e.querySelector(".answer-mode"),
+        key=`${id}-${t}`;
+        exerciseStates[key]= {
+          id,
+          t,
+          i:0,
+          score:0,
+          qs:[],
+          r:[],
+          qm:"english",
+          am:"korean",
+          done:false
+        };
+        let reset=()=> {
+          let s=exerciseStates[key];
+          s.i=0;
+          s.score=0;
+          s.r=[];
+          s.qm=qm.value;
+          s.am=am.value;
+          if(s.qm===s.am) {
+            s.am=s.qm==="english"?"korean":"english";
+            am.value=s.am
+          }
+          s.qs=Array.from( {
+            length:10
+          },
+          ()=>generateQuestion(id));
+          e.querySelector(".finish").style.display="none";
+          showQuestion(id, t)
+        };
+        qm.onchange=reset;
+        am.onchange=reset;
+        e.querySelectorAll(".restart").forEach(b=>b.onclick=reset);
+        e.querySelector(".next").onclick=()=> {
+          let s=exerciseStates[key];
+          s.i<9?(s.i++, showQuestion(id, t)):finishExercise(id, t)
+        };
+        reset()
+      }
+      function showQuestion(id, t) {
+        let s=exerciseStates[`${id}-${t}`],
+        e=document.getElementById(`${id}-${t}`),
+        q=s.qs[s.i];
+        s.done=false;
+        e.querySelector(".count").textContent=`Question ${s.i+1} / 10`;
+        e.querySelector(".score").textContent=`Score: ${s.score}`;
+        e.querySelector(".progress div").style.width=`${s.i*10}%`;
+        e.querySelector(".prompt-label").textContent=s.qm;
+        e.querySelector(".prompt").textContent=q[s.qm];
+        e.querySelector(".feedback").className="feedback";
+        e.querySelector(".next").classList.add("hidden");
+        let z=e.querySelector(".zone");
+        if(t==="typed") {
+          z.innerHTML=`<div class="answer-row"><input class="ans" autocomplete="off"><button class="btn">Check</button></div>`;
+          let go=()=>submitAnswer(id, t, z.querySelector("input").value);
+          z.querySelector("button").onclick=go;
+          z.querySelector("input").onkeydown=x=>x.key==="Enter"&&go();
+          z.querySelector("input").focus()
+        }
+        else {
+          let opts=[q, ...Array.from( {
+            length:5
+          },
+          ()=>generateQuestion(id))].sort(()=>Math.random()-.5).slice(0, 4);
+          if(!opts.includes(q))opts[0]=q;
+          z.innerHTML=`<div class="choices">${opts.map((o,i)=>`<button class="choice" data-i="${i}">$ {
+            escapeHtml(o[s.am])
+          }
+          </button>`).join("")}</div>`;
+          z.querySelectorAll(".choice").forEach((b, i)=>b.onclick=()=> {
+            let ok=normalizeAnswer(opts[i][s.am],
+            s.am)===normalizeAnswer(q[s.am],
+            s.am);
+            z.querySelectorAll(".choice").forEach((bb, j)=> {
+              bb.disabled=true;
+              if(normalizeAnswer(opts[j][s.am],
+              s.am)===normalizeAnswer(q[s.am],
+              s.am))bb.classList.add("correct")
+            });
+            if(!ok)b.classList.add("wrong");
+            completeQuestion(id, t, opts[i][s.am],
+            ok)
+          })
+        }
+      }
+      function submitAnswer(id, t, u) {
+        let s=exerciseStates[`${id}-${t}`],
+        q=s.qs[s.i];
+        completeQuestion(id, t, u, normalizeAnswer(u, s.am)===normalizeAnswer(q[s.am],
+        s.am))
+      }
+      function completeQuestion(id, t, u, ok) {
+        let s=exerciseStates[`${id}-${t}`],
+        e=document.getElementById(`${id}-${t}`),
+        q=s.qs[s.i];
+        if(s.done)return;
+        s.done=true;
+        if(ok)s.score++;
+        s.r.push( {
+          q, u, ok, qm:s.qm, am:s.am
+        });
+        e.querySelector(".score").textContent=`Score: ${s.score}`;
+        let f=e.querySelector(".feedback");
+        f.className=`feedback ${ok?"good":"bad"}`;
+        f.innerHTML=`${ok?"Correct.":"Not quite."}<br>${feedbackMarkup(q)}`;
+        let n=e.querySelector(".next");
+        n.textContent=s.i===9?"Finish":"Next";
+        n.classList.remove("hidden")
+      }
+      function finishExercise(id, t) {
+        let s=exerciseStates[`${id}-${t}`],
+        e=document.getElementById(`${id}-${t}`),
+        f=e.querySelector(".finish");
+        e.querySelector(".progress div").style.width="100%";
+        f.style.display="block";
+        f.querySelector(".sum").innerHTML=`Final score: <b>${s.score} / 10</b> (${s.score*10}%)`;
+        let n=f.querySelector(".reviewnav");
+        n.innerHTML=s.r.map((x, i)=>`<button data-i="${i}">${i+1}</button>`).join("");
+        n.querySelectorAll("button").forEach(b=>b.onclick=()=>showReviewQuestion(id, t, +b.dataset.i));
+        showReviewQuestion(id, t, 0)
+      }
+      function showReviewQuestion(id, t, i) {
+        let s=exerciseStates[`${id}-${t}`],
+        e=document.getElementById(`${id}-${t}`),
+        r=s.r[i];
+        e.querySelectorAll(".reviewnav button").forEach((b, j)=>b.classList.toggle("active", j===i));
+        e.querySelector(".reviewbox").innerHTML=`<p><b>Question ${i+1}</b> ${r.ok?"✅":"❌"}</p><p><b>Prompt:</b> ${escapeHtml(r.q[r.qm])}</p><p><b>Your answer:</b> ${escapeHtml(r.u||"(blank)")}</p><p>${feedbackMarkup(r.q)}</p>`
+      }
+      // Theme control
+      themeToggle.onclick=()=> {
+        let n=document.documentElement.dataset.theme==="dark"?"light":"dark";
+        document.documentElement.dataset.theme=n;
+        localStorage.setItem("topikGrammarTheme", n)
+      };
+      try {
+        document.documentElement.dataset.theme=localStorage.getItem("topikGrammarTheme")||((matchMedia("(prefers-color-scheme:dark)").matches)?"dark":"light")
+      }
+      catch(_) {
+      }
+      renderApp();
+    </script>
+  </body>
 </html>
