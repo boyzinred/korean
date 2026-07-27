@@ -943,10 +943,14 @@
           },
           ()=>generateQuestion(id))].sort(()=>Math.random()-.5).slice(0, 4);
           if(!opts.includes(q))opts[0]=q;
-          z.innerHTML=`<div class="choices">${opts.map((o,i)=>`<button class="choice" data-i="${i}">$ {
-            escapeHtml(o[s.am])
-          }
-          </button>`).join("")}</div>`;
+          z.innerHTML = `<div class="choices">${opts
+            .map(
+              (option, index) =>
+                `<button class="choice" data-i="${index}">${escapeHtml(
+                  option[s.am]
+                )}</button>`
+            )
+            .join("")}</div>`;
           z.querySelectorAll(".choice").forEach((b, i)=>b.onclick=()=> {
             let ok=normalizeAnswer(opts[i][s.am],
             s.am)===normalizeAnswer(q[s.am],
