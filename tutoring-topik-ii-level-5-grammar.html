@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOPIK II Level 5 Grammar Translation Quiz</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero {
+  color: var(--hero-heading);
+  background: var(--background);
+}
+.hero-inner {
+  padding: clamp(48px, 7vw, 82px);
+}
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 5.7rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.02em;
+}
+.hero p {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: var(--hero-text);
+  font-size: 1.05rem;
+}
+.toc-card {
+  padding: 18px 22px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+.toc-link small,
+.toc-link span:last-child:not(:first-child) {
+  font-size: .72rem;
+  opacity: .78;
+}
+.section,
+.block,
+.quiz-section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+}
+.section-header h2,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.section > summary::-webkit-details-marker,
+details.block > summary::-webkit-details-marker,
+details.quiz-section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after,
+details.block > summary::after,
+details.quiz-section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after,
+details.block:not([open]) > summary::after,
+details.quiz-section:not([open]) > summary::after { content: "Expand"; }
+.section-content,
+.section-body,
+.block-inner,
+.quiz-body {
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.rule-card,
+.info-card,
+.guide-card,
+.note-card,
+.grammar-card,
+.control-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .rule-card,
+html[data-theme="light"] .info-card,
+html[data-theme="light"] .guide-card,
+html[data-theme="light"] .note-card,
+html[data-theme="light"] .grammar-card,
+html[data-theme="light"] .control-card {
+  color: #F5F5F5;
+}
+.exercise,
+.quiz-card {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+.exercise-kicker,
+.prompt-label,
+.control-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+}
+.exercise-body {
+  padding: clamp(24px, 4vw, 38px);
+}
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+  border-radius: 0;
+}
+.progress > div,
+.progress-fill {
+  height: 100%;
+  background: var(--secondary);
+}
+input,
+select,
+textarea,
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus,
+select:focus,
+textarea:focus,
+.answer-input:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+input:disabled,
+select:disabled,
+textarea:disabled,
+.answer-input:disabled {
+  color: var(--subtle);
+  background: var(--muted-strong);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.btn,
+.primary-btn,
+.secondary-btn,
+.restart-top-btn,
+.mode-btn,
+.choice,
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled),
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled),
+.mode-btn:hover:not(:disabled),
+.choice:hover:not(:disabled),
+.blur-toggle:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+.primary-btn:hover:not(:disabled),
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.secondary-btn,
+.btn.positive {
+  color: #192B5D;
+  background: var(--secondary);
+}
+.btn.warning { color: #192B5D; background: var(--accent); }
+.btn.secondary,
+.restart-top-btn,
+.mode-btn,
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.mode-btn.active,
+.blur-toggle[aria-pressed="true"] {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.choice:hover:not(:disabled) {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice.correct {
+  color: #FFFFFF;
+  background: var(--secondary);
+}
+.choice.wrong {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+}
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+.utility-button.top { background: var(--accent); }
+
+.hidden { display: none !important; }
+
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner { min-height: 60px; }
+  .header-inner,
+  .page-main { width: 100%; }
+  .header-inner { padding: 0 14px; }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner { padding: 48px 22px; }
+  .hero h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+  .toc-card {
+    padding: 18px 22px;
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .section-header,
+  details.section > summary,
+  details.block > summary,
+  details.quiz-section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after,
+  details.block > summary::after,
+  details.quiz-section > summary::after {
+    width: 100%;
+  }
+  .section-content,
+  .section-body,
+  .block-inner,
+  .quiz-body,
+  .exercise-body { padding: 22px; }
+  .btn,
+  .primary-btn,
+  .secondary-btn,
+  .restart-top-btn,
+  .mode-btn,
+  .choice,
+  .blur-toggle { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+#bank .section-header {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+#sections > details:nth-child(3n+1) > summary { background: var(--secondary); }
+#sections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
+#sections > details:nth-child(3n+3) > summary { background: var(--primary); }
+
+.grammar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 14px;
+}
+.grammar-card {
+  background: var(--blue-soft);
+}
+.grammar-card h3,
+.info-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+.grammar-card p,
+.info-card p { margin: 0 0 14px; }
+.example {
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+.rule-label {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 9px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.exercise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.exercise-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.exercise-toolbar .restart { min-height: 40px; }
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.controls label {
+  display: grid;
+  gap: 7px;
+  color: var(--surface-text);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--surface-text);
+  font-size: .86rem;
+  font-weight: 800;
+}
+.prompt-label { margin-top: 24px; }
+.prompt {
+  min-height: 88px;
+  margin: 8px 0 22px;
+  color: var(--surface-text);
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.answer-row .btn { min-width: 110px; }
+.choices {
+  display: grid;
+  gap: 8px;
+}
+.next { margin-top: 12px; }
+.finish {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .finish { color: #FFFFFF; }
+.finish h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+.reviewnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0;
+}
+.reviewnav button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+.reviewnav button.active {
+  color: #192B5D;
+  background: var(--primary);
+}
+.reviewbox {
+  margin-bottom: 14px;
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+@media (max-width: 900px) {
+  .exercise-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .section-intro,
+  .controls,
+  .answer-row { grid-template-columns: 1fr; }
+  .exercise-toolbar .restart { width: 100%; }
+}
+
+
+.speech-examples {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.speech-example {
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.speech-example strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--primary-deep);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.source-note {
+  margin: 28px 0 0;
+  padding: 18px 22px;
+  color: var(--surface-subtle);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">TOPIK II Level 5 grammar</p>
+        <h1 id="page-title">Level 5 Grammar Through Translation</h1>
+        <p>Study 18 Level 5 grammar patterns with three Korean speech levels, nuance notes, typed translation, multiple-choice translation, immediate feedback, and answer review.</p>
+      </div>
+    </section>
+
+    <nav class="toc-card" id="toc" aria-labelledby="toc-title">
+      <span class="toc-label" id="toc-title">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <section class="section" id="bank" aria-labelledby="grammar-bank-title">
+      <div class="section-header">
+        <h2 id="grammar-bank-title">Grammar Bank</h2>
+      </div>
+      <div class="section-content">
+        <div class="grammar-grid" id="grammarGrid"></div>
+      </div>
+    </section>
+
+    <div id="sections"></div>
+    <p class="source-note">Content is based on the attached Expanded TOPIK II Level 5 Grammar and Vocabulary document. Examples retain its three speech levels and practical pronunciation-style romanization.</p>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" id="themeToggle" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+
+
+  <script>
+    const GRAMMAR_POINTS = [{"id":"g1","form":"-더라도","title":"Even If / Even Though","meaning":"Expresses that the following result or decision will not change even if the first condition happens.","formRule":"Verb/adjective stem + -더라도. Related noun forms include 이더라도/라도.","nuance":"This is stronger and more hypothetical than -아/어도 and is common in formal speech, essays, and determined statements.","examples":[{"speechLevel":"Casual intimate","korean":"비가 오더라도 경기는 계속돼.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae","english":"Even if it rains, the game will continue."},{"speechLevel":"Polite casual","korean":"비가 오더라도 경기는 계속돼요.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae-yo","english":"Even if it rains, the game will continue."},{"speechLevel":"Formal polite","korean":"비가 오더라도 경기는 계속됩니다.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doem-ni-da","english":"Even if it rains, the game will continue."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"비가 오더라도 경기는 계속돼.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae","english":"Even if it rains, the game will continue."},{"speechLevel":"Polite casual","korean":"비가 오더라도 경기는 계속돼요.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae-yo","english":"Even if it rains, the game will continue."},{"speechLevel":"Formal polite","korean":"비가 오더라도 경기는 계속됩니다.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doem-ni-da","english":"Even if it rains, the game will continue."}]},{"id":"g2","form":"-(으)ㄹ 뿐만 아니라","title":"Not Only... But Also","meaning":"Adds another related fact, usually in the same logical direction.","formRule":"Verb/adjective stem + -(으)ㄹ 뿐만 아니라. Noun + 일 뿐만 아니라.","nuance":"Both sides should usually be parallel and support the same argument. It is polished and useful in TOPIK writing.","examples":[{"speechLevel":"Casual intimate","korean":"이 책은 재미있을 뿐만 아니라 유익해.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae","english":"This book is not only interesting but also useful."},{"speechLevel":"Polite casual","korean":"이 책은 재미있을 뿐만 아니라 유익해요.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae-yo","english":"This book is not only interesting but also useful."},{"speechLevel":"Formal polite","korean":"이 책은 재미있을 뿐만 아니라 유익합니다.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kam-ni-da","english":"This book is not only interesting but also useful."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 책은 재미있을 뿐만 아니라 유익해.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae","english":"This book is not only interesting but also useful."},{"speechLevel":"Polite casual","korean":"이 책은 재미있을 뿐만 아니라 유익해요.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae-yo","english":"This book is not only interesting but also useful."},{"speechLevel":"Formal polite","korean":"이 책은 재미있을 뿐만 아니라 유익합니다.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kam-ni-da","english":"This book is not only interesting but also useful."}]},{"id":"g3","form":"-(으)ㄹ 리가 없다","title":"There Is No Way / Cannot Possibly","meaning":"Expresses strong certainty that something is impossible or extremely unlikely.","formRule":"Verb/adjective stem + -(으)ㄹ 리가 없다. Past: -았/었을 리가 없다. Noun: 일 리가 없다.","nuance":"It is stronger than -(으)ㄹ 것 같지 않다 and implies logical evidence, trust, or a strong assumption.","examples":[{"speechLevel":"Casual intimate","korean":"그 사람이 거짓말을 했을 리가 없어.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo","english":"There is no way that person lied."},{"speechLevel":"Polite casual","korean":"그 사람이 거짓말을 했을 리가 없어요.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo-yo","english":"There is no way that person lied."},{"speechLevel":"Formal polite","korean":"그 사람이 거짓말을 했을 리가 없습니다.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-seum-ni-da","english":"There is no way that person lied."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"그 사람이 거짓말을 했을 리가 없어.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo","english":"There is no way that person lied."},{"speechLevel":"Polite casual","korean":"그 사람이 거짓말을 했을 리가 없어요.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo-yo","english":"There is no way that person lied."},{"speechLevel":"Formal polite","korean":"그 사람이 거짓말을 했을 리가 없습니다.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-seum-ni-da","english":"There is no way that person lied."}]},{"id":"g4","form":"-(으)ㄴ/는 셈이다","title":"It Is Equivalent To / It Means That","meaning":"States that a situation is practically equivalent to another result, even if not literally exact.","formRule":"Action present → -는 셈이다. Adjective or completed action → -(으)ㄴ 셈이다. Noun → 인 셈이다.","nuance":"Use it to interpret the practical meaning of numbers, calculations, social judgments, or conclusions: in effect, basically, or you could say that.","examples":[{"speechLevel":"Casual intimate","korean":"이제 거의 끝난 셈이야.","romanization":"i-je geo-ui kkeut-nan se-mi-ya","english":"Now it is basically finished."},{"speechLevel":"Polite casual","korean":"이제 거의 끝난 셈이에요.","romanization":"i-je geo-ui kkeut-nan se-mi-e-yo","english":"Now it is basically finished."},{"speechLevel":"Formal polite","korean":"이제 거의 끝난 셈입니다.","romanization":"i-je geo-ui kkeut-nan se-mim-ni-da","english":"Now it is basically finished."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이제 거의 끝난 셈이야.","romanization":"i-je geo-ui kkeut-nan se-mi-ya","english":"Now it is basically finished."},{"speechLevel":"Polite casual","korean":"이제 거의 끝난 셈이에요.","romanization":"i-je geo-ui kkeut-nan se-mi-e-yo","english":"Now it is basically finished."},{"speechLevel":"Formal polite","korean":"이제 거의 끝난 셈입니다.","romanization":"i-je geo-ui kkeut-nan se-mim-ni-da","english":"Now it is basically finished."}]},{"id":"g5","form":"-(으)ㄹ 정도로","title":"To The Extent That / So... That","meaning":"Shows the degree or intensity of a situation by giving a result or comparison.","formRule":"Verb/adjective stem + -(으)ㄹ 정도로. Noun + 정도로.","nuance":"It is common with emotional and physical intensity and sounds more vivid than using 너무 or 매우 alone.","examples":[{"speechLevel":"Casual intimate","korean":"눈물이 날 정도로 감동적이었어.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo","english":"It was so moving that I almost cried."},{"speechLevel":"Polite casual","korean":"눈물이 날 정도로 감동적이었어요.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo-yo","english":"It was so moving that I almost cried."},{"speechLevel":"Formal polite","korean":"눈물이 날 정도로 감동적이었습니다.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eot-seum-ni-da","english":"It was so moving that I almost cried."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"눈물이 날 정도로 감동적이었어.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo","english":"It was so moving that I almost cried."},{"speechLevel":"Polite casual","korean":"눈물이 날 정도로 감동적이었어요.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo-yo","english":"It was so moving that I almost cried."},{"speechLevel":"Formal polite","korean":"눈물이 날 정도로 감동적이었습니다.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eot-seum-ni-da","english":"It was so moving that I almost cried."}]},{"id":"g6","form":"-(으)ㄴ/는 반면(에)","title":"Whereas / On The Other Hand","meaning":"Compares two opposite or contrasting facts.","formRule":"Action present → -는 반면(에). Adjective or completed action → -(으)ㄴ 반면(에). Noun → 인 반면(에).","nuance":"This structured contrast is common in essays and explanations and is more formal than -지만.","examples":[{"speechLevel":"Casual intimate","korean":"이 도시는 편리한 반면 물가가 비싸.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Polite casual","korean":"이 도시는 편리한 반면 물가가 비싸요.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa-yo","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Formal polite","korean":"이 도시는 편리한 반면 물가가 비쌉니다.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssam-ni-da","english":"This city is convenient, whereas prices are high."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 도시는 편리한 반면 물가가 비싸.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Polite casual","korean":"이 도시는 편리한 반면 물가가 비싸요.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa-yo","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Formal polite","korean":"이 도시는 편리한 반면 물가가 비쌉니다.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssam-ni-da","english":"This city is convenient, whereas prices are high."}]},{"id":"g7","form":"-(으)ㄴ 탓에","title":"Because Of / Due To A Negative Cause","meaning":"Gives a cause for an undesirable result.","formRule":"Completed action or adjective + -(으)ㄴ 탓에. Noun + 탓에. Ongoing action can use -는 탓에.","nuance":"The expression carries blame or regret and is frequent in explanations of failure, delay, illness, and accidents.","examples":[{"speechLevel":"Casual intimate","korean":"비가 온 탓에 길이 막혔어.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo","english":"Because it rained, the road was blocked."},{"speechLevel":"Polite casual","korean":"비가 온 탓에 길이 막혔어요.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo-yo","english":"Because it rained, the road was blocked."},{"speechLevel":"Formal polite","korean":"비가 온 탓에 길이 막혔습니다.","romanization":"bi-ga on ta-se gi-ri ma-kyeot-seum-ni-da","english":"Because it rained, the road was blocked."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"비가 온 탓에 길이 막혔어.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo","english":"Because it rained, the road was blocked."},{"speechLevel":"Polite casual","korean":"비가 온 탓에 길이 막혔어요.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo-yo","english":"Because it rained, the road was blocked."},{"speechLevel":"Formal polite","korean":"비가 온 탓에 길이 막혔습니다.","romanization":"bi-ga on ta-se gi-ri ma-kyeot-seum-ni-da","english":"Because it rained, the road was blocked."}]},{"id":"g8","form":"-(으)ㄴ 덕분에","title":"Thanks To / Due To A Positive Cause","meaning":"Gives a beneficial cause for a positive result.","formRule":"Completed action or adjective + -(으)ㄴ 덕분에. Noun + 덕분에. Honorific forms such as 도와주신 덕분에 are common.","nuance":"The pattern expresses gratitude or a positive cause and is generally not used for bad results except sarcastically.","examples":[{"speechLevel":"Casual intimate","korean":"친구가 도와준 덕분에 끝냈어.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Polite casual","korean":"친구가 도와준 덕분에 끝냈어요.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo-yo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Formal polite","korean":"친구가 도와준 덕분에 끝냈습니다.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-naet-seum-ni-da","english":"Thanks to my friend helping me, I finished it."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"친구가 도와준 덕분에 끝냈어.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Polite casual","korean":"친구가 도와준 덕분에 끝냈어요.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo-yo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Formal polite","korean":"친구가 도와준 덕분에 끝냈습니다.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-naet-seum-ni-da","english":"Thanks to my friend helping me, I finished it."}]},{"id":"g9","form":"-다시피","title":"As You Know / As You Can See","meaning":"Refers to something the listener already knows, sees, hears, or can infer.","formRule":"Common forms include 알다시피, 아시다시피, 보다시피, 보시다시피, and 들었다시피.","nuance":"It often opens formal explanations. The separate pattern -다시피 하다 can mean almost, but this lesson focuses on the 'as' meaning.","examples":[{"speechLevel":"Casual intimate","korean":"너도 알다시피 그 일은 쉽지 않아.","romanization":"neo-do al-da-shi-pi geu i-reun swip-ji a-na","english":"As you know, that work is not easy."},{"speechLevel":"Polite casual","korean":"아시다시피 그 일은 쉽지 않아요.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji a-na-yo","english":"As you know, that work is not easy."},{"speechLevel":"Formal polite","korean":"아시다시피 그 일은 쉽지 않습니다.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji an-seum-ni-da","english":"As you know, that work is not easy."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"너도 알다시피 그 일은 쉽지 않아.","romanization":"neo-do al-da-shi-pi geu i-reun swip-ji a-na","english":"As you know, that work is not easy."},{"speechLevel":"Polite casual","korean":"아시다시피 그 일은 쉽지 않아요.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji a-na-yo","english":"As you know, that work is not easy."},{"speechLevel":"Formal polite","korean":"아시다시피 그 일은 쉽지 않습니다.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji an-seum-ni-da","english":"As you know, that work is not easy."}]},{"id":"g10","form":"-(으)ㄹ 따름이다","title":"Nothing But / Simply / Can Only","meaning":"States that there is nothing else to do, say, or feel except the stated action or attitude.","formRule":"Verb stem + -(으)ㄹ 따름이다. It often appears with 그저, 단지, or 오직.","nuance":"This is formal, literary, and humble, often expressing modesty, resignation, or limited options.","examples":[{"speechLevel":"Casual intimate","korean":"나는 최선을 다할 따름이야.","romanization":"na-neun choe-seo-neul da-hal tta-reu-mi-ya","english":"I can only do my best."},{"speechLevel":"Polite casual","korean":"저는 최선을 다할 따름이에요.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mi-e-yo","english":"I can only do my best."},{"speechLevel":"Formal polite","korean":"저는 최선을 다할 따름입니다.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mim-ni-da","english":"I can only do my best."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"나는 최선을 다할 따름이야.","romanization":"na-neun choe-seo-neul da-hal tta-reu-mi-ya","english":"I can only do my best."},{"speechLevel":"Polite casual","korean":"저는 최선을 다할 따름이에요.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mi-e-yo","english":"I can only do my best."},{"speechLevel":"Formal polite","korean":"저는 최선을 다할 따름입니다.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mim-ni-da","english":"I can only do my best."}]},{"id":"g11","form":"-(으)ㄹ 법하다","title":"Likely / Understandable / Reasonable","meaning":"Says something is likely, expected, or understandable given the situation.","formRule":"Verb/adjective stem + -(으)ㄹ 법하다.","nuance":"It presents a reason-based judgment that an action or reaction would be natural, softer than certainty and more reasoned than 것 같다.","examples":[{"speechLevel":"Casual intimate","korean":"이 정도면 화낼 법해.","romanization":"i jeong-do-myeon hwa-nael beo-pae","english":"At this point, it is understandable to get angry."},{"speechLevel":"Polite casual","korean":"이 정도면 화낼 법해요.","romanization":"i jeong-do-myeon hwa-nael beo-pae-yo","english":"At this point, it is understandable to get angry."},{"speechLevel":"Formal polite","korean":"이 정도면 화낼 법합니다.","romanization":"i jeong-do-myeon hwa-nael beo-pam-ni-da","english":"At this point, it is understandable to get angry."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 정도면 화낼 법해.","romanization":"i jeong-do-myeon hwa-nael beo-pae","english":"At this point, it is understandable to get angry."},{"speechLevel":"Polite casual","korean":"이 정도면 화낼 법해요.","romanization":"i jeong-do-myeon hwa-nael beo-pae-yo","english":"At this point, it is understandable to get angry."},{"speechLevel":"Formal polite","korean":"이 정도면 화낼 법합니다.","romanization":"i jeong-do-myeon hwa-nael beo-pam-ni-da","english":"At this point, it is understandable to get angry."}]},{"id":"g12","form":"-기에","title":"Because / Since","meaning":"Gives a reason or basis for the following judgment, action, or decision.","formRule":"Verb/adjective stem + -기에. Noun + 이기에.","nuance":"This is more written, formal, and explanatory than -아서/어서 and is useful in essays, reports, public speaking, and careful explanations.","examples":[{"speechLevel":"Casual intimate","korean":"시간이 없기에 먼저 갈게.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge","english":"Since I do not have time, I will go first."},{"speechLevel":"Polite casual","korean":"시간이 없기에 먼저 갈게요.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge-yo","english":"Since I do not have time, I will go first."},{"speechLevel":"Formal polite","korean":"시간이 없기에 먼저 가겠습니다.","romanization":"shi-ga-ni eop-gi-e meon-jeo ga-get-seum-ni-da","english":"Since I do not have time, I will go first."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"시간이 없기에 먼저 갈게.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge","english":"Since I do not have time, I will go first."},{"speechLevel":"Polite casual","korean":"시간이 없기에 먼저 갈게요.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge-yo","english":"Since I do not have time, I will go first."},{"speechLevel":"Formal polite","korean":"시간이 없기에 먼저 가겠습니다.","romanization":"shi-ga-ni eop-gi-e meon-jeo ga-get-seum-ni-da","english":"Since I do not have time, I will go first."}]},{"id":"g13","form":"-(으)ㄹ 만하다","title":"Worth Doing / Bearable / Acceptable","meaning":"Says that something is worth doing, good enough, or acceptable enough.","formRule":"Verb stem + -(으)ㄹ 만하다. Modifier form: -(으)ㄹ 만한 + noun.","nuance":"Depending on context, it can mean worth doing, acceptable or bearable, or understandable, making it useful in reviews and evaluations.","examples":[{"speechLevel":"Casual intimate","korean":"이 영화는 볼 만해.","romanization":"i yeong-hwa-neun bol ma-nae","english":"This movie is worth watching."},{"speechLevel":"Polite casual","korean":"이 영화는 볼 만해요.","romanization":"i yeong-hwa-neun bol ma-nae-yo","english":"This movie is worth watching."},{"speechLevel":"Formal polite","korean":"이 영화는 볼 만합니다.","romanization":"i yeong-hwa-neun bol ma-nam-ni-da","english":"This movie is worth watching."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 영화는 볼 만해.","romanization":"i yeong-hwa-neun bol ma-nae","english":"This movie is worth watching."},{"speechLevel":"Polite casual","korean":"이 영화는 볼 만해요.","romanization":"i yeong-hwa-neun bol ma-nae-yo","english":"This movie is worth watching."},{"speechLevel":"Formal polite","korean":"이 영화는 볼 만합니다.","romanization":"i yeong-hwa-neun bol ma-nam-ni-da","english":"This movie is worth watching."}]},{"id":"g14","form":"-(으)ㄴ/는 척하다","title":"Pretend To / Act As If","meaning":"Says that someone intentionally pretends to do something, be something, or not know something.","formRule":"Action present → -는 척하다. Adjective or completed action → -(으)ㄴ 척하다. Noun → 인 척하다.","nuance":"It normally implies deliberate false behavior and can sound critical when applied to real people.","examples":[{"speechLevel":"Casual intimate","korean":"그는 모르는 척했어.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo","english":"He pretended not to know."},{"speechLevel":"Polite casual","korean":"그는 모르는 척했어요.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo-yo","english":"He pretended not to know."},{"speechLevel":"Formal polite","korean":"그는 모르는 척했습니다.","romanization":"geu-neun mo-reu-neun cheo-kaet-seum-ni-da","english":"He pretended not to know."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"그는 모르는 척했어.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo","english":"He pretended not to know."},{"speechLevel":"Polite casual","korean":"그는 모르는 척했어요.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo-yo","english":"He pretended not to know."},{"speechLevel":"Formal polite","korean":"그는 모르는 척했습니다.","romanization":"geu-neun mo-reu-neun cheo-kaet-seum-ni-da","english":"He pretended not to know."}]},{"id":"g15","form":"-(으)ㄹ 뻔하다","title":"Almost / Nearly","meaning":"Shows that something almost happened but did not actually happen.","formRule":"Verb stem + -(으)ㄹ 뻔하다, usually in the past as -(으)ㄹ 뻔했어요 or -(으)ㄹ 뻔했습니다.","nuance":"It is common for near accidents, mistakes, and narrowly avoided situations and often conveys relief or surprise.","examples":[{"speechLevel":"Casual intimate","korean":"계단에서 넘어질 뻔했어.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo","english":"I almost fell on the stairs."},{"speechLevel":"Polite casual","korean":"계단에서 넘어질 뻔했어요.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo-yo","english":"I almost fell on the stairs."},{"speechLevel":"Formal polite","korean":"계단에서 넘어질 뻔했습니다.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-haet-seum-ni-da","english":"I almost fell on the stairs."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"계단에서 넘어질 뻔했어.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo","english":"I almost fell on the stairs."},{"speechLevel":"Polite casual","korean":"계단에서 넘어질 뻔했어요.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo-yo","english":"I almost fell on the stairs."},{"speechLevel":"Formal polite","korean":"계단에서 넘어질 뻔했습니다.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-haet-seum-ni-da","english":"I almost fell on the stairs."}]},{"id":"g16","form":"-(으)ㄹ수록","title":"The More..., The More...","meaning":"Shows that as one action, quality, or situation increases, another also changes.","formRule":"Verb/adjective stem + -(으)ㄹ수록. It can appear as -(으)면 -(으)ㄹ수록 for emphasis.","nuance":"This pattern is especially useful for trends, comparisons, and abstract arguments in TOPIK writing.","examples":[{"speechLevel":"Casual intimate","korean":"한국어는 배울수록 재미있어.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Polite casual","korean":"한국어는 배울수록 재미있어요.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo-yo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Formal polite","korean":"한국어는 배울수록 재미있습니다.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-it-seum-ni-da","english":"The more I learn Korean, the more interesting it is."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"한국어는 배울수록 재미있어.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Polite casual","korean":"한국어는 배울수록 재미있어요.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo-yo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Formal polite","korean":"한국어는 배울수록 재미있습니다.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-it-seum-ni-da","english":"The more I learn Korean, the more interesting it is."}]},{"id":"g17","form":"-(으)ㄴ 나머지","title":"So... That / As A Result Of Excess","meaning":"Shows that an excessive emotion or condition caused a result, often unexpectedly or negatively.","formRule":"Adjective or completed-action stem + -(으)ㄴ 나머지.","nuance":"It often appears with strong emotions or conditions and produces an uncontrolled, impulsive, or undesirable result.","examples":[{"speechLevel":"Casual intimate","korean":"너무 놀란 나머지 말을 못 했어.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo","english":"I was so surprised that I could not speak."},{"speechLevel":"Polite casual","korean":"너무 놀란 나머지 말을 못 했어요.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo-yo","english":"I was so surprised that I could not speak."},{"speechLevel":"Formal polite","korean":"너무 놀란 나머지 말을 못 했습니다.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-taet-seum-ni-da","english":"I was so surprised that I could not speak."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"너무 놀란 나머지 말을 못 했어.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo","english":"I was so surprised that I could not speak."},{"speechLevel":"Polite casual","korean":"너무 놀란 나머지 말을 못 했어요.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo-yo","english":"I was so surprised that I could not speak."},{"speechLevel":"Formal polite","korean":"너무 놀란 나머지 말을 못 했습니다.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-taet-seum-ni-da","english":"I was so surprised that I could not speak."}]},{"id":"g18","form":"-(으)ㄹ지라도","title":"Even If / Even Though — Formal","meaning":"Expresses strong concession: even if the first condition happens, the following decision or truth remains.","formRule":"Verb/adjective stem + -(으)ㄹ지라도.","nuance":"This resembles -더라도 but is more formal, literary, and emphatic, fitting essays, speeches, mottos, and formal encouragement.","examples":[{"speechLevel":"Casual intimate","korean":"실패할지라도 포기하지 않을 거야.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ya","english":"Even if I fail, I will not give up."},{"speechLevel":"Polite casual","korean":"실패할지라도 포기하지 않을 거예요.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ye-yo","english":"Even if I fail, I will not give up."},{"speechLevel":"Formal polite","korean":"실패할지라도 포기하지 않겠습니다.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji an-ke-sseum-ni-da","english":"Even if I fail, I will not give up."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"실패할지라도 포기하지 않을 거야.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ya","english":"Even if I fail, I will not give up."},{"speechLevel":"Polite casual","korean":"실패할지라도 포기하지 않을 거예요.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ye-yo","english":"Even if I fail, I will not give up."},{"speechLevel":"Formal polite","korean":"실패할지라도 포기하지 않겠습니다.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji an-ke-sseum-ni-da","english":"Even if I fail, I will not give up."}]}];
+    const exerciseStates = {};
+    const grammarGrid = document.getElementById("grammarGrid");
+    const tocGrid = document.getElementById("tocGrid");
+    const sections = document.getElementById("sections");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+      })[char]);
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pointById(id) {
+      return GRAMMAR_POINTS.find(point => point.id === id);
+    }
+
+    function modeLabel(mode) {
+      return mode === "english" ? "English" : mode === "romanization" ? "Romanization" : "Korean";
+    }
+
+    function normalizeAnswer(value, mode) {
+      let text = String(value ?? "").trim().toLowerCase().replace(/[’']/g, "");
+      if (mode === "korean") return text.replace(/\s+/g, "").replace(/[.?!]/g, "");
+      if (mode === "romanization") {
+        return text.replace(/[^a-z\-\s]/g, "").replace(/-+/g, "-").replace(/\s+/g, " ").trim();
+      }
+      return text.replace(/&/g, "and").replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function promptText(question, mode) {
+      if (mode === "english") return question.english;
+      return question[mode];
+    }
+
+    function feedbackMarkup(question) {
+      return `<b>${escapeHtml(question.english)}</b><br><span class="roman">${escapeHtml(question.romanization)}</span><br>${escapeHtml(question.korean)}<br><span class="small">${escapeHtml(question.speechLevel)}</span>`;
+    }
+
+    function buildQuestionList(point) {
+      const source = point.questions.map((question, index) => ({...question, sourceId: `${point.id}-${index}`}));
+      const result = [];
+      while (result.length < 10) {
+        const candidates = source.filter(item => !result.length || item.sourceId !== result[result.length - 1].sourceId);
+        result.push(candidates[Math.floor(Math.random() * candidates.length)]);
+      }
+      return result;
+    }
+
+    function buildChoices(pointId, correctQuestion, answerMode) {
+      const correct = correctQuestion[answerMode];
+      const seen = new Set([normalizeAnswer(correct, answerMode)]);
+      const distractors = [];
+      const allQuestions = shuffle(GRAMMAR_POINTS.flatMap(point => point.questions.map(q => ({...q, pointId: point.id}))));
+      for (const candidate of allQuestions) {
+        const value = candidate[answerMode];
+        const normalized = normalizeAnswer(value, answerMode);
+        if (!normalized || seen.has(normalized)) continue;
+        seen.add(normalized);
+        distractors.push(value);
+        if (distractors.length === 3) break;
+      }
+      return shuffle([{value: correct, correct: true}, ...distractors.map(value => ({value, correct: false}))]);
+    }
+
+    function examplesMarkup(point) {
+      return point.examples.map(example => `
+        <div class="speech-example">
+          <strong>${escapeHtml(example.speechLevel)}</strong>
+          <b>${escapeHtml(example.english)}</b><br>
+          <span class="roman">${escapeHtml(example.romanization)}</span><br>
+          ${escapeHtml(example.korean)}
+        </div>`).join("");
+    }
+
+    function renderApp() {
+      grammarGrid.innerHTML = GRAMMAR_POINTS.map(point => `
+        <article class="grammar-card">
+          <h3>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</h3>
+          <p><b>Meaning:</b> ${escapeHtml(point.meaning)}</p>
+          <p><b>Form:</b> ${escapeHtml(point.formRule)}</p>
+          <div class="example"><b>${escapeHtml(point.examples[1].english)}</b><br><span class="roman">${escapeHtml(point.examples[1].romanization)}</span><br>${escapeHtml(point.examples[1].korean)}</div>
+        </article>`).join("");
+
+      tocGrid.innerHTML = `<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>18 points</small></a>` +
+        GRAMMAR_POINTS.map(point => `<a class="toc-link" href="#${point.id}"><span>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</span><small>2 × 10</small></a>`).join("");
+
+      sections.innerHTML = GRAMMAR_POINTS.map((point, index) => `
+        <details class="section" id="${point.id}" ${index === 0 ? "open" : ""}>
+          <summary><span>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</span></summary>
+          <div class="section-body">
+            <div class="section-intro">
+              <article class="info-card">
+                <span class="rule-label">Rule</span>
+                <h3>Meaning, form, and nuance</h3>
+                <p><b>Meaning:</b> ${escapeHtml(point.meaning)}</p>
+                <p><b>Form:</b> ${escapeHtml(point.formRule)}</p>
+                <p><b>Nuance:</b> ${escapeHtml(point.nuance)}</p>
+              </article>
+              <article class="info-card">
+                <span class="rule-label">Speech levels</span>
+                <h3>Model examples</h3>
+                <div class="speech-examples">${examplesMarkup(point)}</div>
+              </article>
+            </div>
+            <div class="exercise-grid">
+              ${exerciseTemplate(point.id, "typed", "Typed translation")}
+              ${exerciseTemplate(point.id, "mc", "Multiple-choice translation")}
+            </div>
+          </div>
+        </details>`).join("");
+
+      GRAMMAR_POINTS.forEach(point => ["typed", "mc"].forEach(type => initializeExercise(point.id, type)));
+      document.querySelectorAll("details.section").forEach(details => {
+        const summary = details.querySelector(":scope > summary");
+        const sync = () => summary?.setAttribute("aria-expanded", String(details.open));
+        sync();
+        details.addEventListener("toggle", sync);
+      });
+    }
+
+    function exerciseTemplate(id, type, title) {
+      return `<article class="exercise" id="${id}-${type}">
+        <div class="exercise-head">
+          <div class="exercise-head-copy">
+            <span class="exercise-kicker">${type === "typed" ? "Type" : "Select"}</span>
+            <h3>${title}</h3>
+            <p>Ten randomized prompts drawn from the document’s examples and answer key.</p>
+          </div>
+          <div class="score" aria-live="polite"></div>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-toolbar"><button class="btn secondary restart" type="button">Restart</button></div>
+          <div class="controls">
+            <label><span>Question language</span><select class="question-mode"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label>
+            <label><span>Answer language</span><select class="answer-mode"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label>
+          </div>
+          <div class="status"><span class="count"></span></div>
+          <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="100"><div></div></div>
+          <div class="prompt-label"></div>
+          <div class="prompt"></div>
+          <div class="zone"></div>
+          <div class="feedback" aria-live="polite"></div>
+          <button class="btn warning next hidden" type="button">Next</button>
+          <div class="finish">
+            <h4>Exercise complete</h4>
+            <p class="sum"></p>
+            <div class="reviewnav" aria-label="Answer review navigation"></div>
+            <div class="reviewbox"></div>
+            <button class="btn secondary restart" type="button">Restart exercise</button>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function initializeExercise(id, type) {
+      const element = document.getElementById(`${id}-${type}`);
+      const questionMode = element.querySelector(".question-mode");
+      const answerMode = element.querySelector(".answer-mode");
+      const key = `${id}-${type}`;
+      exerciseStates[key] = {id, type, index: 0, score: 0, questions: [], results: [], questionMode: "english", answerMode: "korean", answered: false};
+
+      const reset = () => {
+        const state = exerciseStates[key];
+        state.index = 0;
+        state.score = 0;
+        state.results = [];
+        state.questionMode = questionMode.value;
+        state.answerMode = answerMode.value;
+        if (state.questionMode === state.answerMode) {
+          state.answerMode = state.questionMode === "english" ? "korean" : "english";
+          answerMode.value = state.answerMode;
+        }
+        state.questions = buildQuestionList(pointById(id));
+        element.querySelector(".finish").style.display = "none";
+        showQuestion(id, type);
+      };
+
+      questionMode.onchange = reset;
+      answerMode.onchange = reset;
+      element.querySelectorAll(".restart").forEach(button => button.onclick = reset);
+      element.querySelector(".next").onclick = () => {
+        const state = exerciseStates[key];
+        if (state.index < 9) {
+          state.index += 1;
+          showQuestion(id, type);
+        } else {
+          finishExercise(id, type);
+        }
+      };
+      reset();
+    }
+
+    function showQuestion(id, type) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const question = state.questions[state.index];
+      state.answered = false;
+      element.querySelector(".count").textContent = `Question ${state.index + 1} / 10 · ${question.speechLevel}`;
+      element.querySelector(".score").textContent = `Score: ${state.score}`;
+      const percent = state.index * 10;
+      element.querySelector(".progress div").style.width = `${percent}%`;
+      element.querySelector(".progress").setAttribute("aria-valuenow", String(percent));
+      element.querySelector(".prompt-label").textContent = `${modeLabel(state.questionMode)} · ${question.speechLevel}`;
+      element.querySelector(".prompt").textContent = promptText(question, state.questionMode);
+      element.querySelector(".feedback").className = "feedback";
+      element.querySelector(".feedback").innerHTML = "";
+      element.querySelector(".next").classList.add("hidden");
+      const zone = element.querySelector(".zone");
+
+      if (type === "typed") {
+        zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" placeholder="${state.answerMode === "romanization" ? "Type with syllable dashes" : "Type your answer"}"><button class="btn primary" type="button">Check</button></div>`;
+        const submit = () => submitAnswer(id, type, zone.querySelector("input").value);
+        zone.querySelector("button").onclick = submit;
+        zone.querySelector("input").onkeydown = event => { if (event.key === "Enter") submit(); };
+        // No automatic focus: Safari should open the page at the top.
+      } else {
+        const choices = buildChoices(id, question, state.answerMode);
+        zone.innerHTML = `<div class="choices">${choices.map((choice, index) => `<button class="choice" type="button" data-index="${index}">${escapeHtml(choice.value)}</button>`).join("")}</div>`;
+        zone.querySelectorAll(".choice").forEach((button, index) => {
+          button.onclick = () => {
+            const selected = choices[index];
+            zone.querySelectorAll(".choice").forEach((otherButton, otherIndex) => {
+              otherButton.disabled = true;
+              if (choices[otherIndex].correct) otherButton.classList.add("correct");
+            });
+            if (!selected.correct) button.classList.add("wrong");
+            completeQuestion(id, type, selected.value, selected.correct);
+          };
+        });
+      }
+    }
+
+    function submitAnswer(id, type, userAnswer) {
+      const state = exerciseStates[`${id}-${type}`];
+      const question = state.questions[state.index];
+      const correct = normalizeAnswer(userAnswer, state.answerMode) === normalizeAnswer(question[state.answerMode], state.answerMode);
+      completeQuestion(id, type, userAnswer, correct);
+    }
+
+    function completeQuestion(id, type, userAnswer, correct) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const question = state.questions[state.index];
+      if (state.answered) return;
+      state.answered = true;
+      if (correct) state.score += 1;
+      state.results.push({question, userAnswer, correct, questionMode: state.questionMode, answerMode: state.answerMode});
+      element.querySelector(".score").textContent = `Score: ${state.score}`;
+      const feedback = element.querySelector(".feedback");
+      feedback.className = `feedback ${correct ? "good" : "bad"}`;
+      feedback.innerHTML = `${correct ? "Correct." : "Incorrect."}<br>${feedbackMarkup(question)}`;
+      const next = element.querySelector(".next");
+      next.textContent = state.index === 9 ? "Finish" : "Next";
+      next.classList.remove("hidden");
+    }
+
+    function finishExercise(id, type) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const finish = element.querySelector(".finish");
+      element.querySelector(".progress div").style.width = "100%";
+      element.querySelector(".progress").setAttribute("aria-valuenow", "100");
+      finish.style.display = "block";
+      finish.querySelector(".sum").innerHTML = `Final score: <b>${state.score} / 10</b> (${state.score * 10}%)`;
+      const navigation = finish.querySelector(".reviewnav");
+      navigation.innerHTML = state.results.map((result, index) => `<button type="button" data-index="${index}">${index + 1}</button>`).join("");
+      navigation.querySelectorAll("button").forEach(button => button.onclick = () => showReviewQuestion(id, type, Number(button.dataset.index)));
+      showReviewQuestion(id, type, 0);
+    }
+
+    function showReviewQuestion(id, type, index) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const result = state.results[index];
+      element.querySelectorAll(".reviewnav button").forEach((button, buttonIndex) => button.classList.toggle("active", buttonIndex === index));
+      element.querySelector(".reviewbox").innerHTML = `<p><b>Question ${index + 1}</b> ${result.correct ? "✅" : "❌"}</p><p><b>Prompt:</b> ${escapeHtml(promptText(result.question, result.questionMode))}</p><p><b>Your answer:</b> ${escapeHtml(result.userAnswer || "(blank)")}</p><p>${feedbackMarkup(result.question)}</p>`;
+    }
+
+    renderApp();
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => {
+          applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+        });
+      });
+
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      window.addEventListener("pageshow", () => {
+        if (!location.hash) requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, 0)));
+      });
+    })();
+  </script>
+
+</body>
+</html>
