@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOPIK II Level 3 Grammar Translation Quiz</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero {
+  color: var(--hero-heading);
+  background: var(--background);
+}
+.hero-inner {
+  padding: clamp(48px, 7vw, 82px);
+}
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 5.7rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.02em;
+}
+.hero p {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: var(--hero-text);
+  font-size: 1.05rem;
+}
+.toc-card {
+  padding: 18px 22px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+.toc-link small,
+.toc-link span:last-child:not(:first-child) {
+  font-size: .72rem;
+  opacity: .78;
+}
+.section,
+.block,
+.quiz-section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+}
+.section-header h2,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.section > summary::-webkit-details-marker,
+details.block > summary::-webkit-details-marker,
+details.quiz-section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after,
+details.block > summary::after,
+details.quiz-section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after,
+details.block:not([open]) > summary::after,
+details.quiz-section:not([open]) > summary::after { content: "Expand"; }
+.section-content,
+.section-body,
+.block-inner,
+.quiz-body {
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.rule-card,
+.info-card,
+.guide-card,
+.note-card,
+.grammar-card,
+.control-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .rule-card,
+html[data-theme="light"] .info-card,
+html[data-theme="light"] .guide-card,
+html[data-theme="light"] .note-card,
+html[data-theme="light"] .grammar-card,
+html[data-theme="light"] .control-card {
+  color: #F5F5F5;
+}
+.exercise,
+.quiz-card {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+.exercise-kicker,
+.prompt-label,
+.control-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+}
+.exercise-body {
+  padding: clamp(24px, 4vw, 38px);
+}
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+  border-radius: 0;
+}
+.progress > div,
+.progress-fill {
+  height: 100%;
+  background: var(--secondary);
+}
+input,
+select,
+textarea,
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus,
+select:focus,
+textarea:focus,
+.answer-input:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+input:disabled,
+select:disabled,
+textarea:disabled,
+.answer-input:disabled {
+  color: var(--subtle);
+  background: var(--muted-strong);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.btn,
+.primary-btn,
+.secondary-btn,
+.restart-top-btn,
+.mode-btn,
+.choice,
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled),
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled),
+.mode-btn:hover:not(:disabled),
+.choice:hover:not(:disabled),
+.blur-toggle:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+.primary-btn:hover:not(:disabled),
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.secondary-btn,
+.btn.positive {
+  color: #192B5D;
+  background: var(--secondary);
+}
+.btn.warning { color: #192B5D; background: var(--accent); }
+.btn.secondary,
+.restart-top-btn,
+.mode-btn,
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.mode-btn.active,
+.blur-toggle[aria-pressed="true"] {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.choice:hover:not(:disabled) {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice.correct {
+  color: #FFFFFF;
+  background: var(--secondary);
+}
+.choice.wrong {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+}
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+.utility-button.top { background: var(--accent); }
+
+.hidden { display: none !important; }
+
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner { min-height: 60px; }
+  .header-inner,
+  .page-main { width: 100%; }
+  .header-inner { padding: 0 14px; }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner { padding: 48px 22px; }
+  .hero h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+  .toc-card {
+    padding: 18px 22px;
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .section-header,
+  details.section > summary,
+  details.block > summary,
+  details.quiz-section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after,
+  details.block > summary::after,
+  details.quiz-section > summary::after {
+    width: 100%;
+  }
+  .section-content,
+  .section-body,
+  .block-inner,
+  .quiz-body,
+  .exercise-body { padding: 22px; }
+  .btn,
+  .primary-btn,
+  .secondary-btn,
+  .restart-top-btn,
+  .mode-btn,
+  .choice,
+  .blur-toggle { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+#bank .section-header {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+#sections > details:nth-child(3n+1) > summary { background: var(--secondary); }
+#sections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
+#sections > details:nth-child(3n+3) > summary { background: var(--primary); }
+
+.grammar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 14px;
+}
+.grammar-card {
+  background: var(--blue-soft);
+}
+.grammar-card h3,
+.info-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+.grammar-card p,
+.info-card p { margin: 0 0 14px; }
+.example {
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+.rule-label {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 9px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.exercise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.exercise-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.exercise-toolbar .restart { min-height: 40px; }
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.controls label {
+  display: grid;
+  gap: 7px;
+  color: var(--surface-text);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--surface-text);
+  font-size: .86rem;
+  font-weight: 800;
+}
+.prompt-label { margin-top: 24px; }
+.prompt {
+  min-height: 88px;
+  margin: 8px 0 22px;
+  color: var(--surface-text);
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.answer-row .btn { min-width: 110px; }
+.choices {
+  display: grid;
+  gap: 8px;
+}
+.next { margin-top: 12px; }
+.finish {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .finish { color: #FFFFFF; }
+.finish h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+.reviewnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0;
+}
+.reviewnav button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+.reviewnav button.active {
+  color: #192B5D;
+  background: var(--primary);
+}
+.reviewbox {
+  margin-bottom: 14px;
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+@media (max-width: 900px) {
+  .exercise-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .section-intro,
+  .controls,
+  .answer-row { grid-template-columns: 1fr; }
+  .exercise-toolbar .restart { width: 100%; }
+}
+
+
+.speech-examples {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.speech-example {
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.speech-example strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--primary-deep);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.source-note {
+  margin: 28px 0 0;
+  padding: 18px 22px;
+  color: var(--surface-subtle);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">TOPIK II Level 3 grammar</p>
+        <h1 id="page-title">Level 3 Grammar Through Translation</h1>
+        <p>Study 20 Level 3 grammar patterns with three Korean speech levels, nuance notes, typed translation, multiple-choice translation, immediate feedback, and answer review.</p>
+      </div>
+    </section>
+
+    <nav class="toc-card" id="toc" aria-labelledby="toc-title">
+      <span class="toc-label" id="toc-title">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <section class="section" id="bank" aria-labelledby="grammar-bank-title">
+      <div class="section-header">
+        <h2 id="grammar-bank-title">Grammar Bank</h2>
+      </div>
+      <div class="section-content">
+        <div class="grammar-grid" id="grammarGrid"></div>
+      </div>
+    </section>
+
+    <div id="sections"></div>
+    <p class="source-note">Content is based on the attached Expanded TOPIK II Level 3 Grammar and Vocabulary document. Examples retain its three speech levels and practical pronunciation-style romanization.</p>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" id="themeToggle" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+
+
+  <script>
+    const GRAMMAR_POINTS = [{"id":"g1","form":"-(으)면서","title":"While / Simultaneous Actions","meaning":"Shows that two actions happen at the same time, usually by the same subject.","formRule":"Verb stem + -(으)면서. Use -으면서 after a consonant and -면서 after a vowel. For 하다 verbs, use -하면서.","nuance":"Use this when actions overlap in time. If they happen one after another, use -고 or -아/어서 instead.","examples":[{"speechLevel":"Casual intimate","korean":"음악을 들으면서 공부해.","romanization":"eu-ma-geul deu-reu-myeon-seo gong-bu-hae","english":"I study while listening to music."},{"speechLevel":"Polite casual","korean":"음악을 들으면서 공부해요.","romanization":"eu-ma-geul deu-reu-myeon-seo gong-bu-hae-yo","english":"I study while listening to music."},{"speechLevel":"Formal polite","korean":"음악을 들으면서 공부합니다.","romanization":"eu-ma-geul deu-reu-myeon-seo gong-bu-ham-ni-da","english":"I study while listening to music."}],"practice":[{"speechLevel":"Practice","korean":"그는 커피를 마시면서 신문을 읽어요.","romanization":"geu-neun keo-pi-reul ma-shi-myeon-seo shin-mu-neul il-geo-yo","english":"He reads the newspaper while drinking coffee."}],"questions":[{"speechLevel":"Casual intimate","korean":"음악을 들으면서 공부해.","romanization":"eu-ma-geul deu-reu-myeon-seo gong-bu-hae","english":"I study while listening to music."},{"speechLevel":"Polite casual","korean":"음악을 들으면서 공부해요.","romanization":"eu-ma-geul deu-reu-myeon-seo gong-bu-hae-yo","english":"I study while listening to music."},{"speechLevel":"Formal polite","korean":"음악을 들으면서 공부합니다.","romanization":"eu-ma-geul deu-reu-myeon-seo gong-bu-ham-ni-da","english":"I study while listening to music."},{"speechLevel":"Practice","korean":"그는 커피를 마시면서 신문을 읽어요.","romanization":"geu-neun keo-pi-reul ma-shi-myeon-seo shin-mu-neul il-geo-yo","english":"He reads the newspaper while drinking coffee."}]},{"id":"g2","form":"-(으)려고 하다","title":"Intention / Plan","meaning":"Expresses intention, a plan, or something the speaker is about to do.","formRule":"Verb stem + -(으)려고 하다. Use -으려고 after a consonant and -려고 after a vowel.","nuance":"Use it with intentional action verbs, not descriptive adjectives. It shows the speaker already has a plan in mind.","examples":[{"speechLevel":"Casual intimate","korean":"한국에 유학을 가려고 해.","romanization":"han-gu-ge yu-ha-geul ga-ryeo-go hae","english":"I am planning to study abroad in Korea."},{"speechLevel":"Polite casual","korean":"한국에 유학을 가려고 해요.","romanization":"han-gu-ge yu-ha-geul ga-ryeo-go hae-yo","english":"I am planning to study abroad in Korea."},{"speechLevel":"Formal polite","korean":"한국에 유학을 가려고 합니다.","romanization":"han-gu-ge yu-ha-geul ga-ryeo-go ham-ni-da","english":"I am planning to study abroad in Korea."}],"practice":[{"speechLevel":"Practice","korean":"주말에 친구를 만나려고 해요.","romanization":"ju-ma-re chin-gu-reul man-na-ryeo-go hae-yo","english":"I am going to meet my friend this weekend."}],"questions":[{"speechLevel":"Casual intimate","korean":"한국에 유학을 가려고 해.","romanization":"han-gu-ge yu-ha-geul ga-ryeo-go hae","english":"I am planning to study abroad in Korea."},{"speechLevel":"Polite casual","korean":"한국에 유학을 가려고 해요.","romanization":"han-gu-ge yu-ha-geul ga-ryeo-go hae-yo","english":"I am planning to study abroad in Korea."},{"speechLevel":"Formal polite","korean":"한국에 유학을 가려고 합니다.","romanization":"han-gu-ge yu-ha-geul ga-ryeo-go ham-ni-da","english":"I am planning to study abroad in Korea."},{"speechLevel":"Practice","korean":"주말에 친구를 만나려고 해요.","romanization":"ju-ma-re chin-gu-reul man-na-ryeo-go hae-yo","english":"I am going to meet my friend this weekend."}]},{"id":"g3","form":"-(으)ㄴ 후에","title":"After Doing","meaning":"Means “after doing” and emphasizes that the first action is completed before the second begins.","formRule":"Action verb stem + -(으)ㄴ 후에. Use -은 후에 after a consonant and -ㄴ 후에 after a vowel. Noun + 후에 means “after noun.”","nuance":"This is more explicit than -고 for sequence and is useful when completion matters.","examples":[{"speechLevel":"Casual intimate","korean":"밥을 먹은 후에 커피를 마셨어.","romanization":"ba-beul meo-geun hu-e keo-pi-reul ma-syeo-sseo","english":"I drank coffee after eating."},{"speechLevel":"Polite casual","korean":"밥을 먹은 후에 커피를 마셨어요.","romanization":"ba-beul meo-geun hu-e keo-pi-reul ma-syeo-sseo-yo","english":"I drank coffee after eating."},{"speechLevel":"Formal polite","korean":"밥을 먹은 후에 커피를 마셨습니다.","romanization":"ba-beul meo-geun hu-e keo-pi-reul ma-syeot-sseum-ni-da","english":"I drank coffee after eating."}],"practice":[{"speechLevel":"Practice","korean":"숙제를 한 후에 텔레비전을 봤어요.","romanization":"suk-jje-reul han hu-e tel-le-bi-jeo-neul bwa-sseo-yo","english":"I watched television after doing my homework."},{"speechLevel":"Practice","korean":"수업 후에 공부했어요.","romanization":"su-eop hu-e gong-bu-hae-sseo-yo","english":"I studied after class."}],"questions":[{"speechLevel":"Casual intimate","korean":"밥을 먹은 후에 커피를 마셨어.","romanization":"ba-beul meo-geun hu-e keo-pi-reul ma-syeo-sseo","english":"I drank coffee after eating."},{"speechLevel":"Polite casual","korean":"밥을 먹은 후에 커피를 마셨어요.","romanization":"ba-beul meo-geun hu-e keo-pi-reul ma-syeo-sseo-yo","english":"I drank coffee after eating."},{"speechLevel":"Formal polite","korean":"밥을 먹은 후에 커피를 마셨습니다.","romanization":"ba-beul meo-geun hu-e keo-pi-reul ma-syeot-sseum-ni-da","english":"I drank coffee after eating."},{"speechLevel":"Practice","korean":"숙제를 한 후에 텔레비전을 봤어요.","romanization":"suk-jje-reul han hu-e tel-le-bi-jeo-neul bwa-sseo-yo","english":"I watched television after doing my homework."},{"speechLevel":"Practice","korean":"수업 후에 공부했어요.","romanization":"su-eop hu-e gong-bu-hae-sseo-yo","english":"I studied after class."}]},{"id":"g4","form":"-기 전에","title":"Before Doing","meaning":"Means “before doing” and places one action before another.","formRule":"Verb stem + -기 전에. Noun + 전에 means “before noun.”","nuance":"-기 makes the verb noun-like. This grammar works naturally in commands and advice.","examples":[{"speechLevel":"Casual intimate","korean":"자기 전에 이를 닦아.","romanization":"ja-gi jeo-ne i-reul da-kka","english":"I brush my teeth before going to bed."},{"speechLevel":"Polite casual","korean":"자기 전에 이를 닦아요.","romanization":"ja-gi jeo-ne i-reul da-kka-yo","english":"I brush my teeth before going to bed."},{"speechLevel":"Formal polite","korean":"자기 전에 이를 닦습니다.","romanization":"ja-gi jeo-ne i-reul dak-sseum-ni-da","english":"I brush my teeth before going to bed."}],"practice":[{"speechLevel":"Practice","korean":"시험 보기 전에 복습하세요.","romanization":"si-heom bo-gi jeo-ne bok-sseu-pa-se-yo","english":"Review before taking the exam."},{"speechLevel":"Practice","korean":"먹기 전에 손을 씻으세요.","romanization":"meok-kki jeo-ne so-neul ssi-seu-se-yo","english":"Wash your hands before eating."}],"questions":[{"speechLevel":"Casual intimate","korean":"자기 전에 이를 닦아.","romanization":"ja-gi jeo-ne i-reul da-kka","english":"I brush my teeth before going to bed."},{"speechLevel":"Polite casual","korean":"자기 전에 이를 닦아요.","romanization":"ja-gi jeo-ne i-reul da-kka-yo","english":"I brush my teeth before going to bed."},{"speechLevel":"Formal polite","korean":"자기 전에 이를 닦습니다.","romanization":"ja-gi jeo-ne i-reul dak-sseum-ni-da","english":"I brush my teeth before going to bed."},{"speechLevel":"Practice","korean":"시험 보기 전에 복습하세요.","romanization":"si-heom bo-gi jeo-ne bok-sseu-pa-se-yo","english":"Review before taking the exam."},{"speechLevel":"Practice","korean":"먹기 전에 손을 씻으세요.","romanization":"meok-kki jeo-ne so-neul ssi-seu-se-yo","english":"Wash your hands before eating."}]},{"id":"g5","form":"-(으)니까","title":"Because / Since","meaning":"Gives a reason or cause. It is common when the second clause is a command, suggestion, or invitation.","formRule":"Verb/adjective stem + -(으)니까. Use -으니까 after a consonant and -니까 after a vowel. Past: -았/었으니까.","nuance":"Compared with -아/어서, it can sound more subjective or explanatory and is safer before commands and suggestions.","examples":[{"speechLevel":"Casual intimate","korean":"비가 오니까 우산 가져가.","romanization":"bi-ga o-ni-kka u-sa-neul ga-jyeo-ga","english":"Because it is raining, take an umbrella."},{"speechLevel":"Polite casual","korean":"비가 오니까 우산을 가져가세요.","romanization":"bi-ga o-ni-kka u-sa-neul ga-jyeo-ga-se-yo","english":"Because it is raining, please take an umbrella."},{"speechLevel":"Formal polite","korean":"비가 오니까 우산을 가져가십시오.","romanization":"bi-ga o-ni-kka u-sa-neul ga-jyeo-ga-ship-ssi-o","english":"Because it is raining, please take an umbrella."}],"practice":[{"speechLevel":"Practice","korean":"피곤하니까 쉬세요.","romanization":"pi-gon-ha-ni-kka swi-se-yo","english":"Since you are tired, please rest."},{"speechLevel":"Practice","korean":"늦었으니까 빨리 갑시다.","romanization":"neu-jeo-sseu-ni-kka ppal-li gap-ssi-da","english":"Since we are late, let’s hurry."}],"questions":[{"speechLevel":"Casual intimate","korean":"비가 오니까 우산 가져가.","romanization":"bi-ga o-ni-kka u-sa-neul ga-jyeo-ga","english":"Because it is raining, take an umbrella."},{"speechLevel":"Polite casual","korean":"비가 오니까 우산을 가져가세요.","romanization":"bi-ga o-ni-kka u-sa-neul ga-jyeo-ga-se-yo","english":"Because it is raining, please take an umbrella."},{"speechLevel":"Formal polite","korean":"비가 오니까 우산을 가져가십시오.","romanization":"bi-ga o-ni-kka u-sa-neul ga-jyeo-ga-ship-ssi-o","english":"Because it is raining, please take an umbrella."},{"speechLevel":"Practice","korean":"피곤하니까 쉬세요.","romanization":"pi-gon-ha-ni-kka swi-se-yo","english":"Since you are tired, please rest."},{"speechLevel":"Practice","korean":"늦었으니까 빨리 갑시다.","romanization":"neu-jeo-sseu-ni-kka ppal-li gap-ssi-da","english":"Since we are late, let’s hurry."}]},{"id":"g6","form":"-아/어서","title":"Because / So / And Then","meaning":"Shows a reason or a natural sequence.","formRule":"Use -아서 after ㅏ/ㅗ, -어서 after other vowels, and -해서 for 하다 verbs.","nuance":"For reasons, -아/어서 usually cannot be followed by commands or suggestions. For sequence, the second action follows naturally from the first.","examples":[{"speechLevel":"Casual intimate","korean":"피곤해서 일찍 잤어.","romanization":"pi-gon-hae-seo il-jjik ja-sseo","english":"I went to bed early because I was tired."},{"speechLevel":"Polite casual","korean":"피곤해서 일찍 잤어요.","romanization":"pi-gon-hae-seo il-jjik ja-sseo-yo","english":"I went to bed early because I was tired."},{"speechLevel":"Formal polite","korean":"피곤해서 일찍 잤습니다.","romanization":"pi-gon-hae-seo il-jjik jat-sseum-ni-da","english":"I went to bed early because I was tired."}],"practice":[{"speechLevel":"Practice correction","korean":"피곤하니까 쉬세요.","romanization":"pi-gon-ha-ni-kka swi-se-yo","english":"Since you are tired, please rest."},{"speechLevel":"Practice","korean":"배가 아파서 병원에 갔어요.","romanization":"bae-ga a-pa-seo byeong-wo-ne ga-sseo-yo","english":"I went to the hospital because my stomach hurt."}],"questions":[{"speechLevel":"Casual intimate","korean":"피곤해서 일찍 잤어.","romanization":"pi-gon-hae-seo il-jjik ja-sseo","english":"I went to bed early because I was tired."},{"speechLevel":"Polite casual","korean":"피곤해서 일찍 잤어요.","romanization":"pi-gon-hae-seo il-jjik ja-sseo-yo","english":"I went to bed early because I was tired."},{"speechLevel":"Formal polite","korean":"피곤해서 일찍 잤습니다.","romanization":"pi-gon-hae-seo il-jjik jat-sseum-ni-da","english":"I went to bed early because I was tired."},{"speechLevel":"Practice correction","korean":"피곤하니까 쉬세요.","romanization":"pi-gon-ha-ni-kka swi-se-yo","english":"Since you are tired, please rest."},{"speechLevel":"Practice","korean":"배가 아파서 병원에 갔어요.","romanization":"bae-ga a-pa-seo byeong-wo-ne ga-sseo-yo","english":"I went to the hospital because my stomach hurt."}]},{"id":"g7","form":"-(으)ㄹ 것 같다","title":"Guess / Prediction","meaning":"Expresses a guess, impression, or prediction: “it seems,” “I think,” or “probably.”","formRule":"Verb/adjective stem + -(으)ㄹ 것 같다 for future or prediction. Other tenses use -는 것 같다, -(으)ㄴ 것 같다, or -았/었던 것 같다.","nuance":"This sounds softer than stating a fact directly and is useful when the speaker is not completely sure.","examples":[{"speechLevel":"Casual intimate","korean":"내일 눈이 올 것 같아.","romanization":"nae-il nu-ni ol geot ga-ta","english":"It looks like it will snow tomorrow."},{"speechLevel":"Polite casual","korean":"내일 눈이 올 것 같아요.","romanization":"nae-il nu-ni ol geot ga-ta-yo","english":"It looks like it will snow tomorrow."},{"speechLevel":"Formal polite","korean":"내일 눈이 올 것 같습니다.","romanization":"nae-il nu-ni ol geot gat-sseum-ni-da","english":"It looks like it will snow tomorrow."}],"practice":[{"speechLevel":"Practice","korean":"그 영화는 재미있을 것 같아요.","romanization":"geu yeong-hwa-neun jae-mi-i-sseul geot ga-ta-yo","english":"That movie seems interesting."}],"questions":[{"speechLevel":"Casual intimate","korean":"내일 눈이 올 것 같아.","romanization":"nae-il nu-ni ol geot ga-ta","english":"It looks like it will snow tomorrow."},{"speechLevel":"Polite casual","korean":"내일 눈이 올 것 같아요.","romanization":"nae-il nu-ni ol geot ga-ta-yo","english":"It looks like it will snow tomorrow."},{"speechLevel":"Formal polite","korean":"내일 눈이 올 것 같습니다.","romanization":"nae-il nu-ni ol geot gat-sseum-ni-da","english":"It looks like it will snow tomorrow."},{"speechLevel":"Practice","korean":"그 영화는 재미있을 것 같아요.","romanization":"geu yeong-hwa-neun jae-mi-i-sseul geot ga-ta-yo","english":"That movie seems interesting."}]},{"id":"g8","form":"-(으)면","title":"If / When","meaning":"Expresses a condition. Depending on context, it can mean “if” or “when.”","formRule":"Verb/adjective stem + -(으)면. Use -으면 after a consonant and -면 after a vowel. Noun + 이면/면.","nuance":"Use it for real, general, and hypothetical conditions. Tense is often understood from context.","examples":[{"speechLevel":"Casual intimate","korean":"시간이 있으면 같이 가자.","romanization":"si-ga-ni i-sseu-myeon ga-chi ga-ja","english":"If you have time, let’s go together."},{"speechLevel":"Polite casual","korean":"시간이 있으면 같이 가요.","romanization":"si-ga-ni i-sseu-myeon ga-chi ga-yo","english":"If you have time, let’s go together."},{"speechLevel":"Formal polite","korean":"시간이 있으면 같이 갑시다.","romanization":"si-ga-ni i-sseu-myeon ga-chi gap-ssi-da","english":"If you have time, let’s go together."}],"practice":[{"speechLevel":"Practice","korean":"돈이 많으면 세계 여행을 하고 싶어요.","romanization":"do-ni ma-neu-myeon se-gye yeo-haeng-eul ha-go shi-peo-yo","english":"If I had a lot of money, I would like to travel around the world."},{"speechLevel":"Practice","korean":"비가 오면 집에 있을 거예요.","romanization":"bi-ga o-myeon ji-be i-sseul geo-ye-yo","english":"If it rains, I will stay home."}],"questions":[{"speechLevel":"Casual intimate","korean":"시간이 있으면 같이 가자.","romanization":"si-ga-ni i-sseu-myeon ga-chi ga-ja","english":"If you have time, let’s go together."},{"speechLevel":"Polite casual","korean":"시간이 있으면 같이 가요.","romanization":"si-ga-ni i-sseu-myeon ga-chi ga-yo","english":"If you have time, let’s go together."},{"speechLevel":"Formal polite","korean":"시간이 있으면 같이 갑시다.","romanization":"si-ga-ni i-sseu-myeon ga-chi gap-ssi-da","english":"If you have time, let’s go together."},{"speechLevel":"Practice","korean":"돈이 많으면 세계 여행을 하고 싶어요.","romanization":"do-ni ma-neu-myeon se-gye yeo-haeng-eul ha-go shi-peo-yo","english":"If I had a lot of money, I would like to travel around the world."},{"speechLevel":"Practice","korean":"비가 오면 집에 있을 거예요.","romanization":"bi-ga o-myeon ji-be i-sseul geo-ye-yo","english":"If it rains, I will stay home."}]},{"id":"g9","form":"-아/어 보다","title":"Try / Experience","meaning":"Means “try doing” or “have tried/experienced doing.”","formRule":"Verb stem + -아/어 보다. Past experience is often -아/어 봤다. Request form: -아/어 보세요.","nuance":"In the past tense it often means “have tried before.” In commands it encourages someone to try something.","examples":[{"speechLevel":"Casual intimate","korean":"김치를 먹어 봤어.","romanization":"gim-chi-reul meo-geo bwa-sseo","english":"I tried kimchi."},{"speechLevel":"Polite casual","korean":"김치를 먹어 봤어요.","romanization":"gim-chi-reul meo-geo bwa-sseo-yo","english":"I tried kimchi."},{"speechLevel":"Formal polite","korean":"김치를 먹어 보았습니다.","romanization":"gim-chi-reul meo-geo bo-at-sseum-ni-da","english":"I tried kimchi."}],"practice":[{"speechLevel":"Practice","korean":"이 책을 한번 읽어 보세요.","romanization":"i chae-geul han-beon il-geo bo-se-yo","english":"Please try reading this book once."},{"speechLevel":"Practice","korean":"한국 음식을 먹어 봤어요.","romanization":"han-guk eum-shi-geul meo-geo bwa-sseo-yo","english":"I have tried Korean food."}],"questions":[{"speechLevel":"Casual intimate","korean":"김치를 먹어 봤어.","romanization":"gim-chi-reul meo-geo bwa-sseo","english":"I tried kimchi."},{"speechLevel":"Polite casual","korean":"김치를 먹어 봤어요.","romanization":"gim-chi-reul meo-geo bwa-sseo-yo","english":"I tried kimchi."},{"speechLevel":"Formal polite","korean":"김치를 먹어 보았습니다.","romanization":"gim-chi-reul meo-geo bo-at-sseum-ni-da","english":"I tried kimchi."},{"speechLevel":"Practice","korean":"이 책을 한번 읽어 보세요.","romanization":"i chae-geul han-beon il-geo bo-se-yo","english":"Please try reading this book once."},{"speechLevel":"Practice","korean":"한국 음식을 먹어 봤어요.","romanization":"han-guk eum-shi-geul meo-geo bwa-sseo-yo","english":"I have tried Korean food."}]},{"id":"g10","form":"-(으)ㄹ 수 있다 / 없다","title":"Can / Cannot","meaning":"Expresses ability, possibility, or impossibility.","formRule":"Verb stem + -(으)ㄹ 수 있다/없다. Use -을 수 after consonants and -ㄹ 수 after vowels. ㄹ-ending stems keep ㄹ.","nuance":"This can mean learned ability, physical ability, or situational possibility. For permission, -아/어도 되다 is usually more natural.","examples":[{"speechLevel":"Casual intimate","korean":"한국어를 읽을 수 있어.","romanization":"han-gu-geo-reul il-geul su i-sseo","english":"I can read Korean."},{"speechLevel":"Polite casual","korean":"한국어를 읽을 수 있어요.","romanization":"han-gu-geo-reul il-geul su i-sseo-yo","english":"I can read Korean."},{"speechLevel":"Formal polite","korean":"한국어를 읽을 수 있습니다.","romanization":"han-gu-geo-reul il-geul su it-sseum-ni-da","english":"I can read Korean."}],"practice":[{"speechLevel":"Practice","korean":"오늘은 갈 수 없어요.","romanization":"o-neu-reun gal su eop-sseo-yo","english":"I cannot go today."},{"speechLevel":"Practice","korean":"수영할 수 있어요.","romanization":"su-yeong-hal su i-sseo-yo","english":"I can swim."}],"questions":[{"speechLevel":"Casual intimate","korean":"한국어를 읽을 수 있어.","romanization":"han-gu-geo-reul il-geul su i-sseo","english":"I can read Korean."},{"speechLevel":"Polite casual","korean":"한국어를 읽을 수 있어요.","romanization":"han-gu-geo-reul il-geul su i-sseo-yo","english":"I can read Korean."},{"speechLevel":"Formal polite","korean":"한국어를 읽을 수 있습니다.","romanization":"han-gu-geo-reul il-geul su it-sseum-ni-da","english":"I can read Korean."},{"speechLevel":"Practice","korean":"오늘은 갈 수 없어요.","romanization":"o-neu-reun gal su eop-sseo-yo","english":"I cannot go today."},{"speechLevel":"Practice","korean":"수영할 수 있어요.","romanization":"su-yeong-hal su i-sseo-yo","english":"I can swim."}]},{"id":"g11","form":"-(으)ㄹ 때","title":"When","meaning":"Indicates the time when something happens or happened.","formRule":"Verb/adjective stem + -(으)ㄹ 때 for future/general “when.” Past action can use -았/었을 때. Noun + 때 means “at the time of noun.”","nuance":"Tense before 때 depends on the relationship in time; context determines whether the action is past, present, or future.","examples":[{"speechLevel":"Casual intimate","korean":"어렸을 때 축구를 좋아했어.","romanization":"eo-ryeo-sseul ttae chuk-kku-reul jo-a-hae-sseo","english":"I liked soccer when I was young."},{"speechLevel":"Polite casual","korean":"어렸을 때 축구를 좋아했어요.","romanization":"eo-ryeo-sseul ttae chuk-kku-reul jo-a-hae-sseo-yo","english":"I liked soccer when I was young."},{"speechLevel":"Formal polite","korean":"어렸을 때 축구를 좋아했습니다.","romanization":"eo-ryeo-sseul ttae chuk-kku-reul jo-a-haet-sseum-ni-da","english":"I liked soccer when I was young."}],"practice":[{"speechLevel":"Practice","korean":"한국에 갔을 때 친구를 만났어요.","romanization":"han-gu-ge ga-sseul ttae chin-gu-reul man-na-sseo-yo","english":"When I went to Korea, I met a friend."},{"speechLevel":"Practice","korean":"바쁠 때 커피를 마셔요.","romanization":"ba-ppeul ttae keo-pi-reul ma-syeo-yo","english":"When I am busy, I drink coffee."}],"questions":[{"speechLevel":"Casual intimate","korean":"어렸을 때 축구를 좋아했어.","romanization":"eo-ryeo-sseul ttae chuk-kku-reul jo-a-hae-sseo","english":"I liked soccer when I was young."},{"speechLevel":"Polite casual","korean":"어렸을 때 축구를 좋아했어요.","romanization":"eo-ryeo-sseul ttae chuk-kku-reul jo-a-hae-sseo-yo","english":"I liked soccer when I was young."},{"speechLevel":"Formal polite","korean":"어렸을 때 축구를 좋아했습니다.","romanization":"eo-ryeo-sseul ttae chuk-kku-reul jo-a-haet-sseum-ni-da","english":"I liked soccer when I was young."},{"speechLevel":"Practice","korean":"한국에 갔을 때 친구를 만났어요.","romanization":"han-gu-ge ga-sseul ttae chin-gu-reul man-na-sseo-yo","english":"When I went to Korea, I met a friend."},{"speechLevel":"Practice","korean":"바쁠 때 커피를 마셔요.","romanization":"ba-ppeul ttae keo-pi-reul ma-syeo-yo","english":"When I am busy, I drink coffee."}]},{"id":"g12","form":"-다가","title":"While Doing / Interruption","meaning":"Shows that one action was in progress and then another action occurred.","formRule":"Verb stem + -다가. It is often used when a second action interrupts, changes, or happens during the first action.","nuance":"Unlike -(으)면서, -다가 usually implies that the first action stops, changes direction, or is interrupted.","examples":[{"speechLevel":"Casual intimate","korean":"공부하다가 잠이 들었어.","romanization":"gong-bu-ha-da-ga ja-mi deu-reo-sseo","english":"I fell asleep while studying."},{"speechLevel":"Polite casual","korean":"공부하다가 잠이 들었어요.","romanization":"gong-bu-ha-da-ga ja-mi deu-reo-sseo-yo","english":"I fell asleep while studying."},{"speechLevel":"Formal polite","korean":"공부하다가 잠이 들었습니다.","romanization":"gong-bu-ha-da-ga ja-mi deu-reot-sseum-ni-da","english":"I fell asleep while studying."}],"practice":[{"speechLevel":"Practice","korean":"길을 걷다가 친구를 만났어요.","romanization":"gi-reul geot-tta-ga chin-gu-reul man-na-sseo-yo","english":"I met a friend while walking down the street."}],"questions":[{"speechLevel":"Casual intimate","korean":"공부하다가 잠이 들었어.","romanization":"gong-bu-ha-da-ga ja-mi deu-reo-sseo","english":"I fell asleep while studying."},{"speechLevel":"Polite casual","korean":"공부하다가 잠이 들었어요.","romanization":"gong-bu-ha-da-ga ja-mi deu-reo-sseo-yo","english":"I fell asleep while studying."},{"speechLevel":"Formal polite","korean":"공부하다가 잠이 들었습니다.","romanization":"gong-bu-ha-da-ga ja-mi deu-reot-sseum-ni-da","english":"I fell asleep while studying."},{"speechLevel":"Practice","korean":"길을 걷다가 친구를 만났어요.","romanization":"gi-reul geot-tta-ga chin-gu-reul man-na-sseo-yo","english":"I met a friend while walking down the street."}]},{"id":"g13","form":"-고 있다","title":"Progressive Action","meaning":"Shows an action currently in progress: “be doing.”","formRule":"Verb stem + -고 있다. Casual: -고 있어. Polite: -고 있어요. Formal: -고 있습니다.","nuance":"Use it for actions in progress. Korean also uses it with some clothing and accessory verbs.","examples":[{"speechLevel":"Casual intimate","korean":"지금 책을 읽고 있어.","romanization":"ji-geum chae-geul il-kko i-sseo","english":"I am reading a book now."},{"speechLevel":"Polite casual","korean":"지금 책을 읽고 있어요.","romanization":"ji-geum chae-geul il-kko i-sseo-yo","english":"I am reading a book now."},{"speechLevel":"Formal polite","korean":"지금 책을 읽고 있습니다.","romanization":"ji-geum chae-geul il-kko it-sseum-ni-da","english":"I am reading a book now."}],"practice":[{"speechLevel":"Practice","korean":"듣고 있어요.","romanization":"deut-kko i-sseo-yo","english":"I am listening."},{"speechLevel":"Practice","korean":"학생들이 수업을 듣고 있어요.","romanization":"hak-ssaeng-deu-ri su-eo-beul deut-kko i-sseo-yo","english":"The students are attending class."}],"questions":[{"speechLevel":"Casual intimate","korean":"지금 책을 읽고 있어.","romanization":"ji-geum chae-geul il-kko i-sseo","english":"I am reading a book now."},{"speechLevel":"Polite casual","korean":"지금 책을 읽고 있어요.","romanization":"ji-geum chae-geul il-kko i-sseo-yo","english":"I am reading a book now."},{"speechLevel":"Formal polite","korean":"지금 책을 읽고 있습니다.","romanization":"ji-geum chae-geul il-kko it-sseum-ni-da","english":"I am reading a book now."},{"speechLevel":"Practice","korean":"듣고 있어요.","romanization":"deut-kko i-sseo-yo","english":"I am listening."},{"speechLevel":"Practice","korean":"학생들이 수업을 듣고 있어요.","romanization":"hak-ssaeng-deu-ri su-eo-beul deut-kko i-sseo-yo","english":"The students are attending class."}]},{"id":"g14","form":"-게 되다","title":"Come To / End Up","meaning":"Expresses a change of situation, result, or something that came to happen.","formRule":"Verb/adjective stem + -게 되다. Past: -게 되었다/-게 됐다.","nuance":"It often reduces the speaker’s direct agency and suggests that circumstances led to the change.","examples":[{"speechLevel":"Casual intimate","korean":"한국어를 배우게 됐어.","romanization":"han-gu-geo-reul bae-u-ge dwae-sseo","english":"I came to learn Korean."},{"speechLevel":"Polite casual","korean":"한국어를 배우게 됐어요.","romanization":"han-gu-geo-reul bae-u-ge dwae-sseo-yo","english":"I came to learn Korean."},{"speechLevel":"Formal polite","korean":"한국어를 배우게 되었습니다.","romanization":"han-gu-geo-reul bae-u-ge doe-eot-sseum-ni-da","english":"I came to learn Korean."}],"practice":[{"speechLevel":"Practice","korean":"그 사람과 친구가 되었습니다.","romanization":"geu sa-ram-gwa chin-gu-ga doe-eot-sseum-ni-da","english":"I became friends with that person."},{"speechLevel":"Practice","korean":"한국에 살게 됐어요.","romanization":"han-gu-ge sal-ge dwae-sseo-yo","english":"I ended up living in Korea."}],"questions":[{"speechLevel":"Casual intimate","korean":"한국어를 배우게 됐어.","romanization":"han-gu-geo-reul bae-u-ge dwae-sseo","english":"I came to learn Korean."},{"speechLevel":"Polite casual","korean":"한국어를 배우게 됐어요.","romanization":"han-gu-geo-reul bae-u-ge dwae-sseo-yo","english":"I came to learn Korean."},{"speechLevel":"Formal polite","korean":"한국어를 배우게 되었습니다.","romanization":"han-gu-geo-reul bae-u-ge doe-eot-sseum-ni-da","english":"I came to learn Korean."},{"speechLevel":"Practice","korean":"그 사람과 친구가 되었습니다.","romanization":"geu sa-ram-gwa chin-gu-ga doe-eot-sseum-ni-da","english":"I became friends with that person."},{"speechLevel":"Practice","korean":"한국에 살게 됐어요.","romanization":"han-gu-ge sal-ge dwae-sseo-yo","english":"I ended up living in Korea."}]},{"id":"g15","form":"-기 때문에","title":"Because / Formal Reason","meaning":"Gives a reason in a slightly more formal or written style.","formRule":"Verb/adjective stem + -기 때문에. Noun + 때문에. Past can be -았/었기 때문에.","nuance":"Good for essays, explanations, and presentations. It is more formal than -아/어서 and often clearer in writing.","examples":[{"speechLevel":"Casual intimate","korean":"시험이 있기 때문에 일찍 잤어.","romanization":"si-heo-mi it-kki ttae-mu-ne il-jjik ja-sseo","english":"I went to bed early because I had an exam."},{"speechLevel":"Polite casual","korean":"시험이 있기 때문에 일찍 잤어요.","romanization":"si-heo-mi it-kki ttae-mu-ne il-jjik ja-sseo-yo","english":"I went to bed early because I had an exam."},{"speechLevel":"Formal polite","korean":"시험이 있기 때문에 일찍 잤습니다.","romanization":"si-heo-mi it-kki ttae-mu-ne il-jjik jat-sseum-ni-da","english":"I went to bed early because I had an exam."}],"practice":[{"speechLevel":"Practice","korean":"비가 많이 왔기 때문에 길이 막혔어요.","romanization":"bi-ga ma-ni wat-kki ttae-mu-ne gi-ri ma-kyeo-sseo-yo","english":"The road was congested because it rained a lot."},{"speechLevel":"Practice","korean":"바빴기 때문에 갈 수 없었어요.","romanization":"ba-ppat-kki ttae-mu-ne gal su eop-sseo-sseo-yo","english":"Because I was busy, I could not go."}],"questions":[{"speechLevel":"Casual intimate","korean":"시험이 있기 때문에 일찍 잤어.","romanization":"si-heo-mi it-kki ttae-mu-ne il-jjik ja-sseo","english":"I went to bed early because I had an exam."},{"speechLevel":"Polite casual","korean":"시험이 있기 때문에 일찍 잤어요.","romanization":"si-heo-mi it-kki ttae-mu-ne il-jjik ja-sseo-yo","english":"I went to bed early because I had an exam."},{"speechLevel":"Formal polite","korean":"시험이 있기 때문에 일찍 잤습니다.","romanization":"si-heo-mi it-kki ttae-mu-ne il-jjik jat-sseum-ni-da","english":"I went to bed early because I had an exam."},{"speechLevel":"Practice","korean":"비가 많이 왔기 때문에 길이 막혔어요.","romanization":"bi-ga ma-ni wat-kki ttae-mu-ne gi-ri ma-kyeo-sseo-yo","english":"The road was congested because it rained a lot."},{"speechLevel":"Practice","korean":"바빴기 때문에 갈 수 없었어요.","romanization":"ba-ppat-kki ttae-mu-ne gal su eop-sseo-sseo-yo","english":"Because I was busy, I could not go."}]},{"id":"g16","form":"-(으)ㄴ 적이 있다","title":"Have Ever / Past Experience","meaning":"Expresses that someone has had an experience before.","formRule":"Verb stem + -(으)ㄴ 적이 있다/없다. Use -은 적 after consonants and -ㄴ 적 after vowels.","nuance":"This focuses on whether the experience has happened at least once and is often combined with -아/어 보다.","examples":[{"speechLevel":"Casual intimate","korean":"한국에 간 적이 있어.","romanization":"han-gu-ge gan jeo-gi i-sseo","english":"I have been to Korea."},{"speechLevel":"Polite casual","korean":"한국에 간 적이 있어요.","romanization":"han-gu-ge gan jeo-gi i-sseo-yo","english":"I have been to Korea."},{"speechLevel":"Formal polite","korean":"한국에 간 적이 있습니다.","romanization":"han-gu-ge gan jeo-gi it-sseum-ni-da","english":"I have been to Korea."}],"practice":[{"speechLevel":"Practice","korean":"불고기를 먹어 본 적이 없어요.","romanization":"bul-go-gi-reul meo-geo bon jeo-gi eop-sseo-yo","english":"I have never tried bulgogi."},{"speechLevel":"Practice","korean":"그 사람을 만난 적이 있어요.","romanization":"geu sa-ra-meul man-nan jeo-gi i-sseo-yo","english":"I have met that person before."}],"questions":[{"speechLevel":"Casual intimate","korean":"한국에 간 적이 있어.","romanization":"han-gu-ge gan jeo-gi i-sseo","english":"I have been to Korea."},{"speechLevel":"Polite casual","korean":"한국에 간 적이 있어요.","romanization":"han-gu-ge gan jeo-gi i-sseo-yo","english":"I have been to Korea."},{"speechLevel":"Formal polite","korean":"한국에 간 적이 있습니다.","romanization":"han-gu-ge gan jeo-gi it-sseum-ni-da","english":"I have been to Korea."},{"speechLevel":"Practice","korean":"불고기를 먹어 본 적이 없어요.","romanization":"bul-go-gi-reul meo-geo bon jeo-gi eop-sseo-yo","english":"I have never tried bulgogi."},{"speechLevel":"Practice","korean":"그 사람을 만난 적이 있어요.","romanization":"geu sa-ra-meul man-nan jeo-gi i-sseo-yo","english":"I have met that person before."}]},{"id":"g17","form":"-(으)러 가다 / 오다","title":"Purpose of Movement","meaning":"Expresses going or coming for the purpose of doing an action.","formRule":"Verb stem + -(으)러 + 가다/오다/다니다. Use -으러 after a consonant and -러 after a vowel.","nuance":"Only use this with movement verbs. For non-movement purpose, use -(으)려고 or -기 위해서.","examples":[{"speechLevel":"Casual intimate","korean":"친구를 만나러 갔어.","romanization":"chin-gu-reul man-na-reo ga-sseo","english":"I went to meet my friend."},{"speechLevel":"Polite casual","korean":"친구를 만나러 갔어요.","romanization":"chin-gu-reul man-na-reo ga-sseo-yo","english":"I went to meet my friend."},{"speechLevel":"Formal polite","korean":"친구를 만나러 갔습니다.","romanization":"chin-gu-reul man-na-reo gat-sseum-ni-da","english":"I went to meet my friend."}],"practice":[{"speechLevel":"Practice","korean":"한국어를 배우러 한국에 왔어요.","romanization":"han-gu-geo-reul bae-u-reo han-gu-ge wa-sseo-yo","english":"I came to Korea to learn Korean."}],"questions":[{"speechLevel":"Casual intimate","korean":"친구를 만나러 갔어.","romanization":"chin-gu-reul man-na-reo ga-sseo","english":"I went to meet my friend."},{"speechLevel":"Polite casual","korean":"친구를 만나러 갔어요.","romanization":"chin-gu-reul man-na-reo ga-sseo-yo","english":"I went to meet my friend."},{"speechLevel":"Formal polite","korean":"친구를 만나러 갔습니다.","romanization":"chin-gu-reul man-na-reo gat-sseum-ni-da","english":"I went to meet my friend."},{"speechLevel":"Practice","korean":"한국어를 배우러 한국에 왔어요.","romanization":"han-gu-geo-reul bae-u-reo han-gu-ge wa-sseo-yo","english":"I came to Korea to learn Korean."}]},{"id":"g18","form":"-네요","title":"Realization / Soft Surprise","meaning":"Expresses surprise, admiration, or newly realized information.","formRule":"Verb/adjective stem + -네요. Casual intimate often uses -네. A more formal reaction can use -군요.","nuance":"This sounds softer and more immediate than a plain statement and is common in compliments.","examples":[{"speechLevel":"Casual intimate","korean":"날씨가 정말 춥네.","romanization":"nal-ssi-ga jeong-mal chum-ne","english":"Oh, it is really cold."},{"speechLevel":"Polite casual","korean":"날씨가 정말 춥네요.","romanization":"nal-ssi-ga jeong-mal chum-ne-yo","english":"Oh, it is really cold."},{"speechLevel":"Formal polite","korean":"날씨가 정말 춥군요.","romanization":"nal-ssi-ga jeong-mal chup-kkun-yo","english":"Oh, it is really cold."}],"practice":[{"speechLevel":"Practice","korean":"정말 춥네요.","romanization":"jeong-mal chum-ne-yo","english":"Oh, it is really cold."},{"speechLevel":"Practice","korean":"한국어를 정말 잘하시네요!","romanization":"han-gu-geo-reul jeong-mal jal-ha-shi-ne-yo","english":"Wow, you speak Korean very well!"}],"questions":[{"speechLevel":"Casual intimate","korean":"날씨가 정말 춥네.","romanization":"nal-ssi-ga jeong-mal chum-ne","english":"Oh, it is really cold."},{"speechLevel":"Polite casual","korean":"날씨가 정말 춥네요.","romanization":"nal-ssi-ga jeong-mal chum-ne-yo","english":"Oh, it is really cold."},{"speechLevel":"Formal polite","korean":"날씨가 정말 춥군요.","romanization":"nal-ssi-ga jeong-mal chup-kkun-yo","english":"Oh, it is really cold."},{"speechLevel":"Practice","korean":"정말 춥네요.","romanization":"jeong-mal chum-ne-yo","english":"Oh, it is really cold."},{"speechLevel":"Practice","korean":"한국어를 정말 잘하시네요!","romanization":"han-gu-geo-reul jeong-mal jal-ha-shi-ne-yo","english":"Wow, you speak Korean very well!"}]},{"id":"g19","form":"-(으)ㄹ지도 모르다","title":"Might / May","meaning":"Expresses uncertain possibility: “might,” “may,” or “possibly.”","formRule":"Verb/adjective stem + -(으)ㄹ지도 모르다. Use -을지도 after consonants and -ㄹ지도 after vowels.","nuance":"It is less certain than -(으)ㄹ 것 같다 and openly signals that the speaker is unsure.","examples":[{"speechLevel":"Casual intimate","korean":"오늘 늦을지도 몰라.","romanization":"o-neul neu-jeul-ji-do mol-la","english":"I might be late today."},{"speechLevel":"Polite casual","korean":"오늘 늦을지도 몰라요.","romanization":"o-neul neu-jeul-ji-do mol-la-yo","english":"I might be late today."},{"speechLevel":"Formal polite","korean":"오늘 늦을지도 모릅니다.","romanization":"o-neul neu-jeul-ji-do mo-reum-ni-da","english":"I might be late today."}],"practice":[{"speechLevel":"Practice","korean":"내일 비가 올지도 몰라요.","romanization":"nae-il bi-ga ol-ji-do mol-la-yo","english":"It might rain tomorrow."},{"speechLevel":"Practice","korean":"그 사람이 내일 올지도 몰라요.","romanization":"geu sa-ra-mi nae-il ol-ji-do mol-la-yo","english":"He may come tomorrow."}],"questions":[{"speechLevel":"Casual intimate","korean":"오늘 늦을지도 몰라.","romanization":"o-neul neu-jeul-ji-do mol-la","english":"I might be late today."},{"speechLevel":"Polite casual","korean":"오늘 늦을지도 몰라요.","romanization":"o-neul neu-jeul-ji-do mol-la-yo","english":"I might be late today."},{"speechLevel":"Formal polite","korean":"오늘 늦을지도 모릅니다.","romanization":"o-neul neu-jeul-ji-do mo-reum-ni-da","english":"I might be late today."},{"speechLevel":"Practice","korean":"내일 비가 올지도 몰라요.","romanization":"nae-il bi-ga ol-ji-do mol-la-yo","english":"It might rain tomorrow."},{"speechLevel":"Practice","korean":"그 사람이 내일 올지도 몰라요.","romanization":"geu sa-ra-mi nae-il ol-ji-do mol-la-yo","english":"He may come tomorrow."}]},{"id":"g20","form":"-(으)ㄴ/는 것 같다","title":"Seems / I Think","meaning":"Expresses an opinion, guess, or impression.","formRule":"Present action verb: -는 것 같다. Descriptive verb/adjective: -(으)ㄴ 것 같다. Noun: 인 것 같다. Future/prediction: -(으)ㄹ 것 같다.","nuance":"This useful softening pattern lets the speaker express an opinion without sounding too direct.","examples":[{"speechLevel":"Casual intimate","korean":"그 사람이 학생인 것 같아.","romanization":"geu sa-ra-mi hak-ssaeng-in geot ga-ta","english":"He seems to be a student."},{"speechLevel":"Polite casual","korean":"그 사람이 학생인 것 같아요.","romanization":"geu sa-ra-mi hak-ssaeng-in geot ga-ta-yo","english":"He seems to be a student."},{"speechLevel":"Formal polite","korean":"그 사람이 학생인 것 같습니다.","romanization":"geu sa-ra-mi hak-ssaeng-in geot gat-sseum-ni-da","english":"He seems to be a student."}],"practice":[{"speechLevel":"Practice","korean":"이 음식은 맛있는 것 같아요.","romanization":"i eum-shi-geun ma-shin-neun geot ga-ta-yo","english":"This food seems delicious."}],"questions":[{"speechLevel":"Casual intimate","korean":"그 사람이 학생인 것 같아.","romanization":"geu sa-ra-mi hak-ssaeng-in geot ga-ta","english":"He seems to be a student."},{"speechLevel":"Polite casual","korean":"그 사람이 학생인 것 같아요.","romanization":"geu sa-ra-mi hak-ssaeng-in geot ga-ta-yo","english":"He seems to be a student."},{"speechLevel":"Formal polite","korean":"그 사람이 학생인 것 같습니다.","romanization":"geu sa-ra-mi hak-ssaeng-in geot gat-sseum-ni-da","english":"He seems to be a student."},{"speechLevel":"Practice","korean":"이 음식은 맛있는 것 같아요.","romanization":"i eum-shi-geun ma-shin-neun geot ga-ta-yo","english":"This food seems delicious."}]}];
+    const exerciseStates = {};
+    const grammarGrid = document.getElementById("grammarGrid");
+    const tocGrid = document.getElementById("tocGrid");
+    const sections = document.getElementById("sections");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+      })[char]);
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pointById(id) {
+      return GRAMMAR_POINTS.find(point => point.id === id);
+    }
+
+    function modeLabel(mode) {
+      return mode === "english" ? "English" : mode === "romanization" ? "Romanization" : "Korean";
+    }
+
+    function normalizeAnswer(value, mode) {
+      let text = String(value ?? "").trim().toLowerCase().replace(/[’']/g, "");
+      if (mode === "korean") return text.replace(/\s+/g, "").replace(/[.?!]/g, "");
+      if (mode === "romanization") {
+        return text.replace(/[^a-z\-\s]/g, "").replace(/-+/g, "-").replace(/\s+/g, " ").trim();
+      }
+      return text.replace(/&/g, "and").replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function promptText(question, mode) {
+      if (mode === "english") return question.english;
+      return question[mode];
+    }
+
+    function feedbackMarkup(question) {
+      return `<b>${escapeHtml(question.english)}</b><br><span class="roman">${escapeHtml(question.romanization)}</span><br>${escapeHtml(question.korean)}<br><span class="small">${escapeHtml(question.speechLevel)}</span>`;
+    }
+
+    function buildQuestionList(point) {
+      const source = point.questions.map((question, index) => ({...question, sourceId: `${point.id}-${index}`}));
+      const result = [];
+      while (result.length < 10) {
+        const candidates = source.filter(item => !result.length || item.sourceId !== result[result.length - 1].sourceId);
+        result.push(candidates[Math.floor(Math.random() * candidates.length)]);
+      }
+      return result;
+    }
+
+    function buildChoices(pointId, correctQuestion, answerMode) {
+      const correct = correctQuestion[answerMode];
+      const seen = new Set([normalizeAnswer(correct, answerMode)]);
+      const distractors = [];
+      const allQuestions = shuffle(GRAMMAR_POINTS.flatMap(point => point.questions.map(q => ({...q, pointId: point.id}))));
+      for (const candidate of allQuestions) {
+        const value = candidate[answerMode];
+        const normalized = normalizeAnswer(value, answerMode);
+        if (!normalized || seen.has(normalized)) continue;
+        seen.add(normalized);
+        distractors.push(value);
+        if (distractors.length === 3) break;
+      }
+      return shuffle([{value: correct, correct: true}, ...distractors.map(value => ({value, correct: false}))]);
+    }
+
+    function examplesMarkup(point) {
+      return point.examples.map(example => `
+        <div class="speech-example">
+          <strong>${escapeHtml(example.speechLevel)}</strong>
+          <b>${escapeHtml(example.english)}</b><br>
+          <span class="roman">${escapeHtml(example.romanization)}</span><br>
+          ${escapeHtml(example.korean)}
+        </div>`).join("");
+    }
+
+    function renderApp() {
+      grammarGrid.innerHTML = GRAMMAR_POINTS.map(point => `
+        <article class="grammar-card">
+          <h3>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</h3>
+          <p><b>Meaning:</b> ${escapeHtml(point.meaning)}</p>
+          <p><b>Form:</b> ${escapeHtml(point.formRule)}</p>
+          <div class="example"><b>${escapeHtml(point.examples[1].english)}</b><br><span class="roman">${escapeHtml(point.examples[1].romanization)}</span><br>${escapeHtml(point.examples[1].korean)}</div>
+        </article>`).join("");
+
+      tocGrid.innerHTML = `<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>20 points</small></a>` +
+        GRAMMAR_POINTS.map(point => `<a class="toc-link" href="#${point.id}"><span>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</span><small>2 × 10</small></a>`).join("");
+
+      sections.innerHTML = GRAMMAR_POINTS.map((point, index) => `
+        <details class="section" id="${point.id}" ${index === 0 ? "open" : ""}>
+          <summary><span>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</span></summary>
+          <div class="section-body">
+            <div class="section-intro">
+              <article class="info-card">
+                <span class="rule-label">Rule</span>
+                <h3>Meaning, form, and nuance</h3>
+                <p><b>Meaning:</b> ${escapeHtml(point.meaning)}</p>
+                <p><b>Form:</b> ${escapeHtml(point.formRule)}</p>
+                <p><b>Nuance:</b> ${escapeHtml(point.nuance)}</p>
+              </article>
+              <article class="info-card">
+                <span class="rule-label">Speech levels</span>
+                <h3>Model examples</h3>
+                <div class="speech-examples">${examplesMarkup(point)}</div>
+              </article>
+            </div>
+            <div class="exercise-grid">
+              ${exerciseTemplate(point.id, "typed", "Typed translation")}
+              ${exerciseTemplate(point.id, "mc", "Multiple-choice translation")}
+            </div>
+          </div>
+        </details>`).join("");
+
+      GRAMMAR_POINTS.forEach(point => ["typed", "mc"].forEach(type => initializeExercise(point.id, type)));
+      document.querySelectorAll("details.section").forEach(details => {
+        const summary = details.querySelector(":scope > summary");
+        const sync = () => summary?.setAttribute("aria-expanded", String(details.open));
+        sync();
+        details.addEventListener("toggle", sync);
+      });
+    }
+
+    function exerciseTemplate(id, type, title) {
+      return `<article class="exercise" id="${id}-${type}">
+        <div class="exercise-head">
+          <div class="exercise-head-copy">
+            <span class="exercise-kicker">${type === "typed" ? "Type" : "Select"}</span>
+            <h3>${title}</h3>
+            <p>Ten randomized prompts drawn from the document’s examples and answer key.</p>
+          </div>
+          <div class="score" aria-live="polite"></div>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-toolbar"><button class="btn secondary restart" type="button">Restart</button></div>
+          <div class="controls">
+            <label><span>Question language</span><select class="question-mode"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label>
+            <label><span>Answer language</span><select class="answer-mode"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label>
+          </div>
+          <div class="status"><span class="count"></span></div>
+          <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="100"><div></div></div>
+          <div class="prompt-label"></div>
+          <div class="prompt"></div>
+          <div class="zone"></div>
+          <div class="feedback" aria-live="polite"></div>
+          <button class="btn warning next hidden" type="button">Next</button>
+          <div class="finish">
+            <h4>Exercise complete</h4>
+            <p class="sum"></p>
+            <div class="reviewnav" aria-label="Answer review navigation"></div>
+            <div class="reviewbox"></div>
+            <button class="btn secondary restart" type="button">Restart exercise</button>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function initializeExercise(id, type) {
+      const element = document.getElementById(`${id}-${type}`);
+      const questionMode = element.querySelector(".question-mode");
+      const answerMode = element.querySelector(".answer-mode");
+      const key = `${id}-${type}`;
+      exerciseStates[key] = {id, type, index: 0, score: 0, questions: [], results: [], questionMode: "english", answerMode: "korean", answered: false};
+
+      const reset = () => {
+        const state = exerciseStates[key];
+        state.index = 0;
+        state.score = 0;
+        state.results = [];
+        state.questionMode = questionMode.value;
+        state.answerMode = answerMode.value;
+        if (state.questionMode === state.answerMode) {
+          state.answerMode = state.questionMode === "english" ? "korean" : "english";
+          answerMode.value = state.answerMode;
+        }
+        state.questions = buildQuestionList(pointById(id));
+        element.querySelector(".finish").style.display = "none";
+        showQuestion(id, type);
+      };
+
+      questionMode.onchange = reset;
+      answerMode.onchange = reset;
+      element.querySelectorAll(".restart").forEach(button => button.onclick = reset);
+      element.querySelector(".next").onclick = () => {
+        const state = exerciseStates[key];
+        if (state.index < 9) {
+          state.index += 1;
+          showQuestion(id, type);
+        } else {
+          finishExercise(id, type);
+        }
+      };
+      reset();
+    }
+
+    function showQuestion(id, type) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const question = state.questions[state.index];
+      state.answered = false;
+      element.querySelector(".count").textContent = `Question ${state.index + 1} / 10 · ${question.speechLevel}`;
+      element.querySelector(".score").textContent = `Score: ${state.score}`;
+      const percent = state.index * 10;
+      element.querySelector(".progress div").style.width = `${percent}%`;
+      element.querySelector(".progress").setAttribute("aria-valuenow", String(percent));
+      element.querySelector(".prompt-label").textContent = `${modeLabel(state.questionMode)} · ${question.speechLevel}`;
+      element.querySelector(".prompt").textContent = promptText(question, state.questionMode);
+      element.querySelector(".feedback").className = "feedback";
+      element.querySelector(".feedback").innerHTML = "";
+      element.querySelector(".next").classList.add("hidden");
+      const zone = element.querySelector(".zone");
+
+      if (type === "typed") {
+        zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" placeholder="${state.answerMode === "romanization" ? "Type with syllable dashes" : "Type your answer"}"><button class="btn primary" type="button">Check</button></div>`;
+        const submit = () => submitAnswer(id, type, zone.querySelector("input").value);
+        zone.querySelector("button").onclick = submit;
+        zone.querySelector("input").onkeydown = event => { if (event.key === "Enter") submit(); };
+        // No automatic focus: Safari should open the page at the top.
+      } else {
+        const choices = buildChoices(id, question, state.answerMode);
+        zone.innerHTML = `<div class="choices">${choices.map((choice, index) => `<button class="choice" type="button" data-index="${index}">${escapeHtml(choice.value)}</button>`).join("")}</div>`;
+        zone.querySelectorAll(".choice").forEach((button, index) => {
+          button.onclick = () => {
+            const selected = choices[index];
+            zone.querySelectorAll(".choice").forEach((otherButton, otherIndex) => {
+              otherButton.disabled = true;
+              if (choices[otherIndex].correct) otherButton.classList.add("correct");
+            });
+            if (!selected.correct) button.classList.add("wrong");
+            completeQuestion(id, type, selected.value, selected.correct);
+          };
+        });
+      }
+    }
+
+    function submitAnswer(id, type, userAnswer) {
+      const state = exerciseStates[`${id}-${type}`];
+      const question = state.questions[state.index];
+      const correct = normalizeAnswer(userAnswer, state.answerMode) === normalizeAnswer(question[state.answerMode], state.answerMode);
+      completeQuestion(id, type, userAnswer, correct);
+    }
+
+    function completeQuestion(id, type, userAnswer, correct) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const question = state.questions[state.index];
+      if (state.answered) return;
+      state.answered = true;
+      if (correct) state.score += 1;
+      state.results.push({question, userAnswer, correct, questionMode: state.questionMode, answerMode: state.answerMode});
+      element.querySelector(".score").textContent = `Score: ${state.score}`;
+      const feedback = element.querySelector(".feedback");
+      feedback.className = `feedback ${correct ? "good" : "bad"}`;
+      feedback.innerHTML = `${correct ? "Correct." : "Incorrect."}<br>${feedbackMarkup(question)}`;
+      const next = element.querySelector(".next");
+      next.textContent = state.index === 9 ? "Finish" : "Next";
+      next.classList.remove("hidden");
+    }
+
+    function finishExercise(id, type) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const finish = element.querySelector(".finish");
+      element.querySelector(".progress div").style.width = "100%";
+      element.querySelector(".progress").setAttribute("aria-valuenow", "100");
+      finish.style.display = "block";
+      finish.querySelector(".sum").innerHTML = `Final score: <b>${state.score} / 10</b> (${state.score * 10}%)`;
+      const navigation = finish.querySelector(".reviewnav");
+      navigation.innerHTML = state.results.map((result, index) => `<button type="button" data-index="${index}">${index + 1}</button>`).join("");
+      navigation.querySelectorAll("button").forEach(button => button.onclick = () => showReviewQuestion(id, type, Number(button.dataset.index)));
+      showReviewQuestion(id, type, 0);
+    }
+
+    function showReviewQuestion(id, type, index) {
+      const state = exerciseStates[`${id}-${type}`];
+      const element = document.getElementById(`${id}-${type}`);
+      const result = state.results[index];
+      element.querySelectorAll(".reviewnav button").forEach((button, buttonIndex) => button.classList.toggle("active", buttonIndex === index));
+      element.querySelector(".reviewbox").innerHTML = `<p><b>Question ${index + 1}</b> ${result.correct ? "✅" : "❌"}</p><p><b>Prompt:</b> ${escapeHtml(promptText(result.question, result.questionMode))}</p><p><b>Your answer:</b> ${escapeHtml(result.userAnswer || "(blank)")}</p><p>${feedbackMarkup(result.question)}</p>`;
+    }
+
+    renderApp();
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => {
+          applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+        });
+      });
+
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      window.addEventListener("pageshow", () => {
+        if (!location.hash) requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, 0)));
+      });
+    })();
+  </script>
+
+</body>
+</html>

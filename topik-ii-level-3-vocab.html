@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOPIK II Level 3 Vocabulary Quiz</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero {
+  color: var(--hero-heading);
+  background: var(--background);
+}
+.hero-inner {
+  padding: clamp(48px, 7vw, 82px);
+}
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 5.7rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.02em;
+}
+.hero p {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: var(--hero-text);
+  font-size: 1.05rem;
+}
+.toc-card {
+  padding: 18px 22px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+.toc-link small,
+.toc-link span:last-child:not(:first-child) {
+  font-size: .72rem;
+  opacity: .78;
+}
+.section,
+.block,
+.quiz-section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+}
+.section-header h2,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.section > summary::-webkit-details-marker,
+details.block > summary::-webkit-details-marker,
+details.quiz-section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after,
+details.block > summary::after,
+details.quiz-section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after,
+details.block:not([open]) > summary::after,
+details.quiz-section:not([open]) > summary::after { content: "Expand"; }
+.section-content,
+.section-body,
+.block-inner,
+.quiz-body {
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.rule-card,
+.info-card,
+.guide-card,
+.note-card,
+.grammar-card,
+.control-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .rule-card,
+html[data-theme="light"] .info-card,
+html[data-theme="light"] .guide-card,
+html[data-theme="light"] .note-card,
+html[data-theme="light"] .grammar-card,
+html[data-theme="light"] .control-card {
+  color: #F5F5F5;
+}
+.exercise,
+.quiz-card {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+.exercise-kicker,
+.prompt-label,
+.control-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+}
+.exercise-body {
+  padding: clamp(24px, 4vw, 38px);
+}
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+  border-radius: 0;
+}
+.progress > div,
+.progress-fill {
+  height: 100%;
+  background: var(--secondary);
+}
+input,
+select,
+textarea,
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus,
+select:focus,
+textarea:focus,
+.answer-input:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+input:disabled,
+select:disabled,
+textarea:disabled,
+.answer-input:disabled {
+  color: var(--subtle);
+  background: var(--muted-strong);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.btn,
+.primary-btn,
+.secondary-btn,
+.restart-top-btn,
+.mode-btn,
+.choice,
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled),
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled),
+.mode-btn:hover:not(:disabled),
+.choice:hover:not(:disabled),
+.blur-toggle:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+.primary-btn:hover:not(:disabled),
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.secondary-btn,
+.btn.positive {
+  color: #192B5D;
+  background: var(--secondary);
+}
+.btn.warning { color: #192B5D; background: var(--accent); }
+.btn.secondary,
+.restart-top-btn,
+.mode-btn,
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.mode-btn.active,
+.blur-toggle[aria-pressed="true"] {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.choice:hover:not(:disabled) {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice.correct {
+  color: #FFFFFF;
+  background: var(--secondary);
+}
+.choice.wrong {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+}
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+.utility-button.top { background: var(--accent); }
+
+.hidden { display: none !important; }
+
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner { min-height: 60px; }
+  .header-inner,
+  .page-main { width: 100%; }
+  .header-inner { padding: 0 14px; }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner { padding: 48px 22px; }
+  .hero h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+  .toc-card {
+    padding: 18px 22px;
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .section-header,
+  details.section > summary,
+  details.block > summary,
+  details.quiz-section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after,
+  details.block > summary::after,
+  details.quiz-section > summary::after {
+    width: 100%;
+  }
+  .section-content,
+  .section-body,
+  .block-inner,
+  .quiz-body,
+  .exercise-body { padding: 22px; }
+  .btn,
+  .primary-btn,
+  .secondary-btn,
+  .restart-top-btn,
+  .mode-btn,
+  .choice,
+  .blur-toggle { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+#reference > summary { color: #FFFFFF; background: var(--accent); }
+#quizSections > details:nth-child(3n+1) > summary { background: var(--secondary); }
+#quizSections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
+#quizSections > details:nth-child(3n+3) > summary { background: var(--primary); }
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.guide-card h3,
+.note-card h3 {
+  margin: 0 0 10px;
+}
+.guide-card p,
+.note-card p { margin: 0 0 10px; }
+.mini-list {
+  display: grid;
+  gap: 8px;
+}
+.ref-section {
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.ref-section > summary {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.ref-section > summary::-webkit-details-marker { display: none; }
+.ref-section > summary .small { color: var(--subtle); }
+.small {
+  display: block;
+  color: inherit;
+  font-size: .78rem;
+  opacity: .78;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  color: var(--surface-text);
+  background: var(--surface);
+}
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: #192B5D;
+  background: var(--muted);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+.hangul {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.vocab-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
+}
+.vocab-tools__label {
+  margin-right: auto;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.blur-toggle { min-height: 42px; }
+.blur-target {
+  display: inline-block;
+  transition: filter 180ms ease, opacity 180ms ease;
+}
+.ref-section.blur-meaning [data-vocab-field="meaning"] .blur-target,
+.ref-section.blur-romanization [data-vocab-field="romanization"] .blur-target,
+.ref-section.blur-korean [data-vocab-field="korean"] .blur-target {
+  filter: blur(6px);
+  opacity: .72;
+  user-select: none;
+}
+.ref-section.blur-meaning [data-vocab-field="meaning"].peek .blur-target,
+.ref-section.blur-romanization [data-vocab-field="romanization"].peek .blur-target,
+.ref-section.blur-korean [data-vocab-field="korean"].peek .blur-target {
+  filter: none;
+  opacity: 1;
+  user-select: text;
+}
+[data-vocab-field] { cursor: pointer; }
+[data-vocab-field]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: -4px;
+}
+.familiarity-cell { min-width: 190px; }
+.familiarity-stars {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.35rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
+.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
+.familiarity-label {
+  display: block;
+  margin-top: 5px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.section-meta {
+  margin: 0 0 20px;
+  color: var(--surface-text);
+  opacity: .78;
+}
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.mode-btn {
+  min-height: 44px;
+  width: auto;
+  padding: 0 14px;
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+  color: var(--surface-text);
+  font-size: .86rem;
+  font-weight: 800;
+}
+.restart-top-btn {
+  min-height: 40px;
+  width: auto;
+}
+.prompt-label { margin-top: 26px; }
+.prompt {
+  min-height: 1.2em;
+  margin: 8px 0 26px;
+  color: var(--surface-text);
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.answer-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+.answer-form .primary-btn { min-width: 118px; }
+.answer-input { font-size: 1.1rem; }
+.secondary-btn { margin-top: 12px; }
+.answer-key {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.finish-card {
+  display: none;
+  margin-top: 18px;
+  padding: 24px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .finish-card { color: #FFFFFF; }
+.finish-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.7rem;
+}
+.review {
+  max-height: 420px;
+  overflow: auto;
+  margin-top: 20px;
+}
+.review > h3 { margin-bottom: 10px; }
+.review-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+  padding: 16px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+@media (max-width: 680px) {
+  .guide-grid,
+  .controls,
+  .answer-form,
+  .review-row { grid-template-columns: 1fr; }
+  .segmented { display: grid; grid-template-columns: 1fr; }
+  .mode-btn { width: 100%; }
+  .vocab-tools { align-items: stretch; }
+  .vocab-tools__label { width: 100%; }
+  .blur-toggle { flex: 1 1 140px; }
+  .status-row { align-items: stretch; flex-direction: column; }
+}
+
+.source-note {
+  margin: 28px 0 0;
+  padding: 18px 22px;
+  color: var(--surface-subtle);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">TOPIK II Level 3 vocabulary</p>
+        <h1 id="page-title">TOPIK II Level 3 Vocabulary</h1>
+        <p>Practice 53 Level 3 words from the source document with strict pronunciation-style dashed romanization, reference-table recall tools, familiarity ratings, and section quizzes.</p>
+      </div>
+    </section>
+
+    <nav class="toc-card" id="toc" aria-labelledby="toc-title">
+      <span class="toc-label" id="toc-title">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <details class="block" id="reference" open>
+      <summary><span>Definitions, Romanization, and Korean Reference</span></summary>
+      <div class="block-inner">
+        <div class="guide-grid">
+          <article class="guide-card">
+            <h3>Romanization Rules</h3>
+            <p>Romanization follows the source document’s practical pronunciation guide and keeps syllable dashes, such as <strong>gyeong-heom</strong>.</p>
+            <p>Checking ignores capitalization, but syllable boundaries are strict. Pressing Space in a romanization answer inserts a dash.</p>
+          </article>
+          <article class="guide-card">
+            <h3>Level 3 Study Guide</h3>
+            <div class="mini-list"><div>Use the English, Korean, and pronunciation-style romanization modes in either direction.</div><div>Blur any reference-table column, then click an individual cell to peek.</div><div>Rate each word from Learning to Familiar; ratings persist in this browser.</div></div>
+          </article>
+        </div>
+        <div id="referenceTables"></div>
+      </div>
+    </details>
+
+    <div id="quizSections"></div>
+    <p class="source-note">Content is based on the attached Expanded TOPIK II Level 3 Grammar and Vocabulary document. Romanization is a practical pronunciation guide rather than strict official Revised Romanization.</p>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+
+  <script>
+
+    const SECTIONS = [{"id":"core-high-frequency","title":"Core High-Frequency Vocabulary","items":[{"korean":"경험","romanization":"gyeong-heom","meaning":"experience"},{"korean":"문화","romanization":"mun-hwa","meaning":"culture"},{"korean":"사회","romanization":"sa-hoe","meaning":"society"},{"korean":"경제","romanization":"gyeong-je","meaning":"economy"},{"korean":"환경","romanization":"hwan-gyeong","meaning":"environment"},{"korean":"건강","romanization":"geon-gang","meaning":"health"},{"korean":"습관","romanization":"seup-kkwan","meaning":"habit"},{"korean":"계획","romanization":"gye-hoek","meaning":"plan"},{"korean":"준비","romanization":"jun-bi","meaning":"preparation"},{"korean":"목적","romanization":"mok-jjeok","meaning":"purpose"},{"korean":"기회","romanization":"gi-hoe","meaning":"opportunity"},{"korean":"방법","romanization":"bang-beop","meaning":"method"},{"korean":"결과","romanization":"gyeol-gwa","meaning":"result"},{"korean":"이유","romanization":"i-yu","meaning":"reason"},{"korean":"문제","romanization":"mun-je","meaning":"problem"},{"korean":"해결","romanization":"hae-gyeol","meaning":"solution"},{"korean":"관계","romanization":"gwan-gye","meaning":"relationship"},{"korean":"책임","romanization":"chae-gim","meaning":"responsibility"},{"korean":"약속","romanization":"yak-ssok","meaning":"promise / appointment"},{"korean":"실수","romanization":"sil-ssu","meaning":"mistake"}]},{"id":"education","title":"Education","items":[{"korean":"수업","romanization":"su-eop","meaning":"class"},{"korean":"과제","romanization":"gwa-je","meaning":"assignment"},{"korean":"시험","romanization":"si-heom","meaning":"exam"},{"korean":"성적","romanization":"seong-jeok","meaning":"grade"},{"korean":"발표","romanization":"bal-pyo","meaning":"presentation"},{"korean":"연구","romanization":"yeon-gu","meaning":"research"},{"korean":"졸업","romanization":"jo-reop","meaning":"graduation"},{"korean":"장학금","romanization":"jang-hak-kkeum","meaning":"scholarship"}]},{"id":"work","title":"Work","items":[{"korean":"회사","romanization":"hoe-sa","meaning":"company"},{"korean":"직원","romanization":"ji-gwon","meaning":"employee"},{"korean":"회의","romanization":"hoe-ui","meaning":"meeting"},{"korean":"업무","romanization":"eom-mu","meaning":"work, task"},{"korean":"월급","romanization":"wol-geup","meaning":"salary"},{"korean":"출근","romanization":"chul-geun","meaning":"go to work"},{"korean":"퇴근","romanization":"toe-geun","meaning":"leave work"}]},{"id":"daily-life","title":"Daily Life","items":[{"korean":"생활","romanization":"saeng-hwal","meaning":"daily life"},{"korean":"이사","romanization":"i-sa","meaning":"move"},{"korean":"여행","romanization":"yeo-haeng","meaning":"travel"},{"korean":"교통","romanization":"gyo-tong","meaning":"transportation"},{"korean":"날씨","romanization":"nal-ssi","meaning":"weather"},{"korean":"계절","romanization":"gye-jeol","meaning":"season"},{"korean":"음식","romanization":"eum-shik","meaning":"food"},{"korean":"취미","romanization":"chwi-mi","meaning":"hobby"}]},{"id":"common-verbs","title":"Common Verbs","items":[{"korean":"신청하다","romanization":"sin-cheong-ha-da","meaning":"to apply"},{"korean":"이용하다","romanization":"i-yong-ha-da","meaning":"to use"},{"korean":"참석하다","romanization":"cham-seo-ka-da","meaning":"to attend"},{"korean":"선택하다","romanization":"seon-tae-ka-da","meaning":"to choose"},{"korean":"결정하다","romanization":"gyeol-jjeong-ha-da","meaning":"to decide"},{"korean":"설명하다","romanization":"seol-myeong-ha-da","meaning":"to explain"},{"korean":"증가하다","romanization":"jeung-ga-ha-da","meaning":"to increase"},{"korean":"감소하다","romanization":"gam-so-ha-da","meaning":"to decrease"},{"korean":"발전하다","romanization":"bal-jjeon-ha-da","meaning":"to develop"},{"korean":"성공하다","romanization":"seong-gong-ha-da","meaning":"to succeed"}]}];
+    const ALL_WORDS_SECTION = {
+      id: "all-words",
+      title: "All Words Together",
+      items: SECTIONS.flatMap(section => section.items)
+    };
+    const QUIZ_SECTIONS = [...SECTIONS, ALL_WORDS_SECTION];
+    const MODES = [
+      { key: "english", label: "English" },
+      { key: "romanization", label: "Romanization" },
+      { key: "korean", label: "Korean" }
+    ];
+    const states = {};
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeRomanization(text) {
+      return String(text ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[’']/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function normalizeEnglish(text) {
+      return String(text ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[’']/g, "")
+        .replace(/&/g, "and")
+        .replace(/\ba\.?m\.?\b/g, "am")
+        .replace(/\bp\.?m\.?\b/g, "pm")
+        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function normalizeKorean(text) {
+      return String(text ?? "")
+        .replace(/\s+/g, "")
+        .trim();
+    }
+
+    function splitMeaning(meaning) {
+      const exact = String(meaning);
+      const pieces = exact
+        .split("/")
+        .flatMap(part => part.split(","))
+        .map(s => s.trim())
+        .filter(Boolean);
+      return [...new Set([exact, ...pieces])];
+    }
+
+    function displayValue(item, mode) {
+      if (mode === "english") return item.meaning;
+      if (mode === "romanization") return item.romanization;
+      return item.korean;
+    }
+
+    function answerValues(item, mode) {
+      if (mode === "english") return splitMeaning(item.meaning);
+      if (mode === "romanization") {
+        return [...new Set([item.romanization, ...(item.romanization_alts || [])])];
+      }
+      return [...new Set([item.korean, ...(item.korean_alts || [])])];
+    }
+
+    function normalizeByMode(value, mode) {
+      if (mode === "english") return normalizeEnglish(value);
+      if (mode === "romanization") return normalizeRomanization(value);
+      return normalizeKorean(value);
+    }
+
+    function acceptedAnswers(section, item, qMode, aMode) {
+      const promptValue = normalizeByMode(displayValue(item, qMode), qMode);
+      const matchingItems = section.items.filter(other =>
+        normalizeByMode(displayValue(other, qMode), qMode) === promptValue
+      );
+      const answers = matchingItems.flatMap(other => answerValues(other, aMode));
+      return [...new Set(answers)];
+    }
+
+    function isCorrect(section, item, qMode, aMode, userText) {
+      const normalizedUser = normalizeByMode(userText, aMode);
+      return acceptedAnswers(section, item, qMode, aMode)
+        .some(ans => normalizeByMode(ans, aMode) === normalizedUser);
+    }
+
+    function modeLabel(mode) {
+      return MODES.find(m => m.key === mode)?.label || mode;
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function validNoBackToBack(list) {
+      for (let i = 1; i < list.length; i++) {
+        if (list[i].id === list[i - 1].id) return false;
+      }
+      return true;
+    }
+
+    function buildQuestionList(section) {
+      const base = section.items.map((item, i) => ({ ...item, id: `${section.id}-${i}` }));
+      const doubled = [...base, ...base];
+
+      for (let attempt = 0; attempt < 300; attempt++) {
+        const candidate = shuffle(doubled);
+        if (validNoBackToBack(candidate)) return candidate;
+      }
+
+      const remaining = shuffle(doubled);
+      const result = [];
+      while (remaining.length) {
+        let index = remaining.findIndex(item => !result.length || item.id !== result[result.length - 1].id);
+        if (index === -1) index = 0;
+        result.push(remaining.splice(index, 1)[0]);
+      }
+      return result;
+    }
+
+    function setupTheme() {}
+
+    function renderTOC() {
+      const grid = document.getElementById("tocGrid");
+      grid.innerHTML = `
+        <a class="toc-link" href="#reference"><span>Reference Tables</span><span>all vocab</span></a>
+        ${QUIZ_SECTIONS.map(section => `
+          <a class="toc-link" href="#quiz-${section.id}">
+            <span>${esc(section.title)}</span>
+            <span>${section.items.length} words · ${section.items.length * 2} Qs</span>
+          </a>
+        `).join("")}
+      `;
+    }
+
+    function renderReference() {
+      const container = document.getElementById("referenceTables");
+      container.innerHTML = SECTIONS.map(section => `
+        <details class="ref-section" data-section-id="${esc(section.id)}" open>
+          <summary>
+            <span>${esc(section.title)}</span>
+            <span class="small">${section.items.length} words</span>
+          </summary>
+          ${section.notes ? `
+            <div class="note-card" style="margin: 14px;">
+              <h3>Notes</h3>
+              <ul>${section.notes.map(note => `<li>${esc(note)}</li>`).join("")}</ul>
+            </div>
+          ` : ""}
+          <div class="vocab-tools" aria-label="Vocabulary visibility controls">
+            <span class="vocab-tools__label">Study controls · click a blurred cell to peek</span>
+            <button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur English</button>
+            <button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>
+            <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>English</th>
+                  <th>Romanization</th>
+                  <th>Korean</th>
+                  <th>Familiarity</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${section.items.map((item, itemIndex) => {
+                  const wordKey = `${section.id}:${itemIndex}:${item.korean}`;
+                  return `
+                  <tr>
+                    <td data-vocab-field="meaning" tabindex="0"><span class="blur-target">${esc(item.meaning)}</span></td>
+                    <td data-vocab-field="romanization" tabindex="0"><span class="blur-target"><span class="roman">${esc(item.romanization)}</span>${item.romanization_alts ? `<span class="small">Also accepted: ${esc(item.romanization_alts.join(", "))}</span>` : ""}</span></td>
+                    <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<span class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</span>` : ""}</span></td>
+                    <td class="familiarity-cell">
+                      <div class="familiarity-stars" data-word-key="${esc(wordKey)}" data-level="0" role="group" aria-label="Familiarity rating for ${esc(item.korean)}">
+                        <button class="familiarity-star" type="button" data-level="1" aria-label="Mark 1 star: learning" aria-pressed="false">★</button>
+                        <button class="familiarity-star" type="button" data-level="2" aria-label="Mark 2 stars: developing" aria-pressed="false">★</button>
+                        <button class="familiarity-star" type="button" data-level="3" aria-label="Mark 3 stars: familiar" aria-pressed="false">★</button>
+                      </div>
+                      <span class="familiarity-label">Not rated</span>
+                    </td>
+                  </tr>`;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      `).join("");
+    }
+
+    function renderModeButtons(sectionId, type, activeMode) {
+      return MODES.map(mode => `
+        <button
+          type="button"
+          class="mode-btn ${mode.key === activeMode ? "active" : ""}"
+          data-section="${sectionId}"
+          data-type="${type}"
+          data-mode="${mode.key}">
+          ${mode.label}
+        </button>
+      `).join("");
+    }
+
+    function renderQuizSections() {
+      const container = document.getElementById("quizSections");
+      container.innerHTML = QUIZ_SECTIONS.map((section, index) => {
+        states[section.id] = {
+          questionMode: "english",
+          answerMode: "romanization",
+          questions: buildQuestionList(section),
+          index: 0,
+          score: 0,
+          answered: false,
+          results: []
+        };
+
+        return `
+          <details class="quiz-section" id="quiz-${section.id}" ${index === 0 ? "open" : ""}>
+            <summary><span>${esc(section.title)} Quiz</span></summary>
+            <div class="quiz-body">
+              <p class="section-meta">
+                ${section.items.length} vocabulary items → ${section.items.length * 2} questions. No repeated word appears back to back.
+              </p>
+
+              <div class="controls">
+                <div class="control-card">
+                  <div class="control-label">Question shown as</div>
+                  <div class="segmented mode-group" id="q-modes-${section.id}">
+                    ${renderModeButtons(section.id, "question", "english")}
+                  </div>
+                </div>
+                <div class="control-card">
+                  <div class="control-label">Answer typed as</div>
+                  <div class="segmented mode-group" id="a-modes-${section.id}">
+                    ${renderModeButtons(section.id, "answer", "romanization")}
+                  </div>
+                </div>
+              </div>
+
+              <article class="quiz-card" id="quiz-card-${section.id}">
+                <div class="exercise-head">
+                  <div class="exercise-head-copy">
+                    <span class="exercise-kicker">Vocabulary drill</span>
+                    <h3>${esc(section.title)}</h3>
+                    <p>Answer one prompt at a time, then review the complete set.</p>
+                  </div>
+                  <div class="score" id="score-${section.id}" aria-live="polite"></div>
+                </div>
+                <div class="exercise-body">
+                  <div class="status-row">
+                    <div id="question-number-${section.id}"></div>
+                    <button class="restart-top-btn" id="restart-top-${section.id}" type="button" data-section="${section.id}">Restart</button>
+                  </div>
+                  <div class="progress" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progress-${section.id}"></div></div>
+                  <div class="prompt-label" id="prompt-label-${section.id}"></div>
+                  <p class="prompt" id="prompt-${section.id}"></p>
+
+                  <form class="answer-form" data-section="${section.id}">
+                    <label class="sr-only" for="input-${section.id}">Type your answer</label>
+                    <input class="answer-input" id="input-${section.id}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer" />
+                    <button class="primary-btn" id="check-${section.id}" type="submit">Check</button>
+                  </form>
+
+                  <div class="feedback" id="feedback-${section.id}" aria-live="polite"></div>
+                  <button class="secondary-btn hidden" id="next-${section.id}" type="button" data-section="${section.id}">Next</button>
+
+                  <div class="finish-card" id="finish-${section.id}">
+                    <h3>Quiz Complete</h3>
+                    <p id="final-score-${section.id}"></p>
+                    <button class="secondary-btn" id="restart-${section.id}" type="button" data-section="${section.id}">Restart This Quiz</button>
+                    <div class="review" id="review-${section.id}"></div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </details>
+        `;
+      }).join("");
+
+      attachQuizListeners();
+      QUIZ_SECTIONS.forEach(section => showQuestion(section.id));
+    }
+
+    function sectionById(id) {
+      return QUIZ_SECTIONS.find(s => s.id === id);
+    }
+
+    function itemAnswerDisplay(item, mode) {
+      return answerValues(item, mode).join(" / ");
+    }
+
+    function refreshModeButtons(sectionId) {
+      const state = states[sectionId];
+      document.querySelectorAll(`[data-section="${sectionId}"][data-type="question"]`).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.questionMode);
+      });
+      document.querySelectorAll(`[data-section="${sectionId}"][data-type="answer"]`).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.answerMode);
+      });
+    }
+
+    function resetQuiz(sectionId) {
+      const state = states[sectionId];
+      const section = sectionById(sectionId);
+      state.questions = buildQuestionList(section);
+      state.index = 0;
+      state.score = 0;
+      state.answered = false;
+      state.results = [];
+      document.getElementById(`finish-${sectionId}`).style.display = "none";
+      document.getElementById(`quiz-card-${sectionId}`).querySelector(".answer-form").classList.remove("hidden");
+      document.getElementById(`next-${sectionId}`).classList.add("hidden");
+      showQuestion(sectionId);
+    }
+
+    function showQuestion(sectionId) {
+      const state = states[sectionId];
+      const section = sectionById(sectionId);
+      const item = state.questions[state.index];
+      state.answered = false;
+
+      document.getElementById(`question-number-${sectionId}`).textContent =
+        `Question ${state.index + 1} / ${state.questions.length}`;
+      document.getElementById(`score-${sectionId}`).textContent =
+        `Score: ${state.score}`;
+      const progressPercent = (state.index / state.questions.length) * 100;
+      document.getElementById(`progress-${sectionId}`).style.width = `${progressPercent}%`;
+      document.getElementById(`progress-${sectionId}`).parentElement.setAttribute("aria-valuenow", String(Math.round(progressPercent)));
+      document.getElementById(`prompt-label-${sectionId}`).textContent =
+        modeLabel(state.questionMode);
+      document.getElementById(`prompt-${sectionId}`).textContent =
+        displayValue(item, state.questionMode);
+
+      const input = document.getElementById(`input-${sectionId}`);
+      input.value = "";
+      input.placeholder = state.answerMode === "romanization" ? "Type with syllable dashes" : "Type your answer";
+      input.onkeydown = event => {
+        if (state.answerMode === "romanization" && event.key === " ") {
+          event.preventDefault();
+          const start = input.selectionStart ?? input.value.length;
+          const end = input.selectionEnd ?? start;
+          input.value = input.value.slice(0, start) + "-" + input.value.slice(end);
+          input.setSelectionRange(start + 1, start + 1);
+        }
+      };
+      input.disabled = false;
+      document.getElementById(`check-${sectionId}`).disabled = false;
+      document.getElementById(`feedback-${sectionId}`).className = "feedback";
+      document.getElementById(`feedback-${sectionId}`).innerHTML = "";
+      document.getElementById(`next-${sectionId}`).classList.add("hidden");
+      document.getElementById(`finish-${sectionId}`).style.display = "none";
+      // Deliberately avoid automatic focus so Safari opens at the top.
+    }
+
+    function completeQuestion(sectionId, userAnswer) {
+      const state = states[sectionId];
+      const section = sectionById(sectionId);
+      const item = state.questions[state.index];
+      const correct = isCorrect(section, item, state.questionMode, state.answerMode, userAnswer);
+      const feedback = document.getElementById(`feedback-${sectionId}`);
+      state.answered = true;
+
+      if (correct) {
+        state.score += 1;
+        feedback.className = "feedback good";
+        feedback.innerHTML = `Correct. <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>`;
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = `
+          Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span><br>
+          <span class="small">Full entry: ${esc(item.meaning)} · ${esc(item.romanization)} · ${esc(item.korean)}</span>
+        `;
+      }
+
+      state.results.push({
+        promptMode: state.questionMode,
+        answerMode: state.answerMode,
+        prompt: displayValue(item, state.questionMode),
+        expected: itemAnswerDisplay(item, state.answerMode),
+        full: `${item.meaning} · ${item.romanization} · ${item.korean}`,
+        userAnswer,
+        correct
+      });
+
+      document.getElementById(`score-${sectionId}`).textContent = `Score: ${state.score}`;
+      document.getElementById(`input-${sectionId}`).disabled = true;
+      document.getElementById(`check-${sectionId}`).disabled = true;
+      const next = document.getElementById(`next-${sectionId}`);
+      next.textContent = state.index === state.questions.length - 1 ? "Finish" : "Next";
+      next.classList.remove("hidden");
+      next.focus();
+    }
+
+    function showFinish(sectionId) {
+      const state = states[sectionId];
+      document.getElementById(`progress-${sectionId}`).style.width = "100%";
+      document.getElementById(`progress-${sectionId}`).parentElement.setAttribute("aria-valuenow", "100");
+      document.getElementById(`finish-${sectionId}`).style.display = "block";
+      document.getElementById(`final-score-${sectionId}`).innerHTML =
+        `Final score: <strong>${state.score} / ${state.questions.length}</strong> (${Math.round((state.score / state.questions.length) * 100)}%)`;
+      document.getElementById(`review-${sectionId}`).innerHTML = `
+        <h3>Review</h3>
+        ${state.results.map((r, i) => `
+          <div class="review-row">
+            <div>
+              <strong>${i + 1}. ${esc(r.prompt)}</strong><br>
+              <span class="small">Your answer: ${esc(r.userAnswer || "(blank)")}</span>
+            </div>
+            <div>
+              ${r.correct ? "✅" : "❌"} <strong>${esc(r.expected)}</strong><br>
+              <span class="small">${esc(r.full)}</span>
+            </div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function attachQuizListeners() {
+      document.querySelectorAll(".mode-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sectionId = btn.dataset.section;
+          const state = states[sectionId];
+          if (btn.dataset.type === "question") {
+            state.questionMode = btn.dataset.mode;
+            if (state.answerMode === state.questionMode) {
+              state.answerMode = state.questionMode === "english" ? "romanization" : "english";
+            }
+          } else {
+            state.answerMode = btn.dataset.mode;
+            if (state.answerMode === state.questionMode) {
+              state.questionMode = state.answerMode === "english" ? "romanization" : "english";
+            }
+          }
+          refreshModeButtons(sectionId);
+          resetQuiz(sectionId);
+        });
+      });
+
+      document.querySelectorAll(".answer-form").forEach(form => {
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+          const sectionId = form.dataset.section;
+          const state = states[sectionId];
+          if (state.answered) return;
+          completeQuestion(sectionId, document.getElementById(`input-${sectionId}`).value);
+        });
+      });
+
+      document.querySelectorAll("[id^='next-']").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sectionId = btn.dataset.section;
+          const state = states[sectionId];
+          if (state.index < state.questions.length - 1) {
+            state.index += 1;
+            showQuestion(sectionId);
+          } else {
+            btn.classList.add("hidden");
+            showFinish(sectionId);
+          }
+        });
+      });
+
+      document.querySelectorAll("[id^='restart-']").forEach(btn => {
+        btn.addEventListener("click", () => {
+          resetQuiz(btn.dataset.section);
+        });
+      });
+    }
+
+    setupTheme();
+    renderTOC();
+    renderReference();
+    renderQuizSections();
+
+    document.querySelectorAll("details.block, details.quiz-section, details.ref-section").forEach(details => {
+      const summary = details.querySelector(":scope > summary");
+      if (!summary) return;
+      const sync = () => summary.setAttribute("aria-expanded", String(details.open));
+      sync();
+      details.addEventListener("toggle", sync);
+    });
+  
+  </script>
+  <script>
+
+    (() => {
+      const FAMILIARITY_KEY = "topikVocabFamiliarityV1";
+      const BLUR_KEY = "topikVocabBlurV1";
+      const LEVEL_LABELS = ["Not rated", "1 star · Learning", "2 stars · Developing", "3 stars · Familiar"];
+
+      function loadObject(key) {
+        try { return JSON.parse(localStorage.getItem(key) || "{}"); }
+        catch (_) { return {}; }
+      }
+
+      function saveObject(key, value) {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+      }
+
+      const familiarity = loadObject(FAMILIARITY_KEY);
+      const blurState = loadObject(BLUR_KEY);
+
+      function paintRating(group, level) {
+        const safeLevel = Math.max(0, Math.min(3, Number(level) || 0));
+        group.dataset.level = String(safeLevel);
+        group.querySelectorAll(".familiarity-star").forEach((button, index) => {
+          button.setAttribute("aria-pressed", String(index < safeLevel));
+        });
+        const label = group.parentElement.querySelector(".familiarity-label");
+        if (label) label.textContent = LEVEL_LABELS[safeLevel];
+      }
+
+      document.querySelectorAll(".familiarity-stars").forEach(group => {
+        const wordKey = group.dataset.wordKey;
+        paintRating(group, familiarity[wordKey] || 0);
+
+        group.addEventListener("click", event => {
+          const button = event.target.closest(".familiarity-star");
+          if (!button) return;
+          const chosen = Number(button.dataset.level);
+          const current = Number(group.dataset.level || 0);
+          const next = current === chosen ? 0 : chosen;
+          familiarity[wordKey] = next;
+          if (!next) delete familiarity[wordKey];
+          saveObject(FAMILIARITY_KEY, familiarity);
+          paintRating(group, next);
+        });
+      });
+
+      function applyBlur(section, field, enabled) {
+        section.classList.toggle(`blur-${field}`, enabled);
+        const button = section.querySelector(`.blur-toggle[data-field="${field}"]`);
+        if (button) {
+          const label = field === "meaning" ? "English" : field[0].toUpperCase() + field.slice(1);
+          button.setAttribute("aria-pressed", String(enabled));
+          button.textContent = enabled ? `Show ${label}` : `Blur ${label}`;
+        }
+      }
+
+      document.querySelectorAll(".ref-section[data-section-id]").forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const saved = blurState[sectionId] || {};
+        ["meaning", "romanization", "korean"].forEach(field => applyBlur(section, field, Boolean(saved[field])));
+
+        section.querySelectorAll(".blur-toggle").forEach(button => {
+          button.addEventListener("click", () => {
+            const field = button.dataset.field;
+            const enabled = !section.classList.contains(`blur-${field}`);
+            blurState[sectionId] = blurState[sectionId] || {};
+            blurState[sectionId][field] = enabled;
+            saveObject(BLUR_KEY, blurState);
+            section.querySelectorAll(`[data-vocab-field="${field}"]`).forEach(cell => cell.classList.remove("peek"));
+            applyBlur(section, field, enabled);
+          });
+        });
+
+        section.querySelectorAll("[data-vocab-field]").forEach(cell => {
+          cell.addEventListener("click", () => {
+            const field = cell.dataset.vocabField;
+            if (section.classList.contains(`blur-${field}`)) cell.classList.toggle("peek");
+          });
+          cell.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              cell.click();
+            }
+          });
+        });
+      });
+    })();
+  
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => {
+          applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+        });
+      });
+
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      window.addEventListener("pageshow", () => {
+        if (!location.hash) requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, 0)));
+      });
+    })();
+  </script>
+
+</body>
+</html>
