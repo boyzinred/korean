@@ -919,29 +919,19 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
         if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
       });
 
-      function storeAnchor(hash) {
-        try {
-          if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
-          else localStorage.removeItem(ANCHOR_KEY);
-        } catch (_) {}
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
       }
-
-      document.addEventListener("click", event => {
-        const link = event.target.closest('a[href^="#"]');
-        if (link) storeAnchor(link.getAttribute("href"));
-      });
-
-      window.addEventListener("hashchange", () => storeAnchor(location.hash));
-
-      if (!location.hash) {
-        let saved = "";
-        try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
-        if (saved && document.querySelector(saved)) {
-          requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
-        } else {
-          requestAnimationFrame(() => window.scrollTo(0, 0));
+      
+      window.addEventListener("pageshow", () => {
+        if (!location.hash) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              window.scrollTo(0, 0);
+            });
+          });
         }
-      }
+      });
     })();
   </script>
 
