@@ -1,1089 +1,903 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script id="flat-theme-init">
+
+  <script>
     (() => {
       try {
-        const saved = localStorage.getItem("flatDesignTheme");
+        const saved = localStorage.getItem("koreanQuizThemeV2");
         const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
       } catch (_) {}
     })();
   </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Korean Vocabulary Quiz Hub</title>
   <style>
+
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
-    :root {
-      color-scheme: light;
-      --background: #FFFFFF;
-      --foreground: #111827;
-      --primary: #3B82F6;
-      --primary-hover: #2563EB;
-      --secondary: #10B981;
-      --accent: #F59E0B;
-      --muted: #F3F4F6;
-      --border: #E5E7EB;
-      --blue-soft: #DBEAFE;
-      --green-soft: #D1FAE5;
-      --amber-soft: #FEF3C7;
-      --radius-md: 6px;
-      --radius-lg: 8px;
-      --font: 'Outfit', sans-serif;
-      --transition: all 200ms ease;
-    }
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero {
+  color: var(--hero-heading);
+  background: var(--background);
+}
+.hero-inner {
+  padding: clamp(48px, 7vw, 82px);
+}
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 5.7rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.02em;
+}
+.hero p {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: var(--hero-text);
+  font-size: 1.05rem;
+}
+.toc-card {
+  padding: 18px 22px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+.toc-link small,
+.toc-link span:last-child:not(:first-child) {
+  font-size: .72rem;
+  opacity: .78;
+}
+.section,
+.block,
+.quiz-section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+}
+.section-header h2,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.section > summary::-webkit-details-marker,
+details.block > summary::-webkit-details-marker,
+details.quiz-section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after,
+details.block > summary::after,
+details.quiz-section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after,
+details.block:not([open]) > summary::after,
+details.quiz-section:not([open]) > summary::after { content: "Expand"; }
+.section-content,
+.section-body,
+.block-inner,
+.quiz-body {
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.rule-card,
+.info-card,
+.guide-card,
+.note-card,
+.grammar-card,
+.control-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .rule-card,
+html[data-theme="light"] .info-card,
+html[data-theme="light"] .guide-card,
+html[data-theme="light"] .note-card,
+html[data-theme="light"] .grammar-card,
+html[data-theme="light"] .control-card {
+  color: #F5F5F5;
+}
+.exercise,
+.quiz-card {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+.exercise-kicker,
+.prompt-label,
+.control-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+}
+.exercise-body {
+  padding: clamp(24px, 4vw, 38px);
+}
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+  border-radius: 0;
+}
+.progress > div,
+.progress-fill {
+  height: 100%;
+  background: var(--secondary);
+}
+input,
+select,
+textarea,
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus,
+select:focus,
+textarea:focus,
+.answer-input:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+input:disabled,
+select:disabled,
+textarea:disabled,
+.answer-input:disabled {
+  color: var(--subtle);
+  background: var(--muted-strong);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.btn,
+.primary-btn,
+.secondary-btn,
+.restart-top-btn,
+.mode-btn,
+.choice,
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled),
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled),
+.mode-btn:hover:not(:disabled),
+.choice:hover:not(:disabled),
+.blur-toggle:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+.primary-btn:hover:not(:disabled),
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.secondary-btn,
+.btn.positive {
+  color: #192B5D;
+  background: var(--secondary);
+}
+.btn.warning { color: #192B5D; background: var(--accent); }
+.btn.secondary,
+.restart-top-btn,
+.mode-btn,
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.mode-btn.active,
+.blur-toggle[aria-pressed="true"] {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.choice:hover:not(:disabled) {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice.correct {
+  color: #FFFFFF;
+  background: var(--secondary);
+}
+.choice.wrong {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+}
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+.utility-button.top { background: var(--accent); }
+
+.hidden { display: none !important; }
+
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner { min-height: 60px; }
+  .header-inner,
+  .page-main { width: 100%; }
+  .header-inner { padding: 0 14px; }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner { padding: 48px 22px; }
+  .hero h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+  .toc-card {
+    padding: 18px 22px;
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .section-header,
+  details.section > summary,
+  details.block > summary,
+  details.quiz-section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after,
+  details.block > summary::after,
+  details.quiz-section > summary::after {
+    width: 100%;
+  }
+  .section-content,
+  .section-body,
+  .block-inner,
+  .quiz-body,
+  .exercise-body { padding: 22px; }
+  .btn,
+  .primary-btn,
+  .secondary-btn,
+  .restart-top-btn,
+  .mode-btn,
+  .choice,
+  .blur-toggle { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+#reference > summary { color: #FFFFFF; background: var(--accent); }
+#quizSections > details:nth-child(3n+1) > summary { background: var(--secondary); }
+#quizSections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
+#quizSections > details:nth-child(3n+3) > summary { background: var(--primary); }
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.guide-card h3,
+.note-card h3 {
+  margin: 0 0 10px;
+}
+.guide-card p,
+.note-card p { margin: 0 0 10px; }
+.mini-list {
+  display: grid;
+  gap: 8px;
+}
+.ref-section {
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.ref-section > summary {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.ref-section > summary::-webkit-details-marker { display: none; }
+.ref-section > summary .small { color: var(--subtle); }
+.small {
+  display: block;
+  color: inherit;
+  font-size: .78rem;
+  opacity: .78;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  color: var(--surface-text);
+  background: var(--surface);
+}
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: #192B5D;
+  background: var(--muted);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+.hangul {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.vocab-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
+}
+.vocab-tools__label {
+  margin-right: auto;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.blur-toggle { min-height: 42px; }
+.blur-target {
+  display: inline-block;
+  transition: filter 180ms ease, opacity 180ms ease;
+}
+.ref-section.blur-meaning [data-vocab-field="meaning"] .blur-target,
+.ref-section.blur-romanization [data-vocab-field="romanization"] .blur-target,
+.ref-section.blur-korean [data-vocab-field="korean"] .blur-target {
+  filter: blur(6px);
+  opacity: .72;
+  user-select: none;
+}
+.ref-section.blur-meaning [data-vocab-field="meaning"].peek .blur-target,
+.ref-section.blur-romanization [data-vocab-field="romanization"].peek .blur-target,
+.ref-section.blur-korean [data-vocab-field="korean"].peek .blur-target {
+  filter: none;
+  opacity: 1;
+  user-select: text;
+}
+[data-vocab-field] { cursor: pointer; }
+[data-vocab-field]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: -4px;
+}
+.familiarity-cell { min-width: 190px; }
+.familiarity-stars {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.35rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
+.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
+.familiarity-label {
+  display: block;
+  margin-top: 5px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.section-meta {
+  margin: 0 0 20px;
+  color: var(--surface-text);
+  opacity: .78;
+}
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.mode-btn {
+  min-height: 44px;
+  width: auto;
+  padding: 0 14px;
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+  color: var(--surface-text);
+  font-size: .86rem;
+  font-weight: 800;
+}
+.restart-top-btn {
+  min-height: 40px;
+  width: auto;
+}
+.prompt-label { margin-top: 26px; }
+.prompt {
+  min-height: 1.2em;
+  margin: 8px 0 26px;
+  color: var(--surface-text);
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.answer-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+.answer-form .primary-btn { min-width: 118px; }
+.answer-input { font-size: 1.1rem; }
+.secondary-btn { margin-top: 12px; }
+.answer-key {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.finish-card {
+  display: none;
+  margin-top: 18px;
+  padding: 24px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .finish-card { color: #FFFFFF; }
+.finish-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.7rem;
+}
+.review {
+  max-height: 420px;
+  overflow: auto;
+  margin-top: 20px;
+}
+.review > h3 { margin-bottom: 10px; }
+.review-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+  padding: 16px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+@media (max-width: 680px) {
+  .guide-grid,
+  .controls,
+  .answer-form,
+  .review-row { grid-template-columns: 1fr; }
+  .segmented { display: grid; grid-template-columns: 1fr; }
+  .mode-btn { width: 100%; }
+  .vocab-tools { align-items: stretch; }
+  .vocab-tools__label { width: 100%; }
+  .blur-toggle { flex: 1 1 140px; }
+  .status-row { align-items: stretch; flex-direction: column; }
+}
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--foreground);
-      background: var(--muted);
-      font-family: var(--font);
-      line-height: 1.55;
-    }
-
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    a { color: inherit; }
-
-    .wrap {
-      width: min(1280px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 24px 0 76px;
-    }
-
-    .hero {
-      position: relative;
-      min-height: 570px;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      padding: clamp(38px, 7vw, 88px);
-      color: #FFFFFF;
-      background: var(--primary);
-      border: 0;
-      border-radius: var(--radius-lg);
-      box-shadow: none;
-    }
-
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-    }
-
-    .hero::before {
-      width: 370px;
-      height: 370px;
-      right: 5%;
-      top: -130px;
-      border-radius: 50%;
-      background: var(--secondary);
-    }
-
-    .hero::after {
-      width: 310px;
-      height: 310px;
-      right: 16%;
-      bottom: -155px;
-      background: var(--accent);
-      transform: rotate(14deg);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 38px;
-      padding: 0 13px;
-      color: var(--foreground);
-      background: #FFFFFF;
-      border: 0;
-      border-radius: 999px;
-      font-size: .76rem;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      max-width: 10ch;
-      margin: 24px 0 26px;
-      font-size: clamp(3.5rem, 8vw, 7.6rem);
-      font-weight: 800;
-      line-height: .85;
-      letter-spacing: -.04em;
-    }
-
-    .subtitle {
-      max-width: 720px;
-      margin: 0;
-      color: #EFF6FF;
-      font-size: clamp(1rem, 1.7vw, 1.24rem);
-      line-height: 1.65;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      margin-top: 30px;
-    }
-
-    .theme-toggle { display: none; }
-
-    .home-link,
-    .back-toc,
-    .btn {
-      min-height: 54px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 18px;
-      border: 0;
-      border-radius: var(--radius-md);
-      font-weight: 700;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .home-link {
-      color: var(--foreground);
-      background: #FFFFFF;
-    }
-
-    .home-link:hover {
-      color: #FFFFFF;
-      background: var(--foreground);
-      transform: scale(1.05);
-    }
-
-    .small {
-      color: #6B7280;
-      font-size: .84rem;
-      line-height: 1.5;
-    }
-
-    .hero .small { color: #EFF6FF; }
-
-    #toc {
-      margin-top: 24px;
-      padding: clamp(26px, 4vw, 44px);
-      color: #FFFFFF;
-      background: var(--foreground);
-      border: 0;
-      border-radius: var(--radius-lg);
-    }
-
-    #toc h2,
-    .block h2 {
-      margin: 0 0 22px;
-      color: var(--secondary);
-      font-size: .82rem;
-      font-weight: 700;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
-
-    .toc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 10px;
-    }
-
-    .toc-link {
-      min-height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 12px 16px;
-      color: #FFFFFF;
-      background: #1F2937;
-      border: 0;
-      border-radius: var(--radius-md);
-      font-weight: 600;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .toc-link:hover {
-      color: var(--foreground);
-      background: var(--secondary);
-      transform: translateX(5px);
-    }
-
-    .toc-link span:last-child {
-      color: var(--accent);
-      font-size: .76rem;
-      white-space: nowrap;
-    }
-
-    .toc-link:hover span:last-child { color: var(--foreground); }
-
-    .block,
-    .quiz-section {
-      margin-top: 24px;
-      overflow: hidden;
-      background: var(--background);
-      border: 0;
-      border-radius: var(--radius-lg);
-      box-shadow: none;
-      scroll-margin-top: 20px;
-    }
-
-    details.block > summary,
-    details.quiz-section > summary {
-      min-height: 132px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: clamp(26px, 5vw, 56px);
-      color: var(--foreground);
-      background: var(--accent);
-      border: 0;
-      cursor: pointer;
-      list-style: none;
-      font-size: clamp(2rem, 5vw, 4.6rem);
-      font-weight: 800;
-      line-height: .92;
-      letter-spacing: -.03em;
-    }
-
-    details.block > summary::-webkit-details-marker,
-    details.quiz-section > summary::-webkit-details-marker { display: none; }
-
-    details.block > summary::after,
-    details.quiz-section > summary::after {
-      content: "Collapse";
-      min-height: 40px;
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      padding: 0 12px;
-      color: var(--foreground);
-      background: #FFFFFF;
-      border-radius: 999px;
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    details.block:not([open]) > summary::after,
-    details.quiz-section:not([open]) > summary::after { content: "Expand"; }
-
-    #quizSections > details:nth-child(3n+1) > summary { background: var(--secondary); }
-    #quizSections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--primary); }
-    #quizSections > details:nth-child(3n+3) > summary { background: var(--accent); }
-
-    .block-inner,
-    .quiz-body {
-      padding: clamp(24px, 4vw, 48px);
-      background: var(--muted);
-    }
-
-    .guide-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .guide-card,
-    .note-card {
-      padding: 22px;
-      background: #FFFFFF;
-      border: 0;
-      border-radius: var(--radius-lg);
-    }
-
-    .guide-card:nth-child(2) { background: var(--blue-soft); }
-
-    .guide-card h3,
-    .note-card h3 {
-      margin: 0 0 10px;
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: -.02em;
-    }
-
-    .guide-card p,
-    .note-card p,
-    .note-card li { color: #4B5563; }
-
-    .mini-list {
-      display: grid;
-      gap: 9px;
-      color: #4B5563;
-      font-size: .9rem;
-    }
-
-    .ref-section {
-      margin-top: 16px;
-      overflow: hidden;
-      background: #FFFFFF;
-      border: 0;
-      border-radius: var(--radius-lg);
-    }
-
-    .ref-section summary {
-      min-height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 16px 20px;
-      color: #FFFFFF;
-      background: var(--foreground);
-      cursor: pointer;
-      list-style: none;
-      font-weight: 700;
-    }
-
-    .ref-section summary::-webkit-details-marker { display: none; }
-    .ref-section summary .small { color: var(--secondary); }
-
-    .table-wrap { overflow-x: auto; }
-
-    table {
-      width: 100%;
-      min-width: 650px;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 14px 16px;
-      text-align: left;
-      vertical-align: top;
-      border-bottom: 2px solid var(--muted);
-    }
-
-    th {
-      color: var(--foreground);
-      background: var(--amber-soft);
-      font-size: .76rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    td { color: #4B5563; }
-
-    .roman {
-      color: var(--primary);
-      font-weight: 800;
-    }
-
-    .hangul {
-      color: var(--foreground);
-      font-size: 1.15rem;
-      font-weight: 800;
-    }
-
-    .section-meta {
-      margin: 0 0 20px;
-      color: #4B5563;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(260px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .control-card {
-      padding: 20px;
-      background: #FFFFFF;
-      border: 0;
-      border-radius: var(--radius-lg);
-    }
-
-    .control-label {
-      margin-bottom: 12px;
-      color: #4B5563;
-      font-size: .74rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-
-    .segmented {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .mode-btn {
-      min-height: 44px;
-      padding: 0 14px;
-      color: var(--foreground);
-      background: var(--muted);
-      border: 0;
-      border-radius: var(--radius-md);
-      font-weight: 700;
-      transition: var(--transition);
-    }
-
-    .mode-btn:hover { background: var(--border); transform: scale(1.04); }
-
-    .mode-btn.active {
-      color: #FFFFFF;
-      background: var(--primary);
-    }
-
-    .quiz-card {
-      padding: clamp(24px, 4vw, 40px);
-      background: #FFFFFF;
-      border: 0;
-      border-radius: var(--radius-lg);
-    }
-
-    .status-row {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 16px;
-      color: #4B5563;
-      font-size: .86rem;
-      font-weight: 700;
-    }
-
-    .progress {
-      height: 12px;
-      overflow: hidden;
-      margin-bottom: 24px;
-      background: var(--border);
-      border-radius: 999px;
-    }
-
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: var(--secondary);
-      transition: width 250ms ease;
-    }
-
-    .prompt-label {
-      margin-bottom: 10px;
-      color: var(--primary);
-      font-size: .74rem;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    .prompt {
-      min-height: 1.2em;
-      margin: 0 0 26px;
-      color: var(--foreground);
-      font-size: clamp(2.4rem, 7vw, 5.5rem);
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -.04em;
-    }
-
-    .answer-form {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .answer-input {
-      width: 100%;
-      min-height: 60px;
-      padding: 0 17px;
-      color: var(--foreground);
-      background: var(--muted);
-      border: 2px solid transparent;
-      border-radius: var(--radius-md);
-      outline: 0;
-      font-size: 1.2rem;
-      transition: var(--transition);
-    }
-
-    .answer-input:focus {
-      background: #FFFFFF;
-      border-color: var(--primary);
-    }
-
-    .answer-input:disabled {
-      color: #6B7280;
-      background: var(--border);
-    }
-
-    .primary-btn,
-    .secondary-btn,
-    .restart-top-btn {
-      min-height: 54px;
-      padding: 0 18px;
-      border: 0;
-      border-radius: var(--radius-md);
-      font-weight: 700;
-      transition: var(--transition);
-    }
-
-    .primary-btn {
-      color: #FFFFFF;
-      background: var(--primary);
-    }
-
-    .primary-btn:hover:not(:disabled) {
-      background: var(--primary-hover);
-      transform: scale(1.05);
-    }
-
-    .secondary-btn {
-      color: var(--foreground);
-      background: var(--accent);
-    }
-
-    .secondary-btn:hover { transform: scale(1.05); }
-
-    .restart-top-btn {
-      min-height: 40px;
-      color: var(--foreground);
-      background: var(--muted);
-    }
-
-    .restart-top-btn:hover { background: var(--border); transform: scale(1.04); }
-
-    .feedback {
-      display: none;
-      margin-bottom: 14px;
-      padding: 18px;
-      color: var(--foreground);
-      border: 0;
-      border-radius: var(--radius-lg);
-      line-height: 1.55;
-    }
-
-    .feedback.good {
-      display: block;
-      background: var(--green-soft);
-    }
-
-    .feedback.bad {
-      display: block;
-      background: var(--amber-soft);
-    }
-
-    .answer-key {
-      display: inline-block;
-      color: var(--foreground);
-      font-size: 1.3rem;
-      font-weight: 800;
-    }
-
-    .review {
-      max-height: 360px;
-      overflow: auto;
-      margin-top: 20px;
-      padding-top: 4px;
-    }
-
-    .review-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      padding: 16px;
-      margin-top: 8px;
-      background: var(--muted);
-      border: 0;
-      border-radius: var(--radius-md);
-    }
-
-    .finish-card {
-      display: none;
-      margin-top: 18px;
-      padding: 26px;
-      text-align: center;
-      background: var(--blue-soft);
-      border: 0;
-      border-radius: var(--radius-lg);
-    }
-
-    .finish-card h3 {
-      margin: 0 0 8px;
-      font-size: 2rem;
-      font-weight: 800;
-    }
-
-    .back-toc {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 20;
-      min-height: 50px;
-      color: var(--foreground);
-      background: var(--accent);
-    }
-
-    .back-toc:hover {
-      color: #FFFFFF;
-      background: var(--foreground);
-      transform: scale(1.05);
-    }
-
-    .hidden { display: none !important; }
-
-    button:focus-visible,
-    a:focus-visible,
-    input:focus-visible,
-    summary:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 3px;
-    }
-
-    @media (max-width: 720px) {
-      .wrap { width: 100%; padding: 0 0 72px; }
-      .hero, #toc, .block, .quiz-section { border-radius: 0; }
-      .hero { min-height: 610px; padding: 42px 24px; }
-      .hero::before { right: -140px; }
-      .hero::after { right: -100px; }
-      #toc, .block, .quiz-section { margin-top: 0; }
-      details.block > summary,
-      details.quiz-section > summary {
-        min-height: 110px;
-        align-items: flex-start;
-        flex-direction: column;
-      }
-      .controls,
-      .answer-form,
-      .review-row { grid-template-columns: 1fr; }
-      .status-row { grid-template-columns: 1fr auto; }
-      .status-row .restart-top-btn { grid-column: 1 / -1; }
-      .primary-btn { min-height: 58px; }
-      .back-toc { right: 10px; bottom: 10px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
-    }
-  </style>
-  <style id="flat-dark-mode">
-    .theme-toggle {
-      min-height: 44px;
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 15px;
-      color: var(--foreground);
-      background: var(--muted);
-      border: 0;
-      border-radius: var(--radius-md);
-      font: inherit;
-      font-size: .76rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .theme-toggle:hover {
-      color: #FFFFFF;
-      background: var(--primary);
-      transform: scale(1.05);
-    }
-
-    .theme-toggle__icon {
-      width: 1.2em;
-      display: inline-grid;
-      place-items: center;
-      font-size: 1rem;
-      line-height: 1;
-    }
-
-    html[data-theme="dark"] {
-      color-scheme: dark;
-      --background: #111827;
-      --foreground: #F9FAFB;
-      --primary: #60A5FA;
-      --primary-hover: #3B82F6;
-      --secondary: #34D399;
-      --accent: #FBBF24;
-      --muted: #1F2937;
-      --muted-strong: #374151;
-      --border: #374151;
-      --blue-soft: #172554;
-      --green-soft: #052E2B;
-      --amber-soft: #451A03;
-      --secondary-soft: #052E2B;
-      --accent-soft: #451A03;
-      --bg: var(--background);
-      --fg: var(--foreground);
-      --line: var(--border);
-      --field: var(--muted);
-      --subtle: #CBD5E1;
-      --correct-bg: var(--secondary);
-      --correct-fg: #052E2B;
-      --text: var(--foreground);
-      --subtext1: #CBD5E1;
-      --subtext0: #94A3B8;
-      --surface0: var(--muted);
-      --surface1: var(--muted-strong);
-      --surface2: var(--border);
-      --base: var(--background);
-      --mantle: #0F172A;
-      --crust: #020617;
-      --blue: var(--primary);
-      --mauve: var(--primary);
-      --red: #FB7185;
-      --green: var(--secondary);
-      --peach: #FB923C;
-      --yellow: var(--accent);
-    }
-
-    html[data-theme="dark"] body { background: #0B1220; }
-
-    html[data-theme="dark"] .site-header,
-    html[data-theme="dark"] body > .shell > header,
-    html[data-theme="dark"] main,
-    html[data-theme="dark"] .shell,
-    html[data-theme="dark"] .section,
-    html[data-theme="dark"] .section-card,
-    html[data-theme="dark"] .block,
-    html[data-theme="dark"] .quiz-section,
-    html[data-theme="dark"] .section-content,
-    html[data-theme="dark"] .block-inner,
-    html[data-theme="dark"] .quiz-body,
-    html[data-theme="dark"] .card-grid,
-    html[data-theme="dark"] .guide-card,
-    html[data-theme="dark"] .note-card,
-    html[data-theme="dark"] .control-card,
-    html[data-theme="dark"] .quiz-card,
-    html[data-theme="dark"] .exercise-card,
-    html[data-theme="dark"] .ref-section,
-    html[data-theme="dark"] .review-answer-grid > div,
-    html[data-theme="dark"] .timer-panel > div:first-child,
-    html[data-theme="dark"] .timed-stage {
-      color: var(--foreground);
-      background: var(--background);
-    }
-
-    html[data-theme="dark"] .panel,
-    html[data-theme="dark"] #toc,
-    html[data-theme="dark"] .toc-card,
-    html[data-theme="dark"] .exercise-head,
-    html[data-theme="dark"] .meta,
-    html[data-theme="dark"] .ref-section summary,
-    html[data-theme="dark"] details.edit-help {
-      color: #F9FAFB;
-      background: #0F172A;
-    }
-
-    html[data-theme="dark"] .toc-link,
-    html[data-theme="dark"] .toc-list a {
-      color: #F9FAFB;
-      background: #1E293B;
-    }
-
-    html[data-theme="dark"] .toc-link:hover,
-    html[data-theme="dark"] .toc-list a:hover {
-      color: #052E2B;
-      background: var(--secondary);
-    }
-
-    html[data-theme="dark"] .hero-art { background: #0F172A; }
-
-    html[data-theme="dark"] .card,
-    html[data-theme="dark"] .quiz-card:nth-child(1) { background: var(--background); }
-
-    html[data-theme="dark"] .card:nth-child(3n+2) { background: var(--blue-soft); }
-    html[data-theme="dark"] .card:nth-child(3n+3) { background: var(--green-soft); }
-    html[data-theme="dark"] .card:hover,
-    html[data-theme="dark"] .quiz-card:hover { background: var(--amber-soft); }
-
-    html[data-theme="dark"] .answer-input,
-    html[data-theme="dark"] .timed-answer,
-    html[data-theme="dark"] input,
-    html[data-theme="dark"] select,
-    html[data-theme="dark"] textarea,
-    html[data-theme="dark"] .option-btn,
-    html[data-theme="dark"] .mode-row,
-    html[data-theme="dark"] .review-panel,
-    html[data-theme="dark"] .review-row,
-    html[data-theme="dark"] .empty,
-    html[data-theme="dark"] .mode-btn,
-    html[data-theme="dark"] .restart-top-btn {
-      color: var(--foreground);
-      background: var(--muted);
-    }
-
-    html[data-theme="dark"] .answer-input:focus,
-    html[data-theme="dark"] .timed-answer:focus,
-    html[data-theme="dark"] input:focus,
-    html[data-theme="dark"] select:focus,
-    html[data-theme="dark"] textarea:focus {
-      color: var(--foreground);
-      background: var(--background);
-      border-color: var(--primary);
-    }
-
-    html[data-theme="dark"] .answer-input:disabled,
-    html[data-theme="dark"] .timed-answer:disabled {
-      color: #94A3B8;
-      background: var(--muted-strong);
-    }
-
-    html[data-theme="dark"] .small,
-    html[data-theme="dark"] .brand-copy span,
-    html[data-theme="dark"] .card p,
-    html[data-theme="dark"] .quiz-card p,
-    html[data-theme="dark"] .guide-card p,
-    html[data-theme="dark"] .note-card p,
-    html[data-theme="dark"] .note-card li,
-    html[data-theme="dark"] .mini-list,
-    html[data-theme="dark"] .section-meta,
-    html[data-theme="dark"] .status-row,
-    html[data-theme="dark"] td,
-    html[data-theme="dark"] .source-note,
-    html[data-theme="dark"] .timed-placeholder,
-    html[data-theme="dark"] .control-label {
-      color: #CBD5E1;
-    }
-
-    html[data-theme="dark"] .section-title,
-    html[data-theme="dark"] details.block > summary,
-    html[data-theme="dark"] #quizSections > details:nth-child(3n+1) > summary,
-    html[data-theme="dark"] #quizSections > details:nth-child(3n+3) > summary,
-    html[data-theme="dark"] .section-card:nth-of-type(3n+2) .section-header,
-    html[data-theme="dark"] .section-card:nth-of-type(3n+3) .section-header,
-    html[data-theme="dark"] #sections .section:nth-child(3n+1) .section-header,
-    html[data-theme="dark"] #sections .section:nth-child(3n+2) .section-header {
-      color: #111827;
-    }
-
-    html[data-theme="dark"] #quizSections > details:nth-child(3n+2) > summary,
-    html[data-theme="dark"] .section-card:nth-of-type(3n+4) .section-header,
-    html[data-theme="dark"] #sections .section:nth-child(3n+3) .section-header {
-      color: #FFFFFF;
-    }
-
-    html[data-theme="dark"] .score-pill,
-    html[data-theme="dark"] .set-pill,
-    html[data-theme="dark"] .btn-accent,
-    html[data-theme="dark"] .btn-warning,
-    html[data-theme="dark"] .secondary-btn,
-    html[data-theme="dark"] .timer-box.danger,
-    html[data-theme="dark"] .option-btn.correct-choice,
-    html[data-theme="dark"] .option-btn.wrong-choice {
-      color: #111827;
-    }
-
-    html[data-theme="dark"] .system-badge,
-    html[data-theme="dark"] .theme-toggle { background: var(--muted); }
-
-    html[data-theme="dark"] .button-link:hover,
-    html[data-theme="dark"] .home-link:hover,
-    html[data-theme="dark"] .back-top:hover,
-    html[data-theme="dark"] .back-toc:hover {
-      color: #FFFFFF;
-      background: #0F172A;
-    }
-
-    html[data-theme="dark"] th {
-      color: #F9FAFB;
-      background: var(--amber-soft);
-    }
-
-    html[data-theme="dark"] pre {
-      color: #F9FAFB;
-      background: var(--amber-soft);
-    }
-
-    html[data-theme="dark"] .collapse-btn,
-    html[data-theme="dark"] .pill,
-    html[data-theme="dark"] .chip,
-    html[data-theme="dark"] .count-badge,
-    html[data-theme="dark"] details.block > summary::after,
-    html[data-theme="dark"] details.quiz-section > summary::after,
-    html[data-theme="dark"] details.edit-help > summary::after {
-      color: #111827;
-      background: #F9FAFB;
-    }
-
-    html[data-theme="dark"] .progress,
-    html[data-theme="dark"] .progress-track { background: var(--border); }
-
-    @media (max-width: 680px) {
-      .theme-toggle { flex: 1; }
-    }
-  </style>
-  <style id="vocab-bank-tools-style">
-    .vocab-tools {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin: 14px;
-      padding: 16px;
-      color: var(--foreground);
-      background: var(--background);
-      border-radius: var(--radius-lg);
-    }
-
-    .vocab-tools__label {
-      margin-right: auto;
-      font-size: .76rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-
-    .blur-toggle {
-      min-height: 42px;
-      padding: 0 13px;
-      color: var(--foreground);
-      background: var(--muted);
-      border: 0;
-      border-radius: var(--radius-md);
-      font: inherit;
-      font-size: .74rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .blur-toggle:hover { transform: scale(1.04); }
-    .blur-toggle[aria-pressed="true"] {
-      color: #FFFFFF;
-      background: var(--primary);
-    }
-
-    .blur-target {
-      display: inline-block;
-      transition: filter 180ms ease, opacity 180ms ease;
-    }
-
-    .ref-section.blur-meaning [data-vocab-field="meaning"] .blur-target,
-    .ref-section.blur-romanization [data-vocab-field="romanization"] .blur-target,
-    .ref-section.blur-korean [data-vocab-field="korean"] .blur-target {
-      filter: blur(6px);
-      opacity: .72;
-      user-select: none;
-    }
-
-    .ref-section.blur-meaning [data-vocab-field="meaning"].peek .blur-target,
-    .ref-section.blur-romanization [data-vocab-field="romanization"].peek .blur-target,
-    .ref-section.blur-korean [data-vocab-field="korean"].peek .blur-target {
-      filter: none;
-      opacity: 1;
-      user-select: text;
-    }
-
-    [data-vocab-field] { cursor: pointer; }
-    [data-vocab-field]:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: -4px;
-    }
-
-    .familiarity-cell { min-width: 190px; }
-    .familiarity-stars {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 4px;
-      background: var(--muted);
-      border-radius: var(--radius-md);
-    }
-
-    .familiarity-star {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      padding: 0;
-      color: #9CA3AF;
-      background: transparent;
-      border: 0;
-      border-radius: 4px;
-      font: inherit;
-      font-size: 1.35rem;
-      line-height: 1;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .familiarity-star:hover { transform: scale(1.14); }
-    .familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: #EF4444; }
-    .familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: #F59E0B; }
-    .familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: #10B981; }
-
-    .familiarity-label {
-      display: block;
-      margin-top: 5px;
-      color: #6B7280;
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-    }
-
-    html[data-theme="dark"] .vocab-tools { background: var(--background); }
-    html[data-theme="dark"] .familiarity-label { color: #CBD5E1; }
-    html[data-theme="dark"] .familiarity-star { color: #64748B; }
-
-    @media (max-width: 720px) {
-      .vocab-tools { align-items: stretch; }
-      .vocab-tools__label { width: 100%; }
-      .blur-toggle { flex: 1 1 140px; }
-      .familiarity-cell { min-width: 170px; }
-    }
   </style>
 </head>
-<body>
-  <a class="back-toc" href="#toc">Back to TOC</a>
-
-  <div class="wrap">
-    <header class="hero">
-      <div class="hero-content">
-        <div class="pill">Korean vocab quiz hub</div>
-        <h1>Korean Vocabulary Practice</h1>
-        <p class="subtitle">
-          Each section has its own quiz. Questions are one at a time, scored immediately, and generated as 2 × N questions, where N is the number of vocabulary items in that section. Repeated items are never placed back to back.
-        </p>
-        <div class="hero-actions">
-          <a class="home-link" href="./index.html">Study Hub</a>
-          <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false"><span class="theme-toggle__icon" aria-hidden="true">◐</span><span class="theme-toggle__label">Dark mode</span></button>
-          <span class="small">Romanization uses no syllable dashes. Spaces are used only between Korean word units.</span>
-        </div>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <nav id="toc">
-      <h2>Table of Contents</h2>
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">TOPIK I vocabulary</p>
+        <h1 id="page-title">Korean Vocabulary Practice</h1>
+        <p>Study the reference tables, blur fields for recall practice, rate familiarity, and complete section quizzes without back-to-back repeated words.</p>
+      </div>
+    </section>
+
+    <nav class="toc-card" id="toc" aria-labelledby="toc-title">
+      <span class="toc-label" id="toc-title">Jump to a section</span>
       <div class="toc-grid" id="tocGrid"></div>
     </nav>
 
     <details class="block" id="reference" open>
-      <summary>Definitions, Romanization, and Korean Reference</summary>
+      <summary><span>Definitions, Romanization, and Korean Reference</span></summary>
       <div class="block-inner">
         <div class="guide-grid">
-          <div class="guide-card">
-            <h3>Romanization Rules Used Here</h3>
-            <p>All syllable dashes from the source sheets were removed. Spaces appear only between separate Korean words, such as <strong>annyeonghi gaseyo</strong>.</p>
-            <p>Quiz checking ignores capitalization, dashes, extra spaces, and most punctuation for romanization answers.</p>
-          </div>
-          <div class="guide-card">
+          <article class="guide-card">
+            <h3>Romanization Rules</h3>
+            <p>All syllable dashes are removed. Spaces appear only between separate Korean words, such as <strong>annyeonghi gaseyo</strong>.</p>
+            <p>Checking ignores capitalization, dashes, extra spaces, and most punctuation for romanization answers.</p>
+          </article>
+          <article class="guide-card">
             <h3>Sound Guide</h3>
             <div class="mini-list">
               <div>ㄱ k/g · ㄷ t/d · ㅂ p/b · ㅈ ch/j · ㅅ s/sh before i/y</div>
@@ -1091,16 +905,22 @@
               <div>ㅋ k · ㅌ t · ㅍ p · ㅊ ch · ㅎ h</div>
               <div>ㅏ a · ㅓ eo · ㅗ o · ㅜ u · ㅡ eu · ㅣ i · ㅐ/ㅔ ae/e</div>
             </div>
-          </div>
+          </article>
         </div>
         <div id="referenceTables"></div>
       </div>
     </details>
 
-    <main id="quizSections"></main>
+    <div id="quizSections"></div>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
   </div>
 
   <script>
+
     const SECTIONS = [{"id": "question-adverbs","title": "Question Words, Frequency, and Adverbs","items": [{"korean": "언제","romanization": "eonje","meaning": "when"},{"korean": "왜","romanization": "wae","meaning": "why"},{"korean": "어떻게","romanization": "eotteohge","meaning": "how"},{"korean": "어느","romanization": "eoneu","meaning": "which"},{"korean": "몇","romanization": "myeot","meaning": "how many"},{"korean": "항상","romanization": "hangsang","meaning": "always"},{"korean": "자주","romanization": "jaju","meaning": "often"},{"korean": "가끔","romanization": "gakkeum","meaning": "sometimes"},{"korean": "보통","romanization": "botong","meaning": "usually"},{"korean": "다시","romanization": "dasi","meaning": "again"},{"korean": "같이","romanization": "gati","meaning": "together"},{"korean": "빨리","romanization": "ppalri","meaning": "quickly"},{"korean": "천천히","romanization": "cheoncheonhi","meaning": "slowly"},{"korean": "잘","romanization": "jal","meaning": "well"},{"korean": "많이","romanization": "manhi","meaning": "a lot"},{"korean": "조금","romanization": "jogeum","meaning": "a little"}]},{"id": "actions-descriptive","title": "Actions and Descriptive Words","items": [{"korean": "가다","romanization": "gada","meaning": "to go"},{"korean": "오다","romanization": "oda","meaning": "to come"},{"korean": "먹다","romanization": "meokda","meaning": "to eat"},{"korean": "마시다","romanization": "masida","meaning": "to drink"},{"korean": "보다","romanization": "boda","meaning": "to see / watch"},{"korean": "듣다","romanization": "deutda","meaning": "to listen"},{"korean": "읽다","romanization": "ilkda","meaning": "to read"},{"korean": "쓰다","romanization": "sseuda","meaning": "to write"},{"korean": "말하다","romanization": "malhada","meaning": "to speak"},{"korean": "공부하다","romanization": "gongbuhada","meaning": "to study"},{"korean": "일하다","romanization": "ilhada","meaning": "to work"},{"korean": "자다","romanization": "jada","meaning": "to sleep"},{"korean": "일어나다","romanization": "ileonada","meaning": "to get up"},{"korean": "앉다","romanization": "anjda","meaning": "to sit"},{"korean": "서다","romanization": "seoda","meaning": "to stand"},{"korean": "만나다","romanization": "mannada","meaning": "to meet"},{"korean": "배우다","romanization": "baeuda","meaning": "to learn"},{"korean": "만들다","romanization": "mandeulda","meaning": "to make"},{"korean": "좋아하다","romanization": "johahada","meaning": "to like"},{"korean": "싫어하다","romanization": "silheohada","meaning": "to dislike"},{"korean": "좋다","romanization": "johda","meaning": "good"},{"korean": "나쁘다","romanization": "nappeuda","meaning": "bad"},{"korean": "크다","romanization": "keuda","meaning": "big"},{"korean": "작다","romanization": "jakda","meaning": "small"},{"korean": "많다","romanization": "manhda","meaning": "many"},{"korean": "적다","romanization": "jeokda","meaning": "few"},{"korean": "빠르다","romanization": "ppareuda","meaning": "fast"},{"korean": "느리다","romanization": "neurida","meaning": "slow"},{"korean": "쉽다","romanization": "swipda","meaning": "easy"},{"korean": "어렵다","romanization": "eoryeopda","meaning": "difficult"},{"korean": "예쁘다","romanization": "yeppeuda","meaning": "pretty"},{"korean": "맛있다","romanization": "matitda","meaning": "delicious"},{"korean": "재미있다","romanization": "jaemiitda","meaning": "interesting"},{"korean": "누구","romanization": "nugu","meaning": "who"},{"korean": "무엇/뭐","romanization": "mueot / mwo","meaning": "what","romanization_alts": ["mueot","mwo"]},{"korean": "어디","romanization": "eodi","meaning": "where"}]},{"id": "food-shopping-weather","title": "Food, Shopping, Colors, and Weather","items": [{"korean": "밥","romanization": "bap","meaning": "rice / meal"},{"korean": "물","romanization": "mul","meaning": "water"},{"korean": "커피","romanization": "keopi","meaning": "coffee"},{"korean": "차","romanization": "cha","meaning": "tea / car"},{"korean": "우유","romanization": "uyu","meaning": "milk"},{"korean": "빵","romanization": "ppang","meaning": "bread"},{"korean": "과일","romanization": "gwail","meaning": "fruit"},{"korean": "사과","romanization": "sagwa","meaning": "apple"},{"korean": "바나나","romanization": "banana","meaning": "banana"},{"korean": "고기","romanization": "gogi","meaning": "meat"},{"korean": "생선","romanization": "saengseon","meaning": "fish"},{"korean": "김치","romanization": "gimchi","meaning": "kimchi"},{"korean": "라면","romanization": "ramyeon","meaning": "instant noodles"},{"korean": "떡","romanization": "tteok","meaning": "rice cake"},{"korean": "가게","romanization": "gage","meaning": "store"},{"korean": "가격","romanization": "gagyeok","meaning": "price"},{"korean": "돈","romanization": "don","meaning": "money"},{"korean": "카드","romanization": "kadeu","meaning": "card"},{"korean": "현금","romanization": "hyeongeum","meaning": "cash"},{"korean": "얼마","romanization": "eolma","meaning": "how much"},{"korean": "싸다","romanization": "ssada","meaning": "cheap"},{"korean": "비싸다","romanization": "bissada","meaning": "expensive"},{"korean": "빨간색","romanization": "ppalgansaek","meaning": "red"},{"korean": "파란색","romanization": "paransaek","meaning": "blue"},{"korean": "노란색","romanization": "noransaek","meaning": "yellow"},{"korean": "초록색","romanization": "choroksaek","meaning": "green"},{"korean": "검은색","romanization": "geomeunsaek","meaning": "black"},{"korean": "흰색","romanization": "huinsaek","meaning": "white"},{"korean": "날씨","romanization": "nalssi","meaning": "weather"},{"korean": "비","romanization": "bi","meaning": "rain"},{"korean": "눈","romanization": "nun","meaning": "snow / eye"},{"korean": "바람","romanization": "baram","meaning": "wind"},{"korean": "덥다","romanization": "deopda","meaning": "hot"},{"korean": "춥다","romanization": "chupda","meaning": "cold"},{"korean": "맑다","romanization": "malkda","meaning": "clear / sunny"},{"korean": "흐리다","romanization": "heurida","meaning": "cloudy"}]},{"id": "places-transportation","title": "Places and Transportation","items": [{"korean": "집","romanization": "jip","meaning": "house / home"},{"korean": "학교","romanization": "hakgyo","meaning": "school"},{"korean": "회사","romanization": "hoesa","meaning": "company"},{"korean": "병원","romanization": "byeongwon","meaning": "hospital"},{"korean": "은행","romanization": "eunhaeng","meaning": "bank"},{"korean": "우체국","romanization": "ucheguk","meaning": "post office"},{"korean": "식당","romanization": "sikdang","meaning": "restaurant"},{"korean": "카페","romanization": "kape","meaning": "cafe"},{"korean": "공원","romanization": "gongwon","meaning": "park"},{"korean": "시장","romanization": "sijang","meaning": "market"},{"korean": "백화점","romanization": "baekhwajeom","meaning": "department store"},{"korean": "도서관","romanization": "doseogwan","meaning": "library"},{"korean": "약국","romanization": "yakguk","meaning": "pharmacy"},{"korean": "공항","romanization": "gonghang","meaning": "airport"},{"korean": "호텔","romanization": "hotel","meaning": "hotel"},{"korean": "버스","romanization": "beoseu","meaning": "bus"},{"korean": "지하철","romanization": "jihacheol","meaning": "subway"},{"korean": "택시","romanization": "taeksi","meaning": "taxi"},{"korean": "기차","romanization": "gicha","meaning": "train"},{"korean": "비행기","romanization": "bihaenggi","meaning": "airplane"},{"korean": "자동차","romanization": "jadongcha","meaning": "car"},{"korean": "자전거","romanization": "jajeongeo","meaning": "bicycle"}]},{"id": "days-time","title": "Days and Time","notes": ["Months: Sino-Korean number + 월.","Days: Sino-Korean number + 일.","Years: Sino-Korean number + 년."],"items": [{"korean": "오늘","romanization": "oneul","meaning": "today"},{"korean": "내일","romanization": "naeil","meaning": "tomorrow"},{"korean": "어제","romanization": "eoje","meaning": "yesterday"},{"korean": "아침","romanization": "achim","meaning": "morning / breakfast"},{"korean": "점심","romanization": "jeomsim","meaning": "lunch / noon"},{"korean": "저녁","romanization": "jeonyeok","meaning": "evening / dinner"},{"korean": "밤","romanization": "bam","meaning": "night"},{"korean": "오전","romanization": "ojeon","meaning": "A.M."},{"korean": "오후","romanization": "ohu","meaning": "P.M."},{"korean": "지금","romanization": "jigeum","meaning": "now"},{"korean": "시간","romanization": "sigan","meaning": "time"},{"korean": "시","romanization": "si","meaning": "hour / o'clock"},{"korean": "분","romanization": "bun","meaning": "minute"},{"korean": "월요일","romanization": "wolyoil","meaning": "Monday"},{"korean": "화요일","romanization": "hwayoil","meaning": "Tuesday"},{"korean": "수요일","romanization": "suyoil","meaning": "Wednesday"},{"korean": "목요일","romanization": "mokyoil","meaning": "Thursday"},{"korean": "금요일","romanization": "geumyoil","meaning": "Friday"},{"korean": "토요일","romanization": "toyoil","meaning": "Saturday"},{"korean": "일요일","romanization": "ilyoil","meaning": "Sunday"}]},{"id": "numbers","title": "Numbers","notes": ["Native Korean numbers 1–4 change before counters: 하나→한, 둘→두, 셋→세, 넷→네.","Romanization answers accept both the base form and before-counter form for native 1–4."],"items": [{"korean": "하나","romanization": "hana","meaning": "one, native","romanization_alts": ["han"],"korean_alts": ["한"]},{"korean": "둘","romanization": "dul","meaning": "two, native","romanization_alts": ["du"],"korean_alts": ["두"]},{"korean": "셋","romanization": "set","meaning": "three, native","romanization_alts": ["se"],"korean_alts": ["세"]},{"korean": "넷","romanization": "net","meaning": "four, native","romanization_alts": ["ne"],"korean_alts": ["네"]},{"korean": "다섯","romanization": "daseot","meaning": "five, native"},{"korean": "여섯","romanization": "yeoseot","meaning": "six, native"},{"korean": "일곱","romanization": "ilgop","meaning": "seven, native"},{"korean": "여덟","romanization": "yeodeolb","meaning": "eight, native"},{"korean": "아홉","romanization": "ahop","meaning": "nine, native"},{"korean": "열","romanization": "yeol","meaning": "ten, native"},{"korean": "일","romanization": "il","meaning": "one, Sino-Korean"},{"korean": "이","romanization": "i","meaning": "two, Sino-Korean"},{"korean": "삼","romanization": "sam","meaning": "three, Sino-Korean"},{"korean": "사","romanization": "sa","meaning": "four, Sino-Korean"},{"korean": "오","romanization": "o","meaning": "five, Sino-Korean"},{"korean": "육","romanization": "yuk","meaning": "six, Sino-Korean"},{"korean": "칠","romanization": "chil","meaning": "seven, Sino-Korean"},{"korean": "팔","romanization": "pal","meaning": "eight, Sino-Korean"},{"korean": "구","romanization": "gu","meaning": "nine, Sino-Korean"},{"korean": "십","romanization": "sip","meaning": "ten, Sino-Korean"}]},{"id": "family-members","title": "Family Members","items": [{"korean": "아버지","romanization": "abeoji","meaning": "father"},{"korean": "어머니","romanization": "eomeoni","meaning": "mother"},{"korean": "부모님","romanization": "bumonim","meaning": "parents"},{"korean": "형","romanization": "hyeong","meaning": "older brother, male speaker"},{"korean": "오빠","romanization": "oppa","meaning": "older brother, female speaker"},{"korean": "누나","romanization": "nuna","meaning": "older sister, male speaker"},{"korean": "언니","romanization": "eonni","meaning": "older sister, female speaker"},{"korean": "남동생","romanization": "namdongsaeng","meaning": "younger brother"},{"korean": "여동생","romanization": "yeodongsaeng","meaning": "younger sister"},{"korean": "할아버지","romanization": "halabeoji","meaning": "grandfather"},{"korean": "할머니","romanization": "halmeoni","meaning": "grandmother"},{"korean": "아들","romanization": "adeul","meaning": "son"},{"korean": "딸","romanization": "ttal","meaning": "daughter"}]},{"id": "greetings","title": "Greetings and Basic Expressions","items": [{"korean": "안녕하세요","romanization": "annyeonghaseyo","meaning": "Hello"},{"korean": "안녕히 가세요","romanization": "annyeonghi gaseyo","meaning": "Goodbye to someone leaving"},{"korean": "안녕히 계세요","romanization": "annyeonghi gyeseyo","meaning": "Goodbye to someone staying"},{"korean": "감사합니다","romanization": "gamsahapnida","meaning": "Thank you"},{"korean": "고맙습니다","romanization": "gomapseupnida","meaning": "Thank you"},{"korean": "죄송합니다","romanization": "joesonghapnida","meaning": "I am sorry"},{"korean": "미안합니다","romanization": "mianhapnida","meaning": "Sorry"},{"korean": "괜찮아요","romanization": "gwaenchanhayo","meaning": "It is okay"},{"korean": "네","romanization": "ne","meaning": "Yes"},{"korean": "아니요","romanization": "aniyo","meaning": "No"},{"korean": "맞아요","romanization": "matayo","meaning": "That is right"},{"korean": "아니에요","romanization": "anieyo","meaning": "It is not"},{"korean": "처음 뵙겠습니다","romanization": "cheoeum boepgetseupnida","meaning": "Nice to meet you"},{"korean": "반갑습니다","romanization": "bangapseupnida","meaning": "Nice to meet you"}]},{"id": "personal-information-people","title": "Personal Information and People","items": [{"korean": "이름","romanization": "ireum","meaning": "name"},{"korean": "성","romanization": "seong","meaning": "family name"},{"korean": "나이","romanization": "nai","meaning": "age"},{"korean": "생일","romanization": "saengil","meaning": "birthday"},{"korean": "국적","romanization": "gukjeok","meaning": "nationality"},{"korean": "사람","romanization": "saram","meaning": "person"},{"korean": "학생","romanization": "haksaeng","meaning": "student"},{"korean": "선생님","romanization": "seonsaengnim","meaning": "teacher"},{"korean": "회사원","romanization": "hoesawon","meaning": "office worker"},{"korean": "의사","romanization": "uisa","meaning": "doctor"},{"korean": "간호사","romanization": "ganhosa","meaning": "nurse"},{"korean": "경찰","romanization": "gyeongchal","meaning": "police officer"},{"korean": "가족","romanization": "gajok","meaning": "family"},{"korean": "친구","romanization": "chingu","meaning": "friend"},{"korean": "남자","romanization": "namja","meaning": "man"},{"korean": "여자","romanization": "yeoja","meaning": "woman"}]}];
     const ALL_WORDS_SECTION = {
       id: "all-words",
@@ -1235,9 +1055,7 @@
       return result;
     }
 
-    function setupTheme() {
-      document.documentElement.dataset.theme = "light";
-    }
+    function setupTheme() {}
 
     function renderTOC() {
       const grid = document.getElementById("tocGrid");
@@ -1335,7 +1153,7 @@
 
         return `
           <details class="quiz-section" id="quiz-${section.id}" ${index === 0 ? "open" : ""}>
-            <summary>${esc(section.title)} Quiz</summary>
+            <summary><span>${esc(section.title)} Quiz</span></summary>
             <div class="quiz-body">
               <p class="section-meta">
                 ${section.items.length} vocabulary items → ${section.items.length * 2} questions. No repeated word appears back to back.
@@ -1356,31 +1174,41 @@
                 </div>
               </div>
 
-              <div class="quiz-card" id="quiz-card-${section.id}">
-                <div class="status-row">
-                  <div id="question-number-${section.id}"></div>
-                  <div id="score-${section.id}"></div>
-                  <button class="restart-top-btn" id="restart-top-${section.id}" type="button" data-section="${section.id}">Restart</button>
+              <article class="quiz-card" id="quiz-card-${section.id}">
+                <div class="exercise-head">
+                  <div class="exercise-head-copy">
+                    <span class="exercise-kicker">Vocabulary drill</span>
+                    <h3>${esc(section.title)}</h3>
+                    <p>Answer one prompt at a time, then review the complete set.</p>
+                  </div>
+                  <div class="score" id="score-${section.id}" aria-live="polite"></div>
                 </div>
-                <div class="progress"><div class="progress-fill" id="progress-${section.id}"></div></div>
-                <div class="prompt-label" id="prompt-label-${section.id}"></div>
-                <p class="prompt" id="prompt-${section.id}"></p>
+                <div class="exercise-body">
+                  <div class="status-row">
+                    <div id="question-number-${section.id}"></div>
+                    <button class="restart-top-btn" id="restart-top-${section.id}" type="button" data-section="${section.id}">Restart</button>
+                  </div>
+                  <div class="progress" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progress-${section.id}"></div></div>
+                  <div class="prompt-label" id="prompt-label-${section.id}"></div>
+                  <p class="prompt" id="prompt-${section.id}"></p>
 
-                <form class="answer-form" data-section="${section.id}">
-                  <input class="answer-input" id="input-${section.id}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer" />
-                  <button class="primary-btn" id="check-${section.id}" type="submit">Check</button>
-                </form>
+                  <form class="answer-form" data-section="${section.id}">
+                    <label class="sr-only" for="input-${section.id}">Type your answer</label>
+                    <input class="answer-input" id="input-${section.id}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer" />
+                    <button class="primary-btn" id="check-${section.id}" type="submit">Check</button>
+                  </form>
 
-                <div class="feedback" id="feedback-${section.id}"></div>
-                <button class="secondary-btn hidden" id="next-${section.id}" type="button" data-section="${section.id}">Next</button>
+                  <div class="feedback" id="feedback-${section.id}" aria-live="polite"></div>
+                  <button class="secondary-btn hidden" id="next-${section.id}" type="button" data-section="${section.id}">Next</button>
 
-                <div class="finish-card" id="finish-${section.id}">
-                  <h3>Quiz Complete</h3>
-                  <p id="final-score-${section.id}"></p>
-                  <button class="secondary-btn" id="restart-${section.id}" type="button" data-section="${section.id}">Restart This Quiz</button>
-                  <div class="review" id="review-${section.id}"></div>
+                  <div class="finish-card" id="finish-${section.id}">
+                    <h3>Quiz Complete</h3>
+                    <p id="final-score-${section.id}"></p>
+                    <button class="secondary-btn" id="restart-${section.id}" type="button" data-section="${section.id}">Restart This Quiz</button>
+                    <div class="review" id="review-${section.id}"></div>
+                  </div>
                 </div>
-              </div>
+              </article>
             </div>
           </details>
         `;
@@ -1432,8 +1260,9 @@
         `Question ${state.index + 1} / ${state.questions.length}`;
       document.getElementById(`score-${sectionId}`).textContent =
         `Score: ${state.score}`;
-      document.getElementById(`progress-${sectionId}`).style.width =
-        `${(state.index / state.questions.length) * 100}%`;
+      const progressPercent = (state.index / state.questions.length) * 100;
+      document.getElementById(`progress-${sectionId}`).style.width = `${progressPercent}%`;
+      document.getElementById(`progress-${sectionId}`).parentElement.setAttribute("aria-valuenow", String(Math.round(progressPercent)));
       document.getElementById(`prompt-label-${sectionId}`).textContent =
         modeLabel(state.questionMode);
       document.getElementById(`prompt-${sectionId}`).textContent =
@@ -1492,6 +1321,7 @@
     function showFinish(sectionId) {
       const state = states[sectionId];
       document.getElementById(`progress-${sectionId}`).style.width = "100%";
+      document.getElementById(`progress-${sectionId}`).parentElement.setAttribute("aria-valuenow", "100");
       document.getElementById(`finish-${sectionId}`).style.display = "block";
       document.getElementById(`final-score-${sectionId}`).innerHTML =
         `Final score: <strong>${state.score} / ${state.questions.length}</strong> (${Math.round((state.score / state.questions.length) * 100)}%)`;
@@ -1568,8 +1398,18 @@
     renderTOC();
     renderReference();
     renderQuizSections();
+
+    document.querySelectorAll("details.block, details.quiz-section, details.ref-section").forEach(details => {
+      const summary = details.querySelector(":scope > summary");
+      if (!summary) return;
+      const sync = () => summary.setAttribute("aria-expanded", String(details.open));
+      sync();
+      details.addEventListener("toggle", sync);
+    });
+  
   </script>
-  <script id="vocab-bank-tools-script">
+  <script>
+
     (() => {
       const FAMILIARITY_KEY = "topikVocabFamiliarityV1";
       const BLUR_KEY = "topikVocabBlurV1";
@@ -1655,13 +1495,16 @@
         });
       });
     })();
+  
   </script>
-  <script id="flat-theme-controller">
+
+  <script>
     (() => {
-      const STORAGE_KEY = "flatDesignTheme";
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const ANCHOR_KEY = `koreanStudyAnchor:${location.pathname}`;
       const root = document.documentElement;
-      const toggle = document.getElementById("themeToggle");
       const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
 
       function savedTheme() {
         try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
@@ -1674,36 +1517,53 @@
         if (persist) {
           try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
         }
-
-        if (toggle) {
+        toggles.forEach(toggle => {
           const dark = next === "dark";
           toggle.setAttribute("aria-pressed", String(dark));
           toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-          toggle.querySelector(".theme-toggle__icon").textContent = dark ? "☀" : "◐";
-          toggle.querySelector(".theme-toggle__label").textContent = dark ? "Light mode" : "Dark mode";
-        }
-
-        document.querySelectorAll(".system-badge").forEach(badge => {
-          badge.textContent = next === "dark" ? "Flat dark" : "Flat light";
-        });
-        document.querySelectorAll(".note").forEach(note => {
-          if (/Flat Design/i.test(note.textContent)) {
-            note.textContent = `Flat Design / Outfit / ${next === "dark" ? "Dark" : "Light"}`;
-          }
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
         });
       }
 
       applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
 
-      toggle?.addEventListener("click", () => {
-        applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => {
+          applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+        });
       });
 
-      const followSystem = event => {
+      media.addEventListener?.("change", event => {
         if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
-      };
-      media.addEventListener?.("change", followSystem);
+      });
+
+      function storeAnchor(hash) {
+        try {
+          if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
+          else localStorage.removeItem(ANCHOR_KEY);
+        } catch (_) {}
+      }
+
+      document.addEventListener("click", event => {
+        const link = event.target.closest('a[href^="#"]');
+        if (link) storeAnchor(link.getAttribute("href"));
+      });
+
+      window.addEventListener("hashchange", () => storeAnchor(location.hash));
+
+      if (!location.hash) {
+        let saved = "";
+        try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
+        if (saved && document.querySelector(saved)) {
+          requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
+        } else {
+          requestAnimationFrame(() => window.scrollTo(0, 0));
+        }
+      }
     })();
   </script>
+
 </body>
 </html>
