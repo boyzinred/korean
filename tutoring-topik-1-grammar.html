@@ -1,619 +1,818 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TOPIK I Grammar Translation Quiz</title>
-
-    <style>
-      /* ==============================
-         Design tokens and global styles
-         ============================== */
-      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
-      :root {
-        --bg: #f3f4f6;
-        --surface: #fff;
-        --fg: #111827;
-        --muted: #6b7280;
-        --primary: #3b82f6;
-        --secondary: #10b981;
-        --accent: #f59e0b;
-        --border: #e5e7eb;
-        --blue-soft: #dbeafe;
-        --green-soft: #d1fae5;
-        --amber-soft: #fef3c7
-      }
-
-      html[data-theme=dark] {
-        --bg: #0b1220;
-        --surface: #111827;
-        --fg: #f9fafb;
-        --muted: #cbd5e1;
-        --primary: #60a5fa;
-        --secondary: #34d399;
-        --accent: #fbbf24;
-        --border: #374151;
-        --blue-soft: #172554;
-        --green-soft: #052e2b;
-        --amber-soft: #451a03
-      }
-
-      * {
-        box-sizing: border-box
-      }
-
-      html {
-        scroll-behavior: smooth
-      }
-
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--fg);
-        font: 16px/1.55 Outfit,sans-serif
-      }
-
-      .page-shell {
-        width: min(1250px,calc(100% - 28px));
-        margin: auto;
-        padding: 22px 0 80px
-      }
-
-      /* Hero */
-      .hero {
-        position: relative;
-        overflow: hidden;
-        background: var(--primary);
-        color: white;
-        padding: 60px;
-        border-radius: 8px;
-        min-height: 420px;
-        display: flex;
-        align-items: center
-      }
-
-      .hero:before {
-        content: "";
-        position: absolute;
-        width: 330px;
-        height: 330px;
-        border-radius: 50%;
-        background: var(--secondary);
-        right: -70px;
-        top: -120px
-      }
-
-      .hero:after {
-        content: "";
-        position: absolute;
-        width: 260px;
-        height: 260px;
-        background: var(--accent);
-        right: 150px;
-        bottom: -160px;
-        transform: rotate(14deg)
-      }
-
-      .hero>div {
-        position: relative;
-        z-index: 1;
-        max-width: 830px
-      }
-
-      .hero-tag {
-        display: inline-block;
-        background: white;
-        color: #111827;
-        padding: 8px 12px;
-        border-radius: 999px;
-        font-weight: 800;
-        font-size: .75rem;
-        letter-spacing: .1em;
-        text-transform: uppercase
-      }
-
-      h1 {
-        font-size: clamp(3rem,7vw,6.8rem);
-        line-height: .88;
-        letter-spacing: -.045em;
-        margin: 20px 0;
-        max-width: 10ch
-      }
-
-      .hero p {
-        font-size: 1.1rem;
-        color: #eff6ff
-      }
-
-      .btn {
-        min-height: 50px;
-        border: 0;
-        border-radius: 6px;
-        padding: 0 16px;
-        font-weight: 800;
-        cursor: pointer;
-        background: var(--primary);
-        color: white;
-        transition: .2s
-      }
-
-      .btn:hover {
-        transform: scale(1.04)
-      }
-
-      .light {
-        background: white;
-        color: #111827
-      }
-
-      .dark {
-        background: #111827;
-        color: white
-      }
-
-      .muted {
-        background: var(--border);
-        color: var(--fg)
-      }
-
-      .accent {
-        background: var(--accent);
-        color: #111827
-      }
-
-      .panel,.section {
-        margin-top: 22px;
-        background: var(--surface);
-        border-radius: 8px;
-        overflow: hidden
-      }
-
-      .panel-header {
-        background: #111827;
-        color: white;
-        padding: 26px 32px
-      }
-
-      .panel-header h2 {
-        margin: 0
-      }
-
-      .panel-body {
-        padding: 26px
-      }
-
-      .grammar-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(285px,1fr));
-        gap: 13px
-      }
-
-      .grammar-card,.info-card,/* Exercise interface */
-      .exercise {
-        background: var(--surface);
-        padding: 18px;
-        border-radius: 8px
-      }
-
-      .grammar-card {
-        background: var(--bg)
-      }
-
-      .grammar-card h3 {
-        margin: 0 0 8px
-      }
-
-      .grammar-card p,.info-card p {
-        color: var(--muted)
-      }
-
-      .example {
-        background: var(--surface);
-        padding: 10px;
-        border-radius: 6px
-      }
-
-      .roman {
-        color: var(--primary);
-        font-weight: 800
-      }
-
-      #tocGrid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
-        gap: 9px
-      }
-
-      .toc-link {
-        background: #1f2937;
-        color: white;
-        text-decoration: none;
-        padding: 13px 15px;
-        border-radius: 6px;
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        font-weight: 700
-      }
-
-      .toc-link:hover {
-        background: var(--secondary);
-        color: #052e2b
-      }
-
-      .toc-link small {
-        color: var(--accent)
-      }
-
-      .nav-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 18px
-      }
-
-      .nav-actions .btn {
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center
-      }
-
-      /* Grammar quiz sections */
-      details summary {
-        list-style: none;
-        cursor: pointer;
-        padding: 26px 30px;
-        font-size: clamp(1.7rem,4vw,3.2rem);
-        font-weight: 800;
-        background: var(--accent);
-        color: #111827;
-        display: flex;
-        justify-content: space-between;
-        gap: 14px
-      }
-
-      details: nth-of-type(3n+1) summary {
-        background: var(--primary);
-        color: white
-      }
-
-      details: nth-of-type(3n+2) summary {
-        background: var(--secondary);
-        color: #052e2b
-      }
-
-      details summary::-webkit-details-marker {
-        display: none
-      }
-
-      details summary:after {
-        content: "Collapse";
-        font-size: .68rem;
-        background: white;
-        color: #111827;
-        padding: 8px 10px;
-        border-radius: 999px;
-        align-self: center
-      }
-
-      details: not([open]) summary:after {
-        content: "Expand"
-      }
-
-      .section-body {
-        background: var(--bg);
-        padding: 22px
-      }
-
-      .section-intro {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-        margin-bottom: 14px
-      }
-
-      .exercise-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px
-      }
-
-      .exercise-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        align-items: start
-      }
-
-      .exercise-header h3 {
-        margin: 6px 0
-      }
-
-      .badge {
-        background: var(--blue-soft);
-        padding: 5px 9px;
-        border-radius: 999px;
-        font-size: .72rem;
-        font-weight: 800
-      }
-
-      .controls {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
-        margin: 12px 0
-      }
-
-      .controls label {
-        display: block;
-        color: var(--muted);
-        font-size: .7rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: .08em
-      }
-
-      .controls select,input {
-        width: 100%;
-        min-height: 46px;
-        border: 2px solid transparent;
-        border-radius: 6px;
-        background: var(--bg);
-        color: var(--fg);
-        padding: 0 10px
-      }
-
-      .controls select:focus,input:focus {
-        outline: 0;
-        border-color: var(--primary);
-        background: var(--surface)
-      }
-
-      .status {
-        display: flex;
-        justify-content: space-between;
-        color: var(--muted);
-        font-weight: 800;
-        font-size: .86rem
-      }
-
-      .progress {
-        height: 9px;
-        background: var(--border);
-        border-radius: 999px;
-        overflow: hidden;
-        margin: 9px 0 16px
-      }
-
-      .progress div {
-        height: 100%;
-        background: var(--secondary);
-        width: 0
-      }
-
-      .prompt-label {
-        font-size: .7rem;
-        color: var(--primary);
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: .1em
-      }
-
-      .prompt {
-        font-size: clamp(1.55rem,3.2vw,2.55rem);
-        font-weight: 800;
-        line-height: 1.08;
-        min-height: 72px;
-        margin: 6px 0 16px
-      }
-
-      .answer-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 8px
-      }
-
-      .choices {
-        display: grid;
-        gap: 8px
-      }
-
-      .choice {
-        min-height: 48px;
-        border: 0;
-        border-radius: 6px;
-        text-align: left;
-        padding: 0 12px;
-        background: var(--bg);
-        color: var(--fg);
-        font-weight: 700;
-        cursor: pointer
-      }
-
-      .choice.correct {
-        background: var(--secondary);
-        color: #052e2b
-      }
-
-      .choice.wrong {
-        background: var(--accent);
-        color: #111827
-      }
-
-      .feedback {
-        display: none;
-        margin-top: 12px;
-        padding: 13px;
-        border-radius: 6px
-      }
-
-      .feedback.good {
-        display: block;
-        background: var(--green-soft)
-      }
-
-      .feedback.bad {
-        display: block;
-        background: var(--amber-soft)
-      }
-
-      .next {
-        margin-top: 10px
-      }
-
-      .finish {
-        display: none;
-        margin-top: 14px;
-        padding: 18px;
-        background: var(--blue-soft);
-        border-radius: 8px
-      }
-
-      .finish h4 {
-        margin: 0;
-        font-size: 1.45rem
-      }
-
-      .reviewnav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin: 12px 0
-      }
-
-      .reviewnav button {
-        width: 36px;
-        height: 36px;
-        border: 0;
-        border-radius: 6px;
-        background: var(--border);
-        color: var(--fg);
-        font-weight: 800
-      }
-
-      .reviewnav button.active {
-        background: var(--primary);
-        color: white
-      }
-
-      .reviewbox {
-        background: var(--surface);
-        padding: 12px;
-        border-radius: 6px
-      }
-
-      .hidden {
-        display: none!important
-      }
-
-      .back-to-toc {
-        position: fixed;
-        right: 14px;
-        bottom: 14px;
-        background: var(--accent);
-        color: #111827;
-        padding: 12px 14px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 800;
-        z-index: 10
-      }
-
-      /* Responsive layout */
-      @media(max-width:900px) {
-        .exercise-grid,.section-intro {
-          grid-template-columns: 1fr
-        }
-
-        .page-shell {
-          width: 100%;
-          padding-top: 0
-        }
-
-        .hero,.panel,.section {
-          border-radius: 0;
-          margin-top: 0
-        }
-
-      }
-
-      @media(max-width:600px) {
-        .hero {
-          padding: 36px 22px
-        }
-
-        .panel-body,.section-body {
-          padding: 16px
-        }
-
-        .controls {
-          grid-template-columns: 1fr
-        }
-
-        .answer-row {
-          grid-template-columns: 1fr
-        }
-
-        details summary {
-          padding: 20px 16px;
-          flex-direction: column;
-          align-items: flex-start
-        }
-
-      }
-    </style>
-  </head>
-
-  <body>
-    <a class="back-to-toc" href="#toc">Back to TOC</a>
-
-    <div class="page-shell">
-      <header class="hero">
-        <div>
-          <span class="hero-tag">TOPIK I Grammar Translation</span>
-          <h1>Grammar Through Translation</h1>
-          <p>
-            Each grammar point has one typed exercise and one multiple-choice exercise.
-            Every exercise uses 10 newly randomized vocabulary combinations, immediate
-            trilingual feedback, an independent score, restart control, final summary,
-            and navigable answer review.
-          </p>
-        </div>
-      </header>
-
-      <nav class="panel" id="toc" aria-labelledby="toc-title">
-        <div class="panel-header">
-          <h2 id="toc-title">Table of Contents</h2>
-        </div>
-
-        <div class="panel-body">
-          <div class="nav-actions">
-            <a class="btn dark" href="https://boyzinred.github.io/korean/index.html">
-              Back to Home
-            </a>
-            <button class="btn light" id="themeToggle" type="button">
-              Toggle Theme
-            </button>
-          </div>
-
-          <div id="tocGrid"></div>
-        </div>
-      </nav>
-
-      <section class="panel" id="bank" aria-labelledby="grammar-bank-title">
-        <div class="panel-header">
-          <h2 id="grammar-bank-title">Grammar Bank</h2>
-        </div>
-        <div class="panel-body">
-          <div class="grammar-grid" id="grammarGrid"></div>
-        </div>
-      </section>
-
-      <main id="sections"></main>
+<head>
+
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOPIK I Grammar Translation Quiz</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero {
+  color: var(--hero-heading);
+  background: var(--background);
+}
+.hero-inner {
+  padding: clamp(48px, 7vw, 82px);
+}
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 5.7rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.02em;
+}
+.hero p {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: var(--hero-text);
+  font-size: 1.05rem;
+}
+.toc-card {
+  padding: 18px 22px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+.toc-link small,
+.toc-link span:last-child:not(:first-child) {
+  font-size: .72rem;
+  opacity: .78;
+}
+.section,
+.block,
+.quiz-section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+}
+.section-header h2,
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+details.section > summary,
+details.block > summary,
+details.quiz-section > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.section > summary::-webkit-details-marker,
+details.block > summary::-webkit-details-marker,
+details.quiz-section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after,
+details.block > summary::after,
+details.quiz-section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after,
+details.block:not([open]) > summary::after,
+details.quiz-section:not([open]) > summary::after { content: "Expand"; }
+.section-content,
+.section-body,
+.block-inner,
+.quiz-body {
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.rule-card,
+.info-card,
+.guide-card,
+.note-card,
+.grammar-card,
+.control-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .rule-card,
+html[data-theme="light"] .info-card,
+html[data-theme="light"] .guide-card,
+html[data-theme="light"] .note-card,
+html[data-theme="light"] .grammar-card,
+html[data-theme="light"] .control-card {
+  color: #F5F5F5;
+}
+.exercise,
+.quiz-card {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+.exercise-kicker,
+.prompt-label,
+.control-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+}
+.exercise-body {
+  padding: clamp(24px, 4vw, 38px);
+}
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+  border-radius: 0;
+}
+.progress > div,
+.progress-fill {
+  height: 100%;
+  background: var(--secondary);
+}
+input,
+select,
+textarea,
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus,
+select:focus,
+textarea:focus,
+.answer-input:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+input:disabled,
+select:disabled,
+textarea:disabled,
+.answer-input:disabled {
+  color: var(--subtle);
+  background: var(--muted-strong);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.btn,
+.primary-btn,
+.secondary-btn,
+.restart-top-btn,
+.mode-btn,
+.choice,
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled),
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled),
+.mode-btn:hover:not(:disabled),
+.choice:hover:not(:disabled),
+.blur-toggle:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+.primary-btn:hover:not(:disabled),
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.secondary-btn,
+.btn.positive {
+  color: #192B5D;
+  background: var(--secondary);
+}
+.btn.warning { color: #192B5D; background: var(--accent); }
+.btn.secondary,
+.restart-top-btn,
+.mode-btn,
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.mode-btn.active,
+.blur-toggle[aria-pressed="true"] {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+.choice:hover:not(:disabled) {
+  color: #192B5D;
+  background: var(--primary);
+}
+.choice.correct {
+  color: #FFFFFF;
+  background: var(--secondary);
+}
+.choice.wrong {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+}
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+.utility-button.top { background: var(--accent); }
+
+.hidden { display: none !important; }
+
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner { min-height: 60px; }
+  .header-inner,
+  .page-main { width: 100%; }
+  .header-inner { padding: 0 14px; }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner { padding: 48px 22px; }
+  .hero h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+  .toc-card {
+    padding: 18px 22px;
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .section-header,
+  details.section > summary,
+  details.block > summary,
+  details.quiz-section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after,
+  details.block > summary::after,
+  details.quiz-section > summary::after {
+    width: 100%;
+  }
+  .section-content,
+  .section-body,
+  .block-inner,
+  .quiz-body,
+  .exercise-body { padding: 22px; }
+  .btn,
+  .primary-btn,
+  .secondary-btn,
+  .restart-top-btn,
+  .mode-btn,
+  .choice,
+  .blur-toggle { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+#bank .section-header {
+  color: #FFFFFF;
+  background: var(--accent);
+}
+#sections > details:nth-child(3n+1) > summary { background: var(--secondary); }
+#sections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
+#sections > details:nth-child(3n+3) > summary { background: var(--primary); }
+
+.grammar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 14px;
+}
+.grammar-card {
+  background: var(--blue-soft);
+}
+.grammar-card h3,
+.info-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+.grammar-card p,
+.info-card p { margin: 0 0 14px; }
+.example {
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+.rule-label {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 9px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.exercise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.exercise-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.exercise-toolbar .restart { min-height: 40px; }
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.controls label {
+  display: grid;
+  gap: 7px;
+  color: var(--surface-text);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--surface-text);
+  font-size: .86rem;
+  font-weight: 800;
+}
+.prompt-label { margin-top: 24px; }
+.prompt {
+  min-height: 88px;
+  margin: 8px 0 22px;
+  color: var(--surface-text);
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.answer-row .btn { min-width: 110px; }
+.choices {
+  display: grid;
+  gap: 8px;
+}
+.next { margin-top: 12px; }
+.finish {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .finish { color: #FFFFFF; }
+.finish h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+.reviewnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0;
+}
+.reviewnav button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+.reviewnav button.active {
+  color: #192B5D;
+  background: var(--primary);
+}
+.reviewbox {
+  margin-bottom: 14px;
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+@media (max-width: 900px) {
+  .exercise-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .section-intro,
+  .controls,
+  .answer-row { grid-template-columns: 1fr; }
+  .exercise-toolbar .restart { width: 100%; }
+}
+
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
     </div>
+  </header>
 
-    <script>
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">TOPIK I grammar translation</p>
+        <h1 id="page-title">Grammar Through Translation</h1>
+        <p>Practice each grammar point with a typed translation and a multiple-choice translation, immediate trilingual feedback, independent scoring, and answer review.</p>
+      </div>
+    </section>
+
+    <nav class="toc-card" id="toc" aria-labelledby="toc-title">
+      <span class="toc-label" id="toc-title">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <section class="section" id="bank" aria-labelledby="grammar-bank-title">
+      <div class="section-header">
+        <h2 id="grammar-bank-title">Grammar Bank</h2>
+      </div>
+      <div class="section-content">
+        <div class="grammar-grid" id="grammarGrid"></div>
+      </div>
+    </section>
+
+    <div id="sections"></div>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" id="themeToggle" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+
+  <script>
+
       // Vocabulary entries use: [Korean, dashed romanization, English]
       const VOCABULARY_BANK= {
         people:[["학생", "hak-ssaeng", "student"],
@@ -866,12 +1065,42 @@
       function renderApp() {
         grammarGrid.innerHTML=GRAMMAR_POINTS.map(x=>`<article class="grammar-card"><h3>${x[1]} · ${x[2]}</h3><p>${x[3]}</p><div class="example"><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</div></article>`).join("");
         tocGrid.innerHTML=`<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a>`+GRAMMAR_POINTS.map(x=>`<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span><small>2 × 10</small></a>`).join("");
-        sections.innerHTML=GRAMMAR_POINTS.map((x, i)=>`<details class="section" id="${x[0]}" ${i===0?"open":""}><summary>${x[1]} · ${x[2]}</summary><div class="section-body"><div class="section-intro"><div class="info-card"><h3>How it works</h3><p>${x[3]}</p></div><div class="info-card"><h3>Model example</h3><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</div></div><div class="exercise-grid">${exerciseTemplate(x[0],"typed","Typed translation")}${exerciseTemplate(x[0],"mc","Multiple choice translation")}</div></div></details>`).join("");
+        sections.innerHTML=GRAMMAR_POINTS.map((x, i)=>`<details class="section" id="${x[0]}" ${i===0?"open":""}><summary><span>${x[1]} · ${x[2]}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">Rule</span><h3>How it works</h3><p>${x[3]}</p></article><article class="info-card"><span class="rule-label">Model</span><h3>Model example</h3><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</article></div><div class="exercise-grid">${exerciseTemplate(x[0],"typed","Typed translation")}${exerciseTemplate(x[0],"mc","Multiple choice translation")}</div></div></details>`).join("");
         GRAMMAR_POINTS.forEach(x=>["typed", "mc"].forEach(t=>initializeExercise(x[0],
         t)))
       }
       function exerciseTemplate(id, t, title) {
-        return `<section class="exercise" id="${id}-${t}"><div class="exercise-header"><div><span class="badge">${t==="typed"?"TYPE":"SELECT"}</span><h3>${title}</h3></div><button class="btn muted restart">Restart</button></div><div class="controls"><label>Question language<select class="question-mode"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="answer-mode"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><div class="status"><span class="count"></span><span class="score"></span></div><div class="progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback"></div><button class="btn accent next hidden">Next</button><div class="finish"><h4>Exercise complete</h4><p class="sum"></p><div class="reviewnav"></div><div class="reviewbox"></div><button class="btn muted restart">Restart exercise</button></div></section>`
+        return `<article class="exercise" id="${id}-${t}">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">${t==="typed"?"Type":"Select"}</span>
+              <h3>${title}</h3>
+              <p>Translate ten randomized prompts and review every response.</p>
+            </div>
+            <div class="score" aria-live="polite"></div>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-toolbar"><button class="btn secondary restart" type="button">Restart</button></div>
+            <div class="controls">
+              <label><span>Question language</span><select class="question-mode"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label>
+              <label><span>Answer language</span><select class="answer-mode"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label>
+            </div>
+            <div class="status"><span class="count"></span></div>
+            <div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div>
+            <div class="prompt-label"></div>
+            <div class="prompt"></div>
+            <div class="zone"></div>
+            <div class="feedback" aria-live="polite"></div>
+            <button class="btn warning next hidden" type="button">Next</button>
+            <div class="finish">
+              <h4>Exercise complete</h4>
+              <p class="sum"></p>
+              <div class="reviewnav" aria-label="Answer review navigation"></div>
+              <div class="reviewbox"></div>
+              <button class="btn secondary restart" type="button">Restart exercise</button>
+            </div>
+          </div>
+        </article>`
       }
       // Exercise lifecycle
       function initializeExercise(id, t) {
@@ -924,14 +1153,14 @@
         s.done=false;
         e.querySelector(".count").textContent=`Question ${s.i+1} / 10`;
         e.querySelector(".score").textContent=`Score: ${s.score}`;
-        e.querySelector(".progress div").style.width=`${s.i*10}%`;
+        e.querySelector(".progress div").style.width=`${s.i*10}%`; e.querySelector(".progress").setAttribute("aria-valuenow", String(s.i*10));
         e.querySelector(".prompt-label").textContent=s.qm;
         e.querySelector(".prompt").textContent=q[s.qm];
         e.querySelector(".feedback").className="feedback";
         e.querySelector(".next").classList.add("hidden");
         let z=e.querySelector(".zone");
         if(t==="typed") {
-          z.innerHTML=`<div class="answer-row"><input class="ans" autocomplete="off"><button class="btn">Check</button></div>`;
+          z.innerHTML=`<div class="answer-row"><label class="sr-only" for="${id}-${t}-answer">Your answer</label><input id="${id}-${t}-answer" class="ans" autocomplete="off"><button class="btn primary" type="button">Check</button></div>`;
           let go=()=>submitAnswer(id, t, z.querySelector("input").value);
           z.querySelector("button").onclick=go;
           z.querySelector("input").onkeydown=x=>x.key==="Enter"&&go();
@@ -943,14 +1172,7 @@
           },
           ()=>generateQuestion(id))].sort(()=>Math.random()-.5).slice(0, 4);
           if(!opts.includes(q))opts[0]=q;
-          z.innerHTML = `<div class="choices">${opts
-            .map(
-              (option, index) =>
-                `<button class="choice" data-i="${index}">${escapeHtml(
-                  option[s.am]
-                )}</button>`
-            )
-            .join("")}</div>`;
+          z.innerHTML=`<div class="choices">${opts.map((o,i)=>`<button class="choice" type="button" data-i="${i}">${escapeHtml(o[s.am])}</button>`).join("")}</div>`;
           z.querySelectorAll(".choice").forEach((b, i)=>b.onclick=()=> {
             let ok=normalizeAnswer(opts[i][s.am],
             s.am)===normalizeAnswer(q[s.am],
@@ -995,7 +1217,7 @@
         let s=exerciseStates[`${id}-${t}`],
         e=document.getElementById(`${id}-${t}`),
         f=e.querySelector(".finish");
-        e.querySelector(".progress div").style.width="100%";
+        e.querySelector(".progress div").style.width="100%"; e.querySelector(".progress").setAttribute("aria-valuenow", "100");
         f.style.display="block";
         f.querySelector(".sum").innerHTML=`Final score: <b>${s.score} / 10</b> (${s.score*10}%)`;
         let n=f.querySelector(".reviewnav");
@@ -1010,18 +1232,83 @@
         e.querySelectorAll(".reviewnav button").forEach((b, j)=>b.classList.toggle("active", j===i));
         e.querySelector(".reviewbox").innerHTML=`<p><b>Question ${i+1}</b> ${r.ok?"✅":"❌"}</p><p><b>Prompt:</b> ${escapeHtml(r.q[r.qm])}</p><p><b>Your answer:</b> ${escapeHtml(r.u||"(blank)")}</p><p>${feedbackMarkup(r.q)}</p>`
       }
-      // Theme control
-      themeToggle.onclick=()=> {
-        let n=document.documentElement.dataset.theme==="dark"?"light":"dark";
-        document.documentElement.dataset.theme=n;
-        localStorage.setItem("topikGrammarTheme", n)
-      };
-      try {
-        document.documentElement.dataset.theme=localStorage.getItem("topikGrammarTheme")||((matchMedia("(prefers-color-scheme:dark)").matches)?"dark":"light")
-      }
-      catch(_) {
-      }
       renderApp();
-    </script>
-  </body>
+
+      document.querySelectorAll("details.section").forEach(details => {
+        const summary = details.querySelector(":scope > summary");
+        if (!summary) return;
+        const sync = () => summary.setAttribute("aria-expanded", String(details.open));
+        sync();
+        details.addEventListener("toggle", sync);
+      });
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const ANCHOR_KEY = `koreanStudyAnchor:${location.pathname}`;
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => {
+          applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+        });
+      });
+
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+
+      function storeAnchor(hash) {
+        try {
+          if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
+          else localStorage.removeItem(ANCHOR_KEY);
+        } catch (_) {}
+      }
+
+      document.addEventListener("click", event => {
+        const link = event.target.closest('a[href^="#"]');
+        if (link) storeAnchor(link.getAttribute("href"));
+      });
+
+      window.addEventListener("hashchange", () => storeAnchor(location.hash));
+
+      if (!location.hash) {
+        let saved = "";
+        try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
+        if (saved && document.querySelector(saved)) {
+          requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
+        } else {
+          requestAnimationFrame(() => window.scrollTo(0, 0));
+        }
+      }
+    })();
+  </script>
+
+</body>
 </html>
