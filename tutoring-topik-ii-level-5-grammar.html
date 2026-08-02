@@ -15,7 +15,7 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TOPIK II Level 5 Grammar</title>
+  <title>TOPIK II Level 5 Grammar Translation Quiz</title>
   <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
@@ -796,7 +796,77 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   border-radius: var(--radius-lg);
 }
 
-  </style>
+  
+
+/* Exercise setup menus, timers, and mobile keyboard workflow */
+.exercise-menu {
+  display: grid;
+  gap: 20px;
+  padding: clamp(24px, 4vw, 38px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.exercise-menu h4 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.1;
+}
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu label {
+  display: grid;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.exercise-menu-actions .btn,
+.exercise-menu-actions .primary-btn { width: auto; }
+.runtime-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.runtime-timer {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.end-early-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+.finish-card { display: none; }
+@media (max-width: 680px) {
+  .exercise-menu-grid { grid-template-columns: 1fr; }
+  .exercise-menu-actions,
+  .runtime-bar { align-items: stretch; flex-direction: column; }
+  .exercise-menu-actions .btn,
+  .exercise-menu-actions .primary-btn,
+  .end-early-btn { width: 100%; }
+}
+
+</style>
 </head>
 <body id="top">
   <header class="site-header">
@@ -830,6 +900,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     </section>
 
     <div id="sections"></div>
+    <p class="source-note">Content is based on the attached Expanded TOPIK II Level 5 Grammar and Vocabulary document. Examples retain its three speech levels and practical pronunciation-style romanization.</p>
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
@@ -932,7 +1003,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
         </article>`).join("");
 
       tocGrid.innerHTML = `<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>18 points</small></a>` +
-        GRAMMAR_POINTS.map(point => `<a class="toc-link" href="#${point.id}"><span>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</span><small>2 × 10</small></a>`).join("");
+        GRAMMAR_POINTS.map(point => `<a class="toc-link" href="#${point.id}"><span>${escapeHtml(point.form)} · ${escapeHtml(point.title)}</span></a>`).join("");
 
       sections.innerHTML = GRAMMAR_POINTS.map((point, index) => `
         <details class="section" id="${point.id}" ${index === 0 ? "open" : ""}>
@@ -948,7 +1019,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
               </article>
               <article class="info-card">
                 <span class="rule-label">Speech levels</span>
-                <h3>Model examples</h3>
+                <h3>Examples</h3>
                 <div class="speech-examples">${examplesMarkup(point)}</div>
               </article>
             </div>
@@ -1175,6 +1246,198 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       });
     })();
   </script>
+
+
+<script>
+(() => {
+  const liveTimers = new Map();
+  const liveSelectors = [".status", ".progress", ".prompt-label", ".prompt", ".zone", ".feedback", ".next", ".runtime-bar"];
+
+  function formatTime(seconds) {
+    const safe = Math.max(0, Math.ceil(seconds));
+    return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
+  }
+  function clearTimer(key) {
+    const timer = liveTimers.get(key);
+    if (timer) clearInterval(timer);
+    liveTimers.delete(key);
+  }
+  function setLive(element, visible) {
+    liveSelectors.forEach(selector => element.querySelectorAll(selector).forEach(node => {
+      if (node.classList.contains("feedback") || node.classList.contains("next")) return;
+      node.classList.toggle("hidden", !visible);
+    }));
+  }
+  function makeQuestions(point, count) {
+    const source = point.questions.map((question, index) => ({...question, sourceId: `${point.id}-${index}`}));
+    const result = [];
+    while (result.length < count) {
+      const candidates = source.filter(item => !result.length || item.sourceId !== result[result.length - 1].sourceId);
+      result.push(candidates[Math.floor(Math.random() * candidates.length)]);
+    }
+    return result;
+  }
+  function showSetup(id, type) {
+    const key = `${id}-${type}`;
+    clearTimer(key);
+    const element = document.getElementById(key);
+    exerciseStates[key].finished = false;
+    element.querySelector(".exercise-menu").classList.remove("hidden");
+    element.querySelector(".exercise-toolbar").classList.add("hidden");
+    element.querySelector(".controls").classList.add("hidden");
+    element.querySelector(".finish").style.display = "none";
+    setLive(element, false);
+  }
+  function startExercise(id, type) {
+    const key = `${id}-${type}`;
+    const element = document.getElementById(key);
+    const state = exerciseStates[key];
+    const count = Math.max(1, Math.min(100, Math.round(Number(element.querySelector(".menu-count").value) || 10)));
+    element.querySelector(".menu-count").value = String(count);
+    clearTimer(key);
+    state.index = 0;
+    state.score = 0;
+    state.results = [];
+    state.questionMode = element.querySelector(".menu-question").value;
+    state.answerMode = element.querySelector(".menu-answer").value;
+    state.questions = makeQuestions(pointById(id), count);
+    state.answered = false;
+    state.finished = false;
+    element.querySelector(".question-mode").value = state.questionMode;
+    element.querySelector(".answer-mode").value = state.answerMode;
+    element.querySelector(".exercise-menu").classList.add("hidden");
+    element.querySelector(".finish").style.display = "none";
+    setLive(element, true);
+    showQuestion(id, type);
+
+    const minutes = Math.max(0, Number(element.querySelector(".menu-timer").value) || 0);
+    const label = element.querySelector(".runtime-timer");
+    if (!minutes) { label.textContent = "Untimed"; return; }
+    const deadline = Date.now() + minutes * 60_000;
+    const tick = () => {
+      const remaining = (deadline - Date.now()) / 1000;
+      label.textContent = `Time left: ${formatTime(remaining)}`;
+      if (remaining <= 0) finishExercise(id, type, "Time is up");
+    };
+    tick();
+    liveTimers.set(key, setInterval(tick, 250));
+  }
+
+  showQuestion = function(id, type) {
+    const state = exerciseStates[`${id}-${type}`];
+    const element = document.getElementById(`${id}-${type}`);
+    if (state.finished || !state.questions.length) return;
+    const question = state.questions[state.index];
+    state.answered = false;
+    element.querySelector(".count").textContent = `Question ${state.index + 1} / ${state.questions.length} · ${question.speechLevel}`;
+    element.querySelector(".score").textContent = `Score: ${state.score}`;
+    const percent = (state.index / state.questions.length) * 100;
+    element.querySelector(".progress div").style.width = `${percent}%`;
+    element.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(percent)));
+    element.querySelector(".prompt-label").textContent = `${modeLabel(state.questionMode)} · ${question.speechLevel}`;
+    element.querySelector(".prompt").textContent = promptText(question, state.questionMode);
+    element.querySelector(".feedback").className = "feedback";
+    element.querySelector(".feedback").innerHTML = "";
+    element.querySelector(".next").classList.add("hidden");
+    const zone = element.querySelector(".zone");
+
+    if (type === "typed") {
+      zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${state.answerMode === "romanization" ? "Type the romanization" : "Type your answer"}"><button class="btn primary" type="button">Check</button></div>`;
+      const input = zone.querySelector("input");
+      const submit = () => submitAnswer(id, type, input.value);
+      zone.querySelector("button").onclick = submit;
+      input.onkeydown = event => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        if (state.answered) element.querySelector(".next").click();
+        else submit();
+      };
+      requestAnimationFrame(() => input.focus({preventScroll: true}));
+    } else {
+      const choices = buildChoices(id, question, state.answerMode);
+      zone.innerHTML = `<div class="choices">${choices.map((choice, index) => `<button class="choice" type="button" data-index="${index}">${escapeHtml(choice.value)}</button>`).join("")}</div>`;
+      zone.querySelectorAll(".choice").forEach((button, index) => {
+        button.onclick = () => {
+          const selected = choices[index];
+          zone.querySelectorAll(".choice").forEach((otherButton, otherIndex) => {
+            otherButton.disabled = true;
+            if (choices[otherIndex].correct) otherButton.classList.add("correct");
+          });
+          if (!selected.correct) button.classList.add("wrong");
+          completeQuestion(id, type, selected.value, selected.correct);
+        };
+      });
+    }
+  };
+
+  completeQuestion = function(id, type, userAnswer, correct) {
+    const state = exerciseStates[`${id}-${type}`];
+    const element = document.getElementById(`${id}-${type}`);
+    if (state.answered || state.finished) return;
+    const question = state.questions[state.index];
+    state.answered = true;
+    if (correct) state.score += 1;
+    state.results.push({question, userAnswer, correct, questionMode: state.questionMode, answerMode: state.answerMode});
+    element.querySelector(".score").textContent = `Score: ${state.score}`;
+    const feedback = element.querySelector(".feedback");
+    feedback.className = `feedback ${correct ? "good" : "bad"}`;
+    feedback.innerHTML = `${correct ? "Correct." : "Incorrect."}<br>${feedbackMarkup(question)}`;
+    const next = element.querySelector(".next");
+    next.textContent = state.index === state.questions.length - 1 ? "Finish" : "Next";
+    next.classList.remove("hidden");
+    if (type === "typed") {
+      const input = element.querySelector(".ans");
+      if (input) { input.readOnly = true; requestAnimationFrame(() => input.focus({preventScroll: true})); }
+    }
+  };
+
+  finishExercise = function(id, type, reason = "Completed") {
+    const key = `${id}-${type}`;
+    const state = exerciseStates[key];
+    if (state.finished) return;
+    state.finished = true;
+    clearTimer(key);
+    const element = document.getElementById(key);
+    const finish = element.querySelector(".finish");
+    const answered = state.results.length;
+    const percent = answered ? Math.round((state.score / answered) * 100) : 0;
+    element.querySelector(".progress div").style.width = `${state.questions.length ? (answered / state.questions.length) * 100 : 0}%`;
+    element.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(state.questions.length ? (answered / state.questions.length) * 100 : 0)));
+    element.querySelector(".next").classList.add("hidden");
+    finish.style.display = "block";
+    finish.querySelector("h4").textContent = reason === "Completed" ? "Exercise complete" : reason;
+    finish.querySelector(".sum").innerHTML = answered ? `Score: <b>${state.score} / ${answered}</b> (${percent}%) · ${answered} of ${state.questions.length} questions answered.` : "No questions were answered.";
+    const navigation = finish.querySelector(".reviewnav");
+    navigation.innerHTML = state.results.map((result, index) => `<button type="button" data-index="${index}">${index + 1}</button>`).join("");
+    navigation.querySelectorAll("button").forEach(button => button.onclick = () => showReviewQuestion(id, type, Number(button.dataset.index)));
+    if (answered) showReviewQuestion(id, type, 0);
+    else finish.querySelector(".reviewbox").innerHTML = "";
+    finish.scrollIntoView({behavior: "smooth", block: "nearest"});
+  };
+
+  document.querySelectorAll(".exercise").forEach(element => {
+    const [id, type] = element.id.match(/^(g\d+)-(typed|mc)$/).slice(1);
+    const body = element.querySelector(".exercise-body");
+    const menu = document.createElement("div");
+    menu.className = "exercise-menu";
+    menu.innerHTML = `<h4>Exercise setup</h4><p>Choose how many questions to answer, both languages, and an optional time limit.</p><div class="exercise-menu-grid"><label>Questions<input class="menu-count" type="number" min="1" max="100" value="10"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`;
+    body.insertBefore(menu, body.firstChild);
+    const runtime = document.createElement("div");
+    runtime.className = "runtime-bar";
+    runtime.innerHTML = `<span class="runtime-timer">Untimed</span><button class="end-early-btn" type="button">End exercise early</button>`;
+    body.insertBefore(runtime, body.querySelector(".status"));
+    menu.querySelector(".start-exercise").onclick = () => startExercise(id, type);
+    runtime.querySelector(".end-early-btn").onclick = () => finishExercise(id, type, "Exercise ended early");
+    element.querySelector(".next").onclick = () => {
+      const state = exerciseStates[`${id}-${type}`];
+      if (state.index < state.questions.length - 1) { state.index += 1; showQuestion(id, type); }
+      else finishExercise(id, type);
+    };
+    element.querySelectorAll(".restart").forEach(button => button.onclick = () => showSetup(id, type));
+    showSetup(id, type);
+  });
+})();
+</script>
 
 </body>
 </html>
