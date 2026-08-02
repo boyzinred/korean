@@ -768,7 +768,82 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   .exercise-toolbar .restart { width: 100%; }
 }
 
-  </style>
+  
+
+/* Exercise setup menus, timers, and mobile keyboard workflow */
+.exercise-menu {
+  display: grid;
+  gap: 20px;
+  padding: clamp(24px, 4vw, 38px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.exercise-menu h4 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.1;
+}
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu label {
+  display: grid;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.exercise-menu-actions .btn,
+.exercise-menu-actions .primary-btn { width: auto; }
+.runtime-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.runtime-timer {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.end-early-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+.finish-card { display: none; }
+@media (max-width: 680px) {
+  .exercise-menu-grid { grid-template-columns: 1fr; }
+  .exercise-menu-actions,
+  .runtime-bar { align-items: stretch; flex-direction: column; }
+  .exercise-menu-actions .btn,
+  .exercise-menu-actions .primary-btn,
+  .end-early-btn { width: 100%; }
+}
+
+
+.speech-examples { display: grid; gap: 8px; margin-top: 14px; }
+.speech-example { padding: 12px; color: var(--surface-text); background: var(--surface-muted); border-radius: var(--radius-md); }
+.speech-example strong { display: block; margin-bottom: 5px; color: var(--primary); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+
+</style>
 </head>
 <body id="top">
   <header class="site-header">
@@ -783,9 +858,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   <main class="page-main">
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-inner">
-        <p class="hero-kicker">TOPIK I grammar translation</p>
-        <h1 id="page-title">Grammar Through Translation</h1>
-        <p>Practice each grammar point with a typed translation and a multiple-choice translation, immediate trilingual feedback, independent scoring, and answer review.</p>
+        <h1 id="page-title">TOPIK I Grammar</h1>
       </div>
     </section>
 
@@ -1064,7 +1137,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       // Rendering
       function renderApp() {
         grammarGrid.innerHTML=GRAMMAR_POINTS.map(x=>`<article class="grammar-card"><h3>${x[1]} · ${x[2]}</h3><p>${x[3]}</p><div class="example"><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</div></article>`).join("");
-        tocGrid.innerHTML=`<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a>`+GRAMMAR_POINTS.map(x=>`<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span><small>2 × 10</small></a>`).join("");
+        tocGrid.innerHTML=`<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a>`+GRAMMAR_POINTS.map(x=>`<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span></a>`).join("");
         sections.innerHTML=GRAMMAR_POINTS.map((x, i)=>`<details class="section" id="${x[0]}" ${i===0?"open":""}><summary><span>${x[1]} · ${x[2]}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">Rule</span><h3>How it works</h3><p>${x[3]}</p></article><article class="info-card"><span class="rule-label">Model</span><h3>Model example</h3><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</article></div><div class="exercise-grid">${exerciseTemplate(x[0],"typed","Typed translation")}${exerciseTemplate(x[0],"mc","Multiple choice translation")}</div></div></details>`).join("");
         GRAMMAR_POINTS.forEach(x=>["typed", "mc"].forEach(t=>initializeExercise(x[0],
         t)))
@@ -1164,6 +1237,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
           let go=()=>submitAnswer(id, t, z.querySelector("input").value);
           z.querySelector("button").onclick=go;
           z.querySelector("input").onkeydown=x=>x.key==="Enter"&&go();
+          z.querySelector("input").focus()
         }
         else {
           let opts=[q, ...Array.from( {
@@ -1283,21 +1357,156 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
         if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
       });
 
-      if ("scrollRestoration" in history) {
-        history.scrollRestoration = "manual";
+      function storeAnchor(hash) {
+        try {
+          if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
+          else localStorage.removeItem(ANCHOR_KEY);
+        } catch (_) {}
       }
 
-      window.addEventListener("pageshow", () => {
-        if (!location.hash) {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              window.scrollTo(0, 0);
-            });
-          });
+      document.addEventListener("click", event => {
+        const link = event.target.closest('a[href^="#"]');
+        if (link) storeAnchor(link.getAttribute("href"));
+      });
+
+      window.addEventListener("hashchange", () => storeAnchor(location.hash));
+
+      if (!location.hash) {
+        let saved = "";
+        try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
+        if (saved && document.querySelector(saved)) {
+          requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
+        } else {
+          requestAnimationFrame(() => window.scrollTo(0, 0));
         }
-      });1
+      }
     })();
   </script>
+
+
+<script>
+(() => {
+  const RULE_DETAILS = {
+    g1:["N + 은/는 (은 after a consonant, 는 after a vowel).","Frames the sentence topic or contrasts it with another topic."],
+    g2:["N + 이/가 (이 after a consonant, 가 after a vowel).","Highlights or identifies the grammatical subject, often as new information."],
+    g3:["N + 을/를 (을 after a consonant, 를 after a vowel).","Marks the noun directly affected by an action verb."],
+    g4:["Time/place/destination noun + 에.","Marks a destination, a static location, or a specific time; it does not mark the place of an action."],
+    g5:["Place noun + 에서.","Marks where an action occurs or the place from which movement begins."],
+    g6:["N + 이에요/예요; formal N + 입니다.","Copular endings attach directly to nouns; 예요 follows a vowel and 이에요 follows a consonant."],
+    g7:["N이/가 있다/없다.","Expresses existence, location, availability, or possession depending on context."],
+    g8:["안 + verb/adjective.","Neutral short negation; it usually means the speaker does not do something by choice or habit."],
+    g9:["못 + action verb.","Expresses inability caused by skill, circumstances, or external limits."],
+    g10:["Verb/adjective stem + -아/어/해요.","The standard polite-casual present ending used in everyday conversation."],
+    g11:["Verb/adjective stem + -았/었/했어요.","Marks a past action, completed event, or past state."],
+    g12:["Verb stem + -(으)ㄹ 거예요.","Expresses a plan, intention, expectation, or prediction."],
+    g13:["Verb stem + -(으)세요.","A polite everyday request or instruction; it can also honor the subject in context."],
+    g14:["Verb stem + -(으)십시오.","A formal directive common in notices, announcements, tests, and official instructions."],
+    g15:["Verb stem + -(으)ㅂ시다.","A formal or neutral suggestion meaning ‘let us’; avoid it toward a superior."],
+    g16:["Verb stem + -(으)ㄹ까요?","Invites the listener’s opinion, proposes a joint action, or offers to do something."],
+    g17:["Clause/verb stem + -고 + clause.","Links equal actions or descriptions without necessarily showing cause."],
+    g18:["Stem + -아서/어서/해서 + clause.","Shows a reason or a natural sequence; commands and suggestions are usually avoided after causal -아서/어서."],
+    g19:["Stem + -지만 + contrasting clause.","Introduces a contrast while acknowledging the first statement."],
+    g20:["Stem + -(으)면 + result clause.","Expresses a condition or a repeated ‘when’ relationship."],
+    g21:["Verb stem + -(으)려고 하다.","Shows an intention, plan, or action that is about to begin."],
+    g22:["Verb stem + -고 싶다.","Expresses the speaker’s own desire; third-person desire normally uses -고 싶어하다."],
+    g23:["Verb stem + -(으)러 + 가다/오다.","States the purpose of movement and is used with movement verbs such as 가다 or 오다."],
+    g24:["Verb stem + -아/어 보다.","Means to try an action or to have experienced it."],
+    g25:["Verb stem + -아/어도 되다.","Asks for or grants permission; literally says that doing the action is acceptable."],
+    g26:["Verb stem + -(으)면 안 되다.","Expresses prohibition or strong advice not to do something."],
+    g27:["Past modifier -(으)ㄴ + 후에.","The first action is completed before the second action begins."],
+    g28:["Verb stem + -기 전에.","The following action happens before the action nominalized with -기."],
+    g29:["Verb stem + -(으)ㄹ 수 있다/없다.","Expresses ability or possibility rather than permission."],
+    g30:["Stem + -네요.","A soft spontaneous reaction to newly noticed information."],
+    g31:["Stem + -군요/-는군요 or -네요.","Both show discovery; -군요 is more explicit or emphatic, while -네요 is softer and conversational."],
+    g32:["Verb: -는 것 같다; adjective: -(으)ㄴ 것 같다; noun: 인 것 같다.","Softens a guess, impression, or uncertain opinion rather than stating it as a fact."]
+  };
+
+  function uniqueExamples(id, fallback) {
+    const results = [];
+    const seen = new Set();
+    for (let attempts = 0; attempts < 30 && results.length < 3; attempts += 1) {
+      let q;
+      try { q = generateQuestion(id); } catch (_) { q = null; }
+      if (!q) continue;
+      const key = `${q.english}|${q.korean}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      results.push(q);
+    }
+    while (results.length < 3) results.push(fallback);
+    return results;
+  }
+
+  GRAMMAR_POINTS.forEach(point => {
+    const section = document.getElementById(point[0]);
+    if (!section) return;
+    const details = RULE_DETAILS[point[0]] || [`Use ${point[1]} according to the pattern shown.`, point[3]];
+    const fallback = {english: point[6], romanization: point[5], korean: point[4]};
+    const examples = uniqueExamples(point[0], fallback);
+    const intro = section.querySelector(".section-intro");
+    intro.innerHTML = `<article class="info-card"><span class="rule-label">Rule</span><h3>Meaning, form, and nuance</h3><p><b>Meaning:</b> ${escapeHtml(point[3])}</p><p><b>Form:</b> ${escapeHtml(details[0])}</p><p><b>Nuance:</b> ${escapeHtml(details[1])}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Examples</h3><div class="speech-examples">${examples.map((q, index) => `<div class="speech-example"><strong>Example ${index + 1}</strong><b>${escapeHtml(q.english)}</b><br><span class="roman">${escapeHtml(q.romanization)}</span><br>${escapeHtml(q.korean)}</div>`).join("")}</div></article>`;
+  });
+
+  const liveTimers = new Map();
+  const liveSelectors = [".status", ".progress", ".prompt-label", ".prompt", ".zone", ".feedback", ".next", ".runtime-bar"];
+  function formatTime(seconds) { const safe = Math.max(0, Math.ceil(seconds)); return `${Math.floor(safe/60)}:${String(safe%60).padStart(2,"0")}`; }
+  function clearTimer(key) { const timer = liveTimers.get(key); if (timer) clearInterval(timer); liveTimers.delete(key); }
+  function setLive(element, visible) { liveSelectors.forEach(selector => element.querySelectorAll(selector).forEach(node => { if (node.classList.contains("feedback") || node.classList.contains("next")) return; node.classList.toggle("hidden", !visible); })); }
+  function showSetup(id, type) {
+    const key = `${id}-${type}`; clearTimer(key); const element = document.getElementById(key); exerciseStates[key].finished = false;
+    element.querySelector(".exercise-menu").classList.remove("hidden"); element.querySelector(".exercise-toolbar").classList.add("hidden"); element.querySelector(".controls").classList.add("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, false);
+  }
+  function startExercise(id, type) {
+    const key = `${id}-${type}`, element = document.getElementById(key), state = exerciseStates[key];
+    const count = Math.max(1, Math.min(100, Math.round(Number(element.querySelector(".menu-count").value) || 10))); element.querySelector(".menu-count").value = String(count);
+    clearTimer(key); state.i = 0; state.score = 0; state.r = []; state.qm = element.querySelector(".menu-question").value; state.am = element.querySelector(".menu-answer").value; state.qs = Array.from({length: count}, () => generateQuestion(id)); state.done = false; state.finished = false;
+    element.querySelector(".question-mode").value = state.qm; element.querySelector(".answer-mode").value = state.am; element.querySelector(".exercise-menu").classList.add("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, true); showQuestion(id, type);
+    const minutes = Math.max(0, Number(element.querySelector(".menu-timer").value) || 0), label = element.querySelector(".runtime-timer");
+    if (!minutes) { label.textContent = "Untimed"; return; }
+    const deadline = Date.now() + minutes * 60000; const tick = () => { const remaining = (deadline - Date.now())/1000; label.textContent = `Time left: ${formatTime(remaining)}`; if (remaining <= 0) finishExercise(id, type, "Time is up"); }; tick(); liveTimers.set(key, setInterval(tick, 250));
+  }
+
+  showQuestion = function(id, type) {
+    const state = exerciseStates[`${id}-${type}`], element = document.getElementById(`${id}-${type}`); if (state.finished || !state.qs.length) return; const q = state.qs[state.i]; state.done = false;
+    element.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.qs.length}`; element.querySelector(".score").textContent = `Score: ${state.score}`;
+    const percent = (state.i/state.qs.length)*100; element.querySelector(".progress div").style.width = `${percent}%`; element.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(percent)));
+    element.querySelector(".prompt-label").textContent = state.qm; element.querySelector(".prompt").textContent = q[state.qm]; element.querySelector(".feedback").className = "feedback"; element.querySelector(".feedback").innerHTML = ""; element.querySelector(".next").classList.add("hidden");
+    const zone = element.querySelector(".zone");
+    if (type === "typed") {
+      zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer"><button class="btn primary" type="button">Check</button></div>`;
+      const input = zone.querySelector("input"), submit = () => submitAnswer(id, type, input.value); zone.querySelector("button").onclick = submit;
+      input.onkeydown = event => { if (event.key !== "Enter") return; event.preventDefault(); if (state.done) element.querySelector(".next").click(); else submit(); };
+      requestAnimationFrame(() => input.focus({preventScroll:true}));
+    } else {
+      let opts = [q, ...Array.from({length:5}, () => generateQuestion(id))].sort(() => Math.random()-.5).slice(0,4); if (!opts.includes(q)) opts[0] = q;
+      zone.innerHTML = `<div class="choices">${opts.map((o,i) => `<button class="choice" type="button" data-i="${i}">${escapeHtml(o[state.am])}</button>`).join("")}</div>`;
+      zone.querySelectorAll(".choice").forEach((button,index) => button.onclick = () => { const ok = normalizeAnswer(opts[index][state.am],state.am) === normalizeAnswer(q[state.am],state.am); zone.querySelectorAll(".choice").forEach((other,j) => { other.disabled = true; if (normalizeAnswer(opts[j][state.am],state.am) === normalizeAnswer(q[state.am],state.am)) other.classList.add("correct"); }); if (!ok) button.classList.add("wrong"); completeQuestion(id,type,opts[index][state.am],ok); });
+    }
+  };
+
+  completeQuestion = function(id,type,userAnswer,correct) {
+    const state = exerciseStates[`${id}-${type}`], element = document.getElementById(`${id}-${type}`), q = state.qs[state.i]; if (state.done || state.finished) return; state.done = true; if (correct) state.score += 1; state.r.push({q,u:userAnswer,ok:correct,qm:state.qm,am:state.am}); element.querySelector(".score").textContent = `Score: ${state.score}`;
+    const feedback = element.querySelector(".feedback"); feedback.className = `feedback ${correct?"good":"bad"}`; feedback.innerHTML = `${correct?"Correct.":"Not quite."}<br>${feedbackMarkup(q)}`;
+    const next = element.querySelector(".next"); next.textContent = state.i === state.qs.length-1 ? "Finish" : "Next"; next.classList.remove("hidden");
+    if (type === "typed") { const input = element.querySelector(".ans"); if (input) { input.readOnly = true; requestAnimationFrame(() => input.focus({preventScroll:true})); } }
+  };
+
+  finishExercise = function(id,type,reason="Completed") {
+    const key = `${id}-${type}`, state = exerciseStates[key]; if (state.finished) return; state.finished = true; clearTimer(key); const element = document.getElementById(key), finish = element.querySelector(".finish"), answered = state.r.length, percent = answered ? Math.round((state.score/answered)*100) : 0;
+    element.querySelector(".progress div").style.width = `${state.qs.length ? (answered/state.qs.length)*100 : 0}%`; element.querySelector(".next").classList.add("hidden"); finish.style.display = "block"; finish.querySelector("h4").textContent = reason === "Completed" ? "Exercise complete" : reason; finish.querySelector(".sum").innerHTML = answered ? `Score: <b>${state.score} / ${answered}</b> (${percent}%) · ${answered} of ${state.qs.length} questions answered.` : "No questions were answered.";
+    const nav = finish.querySelector(".reviewnav"); nav.innerHTML = state.r.map((result,index) => `<button type="button" data-i="${index}">${index+1}</button>`).join(""); nav.querySelectorAll("button").forEach(button => button.onclick = () => showReviewQuestion(id,type,Number(button.dataset.i))); if (answered) showReviewQuestion(id,type,0); else finish.querySelector(".reviewbox").innerHTML = ""; finish.scrollIntoView({behavior:"smooth",block:"nearest"});
+  };
+
+  document.querySelectorAll(".exercise").forEach(element => {
+    const match = element.id.match(/^(g\d+)-(typed|mc)$/); if (!match) return; const [,id,type] = match, body = element.querySelector(".exercise-body");
+    const menu = document.createElement("div"); menu.className = "exercise-menu"; menu.innerHTML = `<h4>Exercise setup</h4><p>Choose how many questions to answer, both languages, and an optional time limit.</p><div class="exercise-menu-grid"><label>Questions<input class="menu-count" type="number" min="1" max="100" value="10"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`; body.insertBefore(menu,body.firstChild);
+    const runtime = document.createElement("div"); runtime.className = "runtime-bar"; runtime.innerHTML = `<span class="runtime-timer">Untimed</span><button class="end-early-btn" type="button">End exercise early</button>`; body.insertBefore(runtime,body.querySelector(".status"));
+    menu.querySelector(".start-exercise").onclick = () => startExercise(id,type); runtime.querySelector(".end-early-btn").onclick = () => finishExercise(id,type,"Exercise ended early");
+    element.querySelector(".next").onclick = () => { const state = exerciseStates[`${id}-${type}`]; if (state.i < state.qs.length-1) { state.i += 1; showQuestion(id,type); } else finishExercise(id,type); };
+    element.querySelectorAll(".restart").forEach(button => button.onclick = () => showSetup(id,type)); showSetup(id,type);
+  });
+})();
+</script>
 
 </body>
 </html>
