@@ -711,7 +711,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
   .card-grid { grid-template-columns: 1fr; padding: 22px; }
 }
 
-  </style>
+  
+.directory-section > summary.section-header { cursor: pointer; list-style: none; }
+.directory-section > summary.section-header::-webkit-details-marker { display: none; }
+.directory-section > summary.section-header h2 { margin: 0; }
+
+</style>
 </head>
 <body id="top">
   <header class="site-header">
@@ -726,9 +731,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
   <main class="page-main">
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-inner">
-        <p class="hero-kicker">Korean study hub</p>
-        <h1 id="page-title">Korean Practice Pages</h1>
-        <p>Open a vocabulary, grammar, or focused practice page from one consistent study hub.</p>
+        <p class="hero-kicker">Korean Language Resources</p>
+        <h1 id="page-title">Vocabulary and Grammar</h1>
       </div>
     </section>
 
@@ -775,54 +779,14 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       Keep these as relative links when using GitHub Pages.
     */
     const PAGES = [
-      {
-        title: "TOPIK I Vocabulary",
-        href: "tutoring-topik-i-vocab.html",
-        group: "TOPIK I",
-        tag: "Vocabulary"
-      },
-      {
-        title: "TOPIK I Grammar",
-        href: "tutoring-topik-i-grammar.html",
-        group: "TOPIK I",
-        tag: "Grammar"
-      },
-      {
-        title: "TOPIK II Level 3 Vocabulary",
-        href: "tutoring-topik-ii-level-3-vocab.html",
-        group: "TOPIK II Level 3",
-        tag: "Vocabulary"
-      },
-      {
-        title: "TOPIK II Level 3 Grammar",
-        href: "tutoring-topik-ii-level-3-grammar.html",
-        group: "TOPIK II Level 3",
-        tag: "Grammar"
-      },
-      {
-        title: "TOPIK II Level 4 Vocabulary",
-        href: "tutoring-topik-ii-level-4-vocab.html",
-        group: "TOPIK II Level 4",
-        tag: "Vocabulary"
-      },
-      {
-        title: "TOPIK II Level 4 Grammar",
-        href: "tutoring-topik-ii-level-4-grammar.html",
-        group: "TOPIK II Level 4",
-        tag: "Grammar"
-      },
-      {
-        title: "TOPIK II Level 5 Vocabulary",
-        href: "tutoring-topik-ii-level-5-vocab.html",
-        group: "TOPIK II Level 5",
-        tag: "Vocabulary"
-      },
-      {
-        title: "TOPIK II Level 5 Grammar",
-        href: "tutoring-topik-ii-level-5-grammar.html",
-        group: "TOPIK II Level 5",
-        tag: "Grammar"
-      }
+      { title: "TOPIK I Vocabulary", href: "tutoring-topik-i-vocab.html", group: "TOPIK I", tag: "Vocabulary" },
+      { title: "TOPIK I Grammar", href: "tutoring-topik-i-grammar.html", group: "TOPIK I", tag: "Grammar" },
+      { title: "TOPIK II Level 3 Vocabulary", href: "tutoring-topik-ii-level-3-vocab.html", group: "TOPIK II Level 3", tag: "Vocabulary" },
+      { title: "TOPIK II Level 3 Grammar", href: "tutoring-topik-ii-level-3-grammar.html", group: "TOPIK II Level 3", tag: "Grammar" },
+      { title: "TOPIK II Level 4 Vocabulary", href: "tutoring-topik-ii-level-4-vocab.html", group: "TOPIK II Level 4", tag: "Vocabulary" },
+      { title: "TOPIK II Level 4 Grammar", href: "tutoring-topik-ii-level-4-grammar.html", group: "TOPIK II Level 4", tag: "Grammar" },
+      { title: "TOPIK II Level 5 Vocabulary", href: "tutoring-topik-ii-level-5-vocab.html", group: "TOPIK II Level 5", tag: "Vocabulary" },
+      { title: "TOPIK II Level 5 Grammar", href: "tutoring-topik-ii-level-5-grammar.html", group: "TOPIK II Level 5", tag: "Grammar" }
     ];
 
     function esc(value) {
@@ -856,7 +820,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       grid.innerHTML = Object.entries(groups).map(([group, pages]) => `
         <a class="toc-link" href="#${esc(slugify(group))}">
           <span>${esc(group)}</span>
-          <span>${pages.length} page${pages.length === 1 ? "" : "s"}</span>
         </a>
       `).join("");
     }
@@ -873,12 +836,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
         return;
       }
 
-      container.innerHTML = Object.entries(groups).map(([group, pages]) => `
-        <section class="directory-section section" id="${esc(slugify(group))}">
-          <div class="section-header">
+      container.innerHTML = Object.entries(groups).map(([group, pages], groupIndex) => `
+        <details class="directory-section section" id="${esc(slugify(group))}" ${groupIndex === 0 ? "open" : ""}>
+          <summary class="section-header">
             <h2>${esc(group)}</h2>
-            <span class="count-badge">${pages.length} page${pages.length === 1 ? "" : "s"}</span>
-          </div>
+          </summary>
           <div class="card-grid">
             ${pages.map(page => `
               <a class="page-card" href="${esc(page.href)}">
@@ -886,7 +848,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
                   <span class="page-tag">${esc(page.tag || "Page")}</span>
                 </div>
                 <h3>${esc(page.title)}</h3>
-                <p>${esc(page.description || "Open this page.")}</p>
                 <div class="page-card-footer">
                   <span>Open page</span>
                   <span>→</span>
@@ -894,7 +855,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
               </a>
             `).join("")}
           </div>
-        </section>
+        </details>
       `).join("");
     }
 
@@ -948,19 +909,29 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
         if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
       });
 
-      if ("scrollRestoration" in history) {
-        history.scrollRestoration = "manual";
+      function storeAnchor(hash) {
+        try {
+          if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
+          else localStorage.removeItem(ANCHOR_KEY);
+        } catch (_) {}
       }
-      
-      window.addEventListener("pageshow", () => {
-        if (!location.hash) {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              window.scrollTo(0, 0);
-            });
-          });
-        }
+
+      document.addEventListener("click", event => {
+        const link = event.target.closest('a[href^="#"]');
+        if (link) storeAnchor(link.getAttribute("href"));
       });
+
+      window.addEventListener("hashchange", () => storeAnchor(location.hash));
+
+      if (!location.hash) {
+        let saved = "";
+        try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
+        if (saved && document.querySelector(saved)) {
+          requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
+        } else {
+          requestAnimationFrame(() => window.scrollTo(0, 0));
+        }
+      }
     })();
   </script>
 
