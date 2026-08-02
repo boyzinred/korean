@@ -870,7 +870,77 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
   border-radius: var(--radius-lg);
 }
 
-  </style>
+  
+
+/* Exercise setup menus, timers, and mobile keyboard workflow */
+.exercise-menu {
+  display: grid;
+  gap: 20px;
+  padding: clamp(24px, 4vw, 38px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.exercise-menu h4 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.1;
+}
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu label {
+  display: grid;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.exercise-menu-actions .btn,
+.exercise-menu-actions .primary-btn { width: auto; }
+.runtime-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.runtime-timer {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.end-early-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+.finish-card { display: none; }
+@media (max-width: 680px) {
+  .exercise-menu-grid { grid-template-columns: 1fr; }
+  .exercise-menu-actions,
+  .runtime-bar { align-items: stretch; flex-direction: column; }
+  .exercise-menu-actions .btn,
+  .exercise-menu-actions .primary-btn,
+  .end-early-btn { width: 100%; }
+}
+
+</style>
 </head>
 <body id="top">
   <header class="site-header">
@@ -913,6 +983,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
     </details>
 
     <div id="quizSections"></div>
+    <p class="source-note">Content is based on the attached Expanded TOPIK II Level 5 Grammar and Vocabulary document. Romanization is a practical pronunciation guide rather than strict official Revised Romanization.</p>
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
@@ -1068,7 +1139,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
         ${QUIZ_SECTIONS.map(section => `
           <a class="toc-link" href="#quiz-${section.id}">
             <span>${esc(section.title)}</span>
-            <span>${section.items.length} words · ${section.items.length * 2} Qs</span>
+            <span>${section.items.length} words</span>
           </a>
         `).join("")}
       `;
@@ -1160,7 +1231,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
             <summary><span>${esc(section.title)} Quiz</span></summary>
             <div class="quiz-body">
               <p class="section-meta">
-                ${section.items.length} vocabulary items → ${section.items.length * 2} questions. No repeated word appears back to back.
+                Note: Default ${section.items.length} questions for  ${section.items.length} vocabulary words.
               </p>
 
               <div class="controls">
@@ -1558,6 +1629,262 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
       });
     })();
   </script>
+
+
+<script>
+(() => {
+  const liveTimers = new Map();
+  const quizLiveSelectors = [
+    ".status-row", ".progress", ".prompt-label", ".prompt",
+    ".answer-form", ".feedback", ".secondary-btn[id^='next-']", ".runtime-bar"
+  ];
+
+  function formatTime(seconds) {
+    const safe = Math.max(0, Math.ceil(seconds));
+    const minutes = Math.floor(safe / 60);
+    const remainder = safe % 60;
+    return `${minutes}:${String(remainder).padStart(2, "0")}`;
+  }
+
+  function clearQuizTimer(sectionId) {
+    const timer = liveTimers.get(sectionId);
+    if (timer) clearInterval(timer);
+    liveTimers.delete(sectionId);
+  }
+
+  function setLiveVisibility(sectionId, visible) {
+    const card = document.getElementById(`quiz-card-${sectionId}`);
+    if (!card) return;
+    card.classList.toggle("hidden", !visible);
+    card.querySelectorAll(quizLiveSelectors.join(",")).forEach(node => {
+      if (node.classList.contains("feedback") || (node.id || "").startsWith("next-")) return;
+      node.classList.toggle("hidden", !visible);
+    });
+  }
+
+  function showQuizSetup(sectionId) {
+    clearQuizTimer(sectionId);
+    const section = sectionById(sectionId);
+    const state = states[sectionId];
+    state.finished = false;
+    const menu = document.getElementById(`menu-${sectionId}`);
+    if (menu) menu.classList.remove("hidden");
+    setLiveVisibility(sectionId, false);
+    const finish = document.getElementById(`finish-${sectionId}`);
+    if (finish) finish.style.display = "none";
+  }
+
+  function buildRequestedQuestions(section, count) {
+    let questions = buildQuestionList(section);
+    if (questions.length >= count) return questions.slice(0, count);
+    const result = [...questions];
+    while (result.length < count) {
+      const refill = buildQuestionList(section);
+      for (const item of refill) {
+        if (result.length >= count) break;
+        if (result.length && item === result[result.length - 1]) continue;
+        result.push(item);
+      }
+    }
+    return result;
+  }
+
+  function startQuiz(sectionId) {
+    const section = sectionById(sectionId);
+    const state = states[sectionId];
+    const countInput = document.getElementById(`menu-count-${sectionId}`);
+    const questionSelect = document.getElementById(`menu-question-${sectionId}`);
+    const answerSelect = document.getElementById(`menu-answer-${sectionId}`);
+    const timerInput = document.getElementById(`menu-timer-${sectionId}`);
+    const max = Math.max(1, section.items.length * 2);
+    const count = Math.max(1, Math.min(max, Math.round(Number(countInput.value) || section.items.length)));
+    countInput.value = String(count);
+
+    clearQuizTimer(sectionId);
+    state.questionMode = questionSelect.value;
+    state.answerMode = answerSelect.value;
+    state.questions = buildRequestedQuestions(section, count);
+    state.index = 0;
+    state.score = 0;
+    state.answered = false;
+    state.results = [];
+    state.finished = false;
+    state.endReason = "Completed";
+
+    refreshModeButtons(sectionId);
+    document.getElementById(`menu-${sectionId}`).classList.add("hidden");
+    setLiveVisibility(sectionId, true);
+    document.getElementById(`finish-${sectionId}`).style.display = "none";
+    document.getElementById(`quiz-card-${sectionId}`).querySelector(".answer-form").classList.remove("hidden");
+    showQuestion(sectionId);
+
+    const minutes = Math.max(0, Number(timerInput.value) || 0);
+    const timerLabel = document.getElementById(`timer-${sectionId}`);
+    if (!minutes) {
+      timerLabel.textContent = "Untimed";
+      return;
+    }
+    const deadline = Date.now() + minutes * 60_000;
+    const tick = () => {
+      const remaining = (deadline - Date.now()) / 1000;
+      timerLabel.textContent = `Time left: ${formatTime(remaining)}`;
+      if (remaining <= 0) showFinish(sectionId, "Time is up");
+    };
+    tick();
+    liveTimers.set(sectionId, setInterval(tick, 250));
+  }
+
+  resetQuiz = function(sectionId) {
+    showQuizSetup(sectionId);
+  };
+
+  showQuestion = function(sectionId) {
+    const state = states[sectionId];
+    if (state.finished || !state.questions.length) return;
+    const item = state.questions[state.index];
+    state.answered = false;
+
+    document.getElementById(`question-number-${sectionId}`).textContent =
+      `Question ${state.index + 1} / ${state.questions.length}`;
+    document.getElementById(`score-${sectionId}`).textContent = `Score: ${state.score}`;
+    const progressPercent = (state.index / state.questions.length) * 100;
+    document.getElementById(`progress-${sectionId}`).style.width = `${progressPercent}%`;
+    document.getElementById(`progress-${sectionId}`).parentElement.setAttribute("aria-valuenow", String(Math.round(progressPercent)));
+    document.getElementById(`prompt-label-${sectionId}`).textContent = modeLabel(state.questionMode);
+    document.getElementById(`prompt-${sectionId}`).textContent = displayValue(item, state.questionMode);
+
+    const input = document.getElementById(`input-${sectionId}`);
+    const form = document.querySelector(`.answer-form[data-section="${sectionId}"]`);
+    input.value = "";
+    input.disabled = false;
+    input.readOnly = false;
+    input.placeholder = state.answerMode === "romanization" ? "Type with syllable dashes" : "Type your answer";
+    input.onkeydown = event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (state.answered) document.getElementById(`next-${sectionId}`).click();
+        else form.requestSubmit();
+        return;
+      }
+      if (state.answerMode === "romanization" && event.key === " ") {
+        event.preventDefault();
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? start;
+        input.value = input.value.slice(0, start) + "-" + input.value.slice(end);
+        input.setSelectionRange(start + 1, start + 1);
+      }
+    };
+    document.getElementById(`check-${sectionId}`).disabled = false;
+    const feedback = document.getElementById(`feedback-${sectionId}`);
+    feedback.className = "feedback";
+    feedback.innerHTML = "";
+    document.getElementById(`next-${sectionId}`).classList.add("hidden");
+    document.getElementById(`finish-${sectionId}`).style.display = "none";
+    requestAnimationFrame(() => input.focus({preventScroll: true}));
+  };
+
+  completeQuestion = function(sectionId, userAnswer) {
+    const state = states[sectionId];
+    if (state.answered || state.finished) return;
+    const section = sectionById(sectionId);
+    const item = state.questions[state.index];
+    const correct = isCorrect(section, item, state.questionMode, state.answerMode, userAnswer);
+    const feedback = document.getElementById(`feedback-${sectionId}`);
+    state.answered = true;
+
+    if (correct) {
+      state.score += 1;
+      feedback.className = "feedback good";
+      feedback.innerHTML = `Correct. <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>`;
+    } else {
+      feedback.className = "feedback bad";
+      feedback.innerHTML = `Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span><br><span class="small">Full entry: ${esc(item.meaning)} · ${esc(item.romanization)} · ${esc(item.korean)}</span>`;
+    }
+
+    state.results.push({
+      promptMode: state.questionMode,
+      answerMode: state.answerMode,
+      prompt: displayValue(item, state.questionMode),
+      expected: itemAnswerDisplay(item, state.answerMode),
+      full: `${item.meaning} · ${item.romanization} · ${item.korean}`,
+      userAnswer,
+      correct
+    });
+
+    document.getElementById(`score-${sectionId}`).textContent = `Score: ${state.score}`;
+    const input = document.getElementById(`input-${sectionId}`);
+    input.disabled = false;
+    input.readOnly = true;
+    document.getElementById(`check-${sectionId}`).disabled = true;
+    const next = document.getElementById(`next-${sectionId}`);
+    next.textContent = state.index === state.questions.length - 1 ? "Finish" : "Next";
+    next.classList.remove("hidden");
+    requestAnimationFrame(() => input.focus({preventScroll: true}));
+  };
+
+  showFinish = function(sectionId, reason = "Completed") {
+    const state = states[sectionId];
+    if (state.finished) return;
+    state.finished = true;
+    clearQuizTimer(sectionId);
+    const answered = state.results.length;
+    const percent = answered ? Math.round((state.score / answered) * 100) : 0;
+    document.getElementById(`progress-${sectionId}`).style.width = answered === state.questions.length ? "100%" : `${(answered / state.questions.length) * 100}%`;
+    document.getElementById(`progress-${sectionId}`).parentElement.setAttribute("aria-valuenow", String(Math.round((answered / state.questions.length) * 100)));
+    document.getElementById(`quiz-card-${sectionId}`).querySelector(".answer-form").classList.add("hidden");
+    document.getElementById(`next-${sectionId}`).classList.add("hidden");
+    const finish = document.getElementById(`finish-${sectionId}`);
+    finish.style.display = "block";
+    finish.querySelector("h3").textContent = reason === "Completed" ? "Quiz Complete" : reason;
+    document.getElementById(`final-score-${sectionId}`).innerHTML = answered
+      ? `Score: <strong>${state.score} / ${answered}</strong> (${percent}%) · ${answered} of ${state.questions.length} questions answered.`
+      : `No questions were answered.`;
+    document.getElementById(`review-${sectionId}`).innerHTML = answered ? `
+      <h3>Review</h3>
+      ${state.results.map((r, i) => `
+        <div class="review-row">
+          <div><strong>${i + 1}. ${esc(r.prompt)}</strong><br><span class="small">Your answer: ${esc(r.userAnswer || "(blank)")}</span></div>
+          <div>${r.correct ? "✅" : "❌"} <strong>${esc(r.expected)}</strong><br><span class="small">${esc(r.full)}</span></div>
+        </div>`).join("")}` : "";
+    finish.scrollIntoView({behavior: "smooth", block: "nearest"});
+  };
+
+  QUIZ_SECTIONS.forEach(section => {
+    const quizSection = document.getElementById(`quiz-${section.id}`);
+    const controls = quizSection.querySelector(":scope > .quiz-body > .controls");
+    if (controls) controls.classList.add("hidden");
+    const card = document.getElementById(`quiz-card-${section.id}`);
+    const body = card.querySelector(".exercise-body");
+    const menu = document.createElement("div");
+    menu.className = "exercise-menu";
+    menu.id = `menu-${section.id}`;
+    menu.innerHTML = `
+      <h4>Exercise setup</h4>
+      <p>Choose the question count, display languages, and an optional time limit.</p>
+      <div class="exercise-menu-grid">
+        <label>Questions<input id="menu-count-${section.id}" type="number" min="1" max="${Math.max(1, section.items.length * 2)}" value="${section.items.length}"></label>
+        <label>Timer in minutes<input id="menu-timer-${section.id}" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label>
+        <label>Question language<select id="menu-question-${section.id}"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label>
+        <label>Answer language<select id="menu-answer-${section.id}"><option value="english">English</option><option value="romanization" selected>Romanization</option><option value="korean">Korean</option></select></label>
+      </div>
+      <div class="exercise-menu-actions"><button class="primary-btn" type="button" id="start-${section.id}">Start exercise</button></div>`;
+    card.parentElement.insertBefore(menu, card);
+
+    const runtime = document.createElement("div");
+    runtime.className = "runtime-bar";
+    runtime.innerHTML = `<span class="runtime-timer" id="timer-${section.id}">Untimed</span><button class="end-early-btn" type="button" id="end-${section.id}">End exercise early</button>`;
+    body.insertBefore(runtime, body.firstChild);
+
+    document.getElementById(`start-${section.id}`).addEventListener("click", () => startQuiz(section.id));
+    document.getElementById(`end-${section.id}`).addEventListener("click", () => showFinish(section.id, "Exercise ended early"));
+    card.querySelectorAll(`[id^="restart-"]`).forEach(button => button.addEventListener("click", event => {
+      event.preventDefault();
+      showQuizSetup(section.id);
+    }, true));
+    showQuizSetup(section.id);
+  });
+})();
+</script>
 
 </body>
 </html>
