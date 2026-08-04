@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bab 1: 만나서 반가워요</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      color-scheme: light;
+      --light-background: #28468A;
+      --light-foreground: #F5F5F5;
+      --light-primary: #BCE0E6;
+      --light-primary-hover: #ADC6CB;
+      --light-secondary: #AD8FE6;
+      --light-secondary-soft: #8E7EBF;
+      --light-accent: #C74E33;
+      --light-accent-soft: #A24B36;
+      --light-muted: #A0E090;
+      --light-muted-strong: #99C588;
+      --light-blue-soft: #6375CF;
+      --light-border: #6674C8;
+      --light-subtle: #DEEAAE;
+
+      --background: var(--light-background);
+      --foreground: var(--light-foreground);
+      --primary: var(--light-primary);
+      --primary-hover: var(--light-primary-hover);
+      --secondary: var(--light-secondary);
+      --secondary-soft: var(--light-secondary-soft);
+      --accent: var(--light-accent);
+      --accent-soft: var(--light-accent-soft);
+      --muted: var(--light-muted);
+      --muted-strong: var(--light-muted-strong);
+      --blue-soft: var(--light-blue-soft);
+      --border: var(--light-border);
+      --subtle: var(--light-subtle);
+
+      --surface: #F5F5F5;
+      --surface-text: #28468A;
+      --surface-muted: #E8ECF4;
+      --inverse: #20386E;
+      --inverse-text: #F5F5F5;
+      --hero-heading: #FFFFFF;
+      --hero-text: #EFF6FF;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --font: 'Outfit', system-ui, sans-serif;
+      --transition: all 200ms ease;
+    }
+
+    html[data-theme='dark'] {
+      color-scheme: dark;
+      --light-background: #111827;
+      --light-foreground: #F9FAFB;
+      --light-primary: #6CC2D0;
+      --light-primary-hover: #6CC0D0;
+      --light-secondary: #8B61DC;
+      --light-secondary-soft: #201933;
+      --light-accent: #E29D8D;
+      --light-accent-soft: #391B13;
+      --light-muted: #1F2937;
+      --light-muted-strong: #374151;
+      --light-blue-soft: #12193B;
+      --light-border: #374151;
+      --light-subtle: #CBD5E1;
+
+      --background: var(--light-background);
+      --foreground: var(--light-foreground);
+      --primary: var(--light-primary);
+      --primary-hover: var(--light-primary-hover);
+      --secondary: var(--light-secondary);
+      --secondary-soft: var(--light-secondary-soft);
+      --accent: var(--light-accent);
+      --accent-soft: var(--light-accent-soft);
+      --muted: var(--light-muted);
+      --muted-strong: var(--light-muted-strong);
+      --blue-soft: var(--light-blue-soft);
+      --border: var(--light-border);
+      --subtle: var(--light-subtle);
+
+      --surface: #1F2937;
+      --surface-text: #F9FAFB;
+      --surface-muted: #111827;
+      --inverse: #0F172A;
+      --inverse-text: #F9FAFB;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100vh; color: var(--foreground); background: var(--background); font-family: var(--font); line-height: 1.6; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    
+    .site-header { color: var(--surface-text); background: var(--surface); border-bottom: 1px solid var(--border); }
+    .header-inner, .page-main { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+    .header-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { min-width: 0; overflow: hidden; color: var(--surface-text); font-size: 1rem; font-weight: 800; letter-spacing: -.02em; text-overflow: ellipsis; text-decoration: none; white-space: nowrap; }
+    .site-nav { display: flex; gap: 12px; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 16px; color: var(--surface-text); background: var(--surface-muted); border-radius: var(--radius-md); font-size: 0.88rem; font-weight: 800; text-decoration: none; transition: var(--transition); }
+    .home-link:hover { color: #192B5D; background: var(--primary); transform: scale(1.04); }
+
+    .page-main { margin-top: 24px; margin-bottom: 72px; overflow: hidden; color: var(--surface-text); background: var(--surface); border-radius: var(--radius-lg); }
+    .hero { color: var(--hero-heading); background: var(--background); }
+    .hero-inner { padding: clamp(48px, 7vw, 82px); }
+    .hero h1 { max-width: 14ch; margin: 0; font-size: clamp(3rem, 7vw, 5.7rem); font-weight: 800; line-height: .92; letter-spacing: -.02em; }
+    .hero p { max-width: 62ch; margin: 24px 0 0; color: var(--hero-text); font-size: 1.05rem; }
+    .toc-card { padding: 18px 22px; color: var(--surface-text); background: var(--surface); border-bottom: 1px solid var(--border); }
+    .toc-label { display: block; margin-bottom: 10px; font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .toc-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .toc-link { min-height: 40px; display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px; color: var(--surface-text); background: var(--surface-muted); border: 1px solid transparent; border-radius: var(--radius-md); font-size: .88rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .toc-link:hover { color: var(--foreground); background: var(--blue-soft); border-color: var(--primary); }
+    
+    .section { scroll-margin-top: 18px; border-bottom: 1px solid var(--border); }
+    details.section > summary { min-height: 150px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: clamp(30px, 5vw, 64px); color: #192B5D; background: var(--secondary); cursor: pointer; list-style: none; font-size: clamp(2.2rem, 5vw, 4.8rem); font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+    details.section > summary::-webkit-details-marker { display: none; }
+    details.section > summary::after { content: "Collapse"; min-height: 56px; flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; padding: 0 18px; color: #192B5D; background: #FFFFFF; border: 4px solid #192B5D; border-radius: var(--radius-md); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    details.section:not([open]) > summary::after { content: "Expand"; }
+    
+    .section-body { padding: clamp(26px, 5vw, 64px); color: var(--surface-text); background: var(--surface); }
+    .info-card { padding: 22px; color: var(--surface-text); background: var(--blue-soft); border-radius: var(--radius-lg); margin-bottom: 24px;}
+    html[data-theme="light"] .info-card { color: #F5F5F5; }
+    .info-card h3 { margin: 8px 0 10px; font-size: 1.15rem; line-height: 1.2; }
+    .info-card p { margin: 0 0 14px; }
+    .rule-label { display: inline-flex; min-height: 30px; align-items: center; padding: 0 9px; color: #192B5D; background: var(--primary); border-radius: 999px; font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    
+    .exercise { overflow: hidden; color: var(--surface-text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 24px; }
+    .exercise-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(158px, auto); color: var(--inverse-text); background: var(--inverse); }
+    .exercise-head-copy { padding: 24px 28px; }
+    .exercise-kicker { color: var(--primary); font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .exercise-head h3 { margin: 7px 0 0; font-size: clamp(1.45rem, 3vw, 2.3rem); line-height: 1; letter-spacing: -.02em; }
+    .score { min-width: 158px; display: grid; place-items: center; padding: 20px; color: #192B5D; background: var(--accent); font-size: .9rem; font-weight: 800; }
+    .exercise-body { padding: clamp(24px, 4vw, 38px); }
+    
+    input { width: 100%; min-height: 56px; padding: 0 14px; color: var(--surface-text); background: var(--surface-muted); border: 2px solid transparent; border-radius: var(--radius-md); font-size: 1.1rem;}
+    input:focus { background: var(--surface); border-color: var(--primary); }
+    input:disabled { color: var(--subtle); background: var(--muted-strong); cursor: not-allowed; opacity: 1; }
+    
+    .btn, .primary-btn { min-height: 56px; padding: 0 18px; border: 0; border-radius: var(--radius-md); font-weight: 800; transition: var(--transition); }
+    .btn:hover:not(:disabled), .primary-btn:hover:not(:disabled) { transform: scale(1.04); }
+    .primary-btn { color: #192B5D; background: var(--primary); }
+    .primary-btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn.warning { color: #192B5D; background: var(--accent); }
+    .btn.danger { color: #FFFFFF; background: var(--accent); }
+    .btn.danger:hover:not(:disabled) { background: var(--accent-soft); }
+    .btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
+    
+    .choice { width: 100%; min-height: 58px; text-align: left; color: var(--surface-text); background: var(--surface-muted); border: 0; border-radius: var(--radius-md); font-weight: 800; transition: var(--transition); padding: 0 18px; margin-bottom: 8px;}
+    .choice:hover:not(:disabled) { color: #192B5D; background: var(--primary); transform: scale(1.02); }
+    .choice.correct { color: #FFFFFF; background: var(--secondary); }
+    .choice.wrong { color: #FFFFFF; background: var(--accent); }
+    
+    .feedback { display: none; margin-top: 16px; padding: 18px; border-radius: var(--radius-lg); }
+    .feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
+    .feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
+    html[data-theme="light"] .feedback { color: #FFFFFF; }
+    
+    .utility-controls { position: fixed; right: 18px; bottom: 18px; z-index: 50; display: flex; gap: 10px; }
+    .utility-button { width: 46px; height: 46px; display: grid; place-items: center; padding: 0; color: #192B5D; background: var(--primary); border: 0; border-radius: 50%; font-size: 1.1rem; font-weight: 800; text-decoration: none; transition: var(--transition); }
+    .utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
+    .utility-button.top { background: var(--accent); }
+    
+    .hidden { display: none !important; }
+    
+    /* Exercise Menu Grid Adjustments */
+    .exercise-menu { display: grid; gap: 20px; padding: clamp(24px, 4vw, 38px); color: var(--surface-text); background: var(--surface); }
+    .exercise-menu h4 { margin: 0; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.1; }
+    .exercise-menu p { margin: 0; opacity: .82; }
+    .exercise-menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .menu-full-width { grid-column: 1 / -1; }
+    .exercise-menu label { display: grid; gap: 7px; font-size: .76rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    select { width: 100%; min-height: 56px; padding: 0 14px; color: var(--surface-text); background: var(--surface-muted); border: 2px solid transparent; border-radius: var(--radius-md); }
+    
+    /* Live UI Details */
+    .live-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--surface-muted); border-radius: var(--radius-md); margin-bottom: 24px; }
+    .live-timer-text { font-weight: 800; color: var(--surface-text); }
+    
+    .status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: var(--surface-text); }
+    .count { font-size: .9rem; font-weight: 800; color: #192B5D; }
+    html[data-theme="dark"] .count { color: var(--surface-text); }
+    .btn.restart-inline { min-height: 34px; padding: 0 14px; font-size: 0.85rem; }
+    
+    .progress { height: 12px; overflow: hidden; background: var(--surface-muted); border-radius: 0; margin-bottom: 24px; }
+    .progress > div { height: 100%; background: var(--muted-strong); width: 0%; transition: width 0.3s; }
+    
+    .prompt-label { color: var(--primary); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px;}
+    .prompt { margin: 0 0 32px; color: var(--surface-text); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; line-height: 1.1; }
+    
+    .answer-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+    
+    .exercise-controls { display: flex; gap: 10px; margin-top: 16px; }
+    
+    .finish { display: none; margin-top: 18px; padding: 20px; color: var(--surface-text); background: var(--blue-soft); border-radius: var(--radius-lg); }
+    html[data-theme="light"] .finish { color: #FFFFFF; }
+    .finish h4 { margin: 0; font-size: 1.45rem; }
+    .reviewbox { margin-bottom: 14px; padding: 14px; color: var(--surface-text); background: var(--surface); border-radius: var(--radius-md); }
+    
+    /* Vocab Specific */
+    .table-wrap { overflow-x: auto; margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    table { width: 100%; min-width: 700px; border-collapse: collapse; color: var(--surface-text); background: var(--surface); }
+    th, td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+    th { color: #192B5D; background: var(--muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .roman { color: var(--primary); font-weight: 800; }
+    .hangul { font-size: 1.15rem; font-weight: 800; }
+    
+    .vocab-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 16px; color: var(--surface-text); background: var(--surface-muted); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .vocab-tools__label { margin-right: auto; font-size: .76rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .blur-toggle { min-height: 42px; padding: 0 14px; border: 0; border-radius: var(--radius-md); font-weight: 800; color: var(--surface-text); background: var(--surface-muted); transition: var(--transition); }
+    .blur-toggle[aria-pressed="true"] { color: #192B5D; background: var(--primary); }
+    .blur-target { display: inline-block; transition: filter 180ms ease, opacity 180ms ease; }
+    .blur-meaning [data-vocab-field="meaning"] .blur-target,
+    .blur-romanization [data-vocab-field="romanization"] .blur-target,
+    .blur-korean [data-vocab-field="korean"] .blur-target { filter: blur(6px); opacity: .72; user-select: none; }
+    .blur-meaning [data-vocab-field="meaning"].peek .blur-target,
+    .blur-romanization [data-vocab-field="romanization"].peek .blur-target,
+    .blur-korean [data-vocab-field="korean"].peek .blur-target { filter: none; opacity: 1; user-select: text; }
+    [data-vocab-field] { cursor: pointer; }
+    
+    #section-vocab > summary { background: var(--primary); }
+    #section-g1 > summary { color: #FFFFFF; background: var(--accent); }
+    #section-g2 > summary { background: var(--secondary); }
+
+    @media (max-width: 680px) {
+      .header-inner, .page-main { width: 100%; }
+      .header-inner { padding: 0 14px; }
+      .page-main { margin-top: 0; border-radius: 0; }
+      details.section > summary { flex-direction: column; align-items: stretch; padding: 30px 22px; }
+      details.section > summary::after { width: 100%; }
+      .exercise-head { grid-template-columns: 1fr; }
+      .exercise-menu-grid, .answer-row { grid-template-columns: 1fr; }
+      .prompt { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#">Korean Language Resources</a>
+      <nav class="site-nav">
+        <a href="#index.html" class="home-link">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">Bab 1</p>
+        <h1 id="page-title">만나서 반가워요</h1>
+      </div>
+    </section>
+
+    <nav class="toc-card" id="toc">
+      <span class="toc-label">Jump to a section</span>
+      <div class="toc-grid">
+        <a class="toc-link" href="#section-vocab"><span>Vocabulary Bank</span></a>
+        <a class="toc-link" href="#section-g1"><span>Grammar 1: 예요 / 이에요</span></a>
+        <a class="toc-link" href="#section-g2"><span>Grammar 2: 은 / 는</span></a>
+      </div>
+    </nav>
+
+    <!-- Vocabulary Section -->
+    <details class="section" id="section-vocab" open>
+      <summary><span>Vocabulary Bank</span></summary>
+      <div class="section-body">
+        <div class="info-card">
+          <span class="rule-label">Source</span>
+          <h3>Combined Vocabulary</h3>
+          <p>This vocabulary list is compiled from Lesson 1 of the provided material, supplemented with basic TOPIK vocabulary for variety.</p>
+        </div>
+        
+        <div class="vocab-tools" id="vocabTools">
+          <span class="vocab-tools__label">Study controls · click a blurred cell to peek</span>
+          <button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur English</button>
+          <button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>
+          <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
+        </div>
+        <div class="table-wrap" id="vocabTableWrap">
+          <table id="vocabTable">
+            <thead><tr><th>English</th><th>Romanization</th><th>Korean</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        
+        <!-- Vocab Quiz -->
+        <div id="vocabQuizContainer"></div>
+      </div>
+    </details>
+
+    <!-- Grammar 1 Section -->
+    <details class="section" id="section-g1">
+      <summary><span>Grammar 1: 예요 / 이에요</span></summary>
+      <div class="section-body">
+        <div class="info-card">
+          <span class="rule-label">Rule</span>
+          <h3>N예요 / 이에요 (To be)</h3>
+          <p>The copula 예요/이에요 is used to indicate 'to be'.</p>
+          <p>• If the noun does not have a final consonant (받침 X), attach <strong>예요</strong>.<br>
+             • If the noun has a final consonant (받침 O), attach <strong>이에요</strong>.</p>
+          <p><strong>Examples:</strong> 제니퍼예요 (Jennifer), 팀이에요 (Tim), 가수예요 (singer), 학생이에요 (student).</p>
+        </div>
+        <div id="g1QuizContainer"></div>
+      </div>
+    </details>
+
+    <!-- Grammar 2 Section -->
+    <details class="section" id="section-g2">
+      <summary><span>Grammar 2: 은 / 는</span></summary>
+      <div class="section-body">
+        <div class="info-card">
+          <span class="rule-label">Rule</span>
+          <h3>N은 / 는 (Topic Particle)</h3>
+          <p>The particles 은 and 는 are used as subject or topic markers.</p>
+          <p>• If the noun does not have a final consonant (받침 X), attach <strong>는</strong>.<br>
+             • If the noun has a final consonant (받침 O), attach <strong>은</strong>.</p>
+          <p><strong>Examples:</strong> 저는 (I), 선생님은 (teacher), 피비는 (Phoebe), 학생은 (student).</p>
+        </div>
+        <div id="g2QuizContainer"></div>
+      </div>
+    </details>
+
+  </main>
+
+  <div class="utility-controls">
+    <button class="utility-button" id="themeToggle" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon>☾</span></button>
+    <a class="utility-button top" href="#top">↑</a>
+  </div>
+
+  <script>
+    function romanizeKorean(text) {
+      const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+      const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+      const JONG = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+
+      return text.split(" ").map(word => {
+        let parts = [];
+        let currentSyllables = [];
+        for (let i = 0; i < word.length; i++) {
+          let charCode = word.charCodeAt(i);
+          if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+            let offset = charCode - 0xAC00;
+            let jongIndex = offset % 28;
+            let jungIndex = Math.floor(offset / 28) % 21;
+            let choIndex = Math.floor(offset / (28 * 21));
+            currentSyllables.push(CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]);
+          } else {
+            if (currentSyllables.length > 0) {
+              parts.push(currentSyllables.join("-"));
+              currentSyllables = [];
+            }
+            parts.push(word[i]);
+          }
+        }
+        if (currentSyllables.length > 0) {
+          parts.push(currentSyllables.join("-"));
+        }
+        return parts.join("");
+      }).join(" ");
+    }
+
+    const VOCAB = [
+      {korean: "회사원", meaning: "office worker"},
+      {korean: "요리사", meaning: "chef"},
+      {korean: "경찰", meaning: "police officer"},
+      {korean: "간호사", meaning: "nurse"},
+      {korean: "의사", meaning: "doctor"},
+      {korean: "한국", meaning: "Korea"},
+      {korean: "영국", meaning: "UK"},
+      {korean: "호주", meaning: "Australia"},
+      {korean: "일본", meaning: "Japan"},
+      {korean: "베트남", meaning: "Vietnam"},
+      {korean: "중국", meaning: "China"},
+      {korean: "미국", meaning: "USA"},
+      {korean: "러시아", meaning: "Russia"},
+      {korean: "캐나다", meaning: "Canada"},
+      {korean: "독일", meaning: "Germany"},
+      {korean: "가수", meaning: "singer"},
+      {korean: "학생", meaning: "student"},
+      {korean: "선생님", meaning: "teacher"},
+      {korean: "자동차", meaning: "car"},
+      {korean: "아이스크림", meaning: "ice cream"},
+      {korean: "우산", meaning: "umbrella"},
+      {korean: "비행기", meaning: "airplane"},
+      {korean: "기차", meaning: "train"},
+      {korean: "책", meaning: "book"},
+      {korean: "공책", meaning: "notebook"},
+      {korean: "책상", meaning: "desk"},
+      {korean: "사람", meaning: "person"},
+      {korean: "이름", meaning: "name"},
+      {korean: "나이", meaning: "age"},
+      {korean: "집", meaning: "house"},
+      {korean: "학교", meaning: "school"},
+      {korean: "네", meaning: "yes"},
+      {korean: "아니요", meaning: "no"},
+      {korean: "감사합니다", meaning: "thank you"},
+      {korean: "죄송합니다", meaning: "I am sorry"},
+      {korean: "괜찮아요", meaning: "it is okay"}
+    ].map(v => ({...v, romanization: romanizeKorean(v.korean)}));
+
+    const PDF_EX_4 = [
+      { e: "Jennifer ( 예요 / 이에요 )", k: "제니퍼예요" },
+      { e: "Canadian (캐나다 사람) ( 예요 / 이에요 )", k: "캐나다 사람이에요" },
+      { e: "Russia ( 예요 / 이에요 )", k: "러시아예요" },
+      { e: "USA (미국) ( 예요 / 이에요 )", k: "미국이에요" },
+      { e: "Tim (팀) ( 예요 / 이에요 )", k: "팀이에요" },
+      { e: "Student (학생) ( 예요 / 이에요 )", k: "학생이에요" },
+      { e: "German (독일 사람) ( 예요 / 이에요 )", k: "독일 사람이에요" },
+      { e: "Singer (가수) ( 예요 / 이에요 )", k: "가수예요" },
+      { e: "Soyoung (소영) ( 예요 / 이에요 )", k: "소영이에요" },
+      { e: "Police officer (경찰) ( 예요 / 이에요 )", k: "경찰이에요" },
+      { e: "Thuy (투이) ( 예요 / 이에요 )", k: "투이예요" },
+      { e: "Office worker (회사원) ( 예요 / 이에요 )", k: "회사원이에요" },
+      { e: "Chef (요리사) ( 예요 / 이에요 )", k: "요리사예요" }
+    ];
+
+    const PDF_EX_5 = [
+      { e: "Sangwoo (은 / 는) is Korean.", k: "상우는 한국 사람이에요." },
+      { e: "The teacher (은 / 는) is Australian.", k: "선생님은 호주 사람이에요." },
+      { e: "Jennifer (은 / 는) is American.", k: "제니퍼 씨는 미국 사람이에요." },
+      { e: "Wangdan (은 / 는) is Chinese.", k: "왕단 씨는 중국 사람이에요." },
+      { e: "Asako (은 / 는) is Japanese.", k: "아사코 씨는 일본 사람이에요." },
+      { e: "Thuy (은 / 는) is Vietnamese.", k: "투이 씨는 베트남 사람이에요." }
+    ];
+
+    const PDF_EX_6 = [
+      { e: "A: Is it a singer? B: ( Yes / No ), it's a singer.", k: "가수예요? 네, 가수예요." },
+      { e: "A: Is it a car? B: Yes, it is a car.", k: "자동차예요? 네, 자동차예요." },
+      { e: "A: Is he/she Japanese? B: No, he/she is Vietnamese.", k: "일본 사람이에요? 아니요, 베트남 사람이에요." },
+      { e: "A: Is it ice cream? B: No, it is an umbrella.", k: "아이스크림이에요? 아니요, 우산이에요." },
+      { e: "A: Is it an airplane? B: No, it is a train.", k: "비행기예요? 아니요, 기차예요." },
+      { e: "A: Is it a book? B: No, it is a notebook.", k: "책이에요? 아니요, 공책이에요." }
+    ];
+
+    const PDF_EX_7_8 = [
+      { e: "A: Is Soyoung Korean? B: Yes, I am Korean.", k: "소영 씨는 한국 사람이에요? 네, 저는 한국 사람이에요." },
+      { e: "A: Is Tim American? B: No, Tim is Australian.", k: "팀 씨는 미국 사람이에요? 아니요, 팀 씨는 호주 사람이에요." },
+      { e: "A: Is Asako a teacher? B: Yes, Asako is a teacher.", k: "아사코 씨는 선생님이에요? 네, 아사코 씨는 선생님이에요." },
+      { e: "A: Is it a desk? B: Yes, it is a desk.", k: "책상이에요? 네, 책상이에요." },
+      { e: "A: Is Wangdan a doctor? B: No, Wangdan is an office worker.", k: "왕단 씨는 의사예요? 아니요, 왕단 씨는 회사원이에요." },
+      { e: "Tim is an Australian. Tim is a doctor.", k: "팀 씨는 호주 사람이에요. 팀 씨는 의사예요." },
+      { e: "Asako is Japanese. Asako is a student.", k: "아사코 씨는 일본 사람이에요. 아사코 씨는 학생이에요." },
+      { e: "Sangwoo is Korean. Sangwoo is a teacher.", k: "상우 씨는 한국 사람이에요. 상우 씨는 선생님이에요." },
+      { e: "Tinu is Vietnamese. Tinu is a chef.", k: "티누 씨는 베트남 사람이에요. 티누 씨는 요리사예요." }
+    ];
+
+    function formatPdfEx(arr) {
+      return arr.map(q => ({
+        english: q.e,
+        korean: q.k,
+        romanization: romanizeKorean(q.k)
+      }));
+    }
+
+    const CONSONANT_ENDING_WORDS = new Set(["회사원", "경찰", "학생", "선생님", "한국", "영국", "일본", "베트남", "미국", "독일", "우산", "책", "공책", "책상", "사람", "이름", "집"]);
+    const hasBatchim = word => CONSONANT_ENDING_WORDS.has(word);
+    
+    function generateQuestion(type) {
+      const vocabWord = VOCAB[Math.floor(Math.random() * VOCAB.length)];
+      const k = vocabWord.korean;
+      const e = vocabWord.meaning.trim();
+      let eng, kor;
+
+      if (type === "g1") {
+        eng = `It is a/an ${e}.`;
+        kor = hasBatchim(k) ? `${k}이에요.` : `${k}예요.`;
+      } else if (type === "g2") {
+        eng = `As for the ${e}...`;
+        kor = hasBatchim(k) ? `${k}은` : `${k}는`;
+      }
+      return { english: eng, korean: kor, romanization: romanizeKorean(kor) };
+    }
+
+    function buildQuestions(id, count) {
+      if (id === "vocab") {
+        return [...VOCAB].sort(() => Math.random() - 0.5).slice(0, count);
+      } else if (id === "pdf4") {
+        return formatPdfEx(PDF_EX_4).sort(() => Math.random() - 0.5).slice(0, count);
+      } else if (id === "pdf5") {
+        return formatPdfEx(PDF_EX_5).sort(() => Math.random() - 0.5).slice(0, count);
+      } else if (id === "pdf6") {
+        return formatPdfEx(PDF_EX_6).sort(() => Math.random() - 0.5).slice(0, count);
+      } else if (id === "pdf7") {
+        return formatPdfEx(PDF_EX_7_8).sort(() => Math.random() - 0.5).slice(0, count);
+      } else if (id === "g1" || id === "g2") {
+        return Array.from({length: count}, () => generateQuestion(id));
+      }
+      return [];
+    }
+
+    function escapeHtml(s) {
+      return String(s??"").replace(/[&<>"']/g, m=>({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[m]));
+    }
+
+    function normalizeAnswer(s) {
+      return String(s ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[.?!,]/g, "")
+        .replace(/\//g, "");
+    }
+
+    const exerciseStates = {};
+
+    function renderExercise(containerId, id, type, title, subtitle) {
+      const exId = `${id}-${type}`;
+      exerciseStates[exId] = { qs: [], r: [], done: false, finished: false, i: 0, score: 0 };
+      
+      const html = `
+        <article class="exercise" id="${exId}">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">${type === "typed" ? "Type" : "Select"}</span>
+              <h3>${title}</h3>
+              <p>${subtitle}</p>
+            </div>
+            <div class="score" aria-live="polite">Score: 0</div>
+          </div>
+          <div class="exercise-body">
+            
+            <div class="exercise-menu" id="menu-${exId}">
+              <h4>Exercise setup</h4>
+              <div class="exercise-menu-grid">
+                <label class="menu-full-width">Questions<input class="menu-count" type="number" min="1" max="50" value="5"></label>
+                <label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label>
+                <label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label>
+              </div>
+              <button class="btn primary start-btn" type="button" style="margin-top: 14px;">Start exercise</button>
+            </div>
+            
+            <div class="live-area hidden">
+              <div class="live-top-bar">
+                <span class="live-timer-text">Untimed</span>
+                <button class="btn danger end-early" type="button" style="min-height: 40px;">End exercise early</button>
+              </div>
+              
+              <div class="status">
+                <span class="count"></span>
+                <button class="btn secondary restart-inline" type="button">Restart</button>
+              </div>
+              <div class="progress" role="progressbar"><div></div></div>
+              
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+              <div class="zone"></div>
+              <div class="feedback" aria-live="polite"></div>
+              
+              <div class="exercise-controls">
+                <button class="btn warning next hidden" type="button">Next</button>
+              </div>
+            </div>
+            
+            <div class="finish">
+              <h4>Exercise complete</h4>
+              <p class="sum"></p>
+              <div class="reviewbox"></div>
+              <button class="btn secondary restart" type="button">Restart exercise</button>
+            </div>
+          </div>
+        </article>
+      `;
+      
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      document.getElementById(containerId).appendChild(wrapper.firstElementChild);
+
+      const el = document.getElementById(exId);
+      el.querySelector(".start-btn").addEventListener("click", () => startExercise(exId, id, type));
+      
+      el.querySelector(".next").addEventListener("click", () => {
+        if (exerciseStates[exId].i < exerciseStates[exId].qs.length - 1) {
+          exerciseStates[exId].i++;
+          showQuestion(exId, id, type);
+        } else {
+          finishExercise(exId);
+        }
+      });
+
+      // Bind the new 'End early' and 'Restart' buttons
+      el.querySelector(".end-early").addEventListener("click", () => finishExercise(exId));
+      
+      const restartLogic = () => {
+        el.querySelector(".exercise-menu").classList.remove("hidden");
+        el.querySelector(".finish").style.display = "none";
+        el.querySelector(".live-area").classList.add("hidden");
+      };
+      
+      el.querySelector(".restart-inline").addEventListener("click", restartLogic);
+      el.querySelector(".restart").addEventListener("click", restartLogic);
+    }
+
+    function startExercise(exId, baseId, type) {
+      const el = document.getElementById(exId);
+      const state = exerciseStates[exId];
+      const count = parseInt(el.querySelector(".menu-count").value) || 5;
+      
+      state.qm = el.querySelector(".menu-question").value;
+      state.am = el.querySelector(".menu-answer").value;
+      state.qs = buildQuestions(baseId, count);
+      state.i = 0; state.score = 0; state.r = []; state.finished = false; state.done = false;
+
+      el.querySelector(".exercise-menu").classList.add("hidden");
+      el.querySelector(".live-area").classList.remove("hidden");
+      showQuestion(exId, baseId, type);
+    }
+
+    function showQuestion(exId, baseId, type) {
+      const state = exerciseStates[exId];
+      const el = document.getElementById(exId);
+      const q = state.qs[state.i];
+      state.done = false;
+
+      el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.qs.length}`;
+      el.querySelector(".score").textContent = `Score: ${state.score}`;
+      el.querySelector(".progress div").style.width = `${(state.i / state.qs.length) * 100}%`;
+      el.querySelector(".prompt-label").textContent = state.qm;
+      
+      el.querySelector(".prompt").textContent = q[state.qm];
+      el.querySelector(".feedback").className = "feedback";
+      el.querySelector(".feedback").innerHTML = "";
+      el.querySelector(".next").classList.add("hidden");
+
+      const zone = el.querySelector(".zone");
+      if (type === "typed") {
+        zone.innerHTML = `<div class="answer-row"><input class="ans" autocomplete="off" spellcheck="false" placeholder="Type with syllable dashes"><button class="btn primary chk" type="button">Check</button></div>`;
+        const input = zone.querySelector(".ans");
+        const submit = () => submitAnswer(exId, type, input.value, q);
+        zone.querySelector(".chk").onclick = submit;
+        input.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); if (state.done) el.querySelector(".next").click(); else submit(); } };
+        requestAnimationFrame(() => input.focus());
+      } else {
+        let opts = [q];
+        while (opts.length < 4) {
+          let extra = buildQuestions(baseId, 1)[0];
+          if (!opts.some(o => normalizeAnswer(o[state.am]) === normalizeAnswer(extra[state.am]))) {
+            opts.push(extra);
+          }
+        }
+        opts.sort(() => Math.random() - 0.5); 
+        
+        zone.innerHTML = opts.map((o, i) => `<button class="choice" type="button" data-val="${escapeHtml(o[state.am])}">${escapeHtml(o[state.am])}</button>`).join("");
+        zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => submitAnswer(exId, type, btn.dataset.val, q, btn));
+      }
+    }
+
+    function submitAnswer(exId, type, userVal, q, btn) {
+      const state = exerciseStates[exId];
+      if (state.done) return;
+      state.done = true;
+      
+      const cleanExpected = normalizeAnswer(q[state.am]);
+      const cleanUser = normalizeAnswer(userVal);
+      const correct = (cleanExpected === cleanUser);
+      
+      if (correct) state.score++;
+      state.r.push({ q, u: userVal, ok: correct });
+      
+      const el = document.getElementById(exId);
+      el.querySelector(".score").textContent = `Score: ${state.score}`;
+      const fb = el.querySelector(".feedback");
+      fb.className = `feedback ${correct ? "good" : "bad"}`;
+      
+      let statusText = correct ? "Correct." : "Not quite.";
+      fb.innerHTML = `${statusText}<br><b>${escapeHtml(q.english)}</b><br><span class="roman">${escapeHtml(q.romanization)}</span><br>${escapeHtml(q.korean)}`;
+      
+      if (type === "typed") {
+        el.querySelector(".ans").readOnly = true;
+      } else {
+        el.querySelectorAll(".choice").forEach(b => {
+          b.disabled = true;
+          if (normalizeAnswer(b.dataset.val) === cleanExpected) b.classList.add("correct");
+        });
+        if (!correct && btn) btn.classList.add("wrong");
+      }
+      
+      el.querySelector(".next").textContent = state.i === state.qs.length - 1 ? "Finish" : "Next";
+      el.querySelector(".next").classList.remove("hidden");
+    }
+
+    function finishExercise(exId) {
+      const state = exerciseStates[exId];
+      const el = document.getElementById(exId);
+      el.querySelector(".live-area").classList.add("hidden");
+      const fin = el.querySelector(".finish");
+      fin.style.display = "block";
+      fin.querySelector(".sum").innerHTML = `Score: <b>${state.score} / ${state.r.length}</b> ${state.r.length < state.qs.length ? "<em>(Ended early)</em>" : ""}`;
+      
+      fin.querySelector(".reviewbox").innerHTML = state.r.length === 0 ? "<p>No questions answered.</p>" : state.r.map((res, i) => `
+        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+          <strong>${i+1}. ${escapeHtml(res.q[state.qm])}</strong><br>
+          ${res.ok ? "✅" : "❌"} Your answer: ${escapeHtml(res.u)}<br>
+          <span style="opacity:.8; font-size: .85rem;">Expected: ${escapeHtml(res.q[state.am])}</span>
+        </div>
+      `).join("");
+    }
+
+    window.onload = () => {
+      const tbody = document.querySelector("#vocabTable tbody");
+      tbody.innerHTML = VOCAB.map(v => `
+        <tr>
+          <td data-vocab-field="meaning"><span class="blur-target">${escapeHtml(v.meaning)}</span></td>
+          <td data-vocab-field="romanization"><span class="blur-target roman">${escapeHtml(v.romanization)}</span></td>
+          <td data-vocab-field="korean"><span class="blur-target hangul">${escapeHtml(v.korean)}</span></td>
+        </tr>
+      `).join("");
+
+      const wrap = document.getElementById("vocabTableWrap");
+      document.querySelectorAll(".blur-toggle").forEach(btn => {
+        btn.onclick = () => {
+          const field = btn.dataset.field;
+          const isPressed = btn.getAttribute("aria-pressed") === "true";
+          btn.setAttribute("aria-pressed", String(!isPressed));
+          wrap.classList.toggle(`blur-${field}`, !isPressed);
+        };
+      });
+      document.querySelectorAll("[data-vocab-field]").forEach(td => {
+        td.onclick = () => td.classList.toggle("peek");
+      });
+
+      renderExercise("vocabQuizContainer", "vocab", "typed", "Vocabulary Practice", "Test your knowledge on the combined vocabulary list.");
+      
+      renderExercise("g1QuizContainer", "pdf4", "mc", "Material Exercise 4: Choose 예요/이에요", "Identify the correct particle based on the material.");
+      renderExercise("g1QuizContainer", "pdf6", "typed", "Material Exercise 6: Q&A", "Translate the dialogue from the material.");
+      renderExercise("g1QuizContainer", "g1", "typed", "Typed Translation", "Auto-generated practice for 예요/이에요.");
+      renderExercise("g1QuizContainer", "g1", "mc", "Multiple Choice", "Auto-generated practice for 예요/이에요.");
+
+      renderExercise("g2QuizContainer", "pdf5", "mc", "Material Exercise 5: Choose 은/는", "Identify the correct particle based on the material.");
+      renderExercise("g2QuizContainer", "pdf7", "typed", "Material Exercises 7 & 8: Sentence Building", "Translate the comprehensive sentences from the material.");
+      renderExercise("g2QuizContainer", "g2", "typed", "Typed Translation", "Auto-generated practice for 은/는.");
+      renderExercise("g2QuizContainer", "g2", "mc", "Multiple Choice", "Auto-generated practice for 은/는.");
+
+      const root = document.documentElement;
+      document.getElementById("themeToggle").onclick = () => {
+        const next = root.dataset.theme === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        localStorage.setItem("koreanQuizThemeV2", next);
+        document.getElementById("themeToggle").querySelector("span").textContent = next === "dark" ? "☀" : "☾";
+      };
+    };
+  </script>
+</body>
+</html>
