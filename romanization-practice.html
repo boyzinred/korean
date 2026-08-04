@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanRomanizationThemeV1");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Korean Romanization Exercises</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      color-scheme: light;
+      --light-background: #28468A;
+      --light-foreground: #F5F5F5;
+      --light-primary: #BCE0E6;
+      --light-primary-hover: #ADC6CB;
+      --light-secondary: #AD8FE6;
+      --light-secondary-soft: #8E7EBF;
+      --light-accent: #C74E33;
+      --light-accent-soft: #A24B36;
+      --light-muted: #A0E090;
+      --light-muted-strong: #99C588;
+      --light-blue-soft: #6375CF;
+      --light-border: #6674C8;
+      --light-subtle: #DEEAAE;
+
+      --background: var(--light-background);
+      --foreground: var(--light-foreground);
+      --primary: var(--light-primary);
+      --primary-hover: var(--light-primary-hover);
+      --secondary: var(--light-secondary);
+      --secondary-soft: var(--light-secondary-soft);
+      --accent: var(--light-accent);
+      --accent-soft: var(--light-accent-soft);
+      --muted: var(--light-muted);
+      --muted-strong: var(--light-muted-strong);
+      --blue-soft: var(--light-blue-soft);
+      --border: var(--light-border);
+      --subtle: var(--light-subtle);
+
+      --surface: #F5F5F5;
+      --surface-text: #28468A;
+      --surface-muted: #E8ECF4;
+      --inverse: #20386E;
+      --inverse-text: #F5F5F5;
+      --hero-heading: #FFFFFF;
+      --hero-text: #EFF6FF;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --font: 'Outfit', system-ui, sans-serif;
+      --transition: all 200ms ease;
+    }
+
+    html[data-theme='dark'] {
+      color-scheme: dark;
+      --light-background: #111827;
+      --light-foreground: #F9FAFB;
+      --light-primary: #6CC2D0;
+      --light-primary-hover: #6CC0D0;
+      --light-secondary: #8B61DC;
+      --light-secondary-soft: #201933;
+      --light-accent: #E29D8D;
+      --light-accent-soft: #391B13;
+      --light-muted: #1F2937;
+      --light-muted-strong: #374151;
+      --light-blue-soft: #12193B;
+      --light-border: #374151;
+      --light-subtle: #CBD5E1;
+
+      --background: var(--light-background);
+      --foreground: var(--light-foreground);
+      --primary: var(--light-primary);
+      --primary-hover: var(--light-primary-hover);
+      --secondary: var(--light-secondary);
+      --secondary-soft: var(--light-secondary-soft);
+      --accent: var(--light-accent);
+      --accent-soft: var(--light-accent-soft);
+      --muted: var(--light-muted);
+      --muted-strong: var(--light-muted-strong);
+      --blue-soft: var(--light-blue-soft);
+      --border: var(--light-border);
+      --subtle: var(--light-subtle);
+
+      --surface: #1F2937;
+      --surface-text: #F9FAFB;
+      --surface-muted: #111827;
+      --inverse: #0F172A;
+      --inverse-text: #F9FAFB;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--foreground);
+      background: var(--background);
+      font-family: var(--font);
+      line-height: 1.6;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    .site-header {
+      color: var(--surface-text);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner, .page-main {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+    .header-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
+      color: var(--surface-text);
+      font-size: 1rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .header-link {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 13px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .header-link:hover {
+      border-color: var(--primary);
+      background: var(--blue-soft);
+      color: var(--foreground);
+    }
+
+    .page-main {
+      margin-top: 24px;
+      margin-bottom: 72px;
+      overflow: hidden;
+      color: var(--surface-text);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+    }
+    .hero {
+      color: var(--hero-heading);
+      background: var(--background);
+    }
+    .hero-inner {
+      padding: clamp(36px, 5vw, 60px);
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .hero p {
+      margin: 12px 0 0;
+      color: var(--hero-text);
+      font-size: 1rem;
+    }
+
+    .quiz-section {
+      border-bottom: 1px solid var(--border);
+    }
+    .quiz-body {
+      padding: clamp(24px, 5vw, 48px);
+      color: var(--surface-text);
+      background: var(--surface);
+    }
+    .exercise-card {
+      overflow: hidden;
+      color: var(--surface-text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .exercise-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+      color: var(--inverse-text);
+      background: var(--inverse);
+    }
+    .exercise-head-copy {
+      padding: 24px 28px;
+    }
+    .exercise-kicker {
+      color: var(--primary);
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .exercise-head h3 {
+      margin: 7px 0 0;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      line-height: 1;
+    }
+    .exercise-head p {
+      margin: 8px 0 0;
+      color: var(--subtle);
+      font-size: 0.9rem;
+    }
+    .score {
+      min-width: 158px;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      color: #192B5D;
+      background: var(--accent);
+      font-size: .9rem;
+      font-weight: 800;
+    }
+    .exercise-body {
+      padding: clamp(24px, 4vw, 38px);
+    }
+    .progress {
+      height: 12px;
+      overflow: hidden;
+      background: var(--muted-strong);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 0%;
+      transition: width 200ms ease;
+    }
+    input, .answer-input {
+      width: 100%;
+      min-height: 56px;
+      padding: 0 14px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+    }
+    input:focus, .answer-input:focus {
+      background: var(--surface);
+      border-color: var(--primary);
+      outline: none;
+    }
+    .primary-btn, .secondary-btn {
+      min-height: 56px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .primary-btn {
+      color: #192B5D;
+      background: var(--primary);
+    }
+    .primary-btn:hover { background: var(--primary-hover); }
+    .secondary-btn {
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      margin-top: 12px;
+    }
+    .restart-top-btn {
+      min-height: 40px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      background: var(--surface-muted);
+      color: var(--surface-text);
+      cursor: pointer;
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+      font-size: .86rem;
+      font-weight: 800;
+    }
+    .prompt-label {
+      margin-top: 26px;
+      color: var(--primary);
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .prompt {
+      min-height: 1.2em;
+      margin: 8px 0 26px;
+      color: var(--surface-text);
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .answer-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+    .feedback {
+      display: none;
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+    }
+    .feedback.good {
+      display: block;
+      background: var(--secondary-soft);
+      border-left: 8px solid var(--secondary);
+      color: #192B5D;
+    }
+    .feedback.bad {
+      display: block;
+      background: var(--accent-soft);
+      border-left: 8px solid var(--accent);
+      color: #FFFFFF;
+    }
+    .answer-key { font-weight: 800; font-size: 1.15rem; }
+    .small { font-size: 0.8rem; opacity: 0.85; display: block; margin-top: 4px; }
+    
+    /* Monkeytype style container for Exercise 2 */
+    .monkey-container {
+      background: var(--surface-muted);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+      outline: none;
+      cursor: text;
+    }
+    .monkey-container:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-hover);
+    }
+    .monkey-row {
+      font-size: 2rem;
+      line-height: 1.5;
+      letter-spacing: 0.05em;
+      word-break: break-all;
+      font-family: inherit;
+    }
+    .monkey-row.roman-row {
+      font-size: 1.4rem;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      min-height: 2.2em;
+    }
+    .monkey-char {
+      color: var(--surface-text);
+      opacity: 0.4;
+    }
+    .monkey-char.correct {
+      color: #0d7a22;
+      opacity: 1;
+      font-weight: 700;
+      background: rgba(13, 122, 34, 0.12);
+    }
+    html[data-theme='dark'] .monkey-char.correct {
+      color: #4ade80;
+      background: rgba(74, 222, 128, 0.15);
+    }
+    .monkey-char.incorrect {
+      color: #dc2626;
+      opacity: 1;
+      font-weight: 700;
+      text-decoration: underline wavy #dc2626;
+      background: rgba(220, 38, 38, 0.15);
+    }
+    html[data-theme='dark'] .monkey-char.incorrect {
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.2);
+    }
+    .monkey-char.current {
+      border-bottom: 3px solid var(--primary);
+      opacity: 0.9;
+    }
+    .monkey-char.hidden-char {
+      opacity: 0;
+    }
+
+    .finish-card {
+      display: none;
+      margin-top: 18px;
+      padding: 24px;
+      background: var(--blue-soft);
+      color: #fff;
+      border-radius: var(--radius-lg);
+    }
+    .finish-card h3 { margin: 0 0 8px; font-size: 1.7rem; }
+    .review {
+      max-height: 350px;
+      overflow: auto;
+      margin-top: 20px;
+    }
+    .review-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+      padding: 14px;
+      background: var(--surface);
+      color: var(--surface-text);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+    }
+
+    /* Setup Menu UI */
+    .exercise-menu {
+      display: grid;
+      gap: 20px;
+      padding: clamp(24px, 4vw, 38px);
+      background: var(--surface);
+    }
+    .exercise-menu h4 { margin: 0; font-size: 1.5rem; }
+    .exercise-menu p { margin: 0; opacity: 0.8; }
+    .exercise-menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .exercise-menu label {
+      display: grid;
+      gap: 7px;
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .exercise-menu select, .exercise-menu input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 12px;
+      background: var(--surface-muted);
+      color: var(--surface-text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .runtime-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-md);
+      font-weight: 800;
+    }
+    .end-early-btn {
+      min-height: 38px;
+      padding: 0 14px;
+      color: #fff;
+      background: var(--accent);
+      border: 0;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .utility-controls {
+      position: fixed; right: 18px; bottom: 18px; z-index: 50; display: flex; gap: 10px;
+    }
+    .utility-button {
+      width: 46px; height: 46px; display: grid; place-items: center;
+      color: #192B5D; background: var(--primary); border: 0; border-radius: 50%;
+      font-weight: 800; text-decoration: none; cursor: pointer;
+    }
+    .utility-button.top { background: var(--accent); color: #fff; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 680px) {
+      .exercise-menu-grid { grid-template-columns: 1fr; }
+      .exercise-head { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#">Korean Romanization Practice</a>
+      <div class="header-actions">
+        <a class="header-link" href="index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>TOPIK Romanization Drills</h1>
+        <p>Type Korean text into literal syllable-d-separated romanization. Single space = dash (-), Double space = actual space.</p>
+      </div>
+    </section>
+
+    <!-- EXERCISE 1: SHORT SENTENCES -->
+    <div class="quiz-section" id="quiz-ex1">
+      <div class="quiz-body">
+        <!-- Setup Menu -->
+        <div class="exercise-menu" id="menu-ex1">
+          <h4>Exercise 1 Setup: Short Sentences</h4>
+          <p>Practice short sentences and phrases from TOPIK resources.</p>
+          <div class="exercise-menu-grid">
+            <label>Timer in minutes <input id="menu-timer-ex1" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label>
+          </div>
+          <div style="margin-top: 10px;">
+            <button class="primary-btn" type="button" id="start-ex1">Start Exercise</button>
+          </div>
+        </div>
+
+        <!-- Exercise Card -->
+        <article class="exercise-card hidden" id="card-ex1">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Exercise 1</span>
+              <h3>Short Sentences & Phrases</h3>
+              <p>Translate Korean sentences into literal syllable-d-separated romanization.</p>
+            </div>
+            <div class="score" id="score-ex1">Score: 0</div>
+          </div>
+          <div class="exercise-body">
+            <div class="runtime-bar">
+              <span id="timer-ex1">Untimed</span>
+              <button class="end-early-btn" type="button" id="end-ex1">End exercise early</button>
+            </div>
+            <div class="status-row">
+              <div id="question-number-ex1"></div>
+              <button class="restart-top-btn" type="button" id="restart-top-ex1">Restart</button>
+            </div>
+            <div class="progress" role="progressbar"><div class="progress-fill" id="progress-ex1"></div></div>
+            
+            <div class="prompt-label">Korean Sentence</div>
+            <div class="prompt" id="prompt-ex1"></div>
+
+            <form class="answer-form" id="form-ex1">
+              <input class="answer-input" id="input-ex1" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type with syllable dashes (Space = -, Double Space = space)" />
+              <button class="primary-btn" type="submit">Check</button>
+            </form>
+
+            <div class="feedback" id="feedback-ex1"></div>
+            <button class="secondary-btn hidden" id="next-ex1" type="button">Next</button>
+
+            <div class="finish-card" id="finish-ex1">
+              <h3>Exercise Complete!</h3>
+              <p id="final-score-ex1"></p>
+              <button class="secondary-btn" type="button" id="restart-btn-ex1" style="color:#192B5D; background:var(--primary);">Restart Exercise</button>
+              <div class="review" id="review-ex1"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- EXERCISE 2: MONKEYTYPE STYLE EXCERPTS -->
+    <div class="quiz-section" id="quiz-ex2">
+      <div class="quiz-body">
+        <!-- Setup Menu -->
+        <div class="exercise-menu" id="menu-ex2">
+          <h4>Exercise 2 Setup: Monkeytype Excerpts</h4>
+          <p>Longer TOPIK passages formatted for continuous typing practice by reading Korean characters directly and typing their literal romanization.</p>
+          <div class="exercise-menu-grid">
+            <label>Timer in minutes <input id="menu-timer-ex2" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label>
+          </div>
+          <div style="margin-top: 10px;">
+            <button class="primary-btn" type="button" id="start-ex2">Start Exercise</button>
+          </div>
+        </div>
+
+        <!-- Exercise Card -->
+        <article class="exercise-card hidden" id="card-ex2">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Exercise 2</span>
+              <h3>Monkeytype Excerpts</h3>
+              <p>Press SPACE once between every syllable. The program automatically inserts hyphens within words and spaces between words.</p>
+            </div>
+            <div class="score" id="score-ex2">Passage 1/3</div>
+          </div>
+          <div class="exercise-body">
+            <div class="runtime-bar">
+              <span id="timer-ex2">Untimed</span>
+              <button class="end-early-btn" type="button" id="end-ex2">End exercise early</button>
+            </div>
+            <div class="status-row">
+              <div id="question-number-ex2">Passage 1 of 3</div>
+              <button class="restart-top-btn" type="button" id="restart-top-ex2">Restart</button>
+            </div>
+            <div class="progress" role="progressbar"><div class="progress-fill" id="progress-ex2"></div></div>
+            
+            <div class="prompt-label" style="margin-top:16px;">Type Korean text below in Romanization:</div>
+            
+            <!-- Monkeytype Display Box -->
+            <div class="monkey-container" id="monkey-box-ex2" tabindex="0">
+              <div class="monkey-row" id="monkey-korean-row"></div>
+              <div class="monkey-row roman-row" id="monkey-roman-row"></div>
+            </div>
+
+            <div class="finish-card" id="finish-ex2">
+              <h3>All Passages Complete!</h3>
+              <p id="final-score-ex2"></p>
+              <button class="secondary-btn" type="button" id="restart-btn-ex2" style="color:#192B5D; background:var(--primary);">Restart Exercise</button>
+              <div class="review" id="review-ex2"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <div class="utility-controls">
+    <button class="utility-button" data-theme-toggle aria-label="Toggle theme">☾</button>
+    <a class="utility-button top" href="#top">↑</a>
+  </div>
+
+  <script>
+    // Strict Transliteration Engine matching user specs
+    function romanizeKorean(text) {
+      const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+      const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+      const JONG = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+
+      return text.split(" ").map(word => {
+        let parts = [];
+        let currentSyllables = [];
+        for (let i = 0; i < word.length; i++) {
+          let charCode = word.charCodeAt(i);
+          if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+            let offset = charCode - 0xAC00;
+            let jongIndex = offset % 28;
+            let jungIndex = Math.floor(offset / 28) % 21;
+            let choIndex = Math.floor(offset / (28 * 21));
+            currentSyllables.push(CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]);
+          } else {
+            if (currentSyllables.length > 0) {
+              parts.push(currentSyllables.join("-"));
+              currentSyllables = [];
+            }
+            parts.push(word[i]);
+          }
+        }
+        if (currentSyllables.length > 0) {
+          parts.push(currentSyllables.join("-"));
+        }
+        return parts.join("");
+      }).join(" ");
+    }
+
+    // TOPIK-based Data Sets
+    const EX1_ITEMS = [
+      { korean: "안녕하세요?", meaning: "Hello?" },
+      { korean: "저는 학생입니다.", meaning: "I am a student." },
+      { korean: "오늘 날씨가 아주 좋습니다.", meaning: "Today's weather is very good." },
+      { korean: "한국어를 공부합니다.", meaning: "I study Korean." },
+      { korean: "내일 도서관에 갈 겁니다.", meaning: "I will go to the library tomorrow." },
+      { korean: "커피를 마시면서 책을 읽습니다.", meaning: "I read a book while drinking coffee." },
+      { korean: "시간이 없어서 빨리 갔습니다.", meaning: "I went quickly because I had no time." },
+      { korean: "이 가구는 가격이 비쌉니다.", meaning: "This furniture is expensive in price." }
+    ];
+
+    EX1_ITEMS.forEach(item => {
+      item.romanization = romanizeKorean(item.korean);
+    });
+
+    // Database of 5 large TOPIK excerpts for Exercise 2 randomization
+    const EX2_DATABASE = [
+      "한국의 가을은 하늘이 맑고 높습니다. 공기가 시원해서 여행하기 아주 좋은 계절입니다.",
+      "우리는 매일 아침에 일어나서 운동을 합니다. 건강을 지키는 것은 매우 중요한 일입니다.",
+      "한국어 능력 시험을 준비하는 학생들은 단어를 많이 외우고 문법을 정확하게 이해해야 합니다.",
+      "인터넷의 발전으로 인해 우리는 전 세계의 다양한 사람들과 쉽게 소통할 수 있게 되었습니다.",
+      "독서는 우리의 마음을 풍요롭게 만들고 새로운 지식을 얻을 수 있는 훌륭한 방법입니다."
+    ];
+
+    const SENTENCE_POOL = EX2_DATABASE.flatMap(t=>t.split(/(?<=[.!?])/).map(s=>s.trim()).filter(Boolean));
+    function getRandomExcerpt(minChars=80,maxChars=180){
+      let out="";
+      while(out.length<minChars){
+        const start=Math.floor(Math.random()*SENTENCE_POOL.length);
+        out="";
+        for(let i=start;i<SENTENCE_POOL.length;i++){
+          if((out+" "+SENTENCE_POOL[i]).trim().length>maxChars) break;
+          out+=(out?" ":"")+SENTENCE_POOL[i];
+        }
+      }
+      return out;
+    }
+
+    let EX2_EXCERPTS = [];
+    function generateEx2Passages() {
+      EX2_EXCERPTS = [
+        { korean: getRandomExcerpt() },
+        { korean: getRandomExcerpt() },
+        { korean: getRandomExcerpt() }
+      ];
+      EX2_EXCERPTS.forEach(item => {
+        item.romanization = romanizeKorean(item.korean);
+      });
+    }
+
+    // Handle Space rules helper for input fields (Exercise 1)
+    function setupSpaceRuleInput(inputEl) {
+      inputEl.addEventListener("keydown", event => {
+        if (event.key === " ") {
+          event.preventDefault();
+          const start = inputEl.selectionStart ?? inputEl.value.length;
+          const end = inputEl.selectionEnd ?? start;
+          const val = inputEl.value;
+          if (start > 0 && val[start - 1] === "-") {
+            inputEl.value = val.slice(0, start - 1) + " " + val.slice(end);
+            inputEl.setSelectionRange(start, start);
+          } else {
+            inputEl.value = val.slice(0, start) + "-" + val.slice(end);
+            inputEl.setSelectionRange(start + 1, start + 1);
+          }
+        }
+      });
+    }
+
+    // --- EXERCISE 1 LOGIC ---
+    let ex1State = { index: 0, score: 0, results: [], timer: null, finished: false };
+
+    function startEx1() {
+      ex1State = { index: 0, score: 0, results: [], timer: null, finished: false };
+      document.getElementById("menu-ex1").classList.add("hidden");
+      document.getElementById("card-ex1").classList.remove("hidden");
+      
+      const mins = parseFloat(document.getElementById("menu-timer-ex1").value) || 0;
+      if (mins > 0) {
+        let deadline = Date.now() + mins * 60000;
+        ex1State.timer = setInterval(() => {
+          let rem = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+          document.getElementById("timer-ex1").textContent = `Time left: ${Math.floor(rem/60)}:${String(rem%60).padStart(2,'0')}`;
+          if (rem <= 0) finishEx1("Time is up!");
+        }, 250);
+      } else {
+        document.getElementById("timer-ex1").textContent = "Untimed";
+      }
+      showEx1Question();
+    }
+
+    function showEx1Question() {
+      if (ex1State.index >= EX1_ITEMS.length) {
+        finishEx1("Exercise Complete");
+        return;
+      }
+      const item = EX1_ITEMS[ex1State.index];
+      document.getElementById("question-number-ex1").textContent = `Question ${ex1State.index + 1} / ${EX1_ITEMS.length}`;
+      document.getElementById("score-ex1").textContent = `Score: ${ex1State.score}`;
+      document.getElementById("progress-ex1").style.width = `${(ex1State.index / EX1_ITEMS.length) * 100}%`;
+      document.getElementById("prompt-ex1").textContent = item.korean;
+
+      const input = document.getElementById("input-ex1");
+      input.value = "";
+      input.disabled = false;
+      input.readOnly = false;
+      document.getElementById("form-ex1").querySelector("button").disabled = false;
+      document.getElementById("feedback-ex1").className = "feedback";
+      document.getElementById("feedback-ex1").innerHTML = "";
+      document.getElementById("next-ex1").classList.add("hidden");
+      document.getElementById("finish-ex1").style.display = "none";
+      input.focus();
+    }
+
+    document.getElementById("form-ex1").addEventListener("submit", e => {
+      e.preventDefault();
+      if (ex1State.finished) return;
+      const item = EX1_ITEMS[ex1State.index];
+      const userVal = document.getElementById("input-ex1").value.trim().toLowerCase();
+      const expected = item.romanization.toLowerCase();
+
+      const correct = userVal === expected;
+      const feedback = document.getElementById("feedback-ex1");
+      
+      if (correct) {
+        ex1State.score++;
+        feedback.className = "feedback good";
+        feedback.innerHTML = `Correct! <span class="answer-key">${item.romanization}</span>`;
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = `Not quite. Expected: <span class="answer-key">${item.romanization}</span><br><span class="small">Meaning: ${item.meaning}</span>`;
+      }
+
+      ex1State.results.push({
+        prompt: item.korean,
+        user: userVal || "(blank)",
+        expected: item.romanization,
+        correct
+      });
+
+      document.getElementById("score-ex1").textContent = `Score: ${ex1State.score}`;
+      document.getElementById("input-ex1").readOnly = true;
+      document.getElementById("form-ex1").querySelector("button").disabled = true;
+      
+      const nextBtn = document.getElementById("next-ex1");
+      nextBtn.textContent = ex1State.index === EX1_ITEMS.length - 1 ? "Finish" : "Next";
+      nextBtn.classList.remove("hidden");
+      nextBtn.focus();
+    });
+
+    document.getElementById("next-ex1").addEventListener("click", () => {
+      ex1State.index++;
+      showEx1Question();
+    });
+
+    function finishEx1(reason) {
+      if (ex1State.finished) return;
+      ex1State.finished = true;
+      if (ex1State.timer) clearInterval(ex1State.timer);
+
+      document.getElementById("form-ex1").classList.add("hidden");
+      document.getElementById("next-ex1").classList.add("hidden");
+      document.getElementById("progress-ex1").style.width = "100%";
+      
+      const finishCard = document.getElementById("finish-ex1");
+      finishCard.style.display = "block";
+      finishCard.querySelector("h3").textContent = reason;
+      
+      const pct = Math.round((ex1State.score / EX1_ITEMS.length) * 100);
+      document.getElementById("final-score-ex1").innerHTML = `Score: <strong>${ex1State.score} / ${EX1_ITEMS.length}</strong> (${pct}%)`;
+      
+      document.getElementById("review-ex1").innerHTML = `
+        <h3>Review</h3>
+        ${ex1State.results.map((r, i) => `
+          <div class="review-row">
+            <div><strong>${i+1}. ${r.prompt}</strong><br><span class="small">Your input: ${r.user}</span></div>
+            <div>${r.correct ? "✅" : "❌"} <strong>${r.expected}</strong></div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    setupSpaceRuleInput(document.getElementById("input-ex1"));
+    document.getElementById("start-ex1").addEventListener("click", startEx1);
+    document.getElementById("end-ex1").addEventListener("click", () => finishEx1("Exercise Ended Early"));
+    document.getElementById("restart-top-ex1").addEventListener("click", () => {
+      if (ex1State.timer) clearInterval(ex1State.timer);
+      document.getElementById("card-ex1").classList.add("hidden");
+      document.getElementById("menu-ex1").classList.remove("hidden");
+    });
+    document.getElementById("restart-btn-ex1").addEventListener("click", () => {
+      document.getElementById("card-ex1").classList.add("hidden");
+      document.getElementById("menu-ex1").classList.remove("hidden");
+    });
+
+
+    // --- EXERCISE 2 LOGIC (Monkeytype Style reading Korean, typing Romanization) ---
+    let ex2State = { passageIndex: 0, timer: null, finished: false, charIndex: 0, userInputs: [], startTime: null, results: [] };
+
+    function startEx2() {
+      generateEx2Passages();
+      ex2State = { passageIndex: 0, timer: null, finished: false, charIndex: 0, userInputs: [], startTime: null, results: [] };
+      document.getElementById("menu-ex2").classList.add("hidden");
+      document.getElementById("card-ex2").classList.remove("hidden");
+
+      const mins = parseFloat(document.getElementById("menu-timer-ex2").value) || 0;
+      if (mins > 0) {
+        let deadline = Date.now() + mins * 60000;
+        ex2State.timer = setInterval(() => {
+          let rem = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+          document.getElementById("timer-ex2").textContent = `Time left: ${Math.floor(rem/60)}:${String(rem%60).padStart(2,'0')}`;
+          if (rem <= 0) finishEx2("Time is up!");
+        }, 250);
+      } else {
+        document.getElementById("timer-ex2").textContent = "Untimed";
+      }
+      loadEx2Passage();
+    }
+
+    function loadEx2Passage() {
+      if (ex2State.passageIndex >= EX2_EXCERPTS.length) {
+        finishEx2("All Passages Complete!");
+        return;
+      }
+      ex2State.charIndex = 0;
+      ex2State.userInputs = [];
+      ex2State.startTime = Date.now();
+
+      document.getElementById("question-number-ex2").textContent = `Passage ${ex2State.passageIndex + 1} of ${EX2_EXCERPTS.length}`;
+      document.getElementById("score-ex2").textContent = `Passage ${ex2State.passageIndex + 1}/${EX2_EXCERPTS.length}`;
+      document.getElementById("progress-ex2").style.width = `${(ex2State.passageIndex / EX2_EXCERPTS.length) * 100}%`;
+      document.getElementById("finish-ex2").style.display = "none";
+      document.getElementById("monkey-box-ex2").style.display = "block";
+
+      renderMonkeyBox();
+      const box = document.getElementById("monkey-box-ex2");
+      box.focus();
+    }
+
+    function renderMonkeyBox() {
+      const passage = EX2_EXCERPTS[ex2State.passageIndex];
+      const koreanStr = passage.korean;
+      const targetStr = passage.romanization;
+      
+      const koreanRow = document.getElementById("monkey-korean-row");
+      const romanRow = document.getElementById("monkey-roman-row");
+
+      // 1. Render Korean row with highlighting based on typing progress through targetStr
+      koreanRow.innerHTML = koreanStr.split("").map((char, i) => {
+      let typedLetters = ex2State.userInputs.filter(
+          c => c !== "-" && c !== " "
+      ).length;
+
+      let mappedIndex = 0;
+      let romanLetters = 0;
+
+      for (let k = 0; k < koreanStr.length; k++) {
+
+          const syl = romanizeKorean(koreanStr[k]);
+
+          // count only letters in this syllable
+          romanLetters += syl.replace(/[^a-z]/gi, "").length;
+
+          if (typedLetters < romanLetters) {
+              mappedIndex = k;
+              break;
+          }
+
+          mappedIndex = k + 1;
+          if (
+              mappedIndex < koreanStr.length &&
+              koreanStr[mappedIndex] === " " &&
+              (
+                  ex2State.userInputs.length === 0 ||
+                  ex2State.userInputs[ex2State.userInputs.length - 1] !== " "
+              )
+          ) {
+              mappedIndex--;
+          }
+      }
+        let cls = "monkey-char";
+        if (i < mappedIndex) {
+          cls += " correct";
+        } else if (i === mappedIndex) {
+          cls += " current";
+        }
+        return `<span class="${cls}">${char === ' ' ? '␣' : char}</span>`;
+      }).join("");
+
+      // 2. Render typed romanization row underneath, showing typed chars with high-contrast colors, hiding un-typed chars
+      romanRow.innerHTML = targetStr.split("").map((targetChar, i) => {
+        let cls = "monkey-char";
+        let displayChar = "_";
+        
+        if (i < ex2State.userInputs.length) {
+          let typed = ex2State.userInputs[i];
+          displayChar =
+              typed === " "
+                  ? "␣"
+                  : typed === "-"
+                      ? "·"
+                      : typed;
+          if (typed === targetChar) {
+            cls += " correct";
+          } else {
+            cls += " incorrect";
+          }
+        } else if (i === ex2State.charIndex) {
+          cls += " current hidden-char";
+          displayChar = "_";
+        } else {
+          cls += " hidden-char";
+          displayChar = "_";
+        }
+        return `<span class="${cls}">${displayChar === ' ' ? '␣' : displayChar}</span>`;
+      }).join("");
+    }
+
+    // Keydown listener for Monkeytype Box with Single/Double space rules
+    document.getElementById("monkey-box-ex2").addEventListener("keydown", e => {
+
+        if (ex2State.finished) return;
+
+        const passage = EX2_EXCERPTS[ex2State.passageIndex];
+        const targetStr = passage.romanization;
+
+        if (e.key === "Backspace") {
+            e.preventDefault();
+
+            if (ex2State.charIndex > 0) {
+                ex2State.charIndex--;
+                ex2State.userInputs.pop();
+                renderMonkeyBox();
+            }
+            return;
+        }
+
+        let typed = null;
+
+        // letters
+        if (/^[a-z]$/i.test(e.key)) {
+            typed = e.key.toLowerCase();
+        }
+
+        // user presses ONE space between every syllable
+        else if (e.key === " ") {
+            e.preventDefault();
+
+            // automatically insert whatever separator is next
+            while (
+                ex2State.charIndex < targetStr.length &&
+                (targetStr[ex2State.charIndex] === "-" ||
+                 targetStr[ex2State.charIndex] === " ")
+            ) {
+
+                ex2State.userInputs.push(targetStr[ex2State.charIndex]);
+                ex2State.charIndex++;
+            }
+
+            renderMonkeyBox();
+            return;
+        }
+
+        else {
+            return;
+        }
+
+        if (typed && ex2State.charIndex < targetStr.length) {
+
+            ex2State.userInputs.push(typed);
+            ex2State.charIndex++;
+
+            renderMonkeyBox();
+
+            if (ex2State.charIndex >= targetStr.length) {
+
+                let correct = 0;
+
+                for (let i = 0; i < targetStr.length; i++) {
+                    if (ex2State.userInputs[i] === targetStr[i]) correct++;
+                }
+
+                ex2State.results.push({
+                    passage: ex2State.passageIndex + 1,
+                    accuracy: Math.round(correct / targetStr.length * 100),
+                    target: targetStr
+                });
+
+                setTimeout(() => {
+                    ex2State.passageIndex++;
+                    loadEx2Passage();
+                }, 300);
+            }
+        }
+
+    });
+
+    function finishEx2(reason) {
+      if (ex2State.finished) return;
+      ex2State.finished = true;
+      if (ex2State.timer) clearInterval(ex2State.timer);
+
+      document.getElementById("monkey-box-ex2").style.display = "none";
+      document.getElementById("progress-ex2").style.width = "100%";
+
+      const finishCard = document.getElementById("finish-ex2");
+      finishCard.style.display = "block";
+      finishCard.querySelector("h3").textContent = reason;
+
+      let avgAcc = ex2State.results.length ? Math.round(ex2State.results.reduce((a,b)=>a+b.accuracy,0)/ex2State.results.length) : 0;
+      document.getElementById("final-score-ex2").innerHTML = `Average Accuracy: <strong>${avgAcc}%</strong> across passages.`;
+      
+      document.getElementById("review-ex2").innerHTML = `
+        <h3>Performance Review</h3>
+        ${ex2State.results.map((r) => `
+          <div class="review-row">
+            <div><strong>Passage ${r.passage}</strong></div>
+            <div>Accuracy: <strong>${r.accuracy}%</strong></div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    document.getElementById("start-ex2").addEventListener("click", startEx2);
+    document.getElementById("end-ex2").addEventListener("click", () => finishEx2("Exercise Ended Early"));
+    document.getElementById("restart-top-ex2").addEventListener("click", () => {
+      if (ex2State.timer) clearInterval(ex2State.timer);
+      document.getElementById("card-ex2").classList.add("hidden");
+      document.getElementById("menu-ex2").classList.remove("hidden");
+    });
+    document.getElementById("restart-btn-ex2").addEventListener("click", () => {
+      document.getElementById("card-ex2").classList.add("hidden");
+      document.getElementById("menu-ex2").classList.remove("hidden");
+    });
+
+    // Theme Toggle Support
+    const themeToggleBtn = document.querySelector("[data-theme-toggle]");
+    themeToggleBtn.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme;
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      document.documentElement.style.colorScheme = next;
+      localStorage.setItem("koreanRomanizationThemeV1", next);
+      themeToggleBtn.textContent = next === "dark" ? "☀️" : "☾";
+    });
+  </script>
+</body>
+</html>
