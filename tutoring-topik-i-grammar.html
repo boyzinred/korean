@@ -615,6 +615,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   color: #FFFFFF;
   background: var(--accent);
 }
+#batchim-guide > summary { color: #FFFFFF; background: var(--secondary); }
+
 #sections > details:nth-child(3n+1) > summary { background: var(--secondary); }
 #sections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
 #sections > details:nth-child(3n+3) > summary { background: var(--primary); }
@@ -768,8 +770,6 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   .exercise-toolbar .restart { width: 100%; }
 }
 
-  
-
 /* Exercise setup menus, timers, and mobile keyboard workflow */
 .exercise-menu {
   display: grid;
@@ -838,7 +838,6 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   .end-early-btn { width: 100%; }
 }
 
-
 .speech-examples { display: grid; gap: 8px; margin-top: 14px; }
 .speech-example { padding: 12px; color: var(--surface-text); background: var(--surface-muted); border-radius: var(--radius-md); }
 .speech-example strong { display: block; margin-bottom: 5px; color: var(--primary); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
@@ -876,6 +875,36 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       </div>
     </section>
 
+    <details class="block" id="batchim-guide">
+      <summary><span>Batchim (Consonant Endings) Guide</span></summary>
+      <div class="block-inner">
+        <div class="grammar-grid">
+          <article class="grammar-card">
+            <h3>What is Batchim?</h3>
+            <p><strong>Batchim (받침)</strong> refers to the final consonant (or consonant cluster) at the bottom of a Korean syllable. For example, in <strong>학 (hag)</strong>, the <strong>ㄱ</strong> is the batchim. Many Korean grammar rules change depending on whether a noun or verb stem ends in a batchim (consonant) or a vowel.</p>
+          </article>
+          <article class="grammar-card">
+            <h3>Particles (Nouns)</h3>
+            <p>Nouns ending in a <strong>consonant</strong> (batchim) typically take particles starting with a vowel to make pronunciation easier:<br>
+            • Topic: <strong>은</strong> (학생은)<br>
+            • Subject: <strong>이</strong> (학생이)<br>
+            • Object: <strong>을</strong> (학생을)<br><br>
+            Nouns ending in a <strong>vowel</strong> take particles starting with a consonant:<br>
+            • Topic: <strong>는</strong> (학교는)<br>
+            • Subject: <strong>가</strong> (학교가)<br>
+            • Object: <strong>를</strong> (학교를)</p>
+          </article>
+          <article class="grammar-card">
+            <h3>Verb/Adjective Endings</h3>
+            <p>When attaching grammar patterns starting with <strong>-(으)</strong> (like -(으)세요 or -(으)면), you must check the stem:<br>
+            • <strong>Consonant ending:</strong> Add the '으' (e.g., 먹다 &rarr; 먹 + 으면 = 먹으면).<br>
+            • <strong>Vowel ending:</strong> Skip the '으' (e.g., 가다 &rarr; 가 + 면 = 가면).<br>
+            • <strong>ㄹ Batchim Exception:</strong> Stems ending in ㄹ act like vowels for these patterns (e.g., 만들다 &rarr; 만들면).</p>
+          </article>
+        </div>
+      </div>
+    </details>
+
     <div id="sections"></div>
   </main>
 
@@ -885,279 +914,379 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   </div>
 
   <script>
+      // Strict transliteration conversion logic matching the provided keys
+      function romanizeKorean(text) {
+        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+        const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+        const JONG = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
 
-      // Vocabulary entries use: [Korean, dashed romanization, English]
-      const VOCABULARY_BANK= {
-        people:[["학생", "hak-ssaeng", "student"],
-        ["선생님", "seon-saeng-nim", "teacher"],
-        ["의사", "ui-sa", "doctor"],
-        ["간호사", "gan-ho-sa", "nurse"],
-        ["회사원", "hoe-sa-won", "office worker"],
-        ["친구", "chin-gu", "friend"],
-        ["어머니", "eo-meo-ni", "mother"],
-        ["아버지", "a-beo-ji", "father"]],
-        places:[["학교", "hak-kkyo", "school"],
-        ["회사", "hoe-sa", "company"],
-        ["병원", "byeong-won", "hospital"],
-        ["은행", "eun-haeng", "bank"],
-        ["식당", "shik-ttang", "restaurant"],
-        ["카페", "ka-pe", "cafe"],
-        ["공원", "gong-won", "park"],
-        ["시장", "shi-jang", "market"],
-        ["도서관", "do-seo-gwan", "library"],
-        ["집", "jip", "home"]],
-        food:[["밥", "bap", "a meal"],
-        ["물", "mul", "water"],
-        ["커피", "keo-pi", "coffee"],
-        ["차", "cha", "tea"],
-        ["우유", "u-yu", "milk"],
-        ["빵", "ppang", "bread"],
-        ["과일", "gwa-il", "fruit"],
-        ["사과", "sa-gwa", "an apple"],
-        ["고기", "go-gi", "meat"],
-        ["김치", "gim-chi", "kimchi"],
-        ["라면", "ra-myeon", "instant noodles"]],
-        objects:[["책", "chaek", "a book"],
-        ["사진", "sa-jin", "a photo"],
-        ["카드", "ka-deu", "a card"],
-        ["돈", "don", "money"],
-        ["자동차", "ja-dong-cha", "a car"],
-        ["자전거", "ja-jeon-geo", "a bicycle"]],
-        time:[["오늘", "o-neul", "today"],
-        ["내일", "nae-il", "tomorrow"],
-        ["어제", "eo-je", "yesterday"],
-        ["아침", "a-chim", "in the morning"],
-        ["점심", "jeom-shim", "at lunch"],
-        ["저녁", "jeo-nyeok", "in the evening"],
-        ["밤", "bam", "at night"],
-        ["지금", "ji-geum", "now"]],
-        adjectives:[["좋다", "jo-ta", "good"],
-        ["나쁘다", "na-ppeu-da", "bad"],
-        ["크다", "keu-da", "big"],
-        ["작다", "jak-tta", "small"],
-        ["많다", "man-ta", "many"],
-        ["빠르다", "ppa-reu-da", "fast"],
-        ["느리다", "neu-ri-da", "slow"],
-        ["쉽다", "swip-tta", "easy"],
-        ["어렵다", "eo-ryeop-tta", "difficult"],
-        ["예쁘다", "ye-ppeu-da", "pretty"],
-        ["맛있다", "ma-shit-tta", "delicious"],
-        ["재미있다", "jae-mi-it-tta", "interesting"]],
-        verbs:[["가다", "ga-da", "go"],
-        ["오다", "o-da", "come"],
-        ["먹다", "meok-tta", "eat"],
-        ["마시다", "ma-shi-da", "drink"],
-        ["보다", "bo-da", "watch"],
-        ["듣다", "deut-tta", "listen"],
-        ["읽다", "ik-tta", "read"],
-        ["쓰다", "sseu-da", "write"],
-        ["말하다", "mal-ha-da", "speak"],
-        ["공부하다", "gong-bu-ha-da", "study"],
-        ["일하다", "il-ha-da", "work"],
-        ["자다", "ja-da", "sleep"],
-        ["만나다", "man-na-da", "meet"],
-        ["배우다", "bae-u-da", "learn"],
-        ["만들다", "man-deul-da", "make"],
-        ["좋아하다", "jo-a-ha-da", "like"]]
-      };
-      // Grammar entries use: [id, form, title, explanation, Korean, romanization, English]
-      const GRAMMAR_POINTS=[["g1", "은/는", "Topic particle", "Marks the topic or contrast. Use 은 after a consonant and 는 after a vowel.", "저는 학생이에요.", "jeo-neun hak-ssaeng-i-e-yo", "I am a student."],
-      ["g2", "이/가", "Subject particle", "Marks a new, focused, or identified subject.", "고양이가 귀여워요.", "go-yang-i-ga gwi-yeo-wo-yo", "The cat is cute."],
-      ["g3", "을/를", "Object particle", "Marks the direct object of an action verb.", "커피를 마셔요.", "keo-pi-reul ma-syeo-yo", "I drink coffee."],
-      ["g4", "에", "Destination, location, or time", "Use 에 for destination, static location, or time.", "학교에 가요.", "hak-kkyo-e ga-yo", "I go to school."],
-      ["g5", "에서", "Place of action", "Use 에서 where an action happens or where movement starts.", "카페에서 공부해요.", "ka-pe-e-seo gong-bu-hae-yo", "I study at a cafe."],
-      ["g6", "이다", "To be", "Attach 이에요/예요 or 입니다 directly to a noun.", "친구예요.", "chin-gu-ye-yo", "He or she is a friend."],
-      ["g7", "있다 / 없다", "Existence and possession", "있다 means exist or have; 없다 means not exist or not have.", "시간이 있어요.", "si-ga-ni i-sseo-yo", "I have time."],
-      ["g8", "안 + verb", "Short negation", "Place 안 before a verb or adjective.", "안 가요.", "an ga-yo", "I do not go."],
-      ["g9", "못 + verb", "Inability", "Use 못 when ability or circumstances prevent an action.", "오늘 못 가요.", "o-neul mot ga-yo", "I cannot go today."],
-      ["g10", "-아/어/해요", "Present tense", "Basic everyday polite present tense.", "밥을 먹어요.", "ba-beul meo-geo-yo", "I eat a meal."],
-      ["g11", "-았/었/했어요", "Past tense", "Marks a completed past action or state.", "어제 공부했어요.", "eo-je gong-bu-hae-sseo-yo", "I studied yesterday."],
-      ["g12", "-(으)ㄹ 거예요", "Future tense", "Expresses a future plan, intention, or prediction.", "내일 갈 거예요.", "nae-il gal geo-ye-yo", "I will go tomorrow."],
-      ["g13", "-(으)세요", "Polite request", "A polite everyday request or command.", "앉으세요.", "an-jeu-se-yo", "Please sit down."],
-      ["g14", "-(으)십시오", "Formal command", "A formal command used in instructions or announcements.", "기다리십시오.", "gi-da-ri-ship-ssi-o", "Please wait."],
-      ["g15", "-(으)ㅂ시다", "Let’s", "Makes a formal-sounding suggestion.", "같이 갑시다.", "ga-chi gap-ssi-da", "Let’s go together."],
-      ["g16", "-(으)ㄹ까요?", "Shall we?", "A soft suggestion or request for an opinion.", "점심 먹을까요?", "jeom-shim meo-geul-kka-yo", "Shall we eat lunch?"],
-      ["g17", "-고", "And / then", "Connects actions or descriptions without expressing cause.", "밥을 먹고 공부해요.", "ba-beul meok-kko gong-bu-hae-yo", "I eat and then study."],
-      ["g18", "-아서/어서", "Because / then", "Connects clauses by reason or natural sequence.", "피곤해서 쉬어요.", "pi-go-nae-seo swi-eo-yo", "I am tired, so I rest."],
-      ["g19", "-지만", "But / although", "Connects contrasting clauses.", "비싸지만 좋아요.", "bi-ssa-ji-man jo-a-yo", "It is expensive, but good."],
-      ["g20", "-(으)면", "If / when", "Expresses a condition.", "시간이 있으면 만나요.", "si-ga-ni i-sseu-myeon man-na-yo", "If you have time, let’s meet."],
-      ["g21", "-(으)려고 하다", "Intention / plan", "Means intend to, plan to, or be about to.", "책을 사려고 해요.", "chae-geul sa-ryeo-go hae-yo", "I plan to buy a book."],
-      ["g22", "-고 싶다", "Want to", "Expresses the speaker’s desire.", "친구를 만나고 싶어요.", "chin-gu-reul man-na-go shi-peo-yo", "I want to meet a friend."],
-      ["g23", "-(으)러 가다/오다", "Purpose of movement", "Go or come in order to do an action.", "운동하러 공원에 가요.", "un-dong-ha-reo gong-wo-ne ga-yo", "I go to the park to exercise."],
-      ["g24", "-아/어 보다", "Try / experience", "Try doing or have the experience of doing.", "한국 음식을 먹어 봤어요.", "han-guk eum-shi-geul meo-geo bwa-sseo-yo", "I have tried Korean food."],
-      ["g25", "-아/어도 되다", "Permission", "Means may, be allowed to, or it is okay to.", "사진 찍어도 돼요?", "sa-jin jji-geo-do dwae-yo", "May I take a photo?"],
-      ["g26", "-(으)면 안 되다", "Prohibition", "Means must not or should not.", "여기서 뛰면 안 돼요.", "yeo-gi-seo ttwi-myeon an dwae-yo", "You must not run here."],
-      ["g27", "-(으)ㄴ 후에", "After", "One action finishes before another starts.", "밥을 먹은 후에 공부해요.", "ba-beul meo-geun hu-e gong-bu-hae-yo", "I study after eating."],
-      ["g28", "-기 전에", "Before", "One action happens before another.", "자기 전에 책을 읽어요.", "ja-gi jeo-ne chae-geul il-geo-yo", "I read a book before sleeping."],
-      ["g29", "-(으)ㄹ 수 있다/없다", "Can / cannot", "Expresses ability or possibility.", "한국어를 읽을 수 있어요.", "han-gu-geo-reul il-geul su i-sseo-yo", "I can read Korean."],
-      ["g30", "-네요", "Realization / admiration", "A soft reaction after noticing something.", "날씨가 좋네요.", "nal-ssi-ga jon-ne-yo", "Oh, the weather is nice."],
-      ["g31", "-군요 / -네요", "Surprise / discovery", "Both express discovery; -네요 is softer.", "정말 빠르군요!", "jeong-mal ppa-reu-gun-yo", "It is really fast, I see!"],
-      ["g32", "-(으)ㄴ/는 것 같다", "I think / it seems", "Softens a guess or impression.", "비가 오는 것 같아요.", "bi-ga o-neun geot ga-ta-yo", "I think it is raining."]];
-      // Question-generation helpers
-      const randomItem=(array)=>array[Math.floor(Math.random()*array.length)];
-      const CONSONANT_ENDING_WORDS=new Set(["학생", "선생님", "의사", "간호사", "회사원", "친구", "어머니", "아버지", "집", "학교", "회사", "병원", "은행", "식당", "카페", "공원", "시장", "도서관", "밥", "물", "빵", "과일", "고기", "김치", "라면", "책", "사진", "카드", "돈"]);
-      const chooseParticle=(word, consonantForm, vowelForm)=>CONSONANT_ENDING_WORDS.has(word)?consonantForm:vowelForm;
-      const createQuestion=(english, romanization, korean)=>( {
-        english, romanization, korean
-      });
-      // Core conjugation lookup tables
-      const PRESENT_CONJUGATIONS= {
-        가다:["가요", "ga-yo"],
-        오다:["와요", "wa-yo"],
-        먹다:["먹어요", "meo-geo-yo"],
-        마시다:["마셔요", "ma-syeo-yo"],
-        보다:["봐요", "bwa-yo"],
-        듣다:["들어요", "deu-reo-yo"],
-        읽다:["읽어요", "il-geo-yo"],
-        쓰다:["써요", "sseo-yo"],
-        말하다:["말해요", "mal-hae-yo"],
-        공부하다:["공부해요", "gong-bu-hae-yo"],
-        일하다:["일해요", "il-hae-yo"],
-        자다:["자요", "ja-yo"],
-        만나다:["만나요", "man-na-yo"],
-        배우다:["배워요", "bae-wo-yo"],
-        만들다:["만들어요", "man-deu-reo-yo"],
-        좋아하다:["좋아해요", "jo-a-hae-yo"]
-      };
-      const PAST_CONJUGATIONS= {
-        가다:["갔어요", "ga-sseo-yo"],
-        오다:["왔어요", "wa-sseo-yo"],
-        먹다:["먹었어요", "meo-geo-sseo-yo"],
-        마시다:["마셨어요", "ma-syeo-sseo-yo"],
-        보다:["봤어요", "bwa-sseo-yo"],
-        듣다:["들었어요", "deu-reo-sseo-yo"],
-        읽다:["읽었어요", "il-geo-sseo-yo"],
-        쓰다:["썼어요", "sseo-sseo-yo"],
-        말하다:["말했어요", "mal-hae-sseo-yo"],
-        공부하다:["공부했어요", "gong-bu-hae-sseo-yo"],
-        일하다:["일했어요", "il-hae-sseo-yo"],
-        자다:["잤어요", "ja-sseo-yo"],
-        만나다:["만났어요", "man-na-sseo-yo"],
-        배우다:["배웠어요", "bae-wo-sseo-yo"],
-        만들다:["만들었어요", "man-deu-reo-sseo-yo"],
-        좋아하다:["좋아했어요", "jo-a-hae-sseo-yo"]
-      };
-      const FUTURE_CONJUGATIONS= {
-        가다:["갈 거예요", "gal geo-ye-yo"],
-        오다:["올 거예요", "ol geo-ye-yo"],
-        먹다:["먹을 거예요", "meo-geul geo-ye-yo"],
-        마시다:["마실 거예요", "ma-shil geo-ye-yo"],
-        보다:["볼 거예요", "bol geo-ye-yo"],
-        듣다:["들을 거예요", "deu-reul geo-ye-yo"],
-        읽다:["읽을 거예요", "il-geul geo-ye-yo"],
-        쓰다:["쓸 거예요", "sseul geo-ye-yo"],
-        말하다:["말할 거예요", "mal-hal geo-ye-yo"],
-        공부하다:["공부할 거예요", "gong-bu-hal geo-ye-yo"],
-        일하다:["일할 거예요", "il-hal geo-ye-yo"],
-        자다:["잘 거예요", "jal geo-ye-yo"],
-        만나다:["만날 거예요", "man-nal geo-ye-yo"],
-        배우다:["배울 거예요", "bae-ul geo-ye-yo"],
-        만들다:["만들 거예요", "man-deul geo-ye-yo"],
-        좋아하다:["좋아할 거예요", "jo-a-hal geo-ye-yo"]
-      };
-      // Tuple aliases: p=person, pl=place, f=food, o=object, t=time, a=adjective, v=verb
-      // Build one randomized trilingual question for a grammar point
-      function generateQuestion(id) {
-        let p=randomItem(VOCABULARY_BANK.people),
-        pl=randomItem(VOCABULARY_BANK.places),
-        f=randomItem(VOCABULARY_BANK.food),
-        o=randomItem(VOCABULARY_BANK.objects),
-        t=randomItem(VOCABULARY_BANK.time),
-        a=randomItem(VOCABULARY_BANK.adjectives),
-        v=randomItem(VOCABULARY_BANK.verbs),
-        pn=chooseParticle(p[0],
-        "은", "는"),
-        pg=chooseParticle(p[0],
-        "이", "가"),
-        fo=chooseParticle(f[0],
-        "을", "를"),
-        rn=pn==="은"?"eun":"neun",
-        rg=pg==="이"?"i":"ga",
-        fro=fo==="을"?"eul":"reul",
-        vp=PRESENT_CONJUGATIONS[v[0]],
-        va=PAST_CONJUGATIONS[v[0]],
-        vf=FUTURE_CONJUGATIONS[v[0]];
-        let M= {
-          g1:()=>createQuestion(`As for the ${p[2]}, he or she is at the ${pl[2]}.`, `${p[1]}-${rn} ${pl[1]}-e i-sseo-yo`, `${p[0]}${pn} ${pl[0]}에 있어요.`),
-          g2:()=>createQuestion(`The ${p[2]} came today.`, `${p[1]}-${rg} o-neul wa-sseo-yo`, `${p[0]}${pg} 오늘 왔어요.`),
-          g3:()=>createQuestion(`I ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${vp[1]}`, `${f[0]}${fo} ${vp[0]}.`),
-          g4:()=>createQuestion(`I go to the ${pl[2]} ${t[2]}.`, `${t[1]} ${pl[1]}-e ga-yo`, `${t[0]} ${pl[0]}에 가요.`),
-          g5:()=>createQuestion(`I study at the ${pl[2]}.`, `${pl[1]}-e-seo gong-bu-hae-yo`, `${pl[0]}에서 공부해요.`),
-          g6:()=>createQuestion(`He or she is a ${p[2]}.`, `${p[1]}-${chooseParticle(p[0],"i-e-yo","ye-yo")}`, `${p[0]}${chooseParticle(p[0],"이에요","예요")}.`),
-          g7:()=>createQuestion(`There is ${f[2]} at the ${pl[2]}.`, `${pl[1]}-e ${f[1]}-${chooseParticle(f[0],"i","ga")} i-sseo-yo`, `${pl[0]}에 ${f[0]}${chooseParticle(f[0],"이","가")} 있어요.`),
-          g8:()=>createQuestion(`I do not ${v[2]} ${t[2]}.`, `${t[1]} an ${vp[1]}`, `${t[0]} 안 ${vp[0]}.`),
-          g9:()=>createQuestion(`I cannot ${v[2]} ${t[2]}.`, `${t[1]} mot ${vp[1]}`, `${t[0]} 못 ${vp[0]}.`),
-          g10:()=>createQuestion(`I ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${vp[1]}`, `${f[0]}${fo} ${vp[0]}.`),
-          g11:()=>createQuestion(`I did ${v[2]} ${t[2]}.`, `${t[1]} ${va[1]}`, `${t[0]} ${va[0]}.`),
-          g12:()=>createQuestion(`I will ${v[2]} ${t[2]}.`, `${t[1]} ${vf[1]}`, `${t[0]} ${vf[0]}.`),
-          g13:()=>createQuestion(`Please ${v[2]}.`, `${vp[1].replace(/-yo$/,"-se-yo")}`, `${vp[0].replace("요","세요")}.`),
-          g14:()=>createQuestion(`Please ${v[2]}.`, `${vp[1].replace(/-yo$/,"-ship-ssi-o")}`, `${vp[0].replace("요","십시오")}.`),
-          g15:()=>createQuestion(`Let's ${v[2]} together.`, `ga-chi ${vf[1].split(" ")[0]}-p-ssi-da`, `같이 ${vf[0].replace(" 거예요","ㅂ시다")}.`),
-          g16:()=>createQuestion(`Shall we ${v[2]} together?`, `ga-chi ${vf[1].replace(" geo-ye-yo","-kka-yo")}`, `같이 ${vf[0].replace(" 거예요","까요")}?`),
-          g17:()=>createQuestion(`I ${v[2]} and then go to the ${pl[2]}.`, `${v[1].replace(/-da$/,"-go")} ${pl[1]}-e ga-yo`, `${v[0].slice(0,-1)}고 ${pl[0]}에 가요.`),
-          g18:()=>createQuestion(`Because it is ${a[2]}, I rest.`, `${a[1].replace(/-da$/,"-seo")} swi-eo-yo`, `${a[0].slice(0,-1)}서 쉬어요.`),
-          g19:()=>createQuestion(`It is ${a[2]}, but interesting.`, `${a[1].replace(/-da$/,"-ji-man")} jae-mi-i-sseo-yo`, `${a[0].slice(0,-1)}지만 재미있어요.`),
-          g20:()=>createQuestion(`If I have ${o[2]}, I will go to the ${pl[2]}.`, `${o[1]}-${chooseParticle(o[0],"i","ga")} i-sseu-myeon ${pl[1]}-e gal geo-ye-yo`, `${o[0]}${chooseParticle(o[0],"이","가")} 있으면 ${pl[0]}에 갈 거예요.`),
-          g21:()=>createQuestion(`I plan to ${v[2]} ${t[2]}.`, `${t[1]} ${vf[1].replace(" geo-ye-yo","-ryeo-go hae-yo")}`, `${t[0]} ${vf[0].replace(" 거예요","려고 해요")}.`),
-          g22:()=>createQuestion(`I want to ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${v[1].replace(/-da$/,"-go shi-peo-yo")}`, `${f[0]}${fo} ${v[0].slice(0,-1)}고 싶어요.`),
-          g23:()=>createQuestion(`I go to the ${pl[2]} in order to ${v[2]}.`, `${v[1].replace(/-da$/,"-reo")} ${pl[1]}-e ga-yo`, `${v[0].slice(0,-1)}러 ${pl[0]}에 가요.`),
-          g24:()=>createQuestion(`I have tried ${v[2]}ing ${f[2]}.`, `${f[1]}-${fro} ${vp[1].replace(/-yo$/," bwa-sseo-yo")}`, `${f[0]}${fo} ${vp[0].replace("요"," 봤어요")}.`),
-          g25:()=>createQuestion(`May I ${v[2]} here?`, `yeo-gi-seo ${vp[1].replace(/-yo$/,"-do dwae-yo")}`, `여기서 ${vp[0].replace("요","도 돼요")}?`),
-          g26:()=>createQuestion(`You must not ${v[2]} here.`, `yeo-gi-seo ${vf[1].split(" ")[0]}-myeon an dwae-yo`, `여기서 ${vf[0].replace(" 거예요","면 안 돼요")}.`),
-          g27:()=>createQuestion(`I go to the ${pl[2]} after ${v[2]}ing.`, `${va[1].replace(/-sseo-yo$/,"-eun hu-e")} ${pl[1]}-e ga-yo`, `${va[0].replace("었어요","은 후에").replace("았어요","ㄴ 후에").replace("했어요","한 후에")} ${pl[0]}에 가요.`),
-          g28:()=>createQuestion(`I ${v[2]} before going to the ${pl[2]}.`, `${pl[1]}-e ga-gi jeo-ne ${vp[1]}`, `${pl[0]}에 가기 전에 ${vp[0]}.`),
-          g29:()=>createQuestion(`I can ${v[2]} ${f[2]}.`, `${f[1]}-${fro} ${vf[1].replace(" geo-ye-yo"," su i-sseo-yo")}`, `${f[0]}${fo} ${vf[0].replace(" 거예요"," 수 있어요")}.`),
-          g30:()=>createQuestion(`Oh, the ${f[2]} is delicious.`, `${f[1]}-${chooseParticle(f[0],"i","ga")} ma-shin-ne-yo`, `${f[0]}${chooseParticle(f[0],"이","가")} 맛있네요.`),
-          g31:()=>createQuestion(`Wow, it is really ${a[2]}!`, `jeong-mal ${a[1].replace(/-da$/,"-gun-yo")}`, `정말 ${a[0].slice(0,-1)}군요!`),
-          g32:()=>createQuestion(`I think the ${p[2]} is at the ${pl[2]}.`, `${p[1]}-${rg} ${pl[1]}-e in-neun geot ga-ta-yo`, `${p[0]}${pg} ${pl[0]}에 있는 것 같아요.`)
-        };
-        return M[id]()
+        return text.split(" ").map(word => {
+          let parts = [];
+          let currentSyllables = [];
+          for (let i = 0; i < word.length; i++) {
+            let charCode = word.charCodeAt(i);
+            if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+              let offset = charCode - 0xAC00;
+              let jongIndex = offset % 28;
+              let jungIndex = Math.floor(offset / 28) % 21;
+              let choIndex = Math.floor(offset / (28 * 21));
+              currentSyllables.push(CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]);
+            } else {
+              if (currentSyllables.length > 0) {
+                parts.push(currentSyllables.join("-"));
+                currentSyllables = [];
+              }
+              parts.push(word[i]);
+            }
+          }
+          if (currentSyllables.length > 0) {
+            parts.push(currentSyllables.join("-"));
+          }
+          return parts.join("");
+        }).join(" ");
       }
-      // Quiz state and answer utilities
-      const exerciseStates= {
+
+      // Compact Vocabulary Bank without hardcoded romanizations
+      const VOCABULARY_BANK = {
+        people: [["학생", "student"], ["선생님", "teacher"], ["의사", "doctor"], ["간호사", "nurse"], ["회사원", "office worker"], ["친구", "friend"], ["어머니", "mother"], ["아버지", "father"]],
+        places: [["학교", "school"], ["회사", "company"], ["병원", "hospital"], ["은행", "bank"], ["식당", "restaurant"], ["카페", "cafe"], ["공원", "park"], ["시장", "market"], ["도서관", "library"], ["집", "home"]],
+        food: [["밥", "a meal"], ["물", "water"], ["커피", "coffee"], ["차", "tea"], ["우유", "milk"], ["빵", "bread"], ["과일", "fruit"], ["사과", "an apple"], ["고기", "meat"], ["김치", "kimchi"], ["라면", "instant noodles"]],
+        objects: [["책", "a book"], ["사진", "a photo"], ["카드", "a card"], ["돈", "money"], ["자동차", "a car"], ["자전거", "a bicycle"]],
+        time: [["오늘", "today"], ["내일", "tomorrow"], ["어제", "yesterday"], ["아침", "in the morning"], ["점심", "at lunch"], ["저녁", "in the evening"], ["밤", "at night"], ["지금", "now"]],
+        adjectives: [["좋다", "good"], ["나쁘다", "bad"], ["크다", "big"], ["작다", "small"], ["많다", "many"], ["빠르다", "fast"], ["느리다", "slow"], ["쉽다", "easy"], ["어렵다", "difficult"], ["예쁘다", "pretty"], ["맛있다", "delicious"], ["재미있다", "interesting"]],
+        verbs: [["가다", "go"], ["오다", "come"], ["먹다", "eat"], ["마시다", "drink"], ["보다", "watch"], ["듣다", "listen"], ["읽다", "read"], ["쓰다", "write"], ["말하다", "speak"], ["공부하다", "study"], ["일하다", "work"], ["자다", "sleep"], ["만나다", "meet"], ["배우다", "learn"], ["만들다", "make"], ["좋아하다", "like"]]
       };
-      const grammarGrid=document.getElementById("grammarGrid");
-      const tocGrid=document.getElementById("tocGrid");
-      const sections=document.getElementById("sections");
-      const themeToggle=document.getElementById("themeToggle");
+
+      const GRAMMAR_POINTS = [
+        ["g1", "은/는", "Topic particle", "Frames the sentence topic or contrasts it with another topic.", "Consonant (batchim) ➔ 은 (학생은). Vowel ➔ 는 (학교는).", [
+          ["저는 학생이에요.", "I am a student."],
+          ["선생님은 병원에 있어요.", "As for the teacher, he or she is at the hospital."],
+          ["사과는 맛있어요.", "As for the apple, it is delicious."]
+        ]],
+        ["g2", "이/가", "Subject particle", "Highlights or identifies the grammatical subject, often as new information.", "Consonant ➔ 이 (학생이). Vowel ➔ 가 (학교가).", [
+          ["학생이 왔어요.", "The student came."],
+          ["학교가 커요.", "The school is big."],
+          ["친구가 도서관에 있어요.", "The friend is at the library."]
+        ]],
+        ["g3", "을/를", "Object particle", "Marks the noun directly affected by an action verb.", "Consonant ➔ 을 (책을). Vowel ➔ 를 (커피를).", [
+          ["저는 책을 읽어요.", "I read a book."],
+          ["친구를 만나요.", "I meet a friend."],
+          ["밥을 먹어요.", "I eat a meal."]
+        ]],
+        ["g4", "에", "Destination or time", "Marks a destination, a static location, or a specific time. Does not mark the place of an action.", "Attaches directly to the noun regardless of batchim (학교에, 병원에).", [
+          ["학교에 가요.", "I go to school."],
+          ["집에 있어요.", "I am at home."],
+          ["아침에 운동해요.", "I exercise in the morning."]
+        ]],
+        ["g5", "에서", "Place of action", "Marks where an action occurs or the place from which movement begins.", "Attaches directly to the noun regardless of batchim (학교에서, 병원에서).", [
+          ["카페에서 공부해요.", "I study at a cafe."],
+          ["식당에서 밥을 먹어요.", "I eat a meal at a restaurant."],
+          ["도서관에서 책을 읽어요.", "I read a book at the library."]
+        ]],
+        ["g6", "이다", "To be", "Copular endings attach directly to nouns to equate the subject with a noun.", "Consonant ➔ 이에요 (학생이에요). Vowel ➔ 예요 (학교예요). Formal is always 입니다.", [
+          ["저는 학생이에요.", "I am a student."],
+          ["여기는 학교예요.", "Here is the school."],
+          ["그분은 선생님입니다.", "That person is a teacher."]
+        ]],
+        ["g7", "있다 / 없다", "Existence and possession", "Expresses existence, location, availability, or possession depending on context.", "Particles before it follow batchim rules (이 for consonant, 가 for vowel). 있다/없다 themselves don't change based on previous words.", [
+          ["시간이 있어요.", "I have time."],
+          ["사과가 없어요.", "There are no apples."],
+          ["집에 고양이가 있어요.", "There is a cat at home."]
+        ]],
+        ["g8", "안 + verb", "Short negation", "Neutral short negation. Placed directly before a verb or adjective.", "Batchim does not affect this rule. It is simply placed before the word.", [
+          ["오늘 안 가요.", "I do not go today."],
+          ["밥을 안 먹어요.", "I do not eat the meal."],
+          ["날씨가 안 추워요.", "The weather is not cold."]
+        ]],
+        ["g9", "못 + verb", "Inability", "Expresses inability caused by skill, circumstances, or external limits.", "Batchim does not affect this rule. It is simply placed before the verb.", [
+          ["오늘 못 가요.", "I cannot go today."],
+          ["매운 음식을 못 먹어요.", "I cannot eat spicy food."],
+          ["어제 못 잤어요.", "I could not sleep yesterday."]
+        ]],
+        ["g10", "-아/어/해요", "Present tense", "The standard polite-casual present ending used in everyday conversation.", "Depends on the final vowel of the stem, not batchim. ㅏ/ㅗ ➔ 아요, others ➔ 어요, 하 ➔ 해요.", [
+          ["밥을 먹어요.", "I eat a meal."],
+          ["학교에 가요.", "I go to school."],
+          ["도서관에서 공부해요.", "I study at the library."]
+        ]],
+        ["g11", "-았/었/했어요", "Past tense", "Marks a past action, completed event, or past state.", "Depends on the final vowel of the stem, not batchim. ㅏ/ㅗ ➔ 았어요, others ➔ 었어요, 하 ➔ 했어요.", [
+          ["어제 책을 읽었어요.", "I read a book yesterday."],
+          ["친구를 만났어요.", "I met a friend."],
+          ["한국어를 공부했어요.", "I studied Korean."]
+        ]],
+        ["g12", "-(으)ㄹ 거예요", "Future tense", "Expresses a plan, intention, expectation, or prediction.", "Consonant ➔ -을 거예요. Vowel ➔ -ㄹ 거예요. ㄹ-batchim ➔ -거예요.", [
+          ["내일 책을 읽을 거예요.", "I will read a book tomorrow."],
+          ["학교에 갈 거예요.", "I will go to school."],
+          ["요리를 만들 거예요.", "I will make a dish."]
+        ]],
+        ["g13", "-(으)세요", "Polite request", "A polite everyday request or instruction. Can also honor the subject.", "Consonant ➔ -으세요. Vowel ➔ -세요. ㄹ-batchim ➔ -세요 (ㄹ drops).", [
+          ["책을 읽으세요.", "Please read the book."],
+          ["여기에 앉으세요.", "Please sit here."],
+          ["빨리 만드세요.", "Please make it quickly."]
+        ]],
+        ["g14", "-(으)십시오", "Formal command", "A formal directive common in notices, announcements, tests, and official instructions.", "Consonant ➔ -으십시오. Vowel ➔ -십시오. ㄹ-batchim ➔ -십시오 (ㄹ drops).", [
+          ["잠시 기다리십시오.", "Please wait a moment."],
+          ["여기로 가십시오.", "Please go this way."],
+          ["조용히 하십시오.", "Please be quiet."]
+        ]],
+        ["g15", "-(으)ㅂ시다", "Let’s", "A formal or neutral suggestion meaning 'let us'.", "Consonant ➔ -읍시다. Vowel ➔ -ㅂ시다. ㄹ-batchim ➔ -ㅂ시다 (ㄹ drops).", [
+          ["같이 점심을 먹읍시다.", "Let's eat lunch together."],
+          ["공원에 갑시다.", "Let's go to the park."],
+          ["케이크를 만듭시다.", "Let's make a cake."]
+        ]],
+        ["g16", "-(으)ㄹ까요?", "Shall we?", "Invites the listener’s opinion, proposes a joint action, or offers to do something.", "Consonant ➔ -을까요?. Vowel ➔ -ㄹ까요?. ㄹ-batchim ➔ -까요?.", [
+          ["같이 밥을 먹을까요?", "Shall we eat a meal together?"],
+          ["어디로 갈까요?", "Where shall we go?"],
+          ["제가 만들까요?", "Shall I make it?"]
+        ]],
+        ["g17", "-고", "And / then", "Links equal actions or descriptions without necessarily showing cause.", "Attaches directly to the stem regardless of batchim (먹고, 가고, 만들고).", [
+          ["밥을 먹고 커피를 마셔요.", "I eat a meal and drink coffee."],
+          ["친구를 만나고 집에 가요.", "I meet a friend and go home."],
+          ["싸고 맛있어요.", "It is cheap and delicious."]
+        ]],
+        ["g18", "-아서/어서", "Because / then", "Shows a reason or a natural sequence. Cannot be used with commands.", "Depends on vowel harmony, not batchim. ㅏ/ㅗ ➔ 아서, others ➔ 어서.", [
+          ["피곤해서 쉬어요.", "I am tired, so I rest."],
+          ["배가 아파서 병원에 가요.", "My stomach hurts, so I go to the hospital."],
+          ["비가 와서 집에 있어요.", "It rains, so I stay at home."]
+        ]],
+        ["g19", "-지만", "But / although", "Introduces a contrast while acknowledging the first statement.", "Attaches directly to the stem regardless of batchim (먹지만, 가지만, 만들지만).", [
+          ["한국어는 어렵지만 재미있어요.", "Korean is difficult but interesting."],
+          ["비싸지만 샀어요.", "It was expensive, but I bought it."],
+          ["밥을 먹었지만 배가 고파요.", "I ate a meal, but I am hungry."]
+        ]],
+        ["g20", "-(으)면", "If / when", "Expresses a condition or a repeated 'when' relationship.", "Consonant ➔ -으면. Vowel ➔ -면. ㄹ-batchim ➔ -면.", [
+          ["비가 오면 안 갈 거예요.", "If it rains, I will not go."],
+          ["돈이 많으면 집을 살 거예요.", "If I have a lot of money, I will buy a house."],
+          ["시간이 나면 연락하세요.", "If you get time, please contact me."]
+        ]],
+        ["g21", "-(으)려고 하다", "Intention / plan", "Shows an intention, plan, or action that is about to begin.", "Consonant ➔ -으려고 하다. Vowel ➔ -려고 하다. ㄹ-batchim ➔ -려고 하다.", [
+          ["책을 읽으려고 해요.", "I plan to read a book."],
+          ["친구를 만나려고 해요.", "I intend to meet a friend."],
+          ["케이크를 만들려고 해요.", "I plan to make a cake."]
+        ]],
+        ["g22", "-고 싶다", "Want to", "Expresses the speaker’s own desire to do an action.", "Attaches directly to the stem regardless of batchim (먹고 싶다, 가고 싶다).", [
+          ["한국에 가고 싶어요.", "I want to go to Korea."],
+          ["불고기를 먹고 싶어요.", "I want to eat bulgogi."],
+          ["영화를 보고 싶어요.", "I want to watch a movie."]
+        ]],
+        ["g23", "-(으)러 가다/오다", "Purpose of movement", "States the purpose of movement. Used with movement verbs like 가다/오다.", "Consonant ➔ -으러. Vowel ➔ -러. ㄹ-batchim ➔ -러.", [
+          ["점심을 먹으러 가요.", "I go in order to eat lunch."],
+          ["운동하러 공원에 가요.", "I go to the park to exercise."],
+          ["친구를 만나러 왔어요.", "I came to meet a friend."]
+        ]],
+        ["g24", "-아/어 보다", "Try / experience", "Means to try an action or to have experienced it.", "Depends on vowel harmony, not batchim. ㅏ/ㅗ ➔ 아 보다, others ➔ 어 보다.", [
+          ["이 옷을 입어 보세요.", "Please try putting on these clothes."],
+          ["제주도에 가 봤어요.", "I have been to Jeju Island."],
+          ["한국 음식을 먹어 봤어요.", "I have tried eating Korean food."]
+        ]],
+        ["g25", "-아/어도 되다", "Permission", "Asks for or grants permission; literally means that doing the action is okay.", "Depends on vowel harmony, not batchim. ㅏ/ㅗ ➔ 아도 되다, others ➔ 어도 되다.", [
+          ["여기에 앉아도 돼요?", "May I sit here?"],
+          ["사진을 찍어도 돼요?", "May I take a photo?"],
+          ["지금 집에 가도 돼요.", "You may go home now."]
+        ]],
+        ["g26", "-(으)면 안 되다", "Prohibition", "Expresses prohibition or strong advice not to do something.", "Consonant ➔ -으면 안 되다. Vowel ➔ -면 안 되다. ㄹ-batchim ➔ -면 안 되다.", [
+          ["여기에서 사진을 찍으면 안 돼요.", "You must not take photos here."],
+          ["지금 자면 안 돼요.", "You should not sleep now."],
+          ["떠들면 안 돼요.", "You must not make noise."]
+        ]],
+        ["g27", "-(으)ㄴ 후에", "After", "Indicates that the first action is completed before the second action begins.", "Consonant ➔ -은 후에. Vowel ➔ -ㄴ 후에. ㄹ-batchim ➔ -ㄴ 후에 (ㄹ drops).", [
+          ["밥을 먹은 후에 약을 드세요.", "Please take medicine after eating a meal."],
+          ["숙제를 한 후에 게임을 해요.", "I play games after doing homework."],
+          ["손을 씻은 후에 밥을 먹어요.", "I eat a meal after washing my hands."]
+        ]],
+        ["g28", "-기 전에", "Before", "The following action happens before the action nominalized with -기.", "Attaches directly to the stem regardless of batchim (먹기 전에, 가기 전에).", [
+          ["밥을 먹기 전에 손을 씻어요.", "I wash my hands before eating a meal."],
+          ["자기 전에 책을 읽어요.", "I read a book before sleeping."],
+          ["한국에 오기 전에 한국어를 공부했어요.", "I studied Korean before coming to Korea."]
+        ]],
+        ["g29", "-(으)ㄹ 수 있다/없다", "Can / cannot", "Expresses ability or possibility to do an action.", "Consonant ➔ -을 수 있다. Vowel ➔ -ㄹ 수 있다. ㄹ-batchim ➔ -수 있다.", [
+          ["저는 매운 음식을 먹을 수 있어요.", "I can eat spicy food."],
+          ["수영을 할 수 있어요.", "I can swim."],
+          ["운전을 할 수 없어요.", "I cannot drive."]
+        ]],
+        ["g30", "-네요", "Realization / admiration", "A soft spontaneous reaction to newly noticed information.", "Attaches directly to the stem. If the stem ends in ㄹ-batchim, the ㄹ drops (만드네요).", [
+          ["날씨가 정말 좋네요.", "The weather is really nice."],
+          ["한국말을 정말 잘하시네요.", "You speak Korean really well."],
+          ["음식이 참 맛있네요.", "The food is quite delicious."]
+        ]],
+        ["g31", "-군요 / -네요", "Surprise / discovery", "Shows discovery. -군요 is explicit, -네요 is softer. Verbs use -는군요.", "Verbs take -는군요 (ㄹ-batchim drops). Adjectives take -군요 directly.", [
+          ["이 집은 정말 크군요!", "This house is really big!"],
+          ["밥을 많이 먹는군요.", "You eat a lot of food, I see."],
+          ["시간이 참 빠르군요.", "Time is really fast."]
+        ]],
+        ["g32", "-(으)ㄴ/는 것 같다", "I think / it seems", "Softens a guess or uncertain opinion rather than stating it as a fact.", "Action verbs ➔ -는 것 같다 (ㄹ drops). Adjectives: Consonant ➔ -은 것 같다, Vowel ➔ -ㄴ 것 같다.", [
+          ["비가 오는 것 같아요.", "I think it is raining."],
+          ["그 영화는 재미있는 것 같아요.", "I think that movie is interesting."],
+          ["이 옷이 조금 작은 것 같아요.", "I think these clothes are a bit small."]
+        ]]
+      ];
+
+      const PRESENT_CONJUGATIONS = { 가다: "가요", 오다: "와요", 먹다: "먹어요", 마시다: "마셔요", 보다: "봐요", 듣다: "들어요", 읽다: "읽어요", 쓰다: "써요", 말하다: "말해요", 공부하다: "공부해요", 일하다: "일해요", 자다: "자요", 만나다: "만나요", 배우다: "배워요", 만들다: "만들어요", 좋아하다: "좋아해요" };
+      const PAST_CONJUGATIONS = { 가다: "갔어요", 오다: "왔어요", 먹다: "먹었어요", 마시다: "마셨어요", 보다: "봤어요", 듣다: "들었어요", 읽다: "읽었어요", 쓰다: "썼어요", 말하다: "말했어요", 공부하다: "공부했어요", 일하다: "일했어요", 자다: "잤어요", 만나다: "만났어요", 배우다: "배웠어요", 만들다: "만들었어요", 좋아하다: "좋아했어요" };
+      const FUTURE_CONJUGATIONS = { 가다: "갈 거예요", 오다: "올 거예요", 먹다: "먹을 거예요", 마시다: "마실 거예요", 보다: "볼 거예요", 듣다: "들을 거예요", 읽다: "읽을 거예요", 쓰다: "쓸 거예요", 말하다: "말할 거예요", 공부하다: "공부할 거예요", 일하다: "일할 거예요", 자다: "잘 거예요", 만나다: "만날 거예요", 배우다: "배울 거예요", 만들다: "만들 거예요", 좋아하다: "좋아할 거예요" };
+
+      // Helper for question generation
+      const randomItem = (array) => array[Math.floor(Math.random() * array.length)];
+      const CONSONANT_ENDING_WORDS = new Set(["학생", "선생님", "의사", "간호사", "회사원", "친구", "어머니", "아버지", "집", "학교", "회사", "병원", "은행", "식당", "카페", "공원", "시장", "도서관", "밥", "물", "빵", "과일", "고기", "김치", "라면", "책", "사진", "카드", "돈"]);
+      const chooseParticle = (word, consonantForm, vowelForm) => CONSONANT_ENDING_WORDS.has(word) ? consonantForm : vowelForm;
+      
+      const createQuestion = (english, romanization, korean) => ({ english, romanization, korean });
+
+      function generateQuestion(id) {
+        let p = randomItem(VOCABULARY_BANK.people),
+            pl = randomItem(VOCABULARY_BANK.places),
+            f = randomItem(VOCABULARY_BANK.food),
+            o = randomItem(VOCABULARY_BANK.objects),
+            t = randomItem(VOCABULARY_BANK.time),
+            a = randomItem(VOCABULARY_BANK.adjectives),
+            v = randomItem(VOCABULARY_BANK.verbs);
+
+        let pn = chooseParticle(p[0], "은", "는"),
+            pg = chooseParticle(p[0], "이", "가"),
+            fo = chooseParticle(f[0], "을", "를");
+
+        let vp = PRESENT_CONJUGATIONS[v[0]],
+            va = PAST_CONJUGATIONS[v[0]],
+            vf = FUTURE_CONJUGATIONS[v[0]];
+
+        let M = {
+          g1: () => [`As for the ${p[1]}, he or she is at the ${pl[1]}.`, `${p[0]}${pn} ${pl[0]}에 있어요.`],
+          g2: () => [`The ${p[1]} came today.`, `${p[0]}${pg} 오늘 왔어요.`],
+          g3: () => [`I ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${vp}.`],
+          g4: () => [`I go to the ${pl[1]} ${t[1]}.`, `${t[0]} ${pl[0]}에 가요.`],
+          g5: () => [`I study at the ${pl[1]}.`, `${pl[0]}에서 공부해요.`],
+          g6: () => [`He or she is a ${p[1]}.`, `${p[0]}${chooseParticle(p[0], "이에요", "예요")}.`],
+          g7: () => [`There is ${f[1]} at the ${pl[1]}.`, `${pl[0]}에 ${f[0]}${chooseParticle(f[0], "이", "가")} 있어요.`],
+          g8: () => [`I do not ${v[1]} ${t[1]}.`, `${t[0]} 안 ${vp}.`],
+          g9: () => [`I cannot ${v[1]} ${t[1]}.`, `${t[0]} 못 ${vp}.`],
+          g10: () => [`I ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${vp}.`],
+          g11: () => [`I did ${v[1]} ${t[1]}.`, `${t[0]} ${va}.`],
+          g12: () => [`I will ${v[1]} ${t[1]}.`, `${t[0]} ${vf}.`],
+          g13: () => [`Please ${v[1]}.`, `${vp.replace("요", "세요")}.`],
+          g14: () => [`Please ${v[1]}.`, `${vp.replace("요", "십시오")}.`],
+          g15: () => [`Let's ${v[1]} together.`, `같이 ${vf.replace(" 거예요", "ㅂ시다")}.`],
+          g16: () => [`Shall we ${v[1]} together?`, `같이 ${vf.replace(" 거예요", "까요")}?`],
+          g17: () => [`I ${v[1]} and then go to the ${pl[1]}.`, `${v[0].slice(0, -1)}고 ${pl[0]}에 가요.`],
+          g18: () => [`Because it is ${a[1]}, I rest.`, `${a[0].slice(0, -1)}서 쉬어요.`],
+          g19: () => [`It is ${a[1]}, but interesting.`, `${a[0].slice(0, -1)}지만 재미있어요.`],
+          g20: () => [`If I have ${o[1]}, I will go to the ${pl[1]}.`, `${o[0]}${chooseParticle(o[0], "이", "가")} 있으면 ${pl[0]}에 갈 거예요.`],
+          g21: () => [`I plan to ${v[1]} ${t[1]}.`, `${t[0]} ${vf.replace(" 거예요", "려고 해요")}.`],
+          g22: () => [`I want to ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${v[0].slice(0, -1)}고 싶어요.`],
+          g23: () => [`I go to the ${pl[1]} in order to ${v[1]}.`, `${v[0].slice(0, -1)}러 ${pl[0]}에 가요.`],
+          g24: () => [`I have tried ${v[1]}ing ${f[1]}.`, `${f[0]}${fo} ${vp.replace("요", " 봤어요")}.`],
+          g25: () => [`May I ${v[1]} here?`, `여기서 ${vp.replace("요", "도 돼요")}?`],
+          g26: () => [`You must not ${v[1]} here.`, `여기서 ${vf.replace(" 거예요", "면 안 돼요")}.`],
+          g27: () => [`I go to the ${pl[1]} after ${v[1]}ing.`, `${va.replace("었어요", "은 후에").replace("았어요", "ㄴ 후에").replace("했어요", "한 후에")} ${pl[0]}에 가요.`],
+          g28: () => [`I ${v[1]} before going to the ${pl[1]}.`, `${pl[0]}에 가기 전에 ${vp}.`],
+          g29: () => [`I can ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${vf.replace(" 거예요", " 수 있어요")}.`],
+          g30: () => [`Oh, the ${f[1]} is delicious.`, `${f[0]}${chooseParticle(f[0], "이", "가")} 맛있네요.`],
+          g31: () => [`Wow, it is really ${a[1]}!`, `정말 ${a[0].slice(0, -1)}군요!`],
+          g32: () => [`I think the ${p[1]} is at the ${pl[1]}.`, `${p[0]}${pg} ${pl[0]}에 있는 것 같아요.`]
+        };
+        
+        let [english, korean] = M[id]();
+        return createQuestion(english, romanizeKorean(korean), korean);
+      }
+
+      function buildGrammarQuestions(id, count) {
+        const result = [];
+        if (id === "all-grammar") {
+          const points = GRAMMAR_POINTS.map(x => x[0]);
+          while (result.length < count) {
+            const batch = [...points].sort(() => Math.random() - 0.5);
+            if (result.length > 0 && batch[0] === result[result.length - 1].gId) {
+              if (batch.length > 1) {
+                [batch[0], batch[1]] = [batch[1], batch[0]];
+              }
+            }
+            result.push(...batch.map(gId => {
+              const q = generateQuestion(gId);
+              q.gId = gId;
+              return q;
+            }));
+          }
+        } else {
+          while (result.length < count) {
+            result.push(generateQuestion(id));
+          }
+        }
+        return result.slice(0, count);
+      }
+
+      const exerciseStates = {};
+      const grammarGrid = document.getElementById("grammarGrid");
+      const tocGrid = document.getElementById("tocGrid");
+      const sections = document.getElementById("sections");
+      const themeToggle = document.getElementById("themeToggle");
 
       function escapeHtml(s) {
-        return String(s??"").replace(/[&<>"']/g, m=>( {
-          "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-        }
-        [m]))
+        return String(s??"").replace(/[&<>"']/g, m=>({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[m]));
       }
+
       function normalizeAnswer(s, m) {
-        s=String(s??"").trim().toLowerCase();
-        return m==="korean"?s.replace(/\s+/g, "").replace(/[.?!]/g, ""):s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim()
+        s = String(s ?? "").trim().toLowerCase();
+        return m === "korean" ? s.replace(/\s+/g, "").replace(/[.?!]/g, "") : s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim();
       }
+
       function feedbackMarkup(q) {
-        return `<b>${escapeHtml(q.english)}</b><br><span class="roman">${escapeHtml(q.romanization)}</span><br>${escapeHtml(q.korean)}`
+        return `<b>${escapeHtml(q.english)}</b><br><span class="roman">${escapeHtml(q.romanization)}</span><br>${escapeHtml(q.korean)}`;
       }
-      // Rendering
+
       function renderApp() {
-        grammarGrid.innerHTML=GRAMMAR_POINTS.map(x=>`<article class="grammar-card"><h3>${x[1]} · ${x[2]}</h3><p>${x[3]}</p><div class="example"><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</div></article>`).join("");
-        tocGrid.innerHTML=`<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a>`+GRAMMAR_POINTS.map(x=>`<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span></a>`).join("");
-        sections.innerHTML=GRAMMAR_POINTS.map((x, i)=>`<details class="section" id="${x[0]}" ${i===0?"open":""}><summary><span>${x[1]} · ${x[2]}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">Rule</span><h3>How it works</h3><p>${x[3]}</p></article><article class="info-card"><span class="rule-label">Model</span><h3>Model example</h3><b>${x[6]}</b><br><span class="roman">${x[5]}</span><br>${x[4]}</article></div><div class="exercise-grid">${exerciseTemplate(x[0],"typed","Typed translation")}${exerciseTemplate(x[0],"mc","Multiple choice translation")}</div></div></details>`).join("");
-        GRAMMAR_POINTS.forEach(x=>["typed", "mc"].forEach(t=>initializeExercise(x[0],
-        t)))
+        grammarGrid.innerHTML = GRAMMAR_POINTS.map(x => `<article class="grammar-card"><h3>${x[1]} · ${x[2]}</h3><p>${x[3]}</p><div class="example"><b>${escapeHtml(x[5][0][1])}</b><br><span class="roman">${romanizeKorean(x[5][0][0])}</span><br>${escapeHtml(x[5][0][0])}</div></article>`).join("");
+        
+        tocGrid.innerHTML = `<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a><a class="toc-link" href="#batchim-guide"><span>Batchim Guide</span></a><a class="toc-link" href="#all-grammar"><span>All Grammar</span><small>Comprehensive</small></a>` + GRAMMAR_POINTS.map(x => `<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span></a>`).join("");
+        
+        const allGrammarHtml = `<details class="section" id="all-grammar" open><summary><span>All Grammar Points Together</span></summary><div class="section-body"><div class="section-intro"><article class="info-card" style="grid-column: 1 / -1;"><span class="rule-label">Review</span><h3>Comprehensive Test</h3><p>This section automatically shuffles through all 32 grammar points randomly for a comprehensive quiz.</p></article></div><div class="exercise-grid">${exerciseTemplate("all-grammar","typed","Typed translation")}${exerciseTemplate("all-grammar","mc","Multiple choice")}</div></div></details>`;
+        
+        const sectionsHtml = GRAMMAR_POINTS.map(x => `
+          <details class="section" id="${x[0]}">
+            <summary><span>${x[1]} · ${x[2]}</span></summary>
+            <div class="section-body">
+              <div class="section-intro">
+                <article class="info-card">
+                  <span class="rule-label">Rule</span>
+                  <h3>Meaning and form</h3>
+                  <p><b>Meaning:</b> ${x[3]}</p>
+                  <p><b>Batchim Rule:</b> ${x[4]}</p>
+                </article>
+                <article class="info-card">
+                  <span class="rule-label">Examples</span>
+                  <h3>Examples</h3>
+                  <div class="speech-examples">
+                    ${x[5].map((ex, i) => `
+                      <div class="speech-example">
+                        <strong>Example ${i + 1}</strong>
+                        <b>${escapeHtml(ex[1])}</b><br>
+                        <span class="roman">${romanizeKorean(ex[0])}</span><br>
+                        ${escapeHtml(ex[0])}
+                      </div>
+                    `).join("")}
+                  </div>
+                </article>
+              </div>
+              <div class="exercise-grid">
+                ${exerciseTemplate(x[0], "typed", "Typed translation")}
+                ${exerciseTemplate(x[0], "mc", "Multiple choice")}
+              </div>
+            </div>
+          </details>
+        `).join("");
+
+        sections.innerHTML = allGrammarHtml + sectionsHtml;
+        // Initialization handled later dynamically
       }
+
       function exerciseTemplate(id, t, title) {
         return `<article class="exercise" id="${id}-${t}">
           <div class="exercise-head">
             <div class="exercise-head-copy">
               <span class="exercise-kicker">${t==="typed"?"Type":"Select"}</span>
               <h3>${title}</h3>
-              <p>Translate ten randomized prompts and review every response.</p>
+              <p>Translate randomized prompts and review every response.</p>
             </div>
             <div class="score" aria-live="polite"></div>
           </div>
           <div class="exercise-body">
-            <div class="exercise-toolbar"><button class="btn secondary restart" type="button">Restart</button></div>
-            <div class="controls">
-              <label><span>Question language</span><select class="question-mode"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label>
-              <label><span>Answer language</span><select class="answer-mode"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label>
-            </div>
             <div class="status"><span class="count"></span></div>
             <div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div>
             <div class="prompt-label"></div>
@@ -1173,141 +1302,12 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
               <button class="btn secondary restart" type="button">Restart exercise</button>
             </div>
           </div>
-        </article>`
+        </article>`;
       }
-      // Exercise lifecycle
-      function initializeExercise(id, t) {
-        let e=document.getElementById(`${id}-${t}`),
-        qm=e.querySelector(".question-mode"),
-        am=e.querySelector(".answer-mode"),
-        key=`${id}-${t}`;
-        exerciseStates[key]= {
-          id,
-          t,
-          i:0,
-          score:0,
-          qs:[],
-          r:[],
-          qm:"english",
-          am:"korean",
-          done:false
-        };
-        let reset=()=> {
-          let s=exerciseStates[key];
-          s.i=0;
-          s.score=0;
-          s.r=[];
-          s.qm=qm.value;
-          s.am=am.value;
-          if(s.qm===s.am) {
-            s.am=s.qm==="english"?"korean":"english";
-            am.value=s.am
-          }
-          s.qs=Array.from( {
-            length:10
-          },
-          ()=>generateQuestion(id));
-          e.querySelector(".finish").style.display="none";
-          showQuestion(id, t)
-        };
-        qm.onchange=reset;
-        am.onchange=reset;
-        e.querySelectorAll(".restart").forEach(b=>b.onclick=reset);
-        e.querySelector(".next").onclick=()=> {
-          let s=exerciseStates[key];
-          s.i<9?(s.i++, showQuestion(id, t)):finishExercise(id, t)
-        };
-        reset()
-      }
-      function showQuestion(id, t) {
-        let s=exerciseStates[`${id}-${t}`],
-        e=document.getElementById(`${id}-${t}`),
-        q=s.qs[s.i];
-        s.done=false;
-        e.querySelector(".count").textContent=`Question ${s.i+1} / 10`;
-        e.querySelector(".score").textContent=`Score: ${s.score}`;
-        e.querySelector(".progress div").style.width=`${s.i*10}%`; e.querySelector(".progress").setAttribute("aria-valuenow", String(s.i*10));
-        e.querySelector(".prompt-label").textContent=s.qm;
-        e.querySelector(".prompt").textContent=q[s.qm];
-        e.querySelector(".feedback").className="feedback";
-        e.querySelector(".next").classList.add("hidden");
-        let z=e.querySelector(".zone");
-        if(t==="typed") {
-          z.innerHTML=`<div class="answer-row"><label class="sr-only" for="${id}-${t}-answer">Your answer</label><input id="${id}-${t}-answer" class="ans" autocomplete="off"><button class="btn primary" type="button">Check</button></div>`;
-          let go=()=>submitAnswer(id, t, z.querySelector("input").value);
-          z.querySelector("button").onclick=go;
-          z.querySelector("input").onkeydown=x=>x.key==="Enter"&&go();
-          z.querySelector("input").focus()
-        }
-        else {
-          let opts=[q, ...Array.from( {
-            length:5
-          },
-          ()=>generateQuestion(id))].sort(()=>Math.random()-.5).slice(0, 4);
-          if(!opts.includes(q))opts[0]=q;
-          z.innerHTML=`<div class="choices">${opts.map((o,i)=>`<button class="choice" type="button" data-i="${i}">${escapeHtml(o[s.am])}</button>`).join("")}</div>`;
-          z.querySelectorAll(".choice").forEach((b, i)=>b.onclick=()=> {
-            let ok=normalizeAnswer(opts[i][s.am],
-            s.am)===normalizeAnswer(q[s.am],
-            s.am);
-            z.querySelectorAll(".choice").forEach((bb, j)=> {
-              bb.disabled=true;
-              if(normalizeAnswer(opts[j][s.am],
-              s.am)===normalizeAnswer(q[s.am],
-              s.am))bb.classList.add("correct")
-            });
-            if(!ok)b.classList.add("wrong");
-            completeQuestion(id, t, opts[i][s.am],
-            ok)
-          })
-        }
-      }
-      function submitAnswer(id, t, u) {
-        let s=exerciseStates[`${id}-${t}`],
-        q=s.qs[s.i];
-        completeQuestion(id, t, u, normalizeAnswer(u, s.am)===normalizeAnswer(q[s.am],
-        s.am))
-      }
-      function completeQuestion(id, t, u, ok) {
-        let s=exerciseStates[`${id}-${t}`],
-        e=document.getElementById(`${id}-${t}`),
-        q=s.qs[s.i];
-        if(s.done)return;
-        s.done=true;
-        if(ok)s.score++;
-        s.r.push( {
-          q, u, ok, qm:s.qm, am:s.am
-        });
-        e.querySelector(".score").textContent=`Score: ${s.score}`;
-        let f=e.querySelector(".feedback");
-        f.className=`feedback ${ok?"good":"bad"}`;
-        f.innerHTML=`${ok?"Correct.":"Not quite."}<br>${feedbackMarkup(q)}`;
-        let n=e.querySelector(".next");
-        n.textContent=s.i===9?"Finish":"Next";
-        n.classList.remove("hidden")
-      }
-      function finishExercise(id, t) {
-        let s=exerciseStates[`${id}-${t}`],
-        e=document.getElementById(`${id}-${t}`),
-        f=e.querySelector(".finish");
-        e.querySelector(".progress div").style.width="100%"; e.querySelector(".progress").setAttribute("aria-valuenow", "100");
-        f.style.display="block";
-        f.querySelector(".sum").innerHTML=`Final score: <b>${s.score} / 10</b> (${s.score*10}%)`;
-        let n=f.querySelector(".reviewnav");
-        n.innerHTML=s.r.map((x, i)=>`<button data-i="${i}">${i+1}</button>`).join("");
-        n.querySelectorAll("button").forEach(b=>b.onclick=()=>showReviewQuestion(id, t, +b.dataset.i));
-        showReviewQuestion(id, t, 0)
-      }
-      function showReviewQuestion(id, t, i) {
-        let s=exerciseStates[`${id}-${t}`],
-        e=document.getElementById(`${id}-${t}`),
-        r=s.r[i];
-        e.querySelectorAll(".reviewnav button").forEach((b, j)=>b.classList.toggle("active", j===i));
-        e.querySelector(".reviewbox").innerHTML=`<p><b>Question ${i+1}</b> ${r.ok?"✅":"❌"}</p><p><b>Prompt:</b> ${escapeHtml(r.q[r.qm])}</p><p><b>Your answer:</b> ${escapeHtml(r.u||"(blank)")}</p><p>${feedbackMarkup(r.q)}</p>`
-      }
+
       renderApp();
 
-      document.querySelectorAll("details.section").forEach(details => {
+      document.querySelectorAll("details.section, details.block").forEach(details => {
         const summary = details.querySelector(":scope > summary");
         if (!summary) return;
         const sync = () => summary.setAttribute("aria-expanded", String(details.open));
@@ -1386,81 +1386,28 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
 
 <script>
 (() => {
-  const RULE_DETAILS = {
-    g1:["N + 은/는 (은 after a consonant, 는 after a vowel).","Frames the sentence topic or contrasts it with another topic."],
-    g2:["N + 이/가 (이 after a consonant, 가 after a vowel).","Highlights or identifies the grammatical subject, often as new information."],
-    g3:["N + 을/를 (을 after a consonant, 를 after a vowel).","Marks the noun directly affected by an action verb."],
-    g4:["Time/place/destination noun + 에.","Marks a destination, a static location, or a specific time; it does not mark the place of an action."],
-    g5:["Place noun + 에서.","Marks where an action occurs or the place from which movement begins."],
-    g6:["N + 이에요/예요; formal N + 입니다.","Copular endings attach directly to nouns; 예요 follows a vowel and 이에요 follows a consonant."],
-    g7:["N이/가 있다/없다.","Expresses existence, location, availability, or possession depending on context."],
-    g8:["안 + verb/adjective.","Neutral short negation; it usually means the speaker does not do something by choice or habit."],
-    g9:["못 + action verb.","Expresses inability caused by skill, circumstances, or external limits."],
-    g10:["Verb/adjective stem + -아/어/해요.","The standard polite-casual present ending used in everyday conversation."],
-    g11:["Verb/adjective stem + -았/었/했어요.","Marks a past action, completed event, or past state."],
-    g12:["Verb stem + -(으)ㄹ 거예요.","Expresses a plan, intention, expectation, or prediction."],
-    g13:["Verb stem + -(으)세요.","A polite everyday request or instruction; it can also honor the subject in context."],
-    g14:["Verb stem + -(으)십시오.","A formal directive common in notices, announcements, tests, and official instructions."],
-    g15:["Verb stem + -(으)ㅂ시다.","A formal or neutral suggestion meaning ‘let us’; avoid it toward a superior."],
-    g16:["Verb stem + -(으)ㄹ까요?","Invites the listener’s opinion, proposes a joint action, or offers to do something."],
-    g17:["Clause/verb stem + -고 + clause.","Links equal actions or descriptions without necessarily showing cause."],
-    g18:["Stem + -아서/어서/해서 + clause.","Shows a reason or a natural sequence; commands and suggestions are usually avoided after causal -아서/어서."],
-    g19:["Stem + -지만 + contrasting clause.","Introduces a contrast while acknowledging the first statement."],
-    g20:["Stem + -(으)면 + result clause.","Expresses a condition or a repeated ‘when’ relationship."],
-    g21:["Verb stem + -(으)려고 하다.","Shows an intention, plan, or action that is about to begin."],
-    g22:["Verb stem + -고 싶다.","Expresses the speaker’s own desire; third-person desire normally uses -고 싶어하다."],
-    g23:["Verb stem + -(으)러 + 가다/오다.","States the purpose of movement and is used with movement verbs such as 가다 or 오다."],
-    g24:["Verb stem + -아/어 보다.","Means to try an action or to have experienced it."],
-    g25:["Verb stem + -아/어도 되다.","Asks for or grants permission; literally says that doing the action is acceptable."],
-    g26:["Verb stem + -(으)면 안 되다.","Expresses prohibition or strong advice not to do something."],
-    g27:["Past modifier -(으)ㄴ + 후에.","The first action is completed before the second action begins."],
-    g28:["Verb stem + -기 전에.","The following action happens before the action nominalized with -기."],
-    g29:["Verb stem + -(으)ㄹ 수 있다/없다.","Expresses ability or possibility rather than permission."],
-    g30:["Stem + -네요.","A soft spontaneous reaction to newly noticed information."],
-    g31:["Stem + -군요/-는군요 or -네요.","Both show discovery; -군요 is more explicit or emphatic, while -네요 is softer and conversational."],
-    g32:["Verb: -는 것 같다; adjective: -(으)ㄴ 것 같다; noun: 인 것 같다.","Softens a guess, impression, or uncertain opinion rather than stating it as a fact."]
-  };
-
-  function uniqueExamples(id, fallback) {
-    const results = [];
-    const seen = new Set();
-    for (let attempts = 0; attempts < 30 && results.length < 3; attempts += 1) {
-      let q;
-      try { q = generateQuestion(id); } catch (_) { q = null; }
-      if (!q) continue;
-      const key = `${q.english}|${q.korean}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      results.push(q);
-    }
-    while (results.length < 3) results.push(fallback);
-    return results;
-  }
-
-  GRAMMAR_POINTS.forEach(point => {
-    const section = document.getElementById(point[0]);
-    if (!section) return;
-    const details = RULE_DETAILS[point[0]] || [`Use ${point[1]} according to the pattern shown.`, point[3]];
-    const fallback = {english: point[6], romanization: point[5], korean: point[4]};
-    const examples = uniqueExamples(point[0], fallback);
-    const intro = section.querySelector(".section-intro");
-    intro.innerHTML = `<article class="info-card"><span class="rule-label">Rule</span><h3>Meaning, form, and nuance</h3><p><b>Meaning:</b> ${escapeHtml(point[3])}</p><p><b>Form:</b> ${escapeHtml(details[0])}</p><p><b>Nuance:</b> ${escapeHtml(details[1])}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Examples</h3><div class="speech-examples">${examples.map((q, index) => `<div class="speech-example"><strong>Example ${index + 1}</strong><b>${escapeHtml(q.english)}</b><br><span class="roman">${escapeHtml(q.romanization)}</span><br>${escapeHtml(q.korean)}</div>`).join("")}</div></article>`;
-  });
-
   const liveTimers = new Map();
   const liveSelectors = [".status", ".progress", ".prompt-label", ".prompt", ".zone", ".feedback", ".next", ".runtime-bar"];
   function formatTime(seconds) { const safe = Math.max(0, Math.ceil(seconds)); return `${Math.floor(safe/60)}:${String(safe%60).padStart(2,"0")}`; }
   function clearTimer(key) { const timer = liveTimers.get(key); if (timer) clearInterval(timer); liveTimers.delete(key); }
   function setLive(element, visible) { liveSelectors.forEach(selector => element.querySelectorAll(selector).forEach(node => { if (node.classList.contains("feedback") || node.classList.contains("next")) return; node.classList.toggle("hidden", !visible); })); }
+  
   function showSetup(id, type) {
     const key = `${id}-${type}`; clearTimer(key); const element = document.getElementById(key); exerciseStates[key].finished = false;
-    element.querySelector(".exercise-menu").classList.remove("hidden"); element.querySelector(".exercise-toolbar").classList.add("hidden"); element.querySelector(".controls").classList.add("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, false);
+    element.querySelector(".exercise-menu").classList.remove("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, false);
   }
+  
   function startExercise(id, type) {
     const key = `${id}-${type}`, element = document.getElementById(key), state = exerciseStates[key];
-    const count = Math.max(1, Math.min(100, Math.round(Number(element.querySelector(".menu-count").value) || 10))); element.querySelector(".menu-count").value = String(count);
-    clearTimer(key); state.i = 0; state.score = 0; state.r = []; state.qm = element.querySelector(".menu-question").value; state.am = element.querySelector(".menu-answer").value; state.qs = Array.from({length: count}, () => generateQuestion(id)); state.done = false; state.finished = false;
-    element.querySelector(".question-mode").value = state.qm; element.querySelector(".answer-mode").value = state.am; element.querySelector(".exercise-menu").classList.add("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, true); showQuestion(id, type);
+    const defaultCount = id === "all-grammar" ? 32 : 10;
+    const count = Math.max(1, Math.min(100, Math.round(Number(element.querySelector(".menu-count").value) || defaultCount))); 
+    element.querySelector(".menu-count").value = String(count);
+    clearTimer(key); 
+    state.i = 0; state.score = 0; state.r = []; 
+    state.qm = element.querySelector(".menu-question").value; state.am = element.querySelector(".menu-answer").value; 
+    state.qs = buildGrammarQuestions(id, count); 
+    state.done = false; state.finished = false;
+    element.querySelector(".exercise-menu").classList.add("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, true); showQuestion(id, type);
     const minutes = Math.max(0, Number(element.querySelector(".menu-timer").value) || 0), label = element.querySelector(".runtime-timer");
     if (!minutes) { label.textContent = "Untimed"; return; }
     const deadline = Date.now() + minutes * 60000; const tick = () => { const remaining = (deadline - Date.now())/1000; label.textContent = `Time left: ${formatTime(remaining)}`; if (remaining <= 0) finishExercise(id, type, "Time is up"); }; tick(); liveTimers.set(key, setInterval(tick, 250));
@@ -1472,13 +1419,38 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     const percent = (state.i/state.qs.length)*100; element.querySelector(".progress div").style.width = `${percent}%`; element.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(percent)));
     element.querySelector(".prompt-label").textContent = state.qm; element.querySelector(".prompt").textContent = q[state.qm]; element.querySelector(".feedback").className = "feedback"; element.querySelector(".feedback").innerHTML = ""; element.querySelector(".next").classList.add("hidden");
     const zone = element.querySelector(".zone");
+    
     if (type === "typed") {
-      zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer"><button class="btn primary" type="button">Check</button></div>`;
-      const input = zone.querySelector("input"), submit = () => submitAnswer(id, type, input.value); zone.querySelector("button").onclick = submit;
-      input.onkeydown = event => { if (event.key !== "Enter") return; event.preventDefault(); if (state.done) element.querySelector(".next").click(); else submit(); };
+      zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn primary" type="button">Check</button></div>`;
+      const input = zone.querySelector("input"), submit = () => submitAnswer(id, type, input.value); 
+      zone.querySelector("button").onclick = submit;
+      input.placeholder = state.am === "romanization" ? "Type with dashes (Space = dash, Double Space = space)" : "Type your answer";
+      
+      input.onkeydown = event => {
+        if (event.key === "Enter") {
+          event.preventDefault(); 
+          if (state.done) element.querySelector(".next").click(); 
+          else submit();
+          return;
+        }
+        if (state.am === "romanization" && event.key === " ") {
+          event.preventDefault();
+          const start = input.selectionStart ?? input.value.length;
+          const end = input.selectionEnd ?? start;
+          const val = input.value;
+          if (start > 0 && val[start - 1] === "-") {
+            input.value = val.slice(0, start - 1) + " " + val.slice(end);
+            input.setSelectionRange(start, start);
+          } else {
+            input.value = val.slice(0, start) + "-" + val.slice(end);
+            input.setSelectionRange(start + 1, start + 1);
+          }
+        }
+      };
       requestAnimationFrame(() => input.focus({preventScroll:true}));
     } else {
-      let opts = [q, ...Array.from({length:5}, () => generateQuestion(id))].sort(() => Math.random()-.5).slice(0,4); if (!opts.includes(q)) opts[0] = q;
+      let gId = q.gId || id;
+      let opts = [q, ...Array.from({length:5}, () => generateQuestion(gId))].sort(() => Math.random()-.5).slice(0,4); if (!opts.includes(q)) opts[0] = q;
       zone.innerHTML = `<div class="choices">${opts.map((o,i) => `<button class="choice" type="button" data-i="${i}">${escapeHtml(o[state.am])}</button>`).join("")}</div>`;
       zone.querySelectorAll(".choice").forEach((button,index) => button.onclick = () => { const ok = normalizeAnswer(opts[index][state.am],state.am) === normalizeAnswer(q[state.am],state.am); zone.querySelectorAll(".choice").forEach((other,j) => { other.disabled = true; if (normalizeAnswer(opts[j][state.am],state.am) === normalizeAnswer(q[state.am],state.am)) other.classList.add("correct"); }); if (!ok) button.classList.add("wrong"); completeQuestion(id,type,opts[index][state.am],ok); });
     }
@@ -1498,8 +1470,13 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   };
 
   document.querySelectorAll(".exercise").forEach(element => {
-    const match = element.id.match(/^(g\d+)-(typed|mc)$/); if (!match) return; const [,id,type] = match, body = element.querySelector(".exercise-body");
-    const menu = document.createElement("div"); menu.className = "exercise-menu"; menu.innerHTML = `<h4>Exercise setup</h4><p>Choose how many questions to answer, both languages, and an optional time limit.</p><div class="exercise-menu-grid"><label>Questions<input class="menu-count" type="number" min="1" max="100" value="10"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`; body.insertBefore(menu,body.firstChild);
+    const match = element.id.match(/^([a-z0-9-]+)-(typed|mc)$/); if (!match) return; const [,id,type] = match, body = element.querySelector(".exercise-body");
+    const defaultCount = id === "all-grammar" ? 32 : 10;
+    
+    // Initialize blank state for robust toggling
+    exerciseStates[`${id}-${type}`] = { qs: [], r: [], done: false, finished: false };
+
+    const menu = document.createElement("div"); menu.className = "exercise-menu"; menu.innerHTML = `<h4>Exercise setup</h4><p>Choose how many questions to answer, both languages, and an optional time limit.</p><div class="exercise-menu-grid"><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`; body.insertBefore(menu,body.firstChild);
     const runtime = document.createElement("div"); runtime.className = "runtime-bar"; runtime.innerHTML = `<span class="runtime-timer">Untimed</span><button class="end-early-btn" type="button">End exercise early</button>`; body.insertBefore(runtime,body.querySelector(".status"));
     menu.querySelector(".start-exercise").onclick = () => startExercise(id,type); runtime.querySelector(".end-early-btn").onclick = () => finishExercise(id,type,"Exercise ended early");
     element.querySelector(".next").onclick = () => { const state = exerciseStates[`${id}-${type}`]; if (state.i < state.qs.length-1) { state.i += 1; showQuestion(id,type); } else finishExercise(id,type); };
