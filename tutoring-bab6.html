@@ -1,108 +1,2460 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light"><head><script>(()=>{try{const s=localStorage.getItem('koreanQuizThemeV2');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(_){}})();</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Interactive Korean lesson study guide"><title>Korean lesson</title><style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
-:root{color-scheme:light;--background:#28468A;--foreground:#F5F5F5;--primary:#BCE0E6;--primary-hover:#ADC6CB;--secondary:#AD8FE6;--secondary-soft:#8E7EBF;--accent:#C74E33;--accent-soft:#A24B36;--muted:#A0E090;--muted-strong:#99C588;--blue-soft:#6375CF;--border:#6674C8;--subtle:#DEEAAE;--surface:#F5F5F5;--surface-text:#28468A;--surface-muted:#E8ECF4;--inverse:#20386E;--inverse-text:#F5F5F5;--radius-md:6px;--radius-lg:8px;--font:'Outfit',system-ui,sans-serif;--transition:all 180ms ease}
-html[data-theme=dark]{color-scheme:dark;--background:#111827;--foreground:#F9FAFB;--primary:#6CC2D0;--primary-hover:#6CC0D0;--secondary:#8B61DC;--secondary-soft:#201933;--accent:#E29D8D;--accent-soft:#391B13;--muted:#1F2937;--muted-strong:#374151;--blue-soft:#12193B;--border:#374151;--subtle:#CBD5E1;--surface:#1F2937;--surface-text:#F9FAFB;--surface-muted:#111827;--inverse:#0F172A;--inverse-text:#F9FAFB}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--foreground);background:var(--background);font-family:var(--font);line-height:1.55}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--primary);outline-offset:3px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.hidden{display:none!important}
-.site-header{color:var(--surface-text);background:var(--surface);border-bottom:1px solid var(--border)}.header-inner,.page-main{width:min(1120px,calc(100% - 40px));margin-inline:auto}.header-inner{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{min-width:0;overflow:hidden;color:var(--surface-text);font-weight:800;letter-spacing:-.02em;text-decoration:none;text-overflow:ellipsis;white-space:nowrap}.header-actions{display:flex;gap:8px}.header-link{min-height:40px;display:inline-flex;align-items:center;padding:0 13px;color:var(--surface-text);background:var(--surface-muted);border:1px solid transparent;border-radius:var(--radius-md);font-weight:700;text-decoration:none}.header-link:hover{border-color:var(--primary);background:var(--blue-soft);color:var(--foreground)}
-.page-main{margin-top:24px;margin-bottom:72px;overflow:hidden;color:var(--surface-text);background:var(--surface);border-radius:var(--radius-lg)}.hero{color:#fff;background:var(--background)}.hero-inner{padding:clamp(48px,7vw,82px)}.hero-kicker{margin:0 0 18px;color:var(--primary);font-size:.76rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero h1{max-width:16ch;margin:0;font-size:clamp(3rem,7vw,5.7rem);font-weight:800;line-height:.94;letter-spacing:-.03em}.hero p{max-width:68ch;margin:24px 0 0;color:#EFF6FF;font-size:1.05rem}.toc-card{padding:18px 22px;border-bottom:1px solid var(--border)}.toc-label{display:block;margin-bottom:10px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.toc-grid{display:flex;flex-wrap:wrap;gap:8px}.toc-link{min-height:40px;display:inline-flex;align-items:center;gap:9px;padding:8px 12px;color:var(--surface-text);background:var(--surface-muted);border:1px solid transparent;border-radius:var(--radius-md);font-size:.88rem;font-weight:700;text-decoration:none;white-space:nowrap}.toc-link:hover{color:var(--foreground);background:var(--blue-soft);border-color:var(--primary)}
-.block,.section{scroll-margin-top:18px;border-bottom:1px solid var(--border)}details.block>summary,details.section>summary{min-height:150px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:clamp(30px,5vw,64px);color:#192B5D;background:var(--secondary);cursor:pointer;list-style:none;font-size:clamp(2.2rem,5vw,4.8rem);font-weight:800;line-height:1;letter-spacing:-.02em}details.block>summary::-webkit-details-marker,details.section>summary::-webkit-details-marker{display:none}details.block>summary::after,details.section>summary::after{content:'Collapse';min-height:56px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;color:#192B5D;background:#fff;border:4px solid #192B5D;border-radius:var(--radius-md);font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}details:not([open])>summary::after{content:'Expand'}#vocabulary>summary{color:#fff;background:var(--accent)}#grammarSections>details:nth-child(3n+2)>summary{color:#fff;background:var(--accent)}#grammarSections>details:nth-child(3n)>summary{background:var(--primary)}.block-inner,.section-body{padding:clamp(26px,5vw,64px)}
-.guide-grid,.section-intro{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}.guide-card,.info-card{padding:22px;color:var(--foreground);background:var(--blue-soft);border-radius:var(--radius-lg)}.rule-label{display:inline-flex;min-height:30px;align-items:center;padding:0 9px;color:#192B5D;background:var(--primary);border-radius:999px;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.guide-card h3,.info-card h3{margin:8px 0 10px;font-size:1.2rem}.guide-card p,.info-card p{margin:0 0 12px}.example-list{display:grid;gap:9px}.example{padding:14px;color:var(--surface-text);background:var(--surface);border-radius:var(--radius-md);white-space:pre-line}.roman{color:var(--primary);font-weight:800}
-.vocab-tools{display:grid;grid-template-columns:minmax(220px,1fr) repeat(3,minmax(130px,auto));gap:8px;margin:24px 0 14px}.vocab-search,input,select{width:100%;min-width:0;min-height:56px;padding:0 14px;color:var(--surface-text);background:var(--surface-muted);border:2px solid transparent;border-radius:var(--radius-md)}input:focus,select:focus{background:var(--surface);border-color:var(--primary)}.blur-toggle,.btn,.primary-btn,.secondary-btn,.choice,.end-early-btn{min-height:52px;padding:0 18px;border:0;border-radius:var(--radius-md);font-weight:800;transition:var(--transition)}.blur-toggle{color:var(--surface-text);background:var(--surface-muted)}.blur-toggle[aria-pressed=true]{color:#192B5D;background:var(--primary)}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-lg)}table{width:100%;border-collapse:collapse;background:var(--surface)}th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--border)}th{color:var(--inverse-text);background:var(--inverse);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}tbody tr:last-child td{border-bottom:0}.is-blurred .blur-target{filter:blur(7px);user-select:none}.is-blurred [data-vocab-field]:hover .blur-target,.is-blurred [data-vocab-field]:focus .blur-target{filter:none}.source-note{margin:14px 0 0;font-size:.9rem;opacity:.8}
-.exercise-stack{display:grid;gap:28px;margin-top:28px}.exercise{overflow:hidden;color:var(--surface-text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}.exercise-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(158px,auto);color:var(--inverse-text);background:var(--inverse)}.exercise-head-copy{padding:24px 28px}.exercise-kicker,.prompt-label{color:var(--primary);font-size:.74rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.exercise-head h3{margin:7px 0 0;font-size:clamp(1.45rem,3vw,2.3rem);line-height:1}.exercise-head p{margin:10px 0 0;color:var(--subtle)}.score{min-width:158px;display:grid;place-items:center;padding:20px;color:#192B5D;background:var(--accent);font-weight:800}.exercise-body{padding:clamp(24px,4vw,38px)}.exercise-menu{display:grid;gap:20px}.exercise-menu h4{margin:0;font-size:1.45rem}.exercise-menu p{margin:0;opacity:.82}.exercise-menu-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.exercise-menu label{min-width:0;display:grid;grid-template-rows:auto 56px;gap:7px;font-size:.76rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.exercise-menu label>*{height:56px}.primary-btn,.btn.primary{color:#192B5D;background:var(--primary)}.secondary-btn,.btn.secondary{color:var(--surface-text);background:var(--surface-muted)}.btn.warning,.end-early-btn{color:#fff;background:var(--accent)}.exercise-menu-actions{display:flex;gap:10px}.runtime-bar{display:flex;justify-content:flex-end;margin-bottom:18px}.status{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.86rem;font-weight:800}.progress{height:12px;overflow:hidden;background:var(--muted-strong)}.progress>div{height:100%;background:var(--secondary)}.prompt{min-height:88px;margin:8px 0 22px;font-size:clamp(1.35rem,2.5vw,2rem);font-weight:700;line-height:1.3;white-space:pre-line}.answer-row{display:grid;grid-template-columns:1fr auto;gap:8px}.choices{display:grid;gap:8px}.choice{width:100%;min-height:58px;text-align:left;color:var(--surface-text);background:var(--surface-muted);white-space:pre-line}.choice:hover:not(:disabled){color:#192B5D;background:var(--primary)}.choice.correct{color:#fff;background:var(--secondary)}.choice.wrong{color:#fff;background:var(--accent)}.feedback{display:none;margin-top:16px;padding:18px;border-radius:var(--radius-lg);white-space:pre-line}.feedback.good{display:block;color:#fff;background:var(--secondary-soft);border-left:8px solid var(--secondary)}.feedback.bad{display:block;color:#fff;background:var(--accent-soft);border-left:8px solid var(--accent)}.next{margin-top:12px}.finish{display:none;margin-top:18px;padding:20px;color:var(--foreground);background:var(--blue-soft);border-radius:var(--radius-lg)}.finish h4{margin:0;font-size:1.45rem}.finish-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}.review{display:grid;gap:10px;margin-top:16px}.review-item{padding:14px;color:var(--surface-text);background:var(--surface);border-radius:var(--radius-md);white-space:pre-line}.review-item strong{display:block}.utility-controls{position:fixed;right:18px;bottom:18px;z-index:50;display:flex;gap:10px}.utility-button{width:46px;height:46px;display:grid;place-items:center;padding:0;color:#192B5D;background:var(--primary);border:0;border-radius:50%;font-size:1.1rem;font-weight:800;text-decoration:none}.utility-button.top{background:var(--accent)}
-@media(max-width:900px){.exercise-head{grid-template-columns:1fr}.score{min-height:70px}.exercise-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vocab-tools{grid-template-columns:1fr 1fr}.vocab-search{grid-column:1/-1}}
-@media(max-width:680px){.header-inner,.page-main{width:100%}.header-inner{padding:0 14px}.page-main{margin-top:0;border-radius:0}.hero-inner{padding:48px 22px}.toc-card{overflow-x:auto}.toc-grid{width:max-content;flex-wrap:nowrap}details.block>summary,details.section>summary{min-height:0;align-items:stretch;flex-direction:column;padding:30px 22px}details.block>summary::after,details.section>summary::after{width:100%}.block-inner,.section-body,.exercise-body{padding:22px}.guide-grid,.section-intro,.exercise-menu-grid,.answer-row,.vocab-tools{grid-template-columns:1fr}.vocab-search{grid-column:auto}.exercise-menu label{grid-template-rows:auto 56px}.exercise-menu-actions,.finish-actions{flex-direction:column}.exercise-menu-actions button,.finish-actions button,.answer-row button,.runtime-bar button{width:100%}.runtime-bar{justify-content:stretch}.utility-controls{right:10px;bottom:10px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-</style></head><body id="top"><header class="site-header"><div class="header-inner"><a class="brand" href="./index.html">Korean Language Resources</a><div class="header-actions"><a class="header-link" href="./index.html">Home</a></div></div></header><main class="page-main"><section class="hero"><div class="hero-inner"><p class="hero-kicker">Interactive Korean Study Guide</p><h1 id="heroTitle"></h1><p><strong id="heroSubtitle"></strong></p><p id="heroDesc"></p></div></section><nav class="toc-card" aria-label="Lesson sections"><span class="toc-label">Jump to a section</span><div class="toc-grid" id="tocGrid"></div></nav><details class="block" id="vocabulary" open><summary><span>Complete Vocabulary Bank</span></summary><div class="block-inner"><div class="guide-grid"><article class="guide-card"><span class="rule-label">Material only</span><h3>One lesson vocabulary bank</h3><p>Only words found in this Bab lesson are listed here. TOPIK I and Level 3 words appear in expanded exercises without being added to this table.</p></article><article class="guide-card"><span class="rule-label">Romanization input</span><h3>Keyboard shortcut</h3><p>In romanization answers, press <strong>Space once</strong> for a syllable dash. Press <strong>Space twice</strong> for a word space. Checking ignores dash and space placement, while the correct answer keeps canonical formatting.</p></article></div><div class="vocab-tools"><input class="vocab-search" id="vocabSearch" type="search" placeholder="Search Korean, romanization, English, or category"><button class="blur-toggle" type="button" data-blur-field="english" aria-pressed="false">Blur English</button><button class="blur-toggle" type="button" data-blur-field="romanization" aria-pressed="false">Blur Romanization</button><button class="blur-toggle" type="button" data-blur-field="korean" aria-pressed="false">Blur Korean</button></div><div class="table-wrap" id="vocabTable"><table><thead><tr><th>English</th><th>Romanization</th><th>Korean</th><th>Category</th></tr></thead><tbody id="vocabBody"></tbody></table></div><p class="source-note">Expanded exercise words are intentionally omitted from this bank.</p><div class="exercise-stack" id="vocabExercises"></div></div></details><div id="grammarSections"></div></main><div class="utility-controls"><button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon>☾</span><span class="sr-only">Toggle theme</span></button><a class="utility-button top" href="#top" aria-label="Back to top">↑</a></div><script>
-(() => {
-  "use strict";
-  const LESSON = {"title":"Bab 6","subtitle":"공원에서 제니퍼 씨를 만납니다","description":"Switch into formal polite speech, connect clauses with -고, and use formal noun identification and negation.","vocab":[{"korean":"청소하다","english":"to clean","category":"Activities"},{"korean":"이야기하다","english":"to talk","category":"Activities"},{"korean":"수영하다","english":"to swim","category":"Activities"},{"korean":"노래하다","english":"to sing","category":"Activities"},{"korean":"쇼핑하다","english":"to shop","category":"Activities"},{"korean":"빨래하다","english":"to do laundry","category":"Activities"},{"korean":"사진","english":"photo","category":"Objects"},{"korean":"그림","english":"picture","category":"Objects"},{"korean":"춤","english":"dance","category":"Activities"},{"korean":"산책","english":"walk","category":"Activities"},{"korean":"텔레비전","english":"television","category":"Objects"},{"korean":"책","english":"book","category":"Objects"},{"korean":"찍다","english":"to take a photo","category":"Verbs"},{"korean":"하다","english":"to do","category":"Verbs"},{"korean":"추다","english":"to dance","category":"Verbs"},{"korean":"읽다","english":"to read","category":"Verbs"},{"korean":"그리다","english":"to draw","category":"Verbs"},{"korean":"보다","english":"to watch","category":"Verbs"},{"korean":"만화책","english":"comic book","category":"Leisure"},{"korean":"게임","english":"game","category":"Leisure"},{"korean":"한국어 공부","english":"Korean study","category":"Study"},{"korean":"요리","english":"cooking","category":"Activities"},{"korean":"따뜻하다","english":"to be warm","category":"Adjectives"},{"korean":"시원하다","english":"to be cool","category":"Adjectives"},{"korean":"맑다","english":"to be clear","category":"Adjectives"},{"korean":"흐리다","english":"to be cloudy","category":"Adjectives"},{"korean":"깨끗하다","english":"to be clean","category":"Adjectives"},{"korean":"더럽다","english":"to be dirty","category":"Adjectives"},{"korean":"기분","english":"mood","category":"Feelings"},{"korean":"스파게티","english":"spaghetti","category":"Food"},{"korean":"햄버거","english":"hamburger","category":"Food"},{"korean":"농구","english":"basketball","category":"Sports"},{"korean":"축구","english":"soccer","category":"Sports"},{"korean":"공원","english":"park","category":"Places"},{"korean":"기숙사","english":"dormitory","category":"Places"},{"korean":"교실","english":"classroom","category":"Places"}],"vocabSource":[{"korean":"청소하다","english":"to clean","note":""},{"korean":"이야기하다","english":"to talk","note":""},{"korean":"수영하다","english":"to swim","note":""},{"korean":"노래하다","english":"to sing","note":""},{"korean":"쇼핑하다","english":"to shop","note":""},{"korean":"빨래하다","english":"to do laundry","note":""},{"korean":"사진","english":"photo","note":""},{"korean":"그림","english":"picture","note":""},{"korean":"춤","english":"dance","note":""},{"korean":"산책","english":"walk","note":""},{"korean":"텔레비전","english":"television","note":""},{"korean":"책","english":"book","note":""},{"korean":"찍다","english":"to take a photo","note":""},{"korean":"하다","english":"to do","note":""},{"korean":"추다","english":"to dance","note":""},{"korean":"읽다","english":"to read","note":""},{"korean":"그리다","english":"to draw","note":""},{"korean":"보다","english":"to watch","note":""},{"korean":"만화책","english":"comic book","note":""},{"korean":"게임","english":"game","note":""},{"korean":"한국어 공부","english":"Korean study","note":""},{"korean":"요리","english":"cooking","note":""},{"korean":"따뜻하다","english":"to be warm","note":""},{"korean":"시원하다","english":"to be cool","note":""},{"korean":"맑다","english":"to be clear","note":""},{"korean":"흐리다","english":"to be cloudy","note":""},{"korean":"깨끗하다","english":"to be clean","note":""},{"korean":"더럽다","english":"to be dirty","note":""},{"korean":"기분","english":"mood","note":""},{"korean":"스파게티","english":"spaghetti","note":""},{"korean":"햄버거","english":"hamburger","note":""},{"korean":"농구","english":"basketball","note":""},{"korean":"축구","english":"soccer","note":""},{"korean":"공원","english":"park","note":""},{"korean":"기숙사","english":"dormitory","note":""},{"korean":"교실","english":"classroom","note":""}],"vocabMixed":[{"korean":"청소하다","english":"to clean","note":""},{"korean":"이야기하다","english":"to talk","note":""},{"korean":"수영하다","english":"to swim","note":""},{"korean":"노래하다","english":"to sing","note":""},{"korean":"쇼핑하다","english":"to shop","note":""},{"korean":"빨래하다","english":"to do laundry","note":""},{"korean":"사진","english":"photo","note":""},{"korean":"그림","english":"picture","note":""},{"korean":"춤","english":"dance","note":""},{"korean":"산책","english":"walk","note":""},{"korean":"텔레비전","english":"television","note":""},{"korean":"책","english":"book","note":""},{"korean":"찍다","english":"to take a photo","note":""},{"korean":"하다","english":"to do","note":""},{"korean":"추다","english":"to dance","note":""},{"korean":"읽다","english":"to read","note":""},{"korean":"그리다","english":"to draw","note":""},{"korean":"보다","english":"to watch","note":""},{"korean":"만화책","english":"comic book","note":""},{"korean":"게임","english":"game","note":""},{"korean":"한국어 공부","english":"Korean study","note":""},{"korean":"요리","english":"cooking","note":""},{"korean":"따뜻하다","english":"to be warm","note":""},{"korean":"시원하다","english":"to be cool","note":""},{"korean":"맑다","english":"to be clear","note":""},{"korean":"흐리다","english":"to be cloudy","note":""},{"korean":"깨끗하다","english":"to be clean","note":""},{"korean":"더럽다","english":"to be dirty","note":""},{"korean":"기분","english":"mood","note":""},{"korean":"스파게티","english":"spaghetti","note":""},{"korean":"햄버거","english":"hamburger","note":""},{"korean":"농구","english":"basketball","note":""},{"korean":"축구","english":"soccer","note":""},{"korean":"공원","english":"park","note":""},{"korean":"기숙사","english":"dormitory","note":""},{"korean":"교실","english":"classroom","note":""},{"korean":"경험","english":"experience","note":""},{"korean":"문화","english":"culture","note":""},{"korean":"사회","english":"society","note":""},{"korean":"경제","english":"economy","note":""},{"korean":"환경","english":"environment","note":""},{"korean":"건강","english":"health","note":""},{"korean":"습관","english":"habit","note":""},{"korean":"계획","english":"plan","note":""},{"korean":"준비","english":"preparation","note":""},{"korean":"목적","english":"purpose","note":""},{"korean":"기회","english":"opportunity","note":""},{"korean":"방법","english":"method","note":""},{"korean":"결과","english":"result","note":""},{"korean":"이유","english":"reason","note":""},{"korean":"문제","english":"problem","note":""},{"korean":"해결","english":"solution","note":""},{"korean":"관계","english":"relationship","note":""},{"korean":"책임","english":"responsibility","note":""},{"korean":"약속","english":"appointment","note":""},{"korean":"실수","english":"mistake","note":""},{"korean":"수업","english":"class","note":""},{"korean":"과제","english":"assignment","note":""},{"korean":"시험","english":"exam","note":""},{"korean":"성적","english":"grade","note":""},{"korean":"발표","english":"presentation","note":""},{"korean":"연구","english":"research","note":""},{"korean":"졸업","english":"graduation","note":""},{"korean":"장학금","english":"scholarship","note":""},{"korean":"직원","english":"employee","note":""},{"korean":"회의","english":"meeting","note":""},{"korean":"업무","english":"work task","note":""},{"korean":"월급","english":"salary","note":""},{"korean":"여행","english":"travel","note":""},{"korean":"교통","english":"transportation","note":""},{"korean":"생활","english":"daily life","note":""},{"korean":"취미","english":"hobby","note":""}],"sections":[{"id":"formal","title":"A/V-(스)ㅂ니다 · -(스)ㅂ니까?","label":"Formal polite","meaning":"Use formal polite endings in presentations, workplaces, announcements, and formal questions.","form":"After a consonant use -습니다/-습니까. After a vowel use -ㅂ니다/-ㅂ니까. ㄹ generally drops before ㅂ.","notes":"하다 becomes 합니다; formal questions end in a question mark and rising intonation.","examples":[["공부합니다.","I study."],["책을 읽습니다.","I read a book."],["날씨가 춥습니까?","Is the weather cold?"]],"sourceTitle":"Material Exercises 1 and 7 · Formal forms","sourceDescription":"Convert source verbs and complete formal questions and answers.","sourceQuestions":[{"korean":"청소합니다.","english":"I clean.","note":"","prompt":{"english":"Change the source 하다 verb to formal polite.","korean":"청소하다 → ?"}},{"korean":"이야기합니다.","english":"I talk.","note":"","prompt":{"english":"Change the source 하다 verb to formal polite.","korean":"이야기하다 → ?"}},{"korean":"수영합니다.","english":"I swim.","note":"","prompt":{"english":"Change the source 하다 verb to formal polite.","korean":"수영하다 → ?"}},{"korean":"노래합니다.","english":"I sing.","note":"","prompt":{"english":"Change the source 하다 verb to formal polite.","korean":"노래하다 → ?"}},{"korean":"쇼핑합니다.","english":"I shop.","note":"","prompt":{"english":"Change the source 하다 verb to formal polite.","korean":"쇼핑하다 → ?"}},{"korean":"빨래합니다.","english":"I do laundry.","note":"","prompt":{"english":"Change the source 하다 verb to formal polite.","korean":"빨래하다 → ?"}},{"korean":"수영 씨는 햄버거를 좋아합니까?","english":"Does Suyoung like hamburgers?","note":"","prompt":{"english":"Complete Material Exercise 7 formal question.","korean":"수영 씨 · 햄버거 · 좋아하다?"}},{"korean":"저는 햄버거를 안 좋아합니다. 저는 스파게티를 좋아합니다.","english":"I do not like hamburgers. I like spaghetti.","note":"","prompt":{"english":"Complete the formal negative and correction.","korean":"햄버거 X → 스파게티 O"}},{"korean":"공원에 아이들이 많습니까?\n네, 공원에 아이들이 많습니다.","english":"Are there many children in the park? Yes, there are many.","note":"","prompt":{"english":"Complete the source formal question and answer.","korean":"공원 · 아이들 · 많다"}}],"translationTitle":"Translation Practice · Formal daily and academic Korean","translationDescription":"Use formal endings with additional Level 3 vocabulary.","translationQuestions":[{"korean":"회의를 합니다.","english":"I have a meeting.","note":""},{"korean":"발표를 준비합니다.","english":"I prepare a presentation.","note":""},{"korean":"과제를 합니다.","english":"I do an assignment.","note":""},{"korean":"시험을 봅니다.","english":"I take an exam.","note":""},{"korean":"문제를 해결합니다.","english":"I solve the problem.","note":""},{"korean":"방법을 설명합니다.","english":"I explain the method.","note":""},{"korean":"문화를 연구합니다.","english":"I research culture.","note":""},{"korean":"직원이 출근합니다.","english":"The employee goes to work.","note":""},{"korean":"회의가 길습니까?","english":"Is the meeting long?","note":""},{"korean":"환경이 깨끗합니다.","english":"The environment is clean.","note":""},{"korean":"계획이 좋습니까?","english":"Is the plan good?","note":""},{"korean":"시험이 어렵습니다.","english":"The exam is difficult.","note":""}]},{"id":"clause-link","title":"-고","label":"And / linking clauses","meaning":"Attach -고 to the first predicate to connect two actions or descriptions.","form":"Verb/adjective stem + 고, followed by the final conjugated predicate.","notes":"The first predicate does not take tense or politeness in these beginner examples; the last predicate carries the sentence ending.","examples":[["크고 무거워요.","It is big and heavy."],["맑고 따뜻해요.","It is clear and warm."],["책을 읽고 텔레비전을 봐요.","I read a book and watch television."]],"sourceTitle":"Material Exercises 4–5 · Join descriptions and actions","sourceDescription":"Build the original -고 sentences.","sourceQuestions":[{"korean":"가방이 크고 무거워요.","english":"The bag is big and heavy.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"가방 · 크다 + 무겁다"}},{"korean":"오늘 날씨가 맑고 따뜻해요.","english":"Today the weather is clear and warm.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"오늘 날씨 · 맑다 + 따뜻하다"}},{"korean":"한국어 공부가 쉽고 재미있어요.","english":"Studying Korean is easy and interesting.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"한국어 공부 · 쉽다 + 재미있다"}},{"korean":"바나나가 싸고 맛있어요.","english":"Bananas are cheap and delicious.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"바나나 · 싸다 + 맛있다"}},{"korean":"우리 교실이 넓고 깨끗해요.","english":"Our classroom is spacious and clean.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"우리 교실 · 넓다 + 깨끗하다"}},{"korean":"학교 식당이 비싸고 맛없어요.","english":"The school cafeteria is expensive and not tasty.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"학교 식당 · 비싸다 + 맛없다"}},{"korean":"겨울 날씨가 춥고 눈이 와요.","english":"Winter weather is cold and snowy.","note":"","prompt":{"english":"Complete Material Exercise 4.","korean":"겨울 날씨 · 춥다 + 눈이 오다"}},{"korean":"나는 도서관에 가고 친구는 우체국에 가요.","english":"I go to the library, and my friend goes to the post office.","note":"","prompt":{"english":"Build Material Exercise 5.","korean":"나·도서관·가다 / 친구·우체국·가다"}},{"korean":"선생님은 한국어를 가르치고 학생들은 한국어를 배워요.","english":"The teacher teaches Korean, and the students learn Korean.","note":"","prompt":{"english":"Build Material Exercise 5.","korean":"선생님·가르치다 / 학생들·배우다"}}],"translationTitle":"Translation Practice · Linked ideas","translationDescription":"Join new descriptions and actions using lesson and TOPIK vocabulary.","translationQuestions":[{"korean":"회의가 길고 어려워요.","english":"The meeting is long and difficult.","note":""},{"korean":"과제가 많고 어려워요.","english":"There are many assignments, and they are difficult.","note":""},{"korean":"계획이 좋고 준비가 쉬워요.","english":"The plan is good, and the preparation is easy.","note":""},{"korean":"환경이 깨끗하고 조용해요.","english":"The environment is clean and quiet.","note":""},{"korean":"여행이 재미있고 비싸요.","english":"Travel is interesting and expensive.","note":""},{"korean":"시험을 보고 발표를 합니다.","english":"I take an exam and give a presentation.","note":""},{"korean":"문제를 읽고 방법을 설명해요.","english":"I read the problem and explain the method.","note":""},{"korean":"직원은 출근하고 학생은 수업에 가요.","english":"The employee goes to work, and the student goes to class.","note":""},{"korean":"문화를 공부하고 연구도 해요.","english":"I study culture and also do research.","note":""},{"korean":"약속을 하고 친구를 만나요.","english":"I make an appointment and meet a friend.","note":""}]},{"id":"formal-copula","title":"N입니다 · N입니까? · N이/가 아닙니다","label":"Formal noun sentences","meaning":"Identify, question, or negate nouns in formal polite style.","form":"N입니다 for statements, N입니까? for questions, and N이/가 아닙니다 for ‘is not N.’","notes":"The negative particle still follows batchim: 학생이 아닙니다, 의사가 아닙니다.","examples":[["학생입니다.","I am a student."],["선생님입니까?","Are you a teacher?"],["의사가 아닙니다.","I am not a doctor."]],"sourceTitle":"Material Exercise 6 · Formal identification","sourceDescription":"Complete the original formal noun dialogues.","sourceQuestions":[{"korean":"상우는 선생님입니까?\n아니요, 상우는 선생님이 아닙니다. 상우는 학생입니다.","english":"Is Sang-woo a teacher? No, he is not a teacher. He is a student.","note":"","prompt":{"english":"Complete Material Exercise 6.","korean":"상우 · 선생님? → 학생"}},{"korean":"저것은 구두입니까?\n아니요, 저것은 구두가 아닙니다. 저것은 운동화입니다.","english":"Are those dress shoes? No, they are not dress shoes. They are sneakers.","note":"","prompt":{"english":"Complete Material Exercise 6.","korean":"저것 · 구두? → 운동화"}},{"korean":"지금은 여름입니까?\n아니요, 지금은 여름이 아닙니다. 지금은 가을입니다.","english":"Is it summer now? No, it is not summer. It is autumn.","note":"","prompt":{"english":"Complete Material Exercise 6.","korean":"지금 · 여름? → 가을"}},{"korean":"티누는 일본 사람입니까?\n아니요, 티누는 일본 사람이 아닙니다. 티누는 베트남 사람입니다.","english":"Is Tinu Japanese? No, he is not Japanese. He is Vietnamese.","note":"","prompt":{"english":"Complete Material Exercise 6.","korean":"티누 · 일본 사람? → 베트남 사람"}}],"translationTitle":"Translation Practice · Formal correction","translationDescription":"Use formal identification and correction with unseen TOPIK nouns.","translationQuestions":[{"korean":"이것은 계획입니까?\n아니요, 이것은 계획이 아닙니다. 이것은 결과입니다.","english":"Is this a plan? No, it is not a plan. It is a result.","note":""},{"korean":"그것은 과제입니까?\n아니요, 그것은 과제가 아닙니다. 그것은 시험입니다.","english":"Is that an assignment? No, it is not an assignment. It is an exam.","note":""},{"korean":"저것은 문제입니까?\n아니요, 저것은 문제가 아닙니다. 저것은 해결입니다.","english":"Is that over there a problem? No, it is not a problem. It is a solution.","note":""},{"korean":"민수는 직원입니까?\n아니요, 민수는 직원이 아닙니다. 학생입니다.","english":"Is Minsu an employee? No, he is not an employee. He is a student.","note":""},{"korean":"이것은 문화입니까?\n네, 이것은 문화입니다.","english":"Is this culture? Yes, this is culture.","note":""},{"korean":"그것은 약속입니까?\n네, 그것은 약속입니다.","english":"Is that an appointment? Yes, it is an appointment.","note":""},{"korean":"지금은 수업입니까?\n아니요, 지금은 수업이 아닙니다. 회의입니다.","english":"Is it class now? No, it is not class. It is a meeting.","note":""},{"korean":"이 사람은 연구원입니까?\n아니요, 연구원이 아닙니다. 회사원입니다.","english":"Is this person a researcher? No, they are not a researcher. They are an office worker.","note":""}]}]};
-  const STORAGE_KEY = "koreanQuizThemeV2";
-  const root = document.documentElement;
-  const STATES = new Map();
-  const BANKS = new Map();
+<html data-theme="light" lang="en">
+ <head>
+  <script>
+   (() => { try {
+    const s = localStorage.getItem('koreanQuizThemeV2');
+    document.documentElement.dataset.theme = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+catch (_) { } })();
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="Interactive Korean lesson study guide" name="description"/>
+  <title>
+   Korean lesson
+  </title>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
-  function esc(value){return String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
-  function romanizeKorean(text){
-    const CHO=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
-    const JUNG=["a","ae","ya","yae","eo","e","yeo","ye","o","oa","oae","oi","yo","u","ueo","ue","ui","yu","eu","eui","i"];
-    const JONG=["","g","kk","gs","n","nj","nh","d","l","lg","lm","lb","ls","lt","lp","lh","m","b","bs","s","ss","ng","j","ch","k","t","p","h"];
-    return String(text??"").split(/(\s+)/).map(token=>{
-      if(/^\s+$/.test(token)) return token;
-      let out=[],run=[];
-      const flush=()=>{if(run.length){out.push(run.join("-"));run=[];}};
-      for(const ch of token){const code=ch.charCodeAt(0);if(code>=0xAC00&&code<=0xD7A3){const o=code-0xAC00,j=o%28,u=Math.floor(o/28)%21,c=Math.floor(o/(28*21));run.push(CHO[c]+JUNG[u]+JONG[j]);}else{flush();out.push(ch);}}flush();return out.join("");
-    }).join("");
-  }
-  function enrichQuestion(q){
-    q.romanization=q.romanization||romanizeKorean(q.korean);
-    q.prompt=q.prompt||{};
-    if(q.prompt.korean&&!q.prompt.romanization) q.prompt.romanization=romanizeKorean(q.prompt.korean);
-    q.answers=q.answers||{};
-    for(const lang of ["english","korean","romanization"]){if(!Array.isArray(q.answers[lang])) q.answers[lang]=[]; if(q[lang]&&!q.answers[lang].includes(q[lang])) q.answers[lang].unshift(q[lang]);}
-    return q;
-  }
-  function enrichAll(list){return list.map(item=>enrichQuestion({...item,prompt:item.prompt?{...item.prompt}:undefined,answers:item.answers?{...item.answers}:undefined}));}
-  LESSON.vocab.forEach(v=>{v.romanization=romanizeKorean(v.korean);});
-  LESSON.vocabSource=enrichAll(LESSON.vocabSource); LESSON.vocabMixed=enrichAll(LESSON.vocabMixed);
-  LESSON.sections.forEach(s=>{s.sourceQuestions=enrichAll(s.sourceQuestions);s.translationQuestions=enrichAll(s.translationQuestions);});
+/* Theme variables */
+:root {
+  color-scheme: light;
+  --background: #28468A;
+  --foreground: #F5F5F5;
+  --primary: #BCE0E6;
+  --primary-hover: #ADC6CB;
+  --secondary: #AD8FE6;
+  --secondary-soft: #8E7EBF;
+  --accent: #C74E33;
+  --accent-soft: #A24B36;
+  --muted: #A0E090;
+  --muted-strong: #99C588;
+  --blue-soft: #6375CF;
+  --border: #6674C8;
+  --subtle: #DEEAAE;
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit',system-ui,sans-serif;
+  --transition: all 180ms ease;
+}
 
-  function normalize(value,lang){let s=String(value??"").trim().toLowerCase();if(lang==="romanization")return s.replace(/[^a-z0-9]/g,"");if(lang==="korean")return s.replace(/[\s\-–—.,!?;:'"“”‘’()\[\]{}]/g,"");return s.replace(/[^a-z0-9가-힣]+/g," ").replace(/\s+/g," ").trim();}
-  function isCorrect(q,value,lang){return (q.answers?.[lang]||[q[lang]]).some(answer=>normalize(answer,lang)===normalize(value,lang));}
-  function shuffle(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-  function buildSet(bank,count){const out=[];while(out.length<count){out.push(...shuffle(bank));}return out.slice(0,count);}
-  function promptFor(q,lang){return q.prompt?.[lang]??q[lang];}
-  function answerFor(q,lang){return q[lang];}
-  function prettyAnswer(q){return `<strong>${esc(q.english)}</strong><br><span class="roman">${esc(q.romanization)}</span><br>${esc(q.korean)}${q.note?`<br><small>${esc(q.note)}</small>`:""}`;}
+html[data-theme=dark] {
+  color-scheme: dark;
+  --background: #111827;
+  --foreground: #F9FAFB;
+  --primary: #6CC2D0;
+  --primary-hover: #6CC0D0;
+  --secondary: #8B61DC;
+  --secondary-soft: #201933;
+  --accent: #E29D8D;
+  --accent-soft: #391B13;
+  --muted: #1F2937;
+  --muted-strong: #374151;
+  --blue-soft: #12193B;
+  --border: #374151;
+  --subtle: #CBD5E1;
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
 
-  function applyTheme(theme,persist=false){const next=theme==="dark"?"dark":"light";root.dataset.theme=next;root.style.colorScheme=next;if(persist)try{localStorage.setItem(STORAGE_KEY,next)}catch(_){};document.querySelectorAll("[data-theme-toggle]").forEach(btn=>{const dark=next==="dark";btn.setAttribute("aria-pressed",String(dark));btn.title=dark?"Switch to light mode":"Switch to dark mode";btn.querySelector("[data-theme-icon]").textContent=dark?"☀":"☾";});}
-  let saved=null;try{saved=localStorage.getItem(STORAGE_KEY)}catch(_){}applyTheme(saved||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+/* Base elements and accessibility */
+* {
+  box-sizing: border-box;
+}
 
-  function exerciseTemplate(key,title,desc,defaultCount=10,defaultQ="english",defaultA="korean"){
-    return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Interactive exercise</span><h3>${esc(title)}</h3><p>${esc(desc)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>Choose the mode, number of questions, and languages. Romanization answers ignore dash and space placement when checked.</p><div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english"${defaultQ==="english"?" selected":""}>English</option><option value="romanization"${defaultQ==="romanization"?" selected":""}>Romanization</option><option value="korean"${defaultQ==="korean"?" selected":""}>Korean</option></select></label><label>Answer language<select class="menu-a"><option value="english"${defaultA==="english"?" selected":""}>English</option><option value="romanization"${defaultA==="romanization"?" selected":""}>Romanization</option><option value="korean"${defaultA==="korean"?" selected":""}>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="primary-btn start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="finish-actions"><button class="primary-btn restart-same" type="button">Restart exercise</button><button class="secondary-btn change-setup" type="button">Change setup</button></div><div class="review"></div></div></div></article>`;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  function render(){
-    document.title=`${LESSON.title} · ${LESSON.subtitle}`;
-    document.getElementById("heroTitle").textContent=LESSON.title;
-    document.getElementById("heroSubtitle").textContent=LESSON.subtitle;
-    document.getElementById("heroDesc").textContent=LESSON.description;
-    document.getElementById("tocGrid").innerHTML=`<a class="toc-link" href="#vocabulary">Vocabulary</a>`+LESSON.sections.map(s=>`<a class="toc-link" href="#${esc(s.id)}">${esc(s.title)}</a>`).join("");
-    const body=document.getElementById("vocabBody");body.innerHTML=LESSON.vocab.map(v=>`<tr data-search="${esc(`${v.english} ${v.romanization} ${v.korean} ${v.category}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(v.romanization)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td>${esc(v.category)}</td></tr>`).join("");
-    BANKS.set("vocab-source",LESSON.vocabSource);BANKS.set("vocab-mixed",LESSON.vocabMixed);
-    document.getElementById("vocabExercises").innerHTML=exerciseTemplate("vocab-source","Material Vocabulary Practice","Practice only vocabulary appearing in this Bab lesson.",Math.min(15,LESSON.vocabSource.length),"english","korean")+exerciseTemplate("vocab-mixed","Expanded Recognition Practice","Questions may also use TOPIK I and Level 3 words; those extra words are intentionally not listed in the vocabulary table.",20,"english","korean");
-    document.getElementById("grammarSections").innerHTML=LESSON.sections.map((s,i)=>{const sk=`${s.id}-source`,tk=`${s.id}-translation`;BANKS.set(sk,s.sourceQuestions);BANKS.set(tk,s.translationQuestions);return `<details class="section" id="${esc(s.id)}"${i===0?" open":""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k,e])=>`<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(sk,s.sourceTitle,s.sourceDescription,Math.min(10,s.sourceQuestions.length),"english","korean")}${exerciseTemplate(tk,s.translationTitle,s.translationDescription,Math.min(12,s.translationQuestions.length),"english","korean")}</div></div></details>`;}).join("");
-    initInteractions();
-  }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.55;
+}
 
-  function initInteractions(){
-    document.querySelectorAll("details").forEach(d=>{const s=d.querySelector(":scope>summary");const sync=()=>s?.setAttribute("aria-expanded",String(d.open));sync();d.addEventListener("toggle",sync);});
-    const search=document.getElementById("vocabSearch");search.addEventListener("input",()=>{const term=search.value.trim().toLowerCase();document.querySelectorAll("#vocabBody tr").forEach(row=>row.hidden=term&&!row.dataset.search.includes(term));});
-    document.querySelectorAll("[data-blur-field]").forEach(btn=>btn.addEventListener("click",()=>{const field=btn.dataset.blurField,on=btn.getAttribute("aria-pressed")!=="true";btn.setAttribute("aria-pressed",String(on));document.getElementById("vocabTable").classList.toggle(`blur-${field}`,on);document.querySelectorAll(`#vocabBody [data-vocab-field="${field}"]`).forEach(cell=>cell.classList.toggle("is-blurred",on));}));
-    document.querySelectorAll("[data-theme-toggle]").forEach(btn=>btn.addEventListener("click",()=>applyTheme(root.dataset.theme==="dark"?"light":"dark",true)));
-    document.querySelectorAll(".exercise").forEach(initExercise);
-  }
+button,
+input,
+select {
+  font: inherit;
+}
 
-  function initExercise(el){
-    const key=el.id.replace(/^ex-/,"");const bank=BANKS.get(key)||[];const state={key,bank,questions:[],i:0,score:0,results:[],done:false,finished:false,settings:null};STATES.set(key,state);
-    el.querySelector(".start").addEventListener("click",()=>start(el,state));el.querySelector(".end-early-btn").addEventListener("click",()=>finish(el,state,"Exercise ended early"));el.querySelector(".next").addEventListener("click",()=>next(el,state));el.querySelector(".restart-same").addEventListener("click",()=>start(el,state,true));el.querySelector(".change-setup").addEventListener("click",()=>showSetup(el,state));
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Header and page shell */
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner,
+.page-main {
+  width: min(1120px,calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+
+.hero {
+  color: #fff;
+  background: var(--background);
+}
+
+.hero-inner {
+  padding: clamp(48px,7vw,82px);
+}
+
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(3rem,7vw,5.7rem);
+  font-weight: 800;
+  line-height: .94;
+  letter-spacing: -.03em;
+}
+
+.hero p {
+  max-width: 68ch;
+  margin: 24px 0 0;
+  color: #EFF6FF;
+  font-size: 1.05rem;
+}
+
+.toc-card {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+
+/* Collapsible sections */
+.block,
+.section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+details.block>summary,
+details.section>summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px,5vw,64px);
+  color: #192B5D;
+  background: var(--secondary);
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(2.2rem,5vw,4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+
+details.block>summary::-webkit-details-marker,
+details.section>summary::-webkit-details-marker {
+  display: none;
+}
+
+details.block>summary::after,
+details.section>summary::after {
+  content: 'Collapse';
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #fff;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+details:not([open])>summary::after {
+  content: 'Expand';
+}
+
+#vocabulary>summary {
+  color: #fff;
+  background: var(--accent);
+}
+
+#grammarSections>details:nth-child(3n+2)>summary {
+  color: #fff;
+  background: var(--accent);
+}
+
+#grammarSections>details:nth-child(3n)>summary {
+  background: var(--primary);
+}
+
+.block-inner,
+.section-body {
+  padding: clamp(26px,5vw,64px);
+}
+
+/* Information cards and examples */
+.guide-grid,
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.guide-card,
+.info-card {
+  padding: 22px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+
+.rule-label {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 9px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.guide-card h3,
+.info-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.2rem;
+}
+
+.guide-card p,
+.info-card p {
+  margin: 0 0 12px;
+}
+
+.example-list {
+  display: grid;
+  gap: 9px;
+}
+
+.example {
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  white-space: pre-line;
+}
+
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* Vocabulary table */
+.vocab-tools {
+  display: grid;
+  grid-template-columns: minmax(220px,1fr) repeat(3,minmax(130px,auto));
+  gap: 8px;
+  margin: 24px 0 14px;
+}
+
+.vocab-search,
+input,
+select {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+input:focus,
+select:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+
+.blur-toggle,
+.btn,
+.primary-btn,
+.secondary-btn,
+.choice,
+.end-early-btn {
+  min-height: 52px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.blur-toggle[aria-pressed=true] {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--inverse-text);
+  background: var(--inverse);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.is-blurred .blur-target {
+  filter: blur(7px);
+  user-select: none;
+}
+
+.is-blurred:hover .blur-target,
+.is-blurred:focus .blur-target {
+  filter: none;
+}
+
+.source-note {
+  margin: 14px 0 0;
+  font-size: .9rem;
+  opacity: .8;
+}
+
+/* Translation exercises */
+.exercise-stack {
+  display: grid;
+  gap: 28px;
+  margin-top: 28px;
+}
+
+.exercise {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(158px,auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+
+.exercise-kicker,
+.prompt-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem,3vw,2.3rem);
+  line-height: 1;
+}
+
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-weight: 800;
+}
+
+.exercise-body {
+  padding: clamp(24px,4vw,38px);
+}
+
+.exercise-menu {
+  display: grid;
+  gap: 20px;
+}
+
+.exercise-menu h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.exercise-menu p {
+  margin: 0;
+  opacity: .82;
+}
+
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 14px;
+}
+
+.exercise-menu label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.exercise-menu label>* {
+  width: 100%;
+  height: 56px;
+  min-width: 0;
+}
+
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.secondary-btn,
+.btn.secondary {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.btn.warning,
+.end-early-btn {
+  color: #fff;
+  background: var(--accent);
+}
+
+.exercise-menu-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.runtime-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+}
+
+.progress>div {
+  height: 100%;
+  background: var(--secondary);
+}
+
+.prompt {
+  min-height: 88px;
+  margin: 8px 0 22px;
+  font-size: clamp(1.35rem,2.5vw,2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: pre-line;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.choices {
+  display: grid;
+  gap: 8px;
+}
+
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.choice.correct {
+  color: #fff;
+  background: var(--secondary);
+}
+
+.choice.wrong {
+  color: #fff;
+  background: var(--accent);
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  white-space: pre-line;
+}
+
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+
+.next {
+  margin-top: 12px;
+}
+
+.finish {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+
+.finish h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.review {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.review-item {
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  white-space: pre-line;
+}
+
+.review-item strong {
+  display: block;
+}
+
+.finish-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Floating page controls */
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.utility-button.top {
+  background: var(--accent);
+}
+
+@media (max-width:900px) {
+  .exercise-head {
+    grid-template-columns: 1fr;
   }
-  function start(el,state,reuse=false){
-    const settings=reuse&&state.settings?state.settings:{mode:el.querySelector(".menu-mode").value,count:Math.max(1,Math.min(100,Number(el.querySelector(".menu-count").value)||10)),qLang:el.querySelector(".menu-q").value,aLang:el.querySelector(".menu-a").value};state.settings=settings;state.questions=buildSet(state.bank,settings.count);state.i=0;state.score=0;state.results=[];state.done=false;state.finished=false;el.querySelector(".exercise-menu").classList.add("hidden");el.querySelector(".finish").style.display="none";el.querySelector(".live").classList.remove("hidden");showQuestion(el,state);
+  .score {
+    min-height: 74px;
   }
-  function showSetup(el,state){state.finished=true;el.querySelector(".live").classList.add("hidden");el.querySelector(".finish").style.display="none";el.querySelector(".exercise-menu").classList.remove("hidden");el.querySelector(".score").textContent="Not started";}
-  function showQuestion(el,state){
-    if(state.finished)return;const q=state.questions[state.i],S=state.settings;state.done=false;el.querySelector(".count").textContent=`Question ${state.i+1} / ${state.questions.length}`;el.querySelector(".mode-label").textContent=S.mode==="typed"?"Typed":"Multiple choice";el.querySelector(".score").textContent=`Score: ${state.score}`;const pct=(state.i/state.questions.length)*100;el.querySelector(".progress>div").style.width=`${pct}%`;el.querySelector(".progress").setAttribute("aria-valuenow",String(Math.round(pct)));el.querySelector(".prompt-label").textContent=`${S.qLang} → ${S.aLang}`;el.querySelector(".prompt").textContent=promptFor(q,S.qLang);const feedback=el.querySelector(".feedback");feedback.className="feedback";feedback.innerHTML="";el.querySelector(".next").classList.add("hidden");const zone=el.querySelector(".zone");
-    if(S.mode==="typed"){
-      zone.innerHTML=`<div class="answer-row"><label class="sr-only">Your answer</label><input class="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${S.aLang==="romanization"?"Space = dash · Double space = word space":"Type your answer"}"><button class="btn primary check" type="button">Check</button></div>`;const input=zone.querySelector("input"),submit=()=>submitTyped(el,state,input.value);zone.querySelector(".check").onclick=submit;input.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();if(state.done)next(el,state);else submit();return;}if(S.aLang==="romanization"&&ev.key===" "){ev.preventDefault();const a=input.selectionStart??input.value.length,b=input.selectionEnd??a,v=input.value;if(a>0&&v[a-1]==="-"){input.value=v.slice(0,a-1)+" "+v.slice(b);input.setSelectionRange(a,a);}else{input.value=v.slice(0,a)+"-"+v.slice(b);input.setSelectionRange(a+1,a+1);}}});requestAnimationFrame(()=>input.focus({preventScroll:true}));
-    }else{
-      const correct=answerFor(q,S.aLang);let options=[correct];for(const other of shuffle(state.bank)){const a=answerFor(other,S.aLang);if(!options.some(x=>normalize(x,S.aLang)===normalize(a,S.aLang)))options.push(a);if(options.length===4)break;}options=shuffle(options);zone.innerHTML=`<div class="choices">${options.map((o,i)=>`<button class="choice" data-value="${esc(o)}" type="button">${esc(o)}</button>`).join("")}</div>`;zone.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>{if(state.done)return;const value=btn.dataset.value,ok=isCorrect(q,value,S.aLang);zone.querySelectorAll(".choice").forEach(b=>{b.disabled=true;if(isCorrect(q,b.dataset.value,S.aLang))b.classList.add("correct")});if(!ok)btn.classList.add("wrong");complete(el,state,value,ok);}));
+  .exercise-menu-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width:680px) {
+  .header-inner,
+  .page-main {
+    width: 100%;
+  }
+  .header-inner {
+    padding: 0 14px;
+  }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner {
+    padding: 48px 22px;
+  }
+  .toc-card {
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .guide-grid,
+  .section-intro,
+  .exercise-menu-grid,
+  .answer-row {
+    grid-template-columns: 1fr;
+  }
+  details.block>summary,
+  details.section>summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.block>summary::after,
+  details.section>summary::after {
+    width: 100%;
+  }
+  .block-inner,
+  .section-body,
+  .exercise-body {
+    padding: 22px;
+  }
+  .vocab-tools {
+    grid-template-columns: 1fr;
+  }
+  .exercise-menu-actions,
+  .finish-actions {
+    flex-direction: column;
+  }
+  .exercise-menu-actions .btn,
+  .finish-actions .btn,
+  .end-early-btn {
+    width: 100%;
+  }
+  .utility-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+  </style>
+ </head>
+ <body id="top">
+  <!-- Page header -->
+  <header class="site-header">
+   <div class="header-inner">
+    <a class="brand" href="./index.html">
+     Korean Language Resources
+    </a>
+    <div class="header-actions">
+     <a class="header-link" href="./index.html">
+      Home
+     </a>
+    </div>
+   </div>
+  </header>
+  <!-- Lesson content -->
+  <main class="page-main">
+   <section class="hero">
+    <div class="hero-inner">
+     <p class="hero-kicker">
+      Interactive Korean Study Guide
+     </p>
+     <h1 id="heroTitle">
+     </h1>
+     <p>
+      <strong id="heroSubtitle">
+      </strong>
+     </p>
+     <p id="heroDesc">
+     </p>
+    </div>
+   </section>
+   <nav aria-label="Lesson sections" class="toc-card">
+    <span class="toc-label">
+     Jump to a section
+    </span>
+    <div class="toc-grid" id="tocGrid">
+    </div>
+   </nav>
+   <details class="block" id="vocabulary" open="">
+    <summary>
+     <span>
+      Complete Vocabulary Bank
+     </span>
+    </summary>
+    <div class="block-inner">
+     <div class="guide-grid">
+      <article class="guide-card">
+       <span class="rule-label">
+        Lesson vocabulary
+       </span>
+       <h3>
+        One visible vocabulary bank
+       </h3>
+       <p>
+        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here.
+       </p>
+      </article>
+      <article class="guide-card">
+       <span class="rule-label">
+        Literal romanization
+       </span>
+       <h3>
+        Keyboard and checking
+       </h3>
+       <p>
+        Romanization follows the supplied character-by-character system. Press
+        <strong>
+         Space once
+        </strong>
+        for a syllable dash and
+        <strong>
+         Space twice
+        </strong>
+        for a word space. Grading ignores dash and space placement, while correct answers display the intended formatting.
+       </p>
+      </article>
+     </div>
+     <div class="vocab-tools">
+      <input class="vocab-search" id="vocabSearch" placeholder="Search Korean, romanization, English, or category" type="search"/>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="english" type="button">
+       Blur English
+      </button>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="romanization" type="button">
+       Blur Romanization
+      </button>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="korean" type="button">
+       Blur Korean
+      </button>
+     </div>
+     <div class="table-wrap">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          English
+         </th>
+         <th>
+          Romanization
+         </th>
+         <th>
+          Korean
+         </th>
+         <th>
+          Category
+         </th>
+        </tr>
+       </thead>
+       <tbody id="vocabBody">
+       </tbody>
+      </table>
+     </div>
+     <p class="source-note">
+      Workbook-style material questions have been removed. Every exercise below is translation practice.
+     </p>
+     <div class="exercise-stack" id="vocabExercises">
+     </div>
+    </div>
+   </details>
+   <div id="grammarSections">
+   </div>
+  </main>
+  <!-- Floating controls -->
+  <div class="utility-controls">
+   <button aria-pressed="false" class="utility-button" data-theme-toggle="" type="button">
+    <span data-theme-icon="">
+     ☾
+    </span>
+    <span class="sr-only">
+     Toggle theme
+    </span>
+   </button>
+   <a aria-label="Back to top" class="utility-button top" href="#top">
+    ↑
+   </a>
+  </div>
+  <script>
+   (() => {
+    "use strict";
+    // -------------------------------------------------------------------------
+    // Lesson content
+    // -------------------------------------------------------------------------
+    const LESSON = {
+        "title": "Bab 6",
+        "subtitle": "공원에서 제니퍼 씨를 만납니다",
+        "description": "Switch into formal polite speech, connect clauses with -고, and use formal noun identification and negation.",
+        "vocab": [
+            {
+                "korean": "청소하다",
+                "english": "to clean",
+                "category": "Activities"
+            },
+            {
+                "korean": "이야기하다",
+                "english": "to talk",
+                "category": "Activities"
+            },
+            {
+                "korean": "수영하다",
+                "english": "to swim",
+                "category": "Activities"
+            },
+            {
+                "korean": "노래하다",
+                "english": "to sing",
+                "category": "Activities"
+            },
+            {
+                "korean": "쇼핑하다",
+                "english": "to shop",
+                "category": "Activities"
+            },
+            {
+                "korean": "빨래하다",
+                "english": "to do laundry",
+                "category": "Activities"
+            },
+            {
+                "korean": "사진",
+                "english": "photo",
+                "category": "Objects"
+            },
+            {
+                "korean": "그림",
+                "english": "picture",
+                "category": "Objects"
+            },
+            {
+                "korean": "춤",
+                "english": "dance",
+                "category": "Activities"
+            },
+            {
+                "korean": "산책",
+                "english": "walk",
+                "category": "Activities"
+            },
+            {
+                "korean": "텔레비전",
+                "english": "television",
+                "category": "Objects"
+            },
+            {
+                "korean": "책",
+                "english": "book",
+                "category": "Objects"
+            },
+            {
+                "korean": "찍다",
+                "english": "to take a photo",
+                "category": "Verbs"
+            },
+            {
+                "korean": "하다",
+                "english": "to do",
+                "category": "Verbs"
+            },
+            {
+                "korean": "추다",
+                "english": "to dance",
+                "category": "Verbs"
+            },
+            {
+                "korean": "읽다",
+                "english": "to read",
+                "category": "Verbs"
+            },
+            {
+                "korean": "그리다",
+                "english": "to draw",
+                "category": "Verbs"
+            },
+            {
+                "korean": "보다",
+                "english": "to watch",
+                "category": "Verbs"
+            },
+            {
+                "korean": "만화책",
+                "english": "comic book",
+                "category": "Leisure"
+            },
+            {
+                "korean": "게임",
+                "english": "game",
+                "category": "Leisure"
+            },
+            {
+                "korean": "한국어 공부",
+                "english": "Korean study",
+                "category": "Study"
+            },
+            {
+                "korean": "요리",
+                "english": "cooking",
+                "category": "Activities"
+            },
+            {
+                "korean": "따뜻하다",
+                "english": "to be warm",
+                "category": "Adjectives"
+            },
+            {
+                "korean": "시원하다",
+                "english": "to be cool",
+                "category": "Adjectives"
+            },
+            {
+                "korean": "맑다",
+                "english": "to be clear",
+                "category": "Adjectives"
+            },
+            {
+                "korean": "흐리다",
+                "english": "to be cloudy",
+                "category": "Adjectives"
+            },
+            {
+                "korean": "깨끗하다",
+                "english": "to be clean",
+                "category": "Adjectives"
+            },
+            {
+                "korean": "더럽다",
+                "english": "to be dirty",
+                "category": "Adjectives"
+            },
+            {
+                "korean": "기분",
+                "english": "mood",
+                "category": "Feelings"
+            },
+            {
+                "korean": "스파게티",
+                "english": "spaghetti",
+                "category": "Food"
+            },
+            {
+                "korean": "햄버거",
+                "english": "hamburger",
+                "category": "Food"
+            },
+            {
+                "korean": "농구",
+                "english": "basketball",
+                "category": "Sports"
+            },
+            {
+                "korean": "축구",
+                "english": "soccer",
+                "category": "Sports"
+            },
+            {
+                "korean": "공원",
+                "english": "park",
+                "category": "Places"
+            },
+            {
+                "korean": "기숙사",
+                "english": "dormitory",
+                "category": "Places"
+            },
+            {
+                "korean": "교실",
+                "english": "classroom",
+                "category": "Places"
+            }
+        ],
+        "sections": [
+            {
+                "id": "formal",
+                "title": "A/V-(스)ㅂ니다 · -(스)ㅂ니까?",
+                "label": "Formal polite",
+                "meaning": "Use formal polite endings in presentations, workplaces, announcements, and formal questions.",
+                "form": "After a consonant use -습니다/-습니까. After a vowel use -ㅂ니다/-ㅂ니까. ㄹ generally drops before ㅂ.",
+                "notes": "하다 becomes 합니다; formal questions end in a question mark and rising intonation.",
+                "examples": [
+                    [
+                        "공부합니다.",
+                        "I study."
+                    ],
+                    [
+                        "책을 읽습니다.",
+                        "I read a book."
+                    ],
+                    [
+                        "날씨가 춥습니까?",
+                        "Is the weather cold?"
+                    ]
+                ],
+                "generator": "formal"
+            },
+            {
+                "id": "clause-link",
+                "title": "-고",
+                "label": "And / linking clauses",
+                "meaning": "Attach -고 to the first predicate to connect two actions or descriptions.",
+                "form": "Verb/adjective stem + 고, followed by the final conjugated predicate.",
+                "notes": "The first predicate does not take tense or politeness in these beginner examples; the last predicate carries the sentence ending.",
+                "examples": [
+                    [
+                        "크고 무거워요.",
+                        "It is big and heavy."
+                    ],
+                    [
+                        "맑고 따뜻해요.",
+                        "It is clear and warm."
+                    ],
+                    [
+                        "책을 읽고 텔레비전을 봐요.",
+                        "I read a book and watch television."
+                    ]
+                ],
+                "generator": "clauseLink"
+            },
+            {
+                "id": "formal-copula",
+                "title": "N입니다 · N입니까? · N이/가 아닙니다",
+                "label": "Formal noun sentences",
+                "meaning": "Identify, question, or negate nouns in formal polite style.",
+                "form": "N입니다 for statements, N입니까? for questions, and N이/가 아닙니다 for ‘is not N.’",
+                "notes": "The negative particle still follows batchim: 학생이 아닙니다, 의사가 아닙니다.",
+                "examples": [
+                    [
+                        "학생입니다.",
+                        "I am a student."
+                    ],
+                    [
+                        "선생님입니까?",
+                        "Are you a teacher?"
+                    ],
+                    [
+                        "의사가 아닙니다.",
+                        "I am not a doctor."
+                    ]
+                ],
+                "generator": "formalCopula"
+            }
+        ]
+    };
+    // -------------------------------------------------------------------------
+    // Shared page state and small utilities
+    // -------------------------------------------------------------------------
+    const root = document.documentElement;
+    const STORAGE_KEY = "koreanQuizThemeV2";
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [b[i], b[j]] = [b[j], b[i]];
+    } return b; };
+    // Literal transliteration requested by the learner. No pronunciation assimilation is applied.
+    function romanizeKorean(text) {
+        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+        const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+        const JONG = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+        let out = "", previousHangul = false;
+        for (const ch of String(text ?? "")) {
+            const code = ch.charCodeAt(0);
+            if (code >= 0xAC00 && code <= 0xD7A3) {
+                const offset = code - 0xAC00, jong = offset % 28, jung = Math.floor(offset / 28) % 21, cho = Math.floor(offset / (28 * 21));
+                if (previousHangul)
+                    out += "-";
+                out += CHO[cho] + JUNG[jung] + JONG[jong];
+                previousHangul = true;
+            }
+            else {
+                out += ch;
+                previousHangul = false;
+            }
+        }
+        return out;
     }
-  }
-  function submitTyped(el,state,value){if(state.done)return;const q=state.questions[state.i],ok=isCorrect(q,value,state.settings.aLang);complete(el,state,value,ok);const input=el.querySelector(".answer");if(input){input.readOnly=true;requestAnimationFrame(()=>input.focus({preventScroll:true}));}}
-  function complete(el,state,value,ok){if(state.done||state.finished)return;state.done=true;if(ok)state.score++;const q=state.questions[state.i];state.results.push({q,value,ok});el.querySelector(".score").textContent=`Score: ${state.score}`;const f=el.querySelector(".feedback");f.className=`feedback ${ok?"good":"bad"}`;f.innerHTML=`${ok?"Correct.":"Not quite."}<br>${prettyAnswer(q)}`;const nextBtn=el.querySelector(".next");nextBtn.textContent=state.i===state.questions.length-1?"Finish":"Next";nextBtn.classList.remove("hidden");}
-  function next(el,state){if(!state.done)return;if(state.i<state.questions.length-1){state.i++;showQuestion(el,state);}else finish(el,state,"Exercise complete");}
-  function finish(el,state,title){if(state.finished)return;state.finished=true;el.querySelector(".live").classList.add("hidden");const fin=el.querySelector(".finish");fin.style.display="block";fin.querySelector("h4").textContent=title;const answered=state.results.length,pct=answered?Math.round(state.score/answered*100):0;fin.querySelector(".summary").innerHTML=answered?`Score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.`:"No questions were answered.";fin.querySelector(".review").innerHTML=state.results.map((r,i)=>`<div class="review-item"><strong>${i+1}. ${r.ok?"Correct":"Review"}</strong>Your answer: ${esc(r.value||"(blank)")}<br>${prettyAnswer(r.q)}</div>`).join("");fin.scrollIntoView({behavior:"smooth",block:"nearest"});}
-  render();
+    function hasBatchim(text) { const chars = [...String(text)].filter(ch => { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; }); return !!chars.length && ((chars.at(-1).charCodeAt(0) - 0xAC00) % 28 !== 0); }
+    const topic = n => n + (hasBatchim(n) ? "은" : "는"), subject = n => n + (hasBatchim(n) ? "이" : "가"), object = n => n + (hasBatchim(n) ? "을" : "를"), andFormal = n => n + (hasBatchim(n) ? "과" : "와"), copula = n => n + (hasBatchim(n) ? "이에요" : "예요"), negativeN = n => n + (hasBatchim(n) ? "이" : "가");
+    const article = e => /^[aeiou]/i.test(e) ? `an ${e}` : `a ${e}`;
+    const q = (korean, english, alternatives = []) => ({ korean, english, romanization: romanizeKorean(korean), alternatives: alternatives.map(k => ({ korean: k, romanization: romanizeKorean(k) })) });
+    // -------------------------------------------------------------------------
+    // Word pools used to generate translation questions
+    // -------------------------------------------------------------------------
+    const NAMES = [
+        {
+            "k": "팀",
+            "e": "Tim"
+        },
+        {
+            "k": "상우",
+            "e": "Sang-woo"
+        },
+        {
+            "k": "아사코",
+            "e": "Asako"
+        },
+        {
+            "k": "왕단",
+            "e": "Wangdan"
+        },
+        {
+            "k": "투이",
+            "e": "Thuy"
+        },
+        {
+            "k": "티누",
+            "e": "Tinu"
+        },
+        {
+            "k": "소영",
+            "e": "So-young"
+        },
+        {
+            "k": "제니퍼",
+            "e": "Jennifer"
+        },
+        {
+            "k": "민수",
+            "e": "Minsu"
+        },
+        {
+            "k": "수진",
+            "e": "Sujin"
+        }
+    ];
+    const JOBS = [
+        {
+            "k": "학생",
+            "e": "student"
+        },
+        {
+            "k": "선생님",
+            "e": "teacher"
+        },
+        {
+            "k": "회사원",
+            "e": "office worker"
+        },
+        {
+            "k": "요리사",
+            "e": "cook"
+        },
+        {
+            "k": "경찰",
+            "e": "police officer"
+        },
+        {
+            "k": "간호사",
+            "e": "nurse"
+        },
+        {
+            "k": "의사",
+            "e": "doctor"
+        },
+        {
+            "k": "가수",
+            "e": "singer"
+        },
+        {
+            "k": "연구원",
+            "e": "researcher"
+        },
+        {
+            "k": "직원",
+            "e": "employee"
+        }
+    ];
+    const COUNTRIES = [
+        {
+            "k": "한국",
+            "e": "Korean"
+        },
+        {
+            "k": "일본",
+            "e": "Japanese"
+        },
+        {
+            "k": "중국",
+            "e": "Chinese"
+        },
+        {
+            "k": "베트남",
+            "e": "Vietnamese"
+        },
+        {
+            "k": "영국",
+            "e": "British"
+        },
+        {
+            "k": "미국",
+            "e": "American"
+        },
+        {
+            "k": "호주",
+            "e": "Australian"
+        },
+        {
+            "k": "독일",
+            "e": "German"
+        },
+        {
+            "k": "캐나다",
+            "e": "Canadian"
+        },
+        {
+            "k": "러시아",
+            "e": "Russian"
+        }
+    ];
+    const NOUNS = [
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "연필",
+            "e": "pencil"
+        },
+        {
+            "k": "가방",
+            "e": "bag"
+        },
+        {
+            "k": "책상",
+            "e": "desk"
+        },
+        {
+            "k": "컴퓨터",
+            "e": "computer"
+        },
+        {
+            "k": "사과",
+            "e": "apple"
+        },
+        {
+            "k": "커피",
+            "e": "coffee"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "경험",
+            "e": "experience"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        },
+        {
+            "k": "사회",
+            "e": "society"
+        },
+        {
+            "k": "경제",
+            "e": "economy"
+        },
+        {
+            "k": "환경",
+            "e": "environment"
+        },
+        {
+            "k": "건강",
+            "e": "health"
+        },
+        {
+            "k": "습관",
+            "e": "habit"
+        },
+        {
+            "k": "목적",
+            "e": "purpose"
+        },
+        {
+            "k": "기회",
+            "e": "opportunity"
+        },
+        {
+            "k": "방법",
+            "e": "method"
+        },
+        {
+            "k": "결과",
+            "e": "result"
+        },
+        {
+            "k": "이유",
+            "e": "reason"
+        },
+        {
+            "k": "문제",
+            "e": "problem"
+        },
+        {
+            "k": "해결",
+            "e": "solution"
+        },
+        {
+            "k": "관계",
+            "e": "relationship"
+        },
+        {
+            "k": "책임",
+            "e": "responsibility"
+        },
+        {
+            "k": "약속",
+            "e": "appointment"
+        },
+        {
+            "k": "준비",
+            "e": "preparation"
+        },
+        {
+            "k": "발표",
+            "e": "presentation"
+        },
+        {
+            "k": "과제",
+            "e": "assignment"
+        },
+        {
+            "k": "수업",
+            "e": "class"
+        },
+        {
+            "k": "연구",
+            "e": "research"
+        },
+        {
+            "k": "정보",
+            "e": "information"
+        },
+        {
+            "k": "의견",
+            "e": "opinion"
+        },
+        {
+            "k": "변화",
+            "e": "change"
+        },
+        {
+            "k": "선택",
+            "e": "choice"
+        }
+    ];
+    const OBJECTS = [
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "신문",
+            "e": "newspaper"
+        },
+        {
+            "k": "사과",
+            "e": "apple"
+        },
+        {
+            "k": "커피",
+            "e": "coffee"
+        },
+        {
+            "k": "물",
+            "e": "water"
+        },
+        {
+            "k": "영화",
+            "e": "movie"
+        },
+        {
+            "k": "음악",
+            "e": "music"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "문제",
+            "e": "problem"
+        },
+        {
+            "k": "과제",
+            "e": "assignment"
+        },
+        {
+            "k": "정보",
+            "e": "information"
+        },
+        {
+            "k": "환경",
+            "e": "environment"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        },
+        {
+            "k": "경험",
+            "e": "experience"
+        }
+    ];
+    const PLACES = [
+        {
+            "k": "학교",
+            "e": "school"
+        },
+        {
+            "k": "도서관",
+            "e": "library"
+        },
+        {
+            "k": "식당",
+            "e": "restaurant"
+        },
+        {
+            "k": "커피숍",
+            "e": "coffee shop"
+        },
+        {
+            "k": "교실",
+            "e": "classroom"
+        },
+        {
+            "k": "집",
+            "e": "home"
+        },
+        {
+            "k": "회사",
+            "e": "company"
+        },
+        {
+            "k": "공원",
+            "e": "park"
+        },
+        {
+            "k": "시장",
+            "e": "market"
+        },
+        {
+            "k": "은행",
+            "e": "bank"
+        },
+        {
+            "k": "우체국",
+            "e": "post office"
+        },
+        {
+            "k": "영화관",
+            "e": "movie theater"
+        },
+        {
+            "k": "연구실",
+            "e": "research room"
+        },
+        {
+            "k": "회의실",
+            "e": "meeting room"
+        }
+    ];
+    const POSITIONS = [
+        {
+            "k": "위",
+            "e": "on top of"
+        },
+        {
+            "k": "아래",
+            "e": "under"
+        },
+        {
+            "k": "앞",
+            "e": "in front of"
+        },
+        {
+            "k": "뒤",
+            "e": "behind"
+        },
+        {
+            "k": "옆",
+            "e": "next to"
+        },
+        {
+            "k": "안",
+            "e": "inside"
+        },
+        {
+            "k": "밖",
+            "e": "outside"
+        }
+    ];
+    const TRANS = [
+        {
+            "base": "읽다",
+            "p": "읽어요",
+            "f": "읽습니다",
+            "fq": "읽습니까",
+            "c": "읽고",
+            "e": "read"
+        },
+        {
+            "base": "먹다",
+            "p": "먹어요",
+            "f": "먹습니다",
+            "fq": "먹습니까",
+            "c": "먹고",
+            "e": "eat"
+        },
+        {
+            "base": "마시다",
+            "p": "마셔요",
+            "f": "마십니다",
+            "fq": "마십니까",
+            "c": "마시고",
+            "e": "drink"
+        },
+        {
+            "base": "보다",
+            "p": "봐요",
+            "f": "봅니다",
+            "fq": "봅니까",
+            "c": "보고",
+            "e": "watch"
+        },
+        {
+            "base": "공부하다",
+            "p": "공부해요",
+            "f": "공부합니다",
+            "fq": "공부합니까",
+            "c": "공부하고",
+            "e": "study"
+        },
+        {
+            "base": "좋아하다",
+            "p": "좋아해요",
+            "f": "좋아합니다",
+            "fq": "좋아합니까",
+            "c": "좋아하고",
+            "e": "like"
+        },
+        {
+            "base": "사다",
+            "p": "사요",
+            "f": "삽니다",
+            "fq": "삽니까",
+            "c": "사고",
+            "e": "buy"
+        },
+        {
+            "base": "만들다",
+            "p": "만들어요",
+            "f": "만듭니다",
+            "fq": "만듭니까",
+            "c": "만들고",
+            "e": "make"
+        },
+        {
+            "base": "설명하다",
+            "p": "설명해요",
+            "f": "설명합니다",
+            "fq": "설명합니까",
+            "c": "설명하고",
+            "e": "explain"
+        },
+        {
+            "base": "준비하다",
+            "p": "준비해요",
+            "f": "준비합니다",
+            "fq": "준비합니까",
+            "c": "준비하고",
+            "e": "prepare"
+        }
+    ];
+    const INTRANS = [
+        {
+            "base": "가다",
+            "p": "가요",
+            "f": "갑니다",
+            "fq": "갑니까",
+            "c": "가고",
+            "e": "go"
+        },
+        {
+            "base": "오다",
+            "p": "와요",
+            "f": "옵니다",
+            "fq": "옵니까",
+            "c": "오고",
+            "e": "come"
+        },
+        {
+            "base": "자다",
+            "p": "자요",
+            "f": "잡니다",
+            "fq": "잡니까",
+            "c": "자고",
+            "e": "sleep"
+        },
+        {
+            "base": "일하다",
+            "p": "일해요",
+            "f": "일합니다",
+            "fq": "일합니까",
+            "c": "일하고",
+            "e": "work"
+        },
+        {
+            "base": "운동하다",
+            "p": "운동해요",
+            "f": "운동합니다",
+            "fq": "운동합니까",
+            "c": "운동하고",
+            "e": "exercise"
+        },
+        {
+            "base": "청소하다",
+            "p": "청소해요",
+            "f": "청소합니다",
+            "fq": "청소합니까",
+            "c": "청소하고",
+            "e": "clean"
+        },
+        {
+            "base": "수영하다",
+            "p": "수영해요",
+            "f": "수영합니다",
+            "fq": "수영합니까",
+            "c": "수영하고",
+            "e": "swim"
+        },
+        {
+            "base": "쇼핑하다",
+            "p": "쇼핑해요",
+            "f": "쇼핑합니다",
+            "fq": "쇼핑합니까",
+            "c": "쇼핑하고",
+            "e": "shop"
+        }
+    ];
+    const ADJS = [
+        {
+            "base": "맛있다",
+            "p": "맛있어요",
+            "f": "맛있습니다",
+            "c": "맛있고",
+            "e": "delicious"
+        },
+        {
+            "base": "맛없다",
+            "p": "맛없어요",
+            "f": "맛없습니다",
+            "c": "맛없고",
+            "e": "not delicious"
+        },
+        {
+            "base": "많다",
+            "p": "많아요",
+            "f": "많습니다",
+            "c": "많고",
+            "e": "numerous"
+        },
+        {
+            "base": "적다",
+            "p": "적어요",
+            "f": "적습니다",
+            "c": "적고",
+            "e": "few"
+        },
+        {
+            "base": "비싸다",
+            "p": "비싸요",
+            "f": "비쌉니다",
+            "c": "비싸고",
+            "e": "expensive"
+        },
+        {
+            "base": "싸다",
+            "p": "싸요",
+            "f": "쌉니다",
+            "c": "싸고",
+            "e": "cheap"
+        },
+        {
+            "base": "크다",
+            "p": "커요",
+            "f": "큽니다",
+            "c": "크고",
+            "e": "big"
+        },
+        {
+            "base": "작다",
+            "p": "작아요",
+            "f": "작습니다",
+            "c": "작고",
+            "e": "small"
+        },
+        {
+            "base": "넓다",
+            "p": "넓어요",
+            "f": "넓습니다",
+            "c": "넓고",
+            "e": "spacious"
+        },
+        {
+            "base": "좁다",
+            "p": "좁아요",
+            "f": "좁습니다",
+            "c": "좁고",
+            "e": "narrow"
+        },
+        {
+            "base": "길다",
+            "p": "길어요",
+            "f": "깁니다",
+            "c": "길고",
+            "e": "long"
+        },
+        {
+            "base": "짧다",
+            "p": "짧아요",
+            "f": "짧습니다",
+            "c": "짧고",
+            "e": "short"
+        },
+        {
+            "base": "좋다",
+            "p": "좋아요",
+            "f": "좋습니다",
+            "c": "좋고",
+            "e": "good"
+        },
+        {
+            "base": "재미있다",
+            "p": "재미있어요",
+            "f": "재미있습니다",
+            "c": "재미있고",
+            "e": "interesting"
+        },
+        {
+            "base": "어렵다",
+            "p": "어려워요",
+            "f": "어렵습니다",
+            "c": "어렵고",
+            "e": "difficult"
+        },
+        {
+            "base": "쉽다",
+            "p": "쉬워요",
+            "f": "쉽습니다",
+            "c": "쉽고",
+            "e": "easy"
+        },
+        {
+            "base": "깨끗하다",
+            "p": "깨끗해요",
+            "f": "깨끗합니다",
+            "c": "깨끗하고",
+            "e": "clean"
+        },
+        {
+            "base": "조용하다",
+            "p": "조용해요",
+            "f": "조용합니다",
+            "c": "조용하고",
+            "e": "quiet"
+        }
+    ];
+    const BIEUP = [
+        {
+            "p": "추워요",
+            "e": "cold"
+        },
+        {
+            "p": "더워요",
+            "e": "hot"
+        },
+        {
+            "p": "쉬워요",
+            "e": "easy"
+        },
+        {
+            "p": "어려워요",
+            "e": "difficult"
+        },
+        {
+            "p": "무거워요",
+            "e": "heavy"
+        },
+        {
+            "p": "가벼워요",
+            "e": "light"
+        },
+        {
+            "p": "귀여워요",
+            "e": "cute"
+        },
+        {
+            "p": "매워요",
+            "e": "spicy"
+        },
+        {
+            "p": "고마워요",
+            "e": "thankful"
+        },
+        {
+            "p": "아름다워요",
+            "e": "beautiful"
+        }
+    ];
+    const SEASONS = [
+        {
+            "k": "봄",
+            "e": "spring"
+        },
+        {
+            "k": "여름",
+            "e": "summer"
+        },
+        {
+            "k": "가을",
+            "e": "autumn"
+        },
+        {
+            "k": "겨울",
+            "e": "winter"
+        }
+    ];
+    const WEATHER = [
+        {
+            "p": "따뜻해요",
+            "c": "따뜻하고",
+            "e": "warm"
+        },
+        {
+            "p": "더워요",
+            "c": "덥고",
+            "e": "hot"
+        },
+        {
+            "p": "시원해요",
+            "c": "시원하고",
+            "e": "cool"
+        },
+        {
+            "p": "추워요",
+            "c": "춥고",
+            "e": "cold"
+        },
+        {
+            "p": "맑아요",
+            "c": "맑고",
+            "e": "clear"
+        },
+        {
+            "p": "흐려요",
+            "c": "흐리고",
+            "e": "cloudy"
+        }
+    ];
+    const KINDS = [
+        {
+            "k": "계절",
+            "e": "season"
+        },
+        {
+            "k": "음식",
+            "e": "food"
+        },
+        {
+            "k": "영화",
+            "e": "movie"
+        },
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "운동",
+            "e": "exercise"
+        },
+        {
+            "k": "음악",
+            "e": "music"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        }
+    ];
+    const MODIFIERS = [
+        {
+            "k": "한국",
+            "e": "Korean"
+        },
+        {
+            "k": "새로운",
+            "e": "new"
+        },
+        {
+            "k": "재미있는",
+            "e": "interesting"
+        },
+        {
+            "k": "건강한",
+            "e": "healthy"
+        },
+        {
+            "k": "조용한",
+            "e": "quiet"
+        },
+        {
+            "k": "중요한",
+            "e": "important"
+        },
+        {
+            "k": "어려운",
+            "e": "difficult"
+        },
+        {
+            "k": "봄",
+            "e": "spring"
+        }
+    ];
+    function greetingQuestion() {
+        return pick([
+            q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
+        ]);
+    }
+    // -------------------------------------------------------------------------
+    // Grammar-aware question generation
+    // -------------------------------------------------------------------------
+    function generate(kind) {
+        let a, b, c, n, name, job, country, obj, place, verb, verb2, adj, position, owner, season, weather, kindN, mod;
+        switch (kind) {
+            case "greetings": return greetingQuestion();
+            case "copula":
+                n = pick([...NOUNS, ...JOBS]);
+                return q(copula(n.k), `It is ${article(n.e)}.`);
+            case "topic":
+                n = pick(NOUNS);
+                job = pick(JOBS);
+                return q(`${topic(n.k)} ${copula(job.k)}.`, `As for the ${n.e}, it is ${article(job.e)}.`);
+            case "yesno":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                if (Math.random() < .5)
+                    return q(`${copula(a.k)}? 네, ${copula(a.k)}.`, `Is it ${article(a.e)}? Yes, it is ${article(a.e)}.`);
+                return q(`${copula(a.k)}? 아니요, ${copula(b.k)}.`, `Is it ${article(a.e)}? No, it is ${article(b.e)}.`);
+            case "profile":
+                name = pick(NAMES);
+                country = pick(COUNTRIES);
+                job = pick(JOBS);
+                return q(`${name.k} 씨예요. ${name.k} 씨는 ${country.k} 사람이에요. ${name.k} 씨는 ${copula(job.k)}.`, `This is ${name.e}. ${name.e} is ${country.e}. ${name.e} is ${article(job.e)}.`);
+            case "demonstratives":
+                n = pick([...NOUNS, ...JOBS]);
+                a = pick([{ k: "이건", e: "This" }, { k: "그건", e: "That near you" }, { k: "저건", e: "That over there" }]);
+                return q(`${a.k} ${copula(n.k)}.`, `${a.e} is ${article(n.e)}.`);
+            case "negativeCopula":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                return q(`${a.k}${hasBatchim(a.k) ? "이" : "가"} 아니에요. ${copula(b.k)}.`, `It is not ${article(a.e)}. It is ${article(b.e)}.`);
+            case "negativeProfile":
+                name = pick(NAMES);
+                country = pick(COUNTRIES);
+                job = pick(JOBS);
+                a = pick(JOBS.filter(x => x.k !== job.k));
+                return q(`${name.k} 씨는 ${negativeN(a.k)} 아니에요. ${name.k} 씨는 ${copula(job.k)}.`, `${name.e} is not ${article(a.e)}. ${name.e} is ${article(job.e)}.`);
+            case "present":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
+            case "object":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
+            case "placeAction":
+                place = pick(PLACES);
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${place.k}에서 ${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e} at the ${place.e}.`);
+            case "also":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${obj.k}도 ${verb.p}.`, `I also ${verb.e} the ${obj.e}.`);
+            case "destination":
+                place = pick(PLACES);
+                if (Math.random() < .5)
+                    return q(`${place.k}에 가요.`, `I go to the ${place.e}.`);
+                return q(`${place.k}에 와요.`, `I come to the ${place.e}.`);
+            case "shortNegation":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} 안 ${verb.p}.`, `I do not ${verb.e} the ${obj.e}.`);
+            case "andThen":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                place = pick(PLACES);
+                verb2 = pick(INTRANS);
+                return q(`${object(obj.k)} ${verb.p}. 그리고 ${place.k}에서 ${verb2.p}.`, `I ${verb.e} the ${obj.e}. And then I ${verb2.e} at the ${place.e}.`);
+            case "adjective":
+                n = pick(NOUNS);
+                adj = pick(ADJS);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "subjectAdjective":
+                n = pick(NOUNS);
+                adj = pick(ADJS);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "whatKind":
+                kindN = pick(KINDS);
+                mod = pick(MODIFIERS);
+                return q(`무슨 ${object(kindN.k)} 좋아해요? ${mod.k} ${object(kindN.k)} 좋아해요.`, `What kind of ${kindN.e} do you like? I like ${mod.e} ${kindN.e}.`);
+            case "bieup":
+                n = pick(NOUNS);
+                adj = pick(BIEUP);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "weather":
+                season = pick(SEASONS);
+                weather = pick(WEATHER);
+                if (Math.random() < .5)
+                    return q(`${season.k} 날씨가 어때요? ${weather.p}.`, `How is the weather in ${season.e}? It is ${weather.e}.`);
+                a = pick([{ k: "비가 와요", e: "it rains" }, { k: "눈이 와요", e: "it snows" }]);
+                return q(`${season.k} 날씨가 어때요? ${weather.c} ${a.k}.`, `How is the weather in ${season.e}? It is ${weather.e}, and ${a.e}.`);
+            case "formal":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                if (Math.random() < .5)
+                    return q(`${object(obj.k)} ${verb.f}.`, `I ${verb.e} the ${obj.e}.`);
+                return q(`${object(obj.k)} ${verb.fq}?`, `Do you ${verb.e} the ${obj.e}?`);
+            case "clauseLink":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                b = pick(OBJECTS);
+                verb2 = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.c} ${object(b.k)} ${verb2.p}.`, `I ${verb.e} the ${obj.e} and ${verb2.e} the ${b.e}.`);
+            case "formalCopula":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                return q(`${topic(a.k)} ${b.k}입니까? 아니요, ${topic(a.k)} ${negativeN(b.k)} 아닙니다. ${topic(a.k)} ${a.k}입니다.`, `Is the ${a.e} ${article(b.e)}? No, the ${a.e} is not ${article(b.e)}. The ${a.e} is ${article(a.e)}.`);
+            case "numbers": {
+                const num = 1 + Math.floor(Math.random() * 99999);
+                return q(sinoNumber(num), num.toLocaleString("en-US"));
+            }
+            case "location":
+                n = pick(NOUNS);
+                a = pick([...NOUNS, ...PLACES]);
+                position = pick(POSITIONS);
+                if (Math.random() < .8)
+                    return q(`${topic(n.k)} ${a.k} ${position.k}에 있어요.`, `The ${n.e} is ${position.e} the ${a.e}.`);
+                return q(`${topic(n.k)} ${a.k} ${position.k}에 없어요.`, `The ${n.e} is not ${position.e} the ${a.e}.`);
+            case "nounAnd":
+                a = pick(NOUNS);
+                b = pick(NOUNS.filter(x => x.k !== a.k));
+                verb = pick(TRANS);
+                {
+                    const k1 = `${andFormal(a.k)} ${object(b.k)} ${verb.p}.`, k2 = `${a.k}하고 ${object(b.k)} ${verb.p}.`;
+                    return q(k1, `I ${verb.e} the ${a.e} and the ${b.e}.`, [k2]);
+                }
+            case "locationTopic":
+                place = pick(PLACES);
+                position = pick(POSITIONS);
+                n = pick(NOUNS);
+                return q(`${place.k} ${position.k}에는 ${subject(n.k)} 있어요.`, `As for ${position.e} the ${place.e}, there is the ${n.e}.`);
+            case "possessive":
+                owner = pick([...NAMES, ...JOBS]);
+                n = pick(NOUNS);
+                place = pick(PLACES);
+                position = pick(POSITIONS);
+                return q(`${owner.k}의 ${topic(n.k)} ${place.k} ${position.k}에 있어요.`, `${owner.e}'s ${n.e} is ${position.e} the ${place.e}.`);
+            default: return q("책이에요.", "It is a book.");
+        }
+    }
+    function sinoUnder(n) { const d = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"], u = ["", "십", "백", "천"]; let out = []; for (let pos = 3; pos >= 0; pos--) {
+        const p = 10 ** pos, v = Math.floor(n / p) % 10;
+        if (!v)
+            continue;
+        if (v !== 1 || pos === 0)
+            out.push(d[v]);
+        if (pos)
+            out.push(u[pos]);
+    } return out.join(" "); }
+    function sinoNumber(n) { const man = Math.floor(n / 10000), rest = n % 10000, parts = []; if (man) {
+        if (man !== 1)
+            parts.push(sinoUnder(man));
+        parts.push("만");
+    } if (rest)
+        parts.push(sinoUnder(rest)); return parts.join(" ") || "영"; }
+    // -------------------------------------------------------------------------
+    // Answer normalization and evaluation
+    // -------------------------------------------------------------------------
+    function normalize(value, lang) { let s = String(value ?? "").trim().toLowerCase(); if (lang === "romanization")
+        return s.replace(/[^a-z0-9]/g, ""); if (lang === "korean")
+        return s.replace(/[\s\-–—.,!?;:'"“”‘’()\[\]{}]/g, ""); return s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim(); }
+    function answersFor(question, lang) { const values = [question[lang]]; for (const alt of question.alternatives || []) {
+        if (alt[lang])
+            values.push(alt[lang]);
+    } return values; }
+    function isCorrect(question, value, lang) { const norm = normalize(value, lang); return answersFor(question, lang).some(a => normalize(a, lang) === norm); }
+    function pretty(question) { return `<strong>${esc(question.english)}</strong><br><span class="roman">${esc(question.romanization)}</span><br>${esc(question.korean)}`; }
+    function buildSet(generator, count) { const out = [], seen = new Set(); let attempts = 0; while (out.length < count && attempts < count * 40) {
+        const item = generator();
+        attempts++;
+        const key = item.korean;
+        if (!seen.has(key)) {
+            seen.add(key);
+            out.push(item);
+        }
+    } while (out.length < count)
+        out.push(generator()); return shuffle(out); }
+    // -------------------------------------------------------------------------
+    // Exercise templates and runtime state
+    // -------------------------------------------------------------------------
+    const STATES = new Map();
+    function exerciseTemplate(key, title, description, defaultCount = 20) { return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>Choose typed or multiple choice, the number of questions, and both languages.</p><div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`; }
+    // -------------------------------------------------------------------------
+    // Theme, rendering, and event wiring
+    // -------------------------------------------------------------------------
+    function applyTheme(theme, persist = false) { const next = theme === "dark" ? "dark" : "light"; root.dataset.theme = next; root.style.colorScheme = next; if (persist)
+        try {
+            localStorage.setItem(STORAGE_KEY, next);
+        }
+        catch (_) { } document.querySelectorAll("[data-theme-toggle]").forEach(btn => { const dark = next === "dark"; btn.setAttribute("aria-pressed", String(dark)); btn.querySelector("[data-theme-icon]").textContent = dark ? "☀" : "☾"; }); }
+    let saved = null;
+    try {
+        saved = localStorage.getItem(STORAGE_KEY);
+    }
+    catch (_) { }
+    applyTheme(saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+    function render() {
+        document.title = `${LESSON.title} · ${LESSON.subtitle}`;
+        document.getElementById("heroTitle").textContent = LESSON.title;
+        document.getElementById("heroSubtitle").textContent = LESSON.subtitle;
+        document.getElementById("heroDesc").textContent = LESSON.description;
+        document.getElementById("tocGrid").innerHTML = `<a class="toc-link" href="#vocabulary">Vocabulary</a>` + LESSON.sections.map(s => `<a class="toc-link" href="#${esc(s.id)}">${esc(s.title)}</a>`).join("");
+        const body = document.getElementById("vocabBody");
+        body.innerHTML = LESSON.vocab.map(v => { const r = romanizeKorean(v.korean); return `<tr data-search="${esc(`${v.english} ${r} ${v.korean} ${v.category}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td>${esc(v.category || "")}</td></tr>`; }).join("");
+        document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        initInteractions();
+    }
+    function initInteractions() {
+        document.querySelectorAll("details").forEach(d => { const s = d.querySelector(":scope>summary"), sync = () => s?.setAttribute("aria-expanded", String(d.open)); sync(); d.addEventListener("toggle", sync); });
+        const search = document.getElementById("vocabSearch");
+        search.addEventListener("input", () => { const term = search.value.trim().toLowerCase(); document.querySelectorAll("#vocabBody tr").forEach(row => row.hidden = !!term && !row.dataset.search.includes(term)); });
+        document.querySelectorAll("[data-blur-field]").forEach(btn => btn.addEventListener("click", () => { const field = btn.dataset.blurField, on = btn.getAttribute("aria-pressed") !== "true"; btn.setAttribute("aria-pressed", String(on)); document.querySelectorAll(`#vocabBody [data-vocab-field="${field}"]`).forEach(cell => cell.classList.toggle("is-blurred", on)); }));
+        document.querySelectorAll("[data-theme-toggle]").forEach(btn => btn.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
+        document.querySelectorAll(".exercise").forEach(initExercise);
+    }
+    function initExercise(el) {
+        const key = el.id.replace(/^ex-/, "");
+        const section = LESSON.sections.find(s => s.id === key);
+        const generator = key === "vocabulary" ? () => { const v = pick(LESSON.vocab); return q(v.korean, v.english); } : () => generate(section.generator);
+        const state = { generator, questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null };
+        STATES.set(key, state);
+        el.querySelector(".start").onclick = () => start(el, state);
+        el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
+        el.querySelector(".next").onclick = () => next(el, state);
+        el.querySelector(".restart-same").onclick = () => start(el, state, true);
+        el.querySelector(".change-setup").onclick = () => showSetup(el, state);
+    }
+    function start(el, state, reuse = false) { const settings = reuse && state.settings ? state.settings : { mode: el.querySelector(".menu-mode").value, count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)), qLang: el.querySelector(".menu-q").value, aLang: el.querySelector(".menu-a").value }; state.settings = settings; state.questions = buildSet(state.generator, settings.count); state.i = 0; state.score = 0; state.results = []; state.done = false; state.finished = false; el.querySelector(".exercise-menu").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".live").classList.remove("hidden"); showQuestion(el, state); }
+    function showSetup(el, state) { state.finished = true; el.querySelector(".live").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".exercise-menu").classList.remove("hidden"); el.querySelector(".score").textContent = "Not started"; }
+    function showQuestion(el, state) {
+        if (state.finished)
+            return;
+        const question = state.questions[state.i], S = state.settings;
+        state.done = false;
+        el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.questions.length}`;
+        el.querySelector(".mode-label").textContent = S.mode === "typed" ? "Typed" : "Multiple choice";
+        el.querySelector(".score").textContent = `Score: ${state.score}`;
+        const pct = state.i / state.questions.length * 100;
+        el.querySelector(".progress>div").style.width = `${pct}%`;
+        el.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(pct)));
+        el.querySelector(".prompt-label").textContent = `${S.qLang} → ${S.aLang}`;
+        el.querySelector(".prompt").textContent = question[S.qLang];
+        const feedback = el.querySelector(".feedback");
+        feedback.className = "feedback";
+        feedback.innerHTML = "";
+        el.querySelector(".next").classList.add("hidden");
+        const zone = el.querySelector(".zone");
+        if (S.mode === "typed") {
+            zone.innerHTML = `<div class="answer-row"><label class="sr-only">Your answer</label><input class="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${S.aLang === "romanization" ? "Space = dash · Double space = word space" : "Type your answer"}"><button class="btn primary check" type="button">Check</button></div>`;
+            const input = zone.querySelector("input"), submit = () => submitTyped(el, state, input.value);
+            zone.querySelector(".check").onclick = submit;
+            input.addEventListener("keydown", ev => { if (ev.key === "Enter") {
+                ev.preventDefault();
+                if (state.done)
+                    next(el, state);
+                else
+                    submit();
+                return;
+            } if (S.aLang === "romanization" && ev.key === " ") {
+                ev.preventDefault();
+                const a = input.selectionStart ?? input.value.length, b = input.selectionEnd ?? a, v = input.value;
+                if (a > 0 && v[a - 1] === "-") {
+                    input.value = v.slice(0, a - 1) + " " + v.slice(b);
+                    input.setSelectionRange(a, a);
+                }
+                else {
+                    input.value = v.slice(0, a) + "-" + v.slice(b);
+                    input.setSelectionRange(a + 1, a + 1);
+                }
+            } });
+            requestAnimationFrame(() => input.focus({ preventScroll: true }));
+        }
+        else {
+            const correct = question[S.aLang];
+            let options = [correct], tries = 0;
+            while (options.length < 4 && tries < 50) {
+                tries++;
+                const other = state.generator()[S.aLang];
+                if (!options.some(x => normalize(x, S.aLang) === normalize(other, S.aLang)))
+                    options.push(other);
+            }
+            options = shuffle(options);
+            zone.innerHTML = `<div class="choices">${options.map(o => `<button class="choice" data-value="${esc(o)}" type="button">${esc(o)}</button>`).join("")}</div>`;
+            zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => { if (state.done)
+                return; const value = btn.dataset.value, ok = isCorrect(question, value, S.aLang); zone.querySelectorAll(".choice").forEach(b => { b.disabled = true; if (isCorrect(question, b.dataset.value, S.aLang))
+                b.classList.add("correct"); }); if (!ok)
+                btn.classList.add("wrong"); complete(el, state, value, ok); });
+        }
+    }
+    function submitTyped(el, state, value) { if (state.done)
+        return; const question = state.questions[state.i], ok = isCorrect(question, value, state.settings.aLang); complete(el, state, value, ok); const input = el.querySelector(".answer"); if (input) {
+        input.readOnly = true;
+        requestAnimationFrame(() => input.focus({ preventScroll: true }));
+    } }
+    function complete(el, state, value, ok) { if (state.done || state.finished)
+        return; state.done = true; if (ok)
+        state.score++; const question = state.questions[state.i]; state.results.push({ question, value, ok }); el.querySelector(".score").textContent = `Score: ${state.score}`; const f = el.querySelector(".feedback"); f.className = `feedback ${ok ? "good" : "bad"}`; f.innerHTML = `${ok ? "Correct." : "Not quite."}<br>${pretty(question)}`; const nextBtn = el.querySelector(".next"); nextBtn.textContent = state.i === state.questions.length - 1 ? "Finish" : "Next"; nextBtn.classList.remove("hidden"); }
+    function next(el, state) { if (!state.done)
+        return; if (state.i < state.questions.length - 1) {
+        state.i++;
+        showQuestion(el, state);
+    }
+    else
+        finish(el, state, "Exercise complete"); }
+    function finish(el, state, title) { if (state.finished)
+        return; state.finished = true; el.querySelector(".live").classList.add("hidden"); const fin = el.querySelector(".finish"); fin.style.display = "block"; fin.querySelector("h4").textContent = title; const answered = state.results.length, pct = answered ? Math.round(state.score / answered * 100) : 0; fin.querySelector(".summary").innerHTML = answered ? `Score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.` : "No questions were answered."; fin.querySelector(".review").innerHTML = state.results.map((r, i) => `<div class="review-item"><strong>${i + 1}. ${r.ok ? "Correct" : "Review"}</strong>Your answer: ${esc(r.value || "(blank)")}<br>${pretty(r.question)}</div>`).join(""); fin.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+    render();
 })();
-</script></body></html>
+  </script>
+ </body>
+</html>

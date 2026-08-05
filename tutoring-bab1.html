@@ -1,94 +1,64 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
+<html data-theme="light" lang="en">
+ <head>
   <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem("koreanQuizThemeV2");
-        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
-      } catch (_) {}
-    })();
+   (() => { try {
+    const s = localStorage.getItem('koreanQuizThemeV2');
+    document.documentElement.dataset.theme = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+catch (_) { } })();
   </script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Interactive Bab 1 Korean study guide with vocabulary, explanations, source-based exercises, and translation practice." />
-  <title>Bab 1 · 만나서 반가워요</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="Interactive Korean lesson study guide" name="description"/>
+  <title>
+   Korean lesson
+  </title>
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
+/* Theme variables */
 :root {
   color-scheme: light;
-  --light-background: #28468A;
-  --light-foreground: #F5F5F5;
-  --light-primary: #BCE0E6;
-  --light-primary-hover: #ADC6CB;
-  --light-secondary: #AD8FE6;
-  --light-secondary-soft: #8E7EBF;
-  --light-accent: #C74E33;
-  --light-accent-soft: #A24B36;
-  --light-muted: #A0E090;
-  --light-muted-strong: #99C588;
-  --light-blue-soft: #6375CF;
-  --light-border: #6674C8;
-  --light-subtle: #DEEAAE;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
+  --background: #28468A;
+  --foreground: #F5F5F5;
+  --primary: #BCE0E6;
+  --primary-hover: #ADC6CB;
+  --secondary: #AD8FE6;
+  --secondary-soft: #8E7EBF;
+  --accent: #C74E33;
+  --accent-soft: #A24B36;
+  --muted: #A0E090;
+  --muted-strong: #99C588;
+  --blue-soft: #6375CF;
+  --border: #6674C8;
+  --subtle: #DEEAAE;
   --surface: #F5F5F5;
   --surface-text: #28468A;
   --surface-muted: #E8ECF4;
   --inverse: #20386E;
   --inverse-text: #F5F5F5;
-  --hero-heading: #FFFFFF;
-  --hero-text: #EFF6FF;
   --radius-md: 6px;
   --radius-lg: 8px;
-  --font: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font: 'Outfit',system-ui,sans-serif;
   --transition: all 180ms ease;
 }
 
-html[data-theme='dark'] {
+html[data-theme=dark] {
   color-scheme: dark;
-  --light-background: #111827;
-  --light-foreground: #F9FAFB;
-  --light-primary: #6CC2D0;
-  --light-primary-hover: #6CC0D0;
-  --light-secondary: #8B61DC;
-  --light-secondary-soft: #201933;
-  --light-accent: #E29D8D;
-  --light-accent-soft: #391B13;
-  --light-muted: #1F2937;
-  --light-muted-strong: #374151;
-  --light-blue-soft: #12193B;
-  --light-border: #374151;
-  --light-subtle: #CBD5E1;
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
+  --background: #111827;
+  --foreground: #F9FAFB;
+  --primary: #6CC2D0;
+  --primary-hover: #6CC0D0;
+  --secondary: #8B61DC;
+  --secondary-soft: #201933;
+  --accent: #E29D8D;
+  --accent-soft: #391B13;
+  --muted: #1F2937;
+  --muted-strong: #374151;
+  --blue-soft: #12193B;
+  --border: #374151;
+  --subtle: #CBD5E1;
   --surface: #1F2937;
   --surface-text: #F9FAFB;
   --surface-muted: #111827;
@@ -96,8 +66,15 @@ html[data-theme='dark'] {
   --inverse-text: #F9FAFB;
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+/* Base elements and accessibility */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -106,13 +83,31 @@ body {
   font-family: var(--font);
   line-height: 1.55;
 }
-button, input, select, textarea { font: inherit; }
-button { cursor: pointer; }
-a { color: inherit; }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 3px;
 }
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -124,17 +119,24 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   white-space: nowrap;
   border: 0;
 }
-.hidden { display: none !important; }
 
+.hidden {
+  display: none !important;
+}
+
+/* Header and page shell */
 .site-header {
   color: var(--surface-text);
   background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
-.header-inner, .page-main {
-  width: min(1120px, calc(100% - 40px));
+
+.header-inner,
+.page-main {
+  width: min(1120px,calc(100% - 40px));
   margin-inline: auto;
 }
+
 .header-inner {
   min-height: 64px;
   display: flex;
@@ -142,6 +144,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   justify-content: space-between;
   gap: 20px;
 }
+
 .brand {
   min-width: 0;
   overflow: hidden;
@@ -152,7 +155,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.header-actions { display: flex; gap: 8px; }
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .header-link {
   min-height: 40px;
   display: inline-flex;
@@ -165,7 +173,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 700;
   text-decoration: none;
 }
-.header-link:hover { border-color: var(--primary); background: var(--blue-soft); color: var(--foreground); }
+
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
 
 .page-main {
   margin-top: 24px;
@@ -175,8 +188,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background: var(--surface);
   border-radius: var(--radius-lg);
 }
-.hero { color: var(--hero-heading); background: var(--background); }
-.hero-inner { padding: clamp(48px, 7vw, 82px); }
+
+.hero {
+  color: #fff;
+  background: var(--background);
+}
+
+.hero-inner {
+  padding: clamp(48px,7vw,82px);
+}
+
 .hero-kicker {
   margin: 0 0 18px;
   color: var(--primary);
@@ -185,17 +206,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: .16em;
   text-transform: uppercase;
 }
+
 .hero h1 {
   max-width: 16ch;
   margin: 0;
-  font-size: clamp(3rem, 7vw, 5.7rem);
+  font-size: clamp(3rem,7vw,5.7rem);
   font-weight: 800;
   line-height: .94;
   letter-spacing: -.03em;
 }
-.hero p { max-width: 68ch; margin: 24px 0 0; color: var(--hero-text); font-size: 1.05rem; }
 
-.toc-card { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.hero p {
+  max-width: 68ch;
+  margin: 24px 0 0;
+  color: #EFF6FF;
+  font-size: 1.05rem;
+}
+
+.toc-card {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
 .toc-label {
   display: block;
   margin-bottom: 10px;
@@ -204,7 +236,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-.toc-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .toc-link {
   min-height: 40px;
   display: inline-flex;
@@ -220,29 +258,46 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   text-decoration: none;
   white-space: nowrap;
 }
-.toc-link:hover { color: var(--foreground); background: var(--blue-soft); border-color: var(--primary); }
-.toc-link small { font-size: .72rem; opacity: .78; }
 
-.block, .section { scroll-margin-top: 18px; border-bottom: 1px solid var(--border); }
-details.block > summary, details.section > summary {
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+
+/* Collapsible sections */
+.block,
+.section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+details.block>summary,
+details.section>summary {
   min-height: 150px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: clamp(30px, 5vw, 64px);
+  padding: clamp(30px,5vw,64px);
   color: #192B5D;
   background: var(--secondary);
   cursor: pointer;
   list-style: none;
-  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-size: clamp(2.2rem,5vw,4.8rem);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -.02em;
 }
-details.block > summary::-webkit-details-marker, details.section > summary::-webkit-details-marker { display: none; }
-details.block > summary::after, details.section > summary::after {
-  content: "Collapse";
+
+details.block>summary::-webkit-details-marker,
+details.section>summary::-webkit-details-marker {
+  display: none;
+}
+
+details.block>summary::after,
+details.section>summary::after {
+  content: 'Collapse';
   min-height: 56px;
   flex: 0 0 auto;
   display: inline-flex;
@@ -250,7 +305,7 @@ details.block > summary::after, details.section > summary::after {
   justify-content: center;
   padding: 0 18px;
   color: #192B5D;
-  background: #FFFFFF;
+  background: #fff;
   border: 4px solid #192B5D;
   border-radius: var(--radius-md);
   font-size: .76rem;
@@ -258,24 +313,47 @@ details.block > summary::after, details.section > summary::after {
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-details.block:not([open]) > summary::after, details.section:not([open]) > summary::after { content: "Expand"; }
-.block-inner, .section-body { padding: clamp(26px, 5vw, 64px); }
-#vocabulary > summary { color: #FFFFFF; background: var(--accent); }
-#grammarSections > details:nth-child(3n+1) > summary { background: var(--secondary); }
-#grammarSections > details:nth-child(3n+2) > summary { color: #FFFFFF; background: var(--accent); }
-#grammarSections > details:nth-child(3n+3) > summary { background: var(--primary); }
 
-.guide-grid, .section-intro { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.section-intro { margin-bottom: 28px; }
-.guide-card, .info-card, .note-card {
+details:not([open])>summary::after {
+  content: 'Expand';
+}
+
+#vocabulary>summary {
+  color: #fff;
+  background: var(--accent);
+}
+
+#grammarSections>details:nth-child(3n+2)>summary {
+  color: #fff;
+  background: var(--accent);
+}
+
+#grammarSections>details:nth-child(3n)>summary {
+  background: var(--primary);
+}
+
+.block-inner,
+.section-body {
+  padding: clamp(26px,5vw,64px);
+}
+
+/* Information cards and examples */
+.guide-grid,
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.guide-card,
+.info-card {
   padding: 22px;
-  color: var(--surface-text);
+  color: var(--foreground);
   background: var(--blue-soft);
   border-radius: var(--radius-lg);
 }
-html[data-theme="light"] .guide-card, html[data-theme="light"] .info-card, html[data-theme="light"] .note-card { color: #F5F5F5; }
-.guide-card h3, .info-card h3, .note-card h3 { margin: 8px 0 10px; font-size: 1.2rem; line-height: 1.2; }
-.guide-card p, .info-card p, .note-card p { margin: 0 0 12px; }
+
 .rule-label {
   display: inline-flex;
   min-height: 30px;
@@ -289,24 +367,69 @@ html[data-theme="light"] .guide-card, html[data-theme="light"] .info-card, html[
   letter-spacing: .1em;
   text-transform: uppercase;
 }
-.example-list { display: grid; gap: 8px; margin-top: 14px; }
+
+.guide-card h3,
+.info-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.2rem;
+}
+
+.guide-card p,
+.info-card p {
+  margin: 0 0 12px;
+}
+
+.example-list {
+  display: grid;
+  gap: 9px;
+}
+
 .example {
   padding: 14px;
   color: var(--surface-text);
   background: var(--surface);
   border-radius: var(--radius-md);
+  white-space: pre-line;
 }
-.roman { color: var(--primary); font-weight: 800; }
 
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* Vocabulary table */
 .vocab-tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(220px,1fr) repeat(3,minmax(130px,auto));
   gap: 8px;
   margin: 24px 0 14px;
 }
-.vocab-search { flex: 1 1 250px; }
-.blur-toggle, .btn, .primary-btn, .secondary-btn, .choice, .end-early-btn, .restart-top-btn {
+
+.vocab-search,
+input,
+select {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+input:focus,
+select:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+
+.blur-toggle,
+.btn,
+.primary-btn,
+.secondary-btn,
+.choice,
+.end-early-btn {
   min-height: 52px;
   padding: 0 18px;
   border: 0;
@@ -314,51 +437,71 @@ html[data-theme="light"] .guide-card, html[data-theme="light"] .info-card, html[
   font-weight: 800;
   transition: var(--transition);
 }
-.blur-toggle, .btn.secondary, .secondary-btn, .restart-top-btn { color: var(--surface-text); background: var(--surface-muted); }
-.blur-toggle[aria-pressed="true"] { color: #192B5D; background: var(--primary); }
-.primary-btn, .btn.primary { color: #192B5D; background: var(--primary); }
-.primary-btn:hover, .btn.primary:hover { background: var(--primary-hover); }
-.btn.warning, .end-early-btn { color: #FFFFFF; background: var(--accent); }
-.btn:hover:not(:disabled), .primary-btn:hover:not(:disabled), .secondary-btn:hover:not(:disabled), .choice:hover:not(:disabled), .blur-toggle:hover:not(:disabled), .restart-top-btn:hover:not(:disabled) { transform: scale(1.025); }
 
-input, select, textarea {
-  width: 100%;
-  min-height: 54px;
-  padding: 0 14px;
+.blur-toggle {
   color: var(--surface-text);
   background: var(--surface-muted);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
 }
-input:focus, select:focus, textarea:focus { background: var(--surface); border-color: var(--primary); }
-.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); }
-table { width: 100%; border-collapse: collapse; background: var(--surface); }
-th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+
+.blur-toggle[aria-pressed=true] {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
 th {
   color: var(--inverse-text);
   background: var(--inverse);
   font-size: .75rem;
-  letter-spacing: .07em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
-tr:last-child td { border-bottom: 0; }
-tbody tr:hover { background: var(--surface-muted); }
-[data-vocab-field].blurred .blur-target { filter: blur(6px); user-select: none; }
-[data-vocab-field].revealed .blur-target { filter: none !important; }
-.source-badge {
-  display: inline-flex;
-  min-height: 25px;
-  align-items: center;
-  padding: 2px 8px;
-  color: #192B5D;
-  background: var(--primary);
-  border-radius: 999px;
-  font-size: .68rem;
-  font-weight: 800;
-}
-.source-badge.extra { background: var(--muted); }
 
-.exercise-stack { display: grid; gap: 28px; margin-top: 28px; }
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.is-blurred .blur-target {
+  filter: blur(7px);
+  user-select: none;
+}
+
+.is-blurred:hover .blur-target,
+.is-blurred:focus .blur-target {
+  filter: none;
+}
+
+.source-note {
+  margin: 14px 0 0;
+  font-size: .9rem;
+  opacity: .8;
+}
+
+/* Translation exercises */
+.exercise-stack {
+  display: grid;
+  gap: 28px;
+  margin-top: 28px;
+}
+
 .exercise {
   overflow: hidden;
   color: var(--surface-text);
@@ -366,73 +509,248 @@ tbody tr:hover { background: var(--surface-muted); }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 }
-.exercise-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(158px, auto); color: var(--inverse-text); background: var(--inverse); }
-.exercise-head-copy { padding: 24px 28px; }
-.exercise-kicker, .prompt-label, .control-label {
+
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(158px,auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+
+.exercise-kicker,
+.prompt-label {
   color: var(--primary);
   font-size: .74rem;
   font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-.exercise-head h3 { margin: 7px 0 0; font-size: clamp(1.45rem, 3vw, 2.3rem); line-height: 1; letter-spacing: -.02em; }
-.exercise-head p { margin: 10px 0 0; color: var(--subtle); }
-.score { min-width: 158px; display: grid; place-items: center; padding: 20px; color: #192B5D; background: var(--accent); font-size: .9rem; font-weight: 800; }
+
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem,3vw,2.3rem);
+  line-height: 1;
+}
+
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-weight: 800;
+}
+
+.exercise-body {
+  padding: clamp(24px,4vw,38px);
+}
+
 .exercise-menu {
   display: grid;
   gap: 20px;
-  padding: clamp(24px, 4vw, 38px);
-  color: var(--surface-text);
-  background: var(--surface);
 }
-.exercise-menu h4 { margin: 0; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.1; }
-.exercise-menu p { margin: 0; opacity: .82; }
-.exercise-menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.exercise-menu label { display: grid; gap: 7px; font-size: .76rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
-.exercise-menu-actions { display: flex; gap: 10px; align-items: center; }
-.exercise-menu-actions .btn, .exercise-menu-actions .primary-btn { width: auto; }
-.exercise-body { padding: clamp(24px, 4vw, 38px); }
-.runtime-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding: 12px 14px;
+
+.exercise-menu h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.exercise-menu p {
+  margin: 0;
+  opacity: .82;
+}
+
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 14px;
+}
+
+.exercise-menu label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.exercise-menu label>* {
+  width: 100%;
+  height: 56px;
+  min-width: 0;
+}
+
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.secondary-btn,
+.btn.secondary {
   color: var(--surface-text);
   background: var(--surface-muted);
-  border-radius: var(--radius-md);
 }
-.runtime-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.runtime-label { font-weight: 800; }
-.status { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-size: .86rem; font-weight: 800; }
-.progress { height: 12px; overflow: hidden; background: var(--muted-strong); }
-.progress > div { height: 100%; width: 0; background: var(--secondary); transition: width 180ms ease; }
-.prompt-label { margin-top: 24px; }
-.prompt { min-height: 88px; margin: 8px 0 22px; color: var(--surface-text); font-size: clamp(1.45rem, 2.5vw, 2rem); font-weight: 700; line-height: 1.25; white-space: pre-line; }
-.answer-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-.answer-row .btn { min-width: 110px; }
-.choices { display: grid; gap: 8px; }
-.choice { width: 100%; min-height: 58px; text-align: left; color: var(--surface-text); background: var(--surface-muted); }
-.choice:hover:not(:disabled) { color: #192B5D; background: var(--primary); }
-.choice.correct { color: #FFFFFF; background: var(--secondary); }
-.choice.wrong { color: #FFFFFF; background: var(--accent); }
-.feedback { display: none; margin-top: 16px; padding: 18px; border-radius: var(--radius-lg); }
-.feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
-.feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
-html[data-theme="light"] .feedback { color: #FFFFFF; }
-.next { margin-top: 12px; }
-.finish { display: none; margin-top: 18px; padding: 20px; color: var(--surface-text); background: var(--blue-soft); border-radius: var(--radius-lg); }
-html[data-theme="light"] .finish { color: #FFFFFF; }
-.finish h4 { margin: 0; font-size: 1.45rem; }
-.finish-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.review { display: grid; gap: 10px; margin-top: 18px; }
-.review-row { padding: 14px; color: var(--surface-text); background: var(--surface); border-radius: var(--radius-md); }
-.review-row strong { display: inline-block; margin-bottom: 4px; }
-.review-row .result { font-weight: 800; }
-.keyboard-note { margin: 0; padding: 12px 14px; color: var(--surface-text); background: var(--surface-muted); border-radius: var(--radius-md); font-size: .9rem; }
 
-.utility-controls { position: fixed; right: 18px; bottom: 18px; z-index: 50; display: flex; gap: 10px; }
+.btn.warning,
+.end-early-btn {
+  color: #fff;
+  background: var(--accent);
+}
+
+.exercise-menu-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.runtime-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+}
+
+.progress>div {
+  height: 100%;
+  background: var(--secondary);
+}
+
+.prompt {
+  min-height: 88px;
+  margin: 8px 0 22px;
+  font-size: clamp(1.35rem,2.5vw,2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: pre-line;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.choices {
+  display: grid;
+  gap: 8px;
+}
+
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.choice.correct {
+  color: #fff;
+  background: var(--secondary);
+}
+
+.choice.wrong {
+  color: #fff;
+  background: var(--accent);
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  white-space: pre-line;
+}
+
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+
+.next {
+  margin-top: 12px;
+}
+
+.finish {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+
+.finish h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.review {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.review-item {
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  white-space: pre-line;
+}
+
+.review-item strong {
+  display: block;
+}
+
+.finish-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Floating page controls */
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+
 .utility-button {
   width: 46px;
   height: 46px;
@@ -446,1001 +764,1794 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   font-size: 1.1rem;
   font-weight: 800;
   text-decoration: none;
-  transition: var(--transition);
 }
-.utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
-.utility-button.top { background: var(--accent); }
 
-@media (max-width: 900px) {
-  .guide-grid, .section-intro { grid-template-columns: 1fr; }
-  .exercise-head { grid-template-columns: 1fr; }
-  .score { min-height: 74px; }
+.utility-button.top {
+  background: var(--accent);
 }
-@media (max-width: 680px) {
-  .header-inner, .page-main { width: 100%; }
-  .header-inner { min-height: 60px; padding: 0 14px; }
-  .page-main { margin-top: 0; border-radius: 0; }
-  .hero-inner { padding: 48px 22px; }
-  .hero h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
-  .toc-card { padding: 18px 22px; overflow-x: auto; }
-  .toc-grid { width: max-content; flex-wrap: nowrap; }
-  details.block > summary, details.section > summary { min-height: 0; align-items: stretch; flex-direction: column; padding: 30px 22px; }
-  details.block > summary::after, details.section > summary::after { width: 100%; }
-  .block-inner, .section-body, .exercise-body { padding: 22px; }
-  .exercise-menu-grid, .answer-row { grid-template-columns: 1fr; }
-  .exercise-menu-actions, .runtime-bar { align-items: stretch; flex-direction: column; }
-  .runtime-actions { display: grid; }
-  .exercise-menu-actions .btn, .exercise-menu-actions .primary-btn, .end-early-btn, .restart-top-btn, .answer-row .btn { width: 100%; }
-  .finish-actions { display: grid; }
-  .utility-controls { right: 10px; bottom: 10px; }
+
+@media (max-width:900px) {
+  .exercise-head {
+    grid-template-columns: 1fr;
+  }
+  .score {
+    min-height: 74px;
+  }
+  .exercise-menu-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
 }
-@media (prefers-reduced-motion: reduce) {
-  * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
+
+@media (max-width:680px) {
+  .header-inner,
+  .page-main {
+    width: 100%;
+  }
+  .header-inner {
+    padding: 0 14px;
+  }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner {
+    padding: 48px 22px;
+  }
+  .toc-card {
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .guide-grid,
+  .section-intro,
+  .exercise-menu-grid,
+  .answer-row {
+    grid-template-columns: 1fr;
+  }
+  details.block>summary,
+  details.section>summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.block>summary::after,
+  details.section>summary::after {
+    width: 100%;
+  }
+  .block-inner,
+  .section-body,
+  .exercise-body {
+    padding: 22px;
+  }
+  .vocab-tools {
+    grid-template-columns: 1fr;
+  }
+  .exercise-menu-actions,
+  .finish-actions {
+    flex-direction: column;
+  }
+  .exercise-menu-actions .btn,
+  .finish-actions .btn,
+  .end-early-btn {
+    width: 100%;
+  }
+  .utility-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
 }
   </style>
-</head>
-<body id="top">
+ </head>
+ <body id="top">
+  <!-- Page header -->
   <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="#top">Korean Language Resources</a>
-      <div class="header-actions">
-        <a class="header-link" href="index.html">Home</a>
-      </div>
+   <div class="header-inner">
+    <a class="brand" href="./index.html">
+     Korean Language Resources
+    </a>
+    <div class="header-actions">
+     <a class="header-link" href="./index.html">
+      Home
+     </a>
     </div>
+   </div>
   </header>
-
+  <!-- Lesson content -->
   <main class="page-main">
-    <section class="hero" aria-labelledby="page-title">
-      <div class="hero-inner">
-        <p class="hero-kicker">Bab 1 · Lesson 1</p>
-        <h1 id="page-title">만나서 반가워요</h1>
-        <p>Learn introductions, occupations, countries, greetings, N이에요/예요, 은/는, and simple yes/no identification questions. Source exercises appear before the new translation exercises.</p>
-      </div>
-    </section>
-
-    <nav class="toc-card" aria-labelledby="toc-title">
-      <span class="toc-label" id="toc-title">Jump to a section</span>
-      <div class="toc-grid" id="tocGrid"></div>
-    </nav>
-
-    <details class="block" id="vocabulary" open>
-      <summary><span>Complete Vocabulary Bank</span></summary>
-      <div class="block-inner">
-        <div class="guide-grid">
-          <article class="guide-card">
-            <span class="rule-label">One bank</span>
-            <h3>All lesson vocabulary together</h3>
-            <p>Every vocabulary item and fixed expression used in Bab 1 is collected in this single table. Extra beginner TOPIK I nouns are included to make the exercises less repetitive.</p>
-          </article>
-          <article class="guide-card">
-            <span class="rule-label">Romanization input</span>
-            <h3>Keyboard shortcut</h3>
-            <p>For romanization answers, press <strong>Space once</strong> to enter a dash between syllables. Press <strong>Space twice</strong> to replace the dash with a real space between words.</p>
-          </article>
-        </div>
-
-        <div class="vocab-tools" aria-label="Vocabulary study controls">
-          <label class="sr-only" for="vocabSearch">Search vocabulary</label>
-          <input class="vocab-search" id="vocabSearch" type="search" placeholder="Search Korean, romanization, English, or category" />
-          <button class="blur-toggle" type="button" data-blur-field="meaning" aria-pressed="false">Blur English</button>
-          <button class="blur-toggle" type="button" data-blur-field="romanization" aria-pressed="false">Blur Romanization</button>
-          <button class="blur-toggle" type="button" data-blur-field="korean" aria-pressed="false">Blur Korean</button>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>English</th>
-                <th>Romanization</th>
-                <th>Korean</th>
-                <th>Category</th>
-                <th>Source</th>
-              </tr>
-            </thead>
-            <tbody id="vocabBody"></tbody>
-          </table>
-        </div>
-
-        <div class="exercise-stack" id="vocabExercises"></div>
-      </div>
-    </details>
-
-    <div id="grammarSections"></div>
+   <section class="hero">
+    <div class="hero-inner">
+     <p class="hero-kicker">
+      Interactive Korean Study Guide
+     </p>
+     <h1 id="heroTitle">
+     </h1>
+     <p>
+      <strong id="heroSubtitle">
+      </strong>
+     </p>
+     <p id="heroDesc">
+     </p>
+    </div>
+   </section>
+   <nav aria-label="Lesson sections" class="toc-card">
+    <span class="toc-label">
+     Jump to a section
+    </span>
+    <div class="toc-grid" id="tocGrid">
+    </div>
+   </nav>
+   <details class="block" id="vocabulary" open="">
+    <summary>
+     <span>
+      Complete Vocabulary Bank
+     </span>
+    </summary>
+    <div class="block-inner">
+     <div class="guide-grid">
+      <article class="guide-card">
+       <span class="rule-label">
+        Lesson vocabulary
+       </span>
+       <h3>
+        One visible vocabulary bank
+       </h3>
+       <p>
+        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here.
+       </p>
+      </article>
+      <article class="guide-card">
+       <span class="rule-label">
+        Literal romanization
+       </span>
+       <h3>
+        Keyboard and checking
+       </h3>
+       <p>
+        Romanization follows the supplied character-by-character system. Press
+        <strong>
+         Space once
+        </strong>
+        for a syllable dash and
+        <strong>
+         Space twice
+        </strong>
+        for a word space. Grading ignores dash and space placement, while correct answers display the intended formatting.
+       </p>
+      </article>
+     </div>
+     <div class="vocab-tools">
+      <input class="vocab-search" id="vocabSearch" placeholder="Search Korean, romanization, English, or category" type="search"/>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="english" type="button">
+       Blur English
+      </button>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="romanization" type="button">
+       Blur Romanization
+      </button>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="korean" type="button">
+       Blur Korean
+      </button>
+     </div>
+     <div class="table-wrap">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          English
+         </th>
+         <th>
+          Romanization
+         </th>
+         <th>
+          Korean
+         </th>
+         <th>
+          Category
+         </th>
+        </tr>
+       </thead>
+       <tbody id="vocabBody">
+       </tbody>
+      </table>
+     </div>
+     <p class="source-note">
+      Workbook-style material questions have been removed. Every exercise below is translation practice.
+     </p>
+     <div class="exercise-stack" id="vocabExercises">
+     </div>
+    </div>
+   </details>
+   <div id="grammarSections">
+   </div>
   </main>
-
-  <div class="utility-controls" aria-label="Page utilities">
-    <button class="utility-button" id="themeToggle" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
-    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  <!-- Floating controls -->
+  <div class="utility-controls">
+   <button aria-pressed="false" class="utility-button" data-theme-toggle="" type="button">
+    <span data-theme-icon="">
+     ☾
+    </span>
+    <span class="sr-only">
+     Toggle theme
+    </span>
+   </button>
+   <a aria-label="Back to top" class="utility-button top" href="#top">
+    ↑
+   </a>
   </div>
-
-<script>
-(() => {
-  "use strict";
-
-  function romanizeKorean(text) {
-    const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
-    const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
-    const JONG = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
-
-    return String(text).split(" ").map(word => {
-      const parts = [];
-      let syllables = [];
-      for (const char of word) {
-        const code = char.charCodeAt(0);
-        if (code >= 0xAC00 && code <= 0xD7A3) {
-          const offset = code - 0xAC00;
-          const jong = offset % 28;
-          const jung = Math.floor(offset / 28) % 21;
-          const cho = Math.floor(offset / (28 * 21));
-          syllables.push(CHO[cho] + JUNG[jung] + JONG[jong]);
-        } else {
-          if (syllables.length) {
-            parts.push(syllables.join("-"));
-            syllables = [];
-          }
-          parts.push(char);
+  <script>
+   (() => {
+    "use strict";
+    // -------------------------------------------------------------------------
+    // Lesson content
+    // -------------------------------------------------------------------------
+    const LESSON = {
+        "title": "Bab 1",
+        "subtitle": "만나서 반가워요",
+        "description": "Greet people, identify nouns with 이에요/예요, mark a topic with 은/는, and give simple personal introductions.",
+        "vocab": [
+            {
+                "korean": "안녕하세요",
+                "english": "hello",
+                "category": "Greetings"
+            },
+            {
+                "korean": "만나서 반가워요",
+                "english": "nice to meet you",
+                "category": "Greetings"
+            },
+            {
+                "korean": "고맙습니다",
+                "english": "thank you",
+                "category": "Greetings"
+            },
+            {
+                "korean": "죄송합니다",
+                "english": "I am sorry",
+                "category": "Greetings"
+            },
+            {
+                "korean": "괜찮아요",
+                "english": "it is okay",
+                "category": "Greetings"
+            },
+            {
+                "korean": "뭘요",
+                "english": "not at all / you are welcome",
+                "category": "Greetings"
+            },
+            {
+                "korean": "안녕히 가세요",
+                "english": "goodbye (to someone leaving)",
+                "category": "Greetings"
+            },
+            {
+                "korean": "안녕히 계세요",
+                "english": "goodbye (to someone staying)",
+                "category": "Greetings"
+            },
+            {
+                "korean": "네",
+                "english": "yes",
+                "category": "Basic expression"
+            },
+            {
+                "korean": "아니요",
+                "english": "no",
+                "category": "Basic expression"
+            },
+            {
+                "korean": "선생님",
+                "english": "teacher",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "회사원",
+                "english": "office worker",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "요리사",
+                "english": "cook / chef",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "경찰",
+                "english": "police officer",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "간호사",
+                "english": "nurse",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "의사",
+                "english": "doctor",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "가수",
+                "english": "singer",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "학생",
+                "english": "student",
+                "category": "Occupation / person"
+            },
+            {
+                "korean": "사람",
+                "english": "person",
+                "category": "People"
+            },
+            {
+                "korean": "씨",
+                "english": "Mr. / Ms. (name suffix)",
+                "category": "People"
+            },
+            {
+                "korean": "저",
+                "english": "I / me (polite)",
+                "category": "People"
+            },
+            {
+                "korean": "한국",
+                "english": "Korea",
+                "category": "Country"
+            },
+            {
+                "korean": "영국",
+                "english": "United Kingdom",
+                "category": "Country"
+            },
+            {
+                "korean": "호주",
+                "english": "Australia",
+                "category": "Country"
+            },
+            {
+                "korean": "일본",
+                "english": "Japan",
+                "category": "Country"
+            },
+            {
+                "korean": "베트남",
+                "english": "Vietnam",
+                "category": "Country"
+            },
+            {
+                "korean": "중국",
+                "english": "China",
+                "category": "Country"
+            },
+            {
+                "korean": "캐나다",
+                "english": "Canada",
+                "category": "Country"
+            },
+            {
+                "korean": "러시아",
+                "english": "Russia",
+                "category": "Country"
+            },
+            {
+                "korean": "미국",
+                "english": "United States",
+                "category": "Country"
+            },
+            {
+                "korean": "독일",
+                "english": "Germany",
+                "category": "Country"
+            },
+            {
+                "korean": "자동차",
+                "english": "car",
+                "category": "Object / transport"
+            },
+            {
+                "korean": "아이스크림",
+                "english": "ice cream",
+                "category": "Food"
+            },
+            {
+                "korean": "우산",
+                "english": "umbrella",
+                "category": "Object"
+            },
+            {
+                "korean": "비행기",
+                "english": "airplane",
+                "category": "Transport"
+            },
+            {
+                "korean": "기차",
+                "english": "train",
+                "category": "Transport"
+            },
+            {
+                "korean": "책",
+                "english": "book",
+                "category": "Object"
+            },
+            {
+                "korean": "공책",
+                "english": "notebook",
+                "category": "Object"
+            },
+            {
+                "korean": "책상",
+                "english": "desk",
+                "category": "Object"
+            },
+            {
+                "korean": "제니퍼",
+                "english": "Jennifer",
+                "category": "Name"
+            },
+            {
+                "korean": "팀",
+                "english": "Tim",
+                "category": "Name"
+            },
+            {
+                "korean": "소영",
+                "english": "So-young",
+                "category": "Name"
+            },
+            {
+                "korean": "투이",
+                "english": "Thuy",
+                "category": "Name"
+            },
+            {
+                "korean": "상우",
+                "english": "Sang-woo",
+                "category": "Name"
+            },
+            {
+                "korean": "아사코",
+                "english": "Asako",
+                "category": "Name"
+            },
+            {
+                "korean": "왕단",
+                "english": "Wangdan",
+                "category": "Name"
+            },
+            {
+                "korean": "티누",
+                "english": "Tinu",
+                "category": "Name"
+            }
+        ],
+        "sections": [
+            {
+                "id": "greetings",
+                "title": "Greetings and responses",
+                "label": "Expressions",
+                "meaning": "Use fixed polite expressions to greet, thank, apologize, and say goodbye.",
+                "form": "Choose the response that fits the social situation.",
+                "notes": "안녕히 가세요 is said to the person leaving; 안녕히 계세요 is said by the person leaving to someone who stays.",
+                "examples": [
+                    [
+                        "안녕하세요. 만나서 반가워요.",
+                        "Hello. Nice to meet you."
+                    ],
+                    [
+                        "고맙습니다. 뭘요.",
+                        "Thank you. Not at all."
+                    ],
+                    [
+                        "죄송합니다. 괜찮아요.",
+                        "I am sorry. It is okay."
+                    ]
+                ],
+                "generator": "greetings"
+            },
+            {
+                "id": "copula",
+                "title": "N이에요 / 예요",
+                "label": "Copula",
+                "meaning": "Identify a person or thing with the polite-casual copula “to be.”",
+                "form": "After a consonant-final noun use 이에요. After a vowel-final noun use 예요.",
+                "notes": "The ending attaches directly to the noun.",
+                "examples": [
+                    [
+                        "학생이에요.",
+                        "It is a student."
+                    ],
+                    [
+                        "의사예요.",
+                        "It is a doctor."
+                    ],
+                    [
+                        "제니퍼예요.",
+                        "It is Jennifer."
+                    ]
+                ],
+                "generator": "copula"
+            },
+            {
+                "id": "topic",
+                "title": "N은 / 는",
+                "label": "Topic particle",
+                "meaning": "Mark the topic or create a contrast.",
+                "form": "After a consonant-final noun use 은. After a vowel-final noun use 는.",
+                "notes": "The particle attaches directly to any noun, even when the resulting meaning is unusual.",
+                "examples": [
+                    [
+                        "상우는 한국 사람이에요.",
+                        "As for Sang-woo, he is Korean."
+                    ],
+                    [
+                        "선생님은 호주 사람이에요.",
+                        "As for the teacher, the teacher is Australian."
+                    ],
+                    [
+                        "계획은 학생이에요.",
+                        "As for the plan, it is a student."
+                    ]
+                ],
+                "generator": "topic"
+            },
+            {
+                "id": "yes-no",
+                "title": "Yes and no identity questions",
+                "label": "Question and answer",
+                "meaning": "Ask whether something is a noun and confirm or correct the identification.",
+                "form": "N이에요/예요? · 네, N이에요/예요. · 아니요, N이에요/예요.",
+                "notes": "Korean often repeats the noun in the answer.",
+                "examples": [
+                    [
+                        "자동차예요? 네, 자동차예요.",
+                        "Is it a car? Yes, it is a car."
+                    ],
+                    [
+                        "책이에요? 아니요, 공책이에요.",
+                        "Is it a book? No, it is a notebook."
+                    ],
+                    [
+                        "의사예요? 아니요, 회사원이에요.",
+                        "Is the person a doctor? No, the person is an office worker."
+                    ]
+                ],
+                "generator": "yesno"
+            },
+            {
+                "id": "profile",
+                "title": "Three-sentence introductions",
+                "label": "Introduction",
+                "meaning": "Introduce a person with a name, nationality, and occupation.",
+                "form": "Name + 씨예요. · Name + 씨는 Country 사람이에요. · Name + 씨는 Job이에요/예요.",
+                "notes": "The English prompt contains only the sentences to translate, without meta-instructions.",
+                "examples": [
+                    [
+                        "팀 씨예요. 팀 씨는 베트남 사람이에요. 팀 씨는 경찰이에요.",
+                        "This is Tim. Tim is Vietnamese. Tim is a police officer."
+                    ],
+                    [
+                        "아사코 씨예요. 아사코 씨는 일본 사람이에요. 아사코 씨는 학생이에요.",
+                        "This is Asako. Asako is Japanese. Asako is a student."
+                    ]
+                ],
+                "generator": "profile"
+            }
+        ]
+    };
+    // -------------------------------------------------------------------------
+    // Shared page state and small utilities
+    // -------------------------------------------------------------------------
+    const root = document.documentElement;
+    const STORAGE_KEY = "koreanQuizThemeV2";
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [b[i], b[j]] = [b[j], b[i]];
+    } return b; };
+    // Literal transliteration requested by the learner. No pronunciation assimilation is applied.
+    function romanizeKorean(text) {
+        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+        const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+        const JONG = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+        let out = "", previousHangul = false;
+        for (const ch of String(text ?? "")) {
+            const code = ch.charCodeAt(0);
+            if (code >= 0xAC00 && code <= 0xD7A3) {
+                const offset = code - 0xAC00, jong = offset % 28, jung = Math.floor(offset / 28) % 21, cho = Math.floor(offset / (28 * 21));
+                if (previousHangul)
+                    out += "-";
+                out += CHO[cho] + JUNG[jung] + JONG[jong];
+                previousHangul = true;
+            }
+            else {
+                out += ch;
+                previousHangul = false;
+            }
         }
-      }
-      if (syllables.length) parts.push(syllables.join("-"));
-      return parts.join("");
-    }).join(" ");
-  }
-
-  const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
-  const shuffle = array => {
-    const copy = [...array];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
+        return out;
     }
-    return copy;
-  };
-
-  function hasBatchim(text) {
-    const chars = [...String(text)].filter(char => {
-      const code = char.charCodeAt(0);
-      return code >= 0xAC00 && code <= 0xD7A3;
-    });
-    if (!chars.length) return false;
-    return (chars.at(-1).charCodeAt(0) - 0xAC00) % 28 !== 0;
-  }
-  const copula = noun => `${noun}${hasBatchim(noun) ? "이에요" : "예요"}`;
-  const topic = noun => `${noun}${hasBatchim(noun) ? "은" : "는"}`;
-
-  const VOCAB = [
-    ["안녕하세요", "hello", "Greetings", "Bab 1"],
-    ["만나서 반가워요", "nice to meet you", "Greetings", "Bab 1"],
-    ["고맙습니다", "thank you", "Greetings", "Bab 1"],
-    ["죄송합니다", "I am sorry", "Greetings", "Bab 1"],
-    ["괜찮아요", "it is okay", "Greetings", "Bab 1"],
-    ["뭘요", "not at all / you're welcome", "Greetings", "Bab 1"],
-    ["안녕히 가세요", "goodbye (to someone leaving)", "Greetings", "Bab 1"],
-    ["안녕히 계세요", "goodbye (to someone staying)", "Greetings", "Bab 1"],
-    ["네", "yes", "Basic expression", "Bab 1"],
-    ["아니요", "no", "Basic expression", "Bab 1"],
-    ["선생님", "teacher", "Occupation / person", "Bab 1"],
-    ["회사원", "office worker", "Occupation / person", "Bab 1"],
-    ["요리사", "cook / chef", "Occupation / person", "Bab 1"],
-    ["경찰", "police officer", "Occupation / person", "Bab 1"],
-    ["간호사", "nurse", "Occupation / person", "Bab 1"],
-    ["의사", "doctor", "Occupation / person", "Bab 1"],
-    ["가수", "singer", "Occupation / person", "Bab 1"],
-    ["학생", "student", "Occupation / person", "Bab 1"],
-    ["사람", "person", "People", "Bab 1"],
-    ["씨", "Mr. / Ms. (name suffix)", "People", "Bab 1"],
-    ["저", "I / me (polite)", "People", "Bab 1"],
-    ["한국", "Korea", "Country", "Bab 1"],
-    ["영국", "United Kingdom", "Country", "Bab 1"],
-    ["호주", "Australia", "Country", "Bab 1"],
-    ["일본", "Japan", "Country", "Bab 1"],
-    ["베트남", "Vietnam", "Country", "Bab 1"],
-    ["중국", "China", "Country", "Bab 1"],
-    ["캐나다", "Canada", "Country", "Bab 1"],
-    ["러시아", "Russia", "Country", "Bab 1"],
-    ["미국", "United States", "Country", "Bab 1"],
-    ["독일", "Germany", "Country", "Bab 1"],
-    ["자동차", "car", "Object / transport", "Bab 1"],
-    ["아이스크림", "ice cream", "Food", "Bab 1"],
-    ["우산", "umbrella", "Object", "Bab 1"],
-    ["비행기", "airplane", "Transport", "Bab 1"],
-    ["기차", "train", "Transport", "Bab 1"],
-    ["책", "book", "Object", "Bab 1"],
-    ["공책", "notebook", "Object", "Bab 1"],
-    ["책상", "desk", "Object", "Bab 1"],
-    ["제니퍼", "Jennifer", "Name", "Bab 1"],
-    ["팀", "Tim", "Name", "Bab 1"],
-    ["소영", "So-young", "Name", "Bab 1"],
-    ["투이", "Thuy", "Name", "Bab 1"],
-    ["상우", "Sang-woo", "Name", "Bab 1"],
-    ["아사코", "Asako", "Name", "Bab 1"],
-    ["왕단", "Wangdan", "Name", "Bab 1"],
-    ["티누", "Tinu", "Name", "Bab 1"],
-    ["친구", "friend", "People", "TOPIK I extra"],
-    ["가족", "family", "People", "TOPIK I extra"],
-    ["아버지", "father", "Family", "TOPIK I extra"],
-    ["어머니", "mother", "Family", "TOPIK I extra"],
-    ["집", "home", "Place", "TOPIK I extra"],
-    ["학교", "school", "Place", "TOPIK I extra"],
-    ["병원", "hospital", "Place", "TOPIK I extra"],
-    ["은행", "bank", "Place", "TOPIK I extra"],
-    ["식당", "restaurant", "Place", "TOPIK I extra"],
-    ["카페", "cafe", "Place", "TOPIK I extra"],
-    ["공원", "park", "Place", "TOPIK I extra"],
-    ["시장", "market", "Place", "TOPIK I extra"],
-    ["도서관", "library", "Place", "TOPIK I extra"],
-    ["약국", "pharmacy", "Place", "TOPIK I extra"],
-    ["호텔", "hotel", "Place", "TOPIK I extra"],
-    ["버스", "bus", "Transport", "TOPIK I extra"],
-    ["지하철", "subway", "Transport", "TOPIK I extra"],
-    ["택시", "taxi", "Transport", "TOPIK I extra"],
-    ["자전거", "bicycle", "Transport", "TOPIK I extra"],
-    ["사과", "apple", "Food", "TOPIK I extra"],
-    ["바나나", "banana", "Food", "TOPIK I extra"],
-    ["물", "water", "Food / drink", "TOPIK I extra"],
-    ["커피", "coffee", "Food / drink", "TOPIK I extra"],
-    ["차", "tea / car", "Food / transport", "TOPIK I extra"],
-    ["우유", "milk", "Food / drink", "TOPIK I extra"],
-    ["빵", "bread", "Food", "TOPIK I extra"],
-    ["과일", "fruit", "Food", "TOPIK I extra"],
-    ["고기", "meat", "Food", "TOPIK I extra"],
-    ["생선", "fish", "Food", "TOPIK I extra"],
-    ["김치", "kimchi", "Food", "TOPIK I extra"],
-    ["라면", "instant noodles", "Food", "TOPIK I extra"],
-    ["떡", "rice cake", "Food", "TOPIK I extra"],
-    ["카드", "card", "Shopping / object", "TOPIK I extra"],
-    ["돈", "money", "Shopping / object", "TOPIK I extra"]
-  ].map(([korean, meaning, category, source]) => ({ korean, romanization: romanizeKorean(korean), meaning, category, source }));
-
-  const NATIONALITIES = [
-    { country: "한국", adjective: "Korean" },
-    { country: "영국", adjective: "British" },
-    { country: "호주", adjective: "Australian" },
-    { country: "일본", adjective: "Japanese" },
-    { country: "베트남", adjective: "Vietnamese" },
-    { country: "중국", adjective: "Chinese" },
-    { country: "캐나다", adjective: "Canadian" },
-    { country: "러시아", adjective: "Russian" },
-    { country: "미국", adjective: "American" },
-    { country: "독일", adjective: "German" }
-  ];
-  const JOBS = [
-    ["선생님", "teacher"], ["회사원", "office worker"], ["요리사", "cook"], ["경찰", "police officer"],
-    ["간호사", "nurse"], ["의사", "doctor"], ["가수", "singer"], ["학생", "student"]
-  ];
-  const NAMES = [["상우", "Sang-woo"], ["제니퍼", "Jennifer"], ["아사코", "Asako"], ["왕단", "Wangdan"], ["투이", "Thuy"], ["티누", "Tinu"], ["소영", "So-young"], ["팀", "Tim"]];
-  const OBJECTS = VOCAB.filter(item => ["Object / transport", "Object", "Transport", "Food", "Place", "Food / drink", "Shopping / object"].includes(item.category));
-
-  function makeQuestion(promptKorean, promptEnglish, answerKorean, answerEnglish, explanation = "", answerAlternatives = {}) {
-    const koreanAnswers = Array.isArray(answerKorean) ? answerKorean : [answerKorean];
-    const englishAnswers = Array.isArray(answerEnglish) ? answerEnglish : [answerEnglish];
-    const romanAnswers = koreanAnswers.map(romanizeKorean);
-    return {
-      prompt: {
-        korean: promptKorean,
-        romanization: romanizeKorean(promptKorean),
-        english: promptEnglish
-      },
-      answers: {
-        korean: [...koreanAnswers, ...(answerAlternatives.korean || [])],
-        romanization: [...romanAnswers, ...(answerAlternatives.romanization || [])],
-        english: [...englishAnswers, ...(answerAlternatives.english || [])]
-      },
-      model: {
-        korean: koreanAnswers[0],
-        romanization: romanAnswers[0],
-        english: englishAnswers[0]
-      },
-      explanation
-    };
-  }
-
-  const VOCAB_SOURCE_QUESTIONS = [
-    ...[["선생님", "teacher"], ["회사원", "office worker"], ["요리사", "cook"], ["경찰", "police officer"], ["간호사", "nurse"], ["의사", "doctor"]]
-      .map(([k, e]) => makeQuestion(`직업: ${e}`, `Write the Korean occupation: ${e}`, k, e, "Bab 1 Exercise 1: identify and write the occupation.")),
-    ...[["한국", "Korea"], ["영국", "United Kingdom"], ["호주", "Australia"], ["일본", "Japan"], ["베트남", "Vietnam"], ["중국", "China"]]
-      .map(([k, e]) => makeQuestion(`나라: ${e}`, `Write the Korean country name: ${e}`, k, e, "Bab 1 Exercise 2: identify and write the country."))
-  ];
-
-  const VOCAB_QUESTIONS = VOCAB.map(item => makeQuestion(item.korean, `Vocabulary: ${item.meaning}`, item.korean, item.meaning, `${item.category} · ${item.source}`));
-
-  const GREETING_SOURCE = [
-    makeQuestion("안녕하세요?", "Choose or type the natural reply to “Hello.”", "안녕하세요.", "Hello.", "The source example pairs 안녕하세요? with the same greeting."),
-    makeQuestion("고맙습니다.", "Choose or type the natural reply to “Thank you.”", "뭘요.", "Not at all / You're welcome.", "Bab 1 Exercise 3 response matching."),
-    makeQuestion("만나서 반가워요.", "Choose or type the natural reply to “Nice to meet you.”", "만나서 반가워요.", "Nice to meet you, too.", "Bab 1 Exercise 3 response matching."),
-    makeQuestion("죄송합니다.", "Choose or type the natural reply to “I am sorry.”", "괜찮아요.", "It is okay.", "Bab 1 Exercise 3 response matching."),
-    makeQuestion("안녕히 가세요.", "Choose or type the natural reply when the other person tells you goodbye as you leave.", "안녕히 계세요.", "Goodbye (to the person staying).", "The person leaving says 안녕히 계세요 to the person who remains.")
-  ];
-
-  const GREETING_TRANSLATION = [
-    makeQuestion("영어로 번역하세요: 안녕하세요.", "Translate into Korean: Hello.", "안녕하세요.", "Hello.", "A safe polite greeting."),
-    makeQuestion("영어로 번역하세요: 만나서 반가워요.", "Translate into Korean: Nice to meet you.", "만나서 반가워요.", "Nice to meet you.", "Literally: meeting you, I am glad."),
-    makeQuestion("영어로 번역하세요: 고맙습니다.", "Translate into Korean: Thank you.", "고맙습니다.", "Thank you.", "Formal polite thanks."),
-    makeQuestion("영어로 번역하세요: 죄송합니다.", "Translate into Korean: I am sorry.", "죄송합니다.", "I am sorry.", "Formal polite apology."),
-    makeQuestion("영어로 번역하세요: 괜찮아요.", "Translate into Korean: It is okay.", "괜찮아요.", "It is okay.", "Common reassuring response."),
-    makeQuestion("영어로 번역하세요: 안녕히 가세요.", "Translate into Korean: Goodbye, said to someone who is leaving.", "안녕히 가세요.", "Goodbye (to someone leaving).", "가세요 contains the idea of going."),
-    makeQuestion("영어로 번역하세요: 안녕히 계세요.", "Translate into Korean: Goodbye, said to someone who is staying.", "안녕히 계세요.", "Goodbye (to someone staying).", "계세요 contains the idea of remaining/staying.")
-  ];
-
-  const COPULA_SOURCE_NOUNS = ["선생님", "제니퍼", "캐나다 사람", "러시아", "미국", "팀", "학생", "독일 사람", "가수", "소영", "경찰", "투이", "회사원", "요리사"];
-  const COPULA_SOURCE = COPULA_SOURCE_NOUNS.map(noun => makeQuestion(
-    `${noun} (예요 / 이에요)`,
-    `Complete the source exercise with the correct polite copula: ${noun}`,
-    `${copula(noun)}.`,
-    `It is / the person is ${noun}.`,
-    hasBatchim(noun) ? "The noun ends in a final consonant (받침), so use 이에요." : "The noun ends in a vowel, so use 예요."
-  ));
-
-  const COPULA_TRANSLATION = [
-    ...JOBS.map(([noun, english]) => makeQuestion(`${noun}: 영어 뜻을 쓰세요.`, `Translate into Korean: He/She is a ${english}.`, `${copula(noun)}.`, `He/She is a ${english}.`, hasBatchim(noun) ? "Final consonant → 이에요." : "Vowel ending → 예요.")),
-    ...OBJECTS.slice(0, 24).map(item => makeQuestion(`${item.korean}: 영어 뜻을 쓰세요.`, `Translate into Korean: It is ${/^[aeiou]/i.test(item.meaning) ? "an" : "a"} ${item.meaning}.`, `${copula(item.korean)}.`, `It is ${item.meaning}.`, hasBatchim(item.korean) ? "Final consonant → 이에요." : "Vowel ending → 예요."))
-  ];
-
-  const TOPIC_SOURCE = [
-    ["상우", "한국", "Sang-woo", "Korean"],
-    ["선생님", "호주", "the teacher", "Australian"],
-    ["제니퍼 씨", "미국", "Jennifer", "American"],
-    ["왕단 씨", "중국", "Wangdan", "Chinese"],
-    ["아사코 씨", "일본", "Asako", "Japanese"],
-    ["투이 씨", "베트남", "Thuy", "Vietnamese"]
-  ].map(([subject, country, enSubject, nationality]) => makeQuestion(
-    `${subject} (은 / 는) ${country} 사람이에요.`,
-    `Complete the sentence with 은 or 는: ${enSubject} is ${nationality}.`,
-    `${topic(subject)} ${country} 사람이에요.`,
-    `${enSubject} is ${nationality}.`,
-    hasBatchim(subject) ? "The topic ends in a final consonant, so use 은." : "The topic ends in a vowel, so use 는."
-  ));
-
-  const TOPIC_TRANSLATION = [];
-  for (const [nameK, nameE] of NAMES) {
-    for (const nat of NATIONALITIES.slice(0, 6)) {
-      TOPIC_TRANSLATION.push(makeQuestion(
-        `${nameK}: ${nat.country}`,
-        `Translate into Korean: ${nameE} is ${nat.adjective}.`,
-        `${topic(`${nameK} 씨`)} ${nat.country} 사람이에요.`,
-        `${nameE} is ${nat.adjective}.`,
-        `Attach 는 to 씨, then identify nationality with ${nat.country} 사람이에요.`
-      ));
-    }
-  }
-
-  const YESNO_SOURCE = [
-    makeQuestion("가: 자동차예요?", "Answer the source question affirmatively: Is it a car?", "나: 네, 자동차예요.", "Yes, it is a car.", "Bab 1 Exercise 6."),
-    makeQuestion("가: 일본 사람이에요?", "Answer the source question negatively: Is the person Japanese? (Vietnamese)", "나: 아니요, 베트남 사람이에요.", "No, the person is Vietnamese.", "Bab 1 Exercise 6."),
-    makeQuestion("가: 아이스크림이에요?", "Answer the source question negatively: Is it ice cream? (umbrella)", "나: 아니요, 우산이에요.", "No, it is an umbrella.", "Bab 1 Exercise 6."),
-    makeQuestion("가: 비행기예요?", "Answer the source question negatively: Is it an airplane? (train)", "나: 아니요, 기차예요.", "No, it is a train.", "Bab 1 Exercise 6."),
-    makeQuestion("가: 책이에요?", "Answer the source question negatively: Is it a book? (notebook)", "나: 아니요, 공책이에요.", "No, it is a notebook.", "Bab 1 Exercise 6."),
-    makeQuestion("가: 소영 씨는 한국 사람이에요?", "Answer the source question affirmatively as So-young.", "나: 네, 저는 한국 사람이에요.", "Yes, I am Korean.", "Bab 1 Exercise 7 example."),
-    makeQuestion("가: 팀 씨는 미국 사람이에요?", "Answer the source question negatively: Is Tim American? (Australian)", "나: 아니요, 팀 씨는 호주 사람이에요.", "No, Tim is Australian.", "Bab 1 Exercise 7."),
-    makeQuestion("가: 아사코 씨는 선생님이에요?", "Answer the source question affirmatively: Is Asako a teacher?", "나: 네, 아사코 씨는 선생님이에요.", "Yes, Asako is a teacher.", "Bab 1 Exercise 7."),
-    makeQuestion("가: 책상이에요?", "Answer the source question affirmatively: Is it a desk?", "나: 네, 책상이에요.", "Yes, it is a desk.", "Bab 1 Exercise 7."),
-    makeQuestion("가: 왕단 씨는 의사예요?", "Answer the source question negatively: Is Wangdan a doctor? (office worker)", "나: 아니요, 왕단 씨는 회사원이에요.", "No, Wangdan is an office worker.", "Bab 1 Exercise 7."),
-    makeQuestion("가: 제니퍼 씨는 미국 사람이에요?", "Answer the source question negatively: Is Jennifer American? (Australian)", "나: 아니요, 제니퍼 씨는 호주 사람이에요.", "No, Jennifer is Australian.", "Bab 1 Exercise 7.")
-  ];
-
-  const YESNO_TRANSLATION = [];
-  OBJECTS.slice(0, 26).forEach((item, index) => {
-    YESNO_TRANSLATION.push(makeQuestion(
-      `${item.korean}: 질문을 만드세요.`,
-      `Translate into Korean: Is it ${item.meaning}?`,
-      `${copula(item.korean)}?`,
-      `Is it ${item.meaning}?`,
-      "Use rising intonation and a question mark; the copula form does not otherwise change."
-    ));
-    const other = OBJECTS[(index + 7) % OBJECTS.length];
-    YESNO_TRANSLATION.push(makeQuestion(
-      `${item.korean} → ${other.korean}`,
-      `Translate into Korean: No, it is ${other.meaning}.`,
-      `아니요, ${copula(other.korean)}.`,
-      `No, it is ${other.meaning}.`,
-      "Begin with 아니요, then identify the correct noun with 이에요/예요."
-    ));
-  });
-
-  function profileSentence(nameK, countryK, jobK) {
-    return `${nameK} 씨예요.\n${topic(`${nameK} 씨`)} ${countryK} 사람이에요.\n${topic(`${nameK} 씨`)} ${copula(jobK)}.`;
-  }
-  function profileEnglish(nameE, nationality, jobE) {
-    return `This is ${nameE}. ${nameE} is ${nationality}. ${nameE} is a ${jobE}.`;
-  }
-
-  const PROFILE_SOURCE = [
-    ["왕단", "Wangdan", "중국", "Chinese", "회사원", "office worker"],
-    ["팀", "Tim", "미국", "American", "의사", "doctor"],
-    ["아사코", "Asako", "일본", "Japanese", "학생", "student"],
-    ["상우", "Sang-woo", "한국", "Korean", "선생님", "teacher"],
-    ["티누", "Tinu", "베트남", "Vietnamese", "요리사", "cook"]
-  ].map(([nk, ne, ck, nat, jk, je]) => makeQuestion(
-    `${nk} (${ck} 사람, ${jk})`,
-    `Write the three-sentence profile from the source: ${ne} (${nat}, ${je}).`,
-    profileSentence(nk, ck, jk),
-    profileEnglish(ne, nat, je),
-    "Write the name, nationality, and occupation as three complete polite sentences."
-  ));
-
-  const PROFILE_TRANSLATION = [];
-  NAMES.forEach(([nameK, nameE], i) => {
-    NATIONALITIES.forEach((nat, j) => {
-      const [jobK, jobE] = JOBS[(i + j) % JOBS.length];
-      PROFILE_TRANSLATION.push(makeQuestion(
-        `${nameK} · ${nat.country} · ${jobK}`,
-        `Translate into Korean as a three-sentence introduction: This is ${nameE}. ${nameE} is ${nat.adjective}. ${nameE} is a ${jobE}.`,
-        profileSentence(nameK, nat.country, jobK),
-        profileEnglish(nameE, nat.adjective, jobE),
-        "Sentence 1 uses 씨예요. Sentences 2–3 use 씨는 as the topic."
-      ));
-    });
-  });
-
-  const GRAMMAR_SECTIONS = [
-    {
-      id: "greetings",
-      title: "Greetings and Responses",
-      label: "Fixed expressions",
-      meaning: "These expressions are learned as complete chunks. The reply depends on the situation and on who is leaving or staying.",
-      form: "안녕하세요 is a general polite greeting. Say 안녕히 가세요 to the person leaving and 안녕히 계세요 to the person staying.",
-      notes: "뭘요 is a modest reply to thanks. 괜찮아요 reassures someone after an apology.",
-      examples: [["안녕하세요?", "Hello."], ["만나서 반가워요.", "Nice to meet you."], ["죄송합니다. — 괜찮아요.", "I am sorry. — It is okay."]],
-      sourceTitle: "Material Exercise 3 · Match the response",
-      sourceDescription: "Use the reply choices from Bab 1. Choose or type the natural response.",
-      sourceQuestions: GREETING_SOURCE,
-      translationTitle: "Translation Practice · Greetings",
-      translationDescription: "Translate the fixed expressions between English, Korean, and romanization.",
-      translationQuestions: GREETING_TRANSLATION
-    },
-    {
-      id: "copula",
-      title: "N이에요 / 예요",
-      label: "Noun identification",
-      meaning: "N이에요/예요 means “is/am/are N.” It attaches directly to a noun and identifies a person or thing.",
-      form: "Use 이에요 after a noun with a final consonant (받침): 학생이에요. Use 예요 after a vowel: 의사예요.",
-      notes: "The question form is identical in writing except for the question mark and rising intonation: 학생이에요?",
-      examples: [["선생님이에요.", "He/She is a teacher."], ["제니퍼예요.", "It is Jennifer."], ["한국 사람이에요.", "He/She is Korean."]],
-      sourceTitle: "Material Exercise 4 · Choose 예요 or 이에요",
-      sourceDescription: "Complete the original Bab 1 noun list with the correct copula form.",
-      sourceQuestions: COPULA_SOURCE,
-      translationTitle: "Translation Practice · Identify a noun",
-      translationDescription: "Translate randomized occupation, object, place, transport, and food sentences.",
-      translationQuestions: COPULA_TRANSLATION
-    },
-    {
-      id: "topic",
-      title: "N은 / 는",
-      label: "Topic particle",
-      meaning: "은/는 marks the topic: the person or thing the sentence is about. In this lesson it is used to state nationality and occupation.",
-      form: "Use 은 after a final consonant: 선생님은. Use 는 after a vowel: 상우는. The name suffix 씨 ends in a vowel, so 씨는 is used.",
-      notes: "The topic particle does not translate as a separate English word. It frames the sentence as “as for N...”",
-      examples: [["상우는 한국 사람이에요.", "Sang-woo is Korean."], ["선생님은 호주 사람이에요.", "The teacher is Australian."], ["제니퍼 씨는 미국 사람이에요.", "Jennifer is American."]],
-      sourceTitle: "Material Exercise 5 · Choose 은 or 는",
-      sourceDescription: "Complete the original nationality sentences with the correct topic particle.",
-      sourceQuestions: TOPIC_SOURCE,
-      translationTitle: "Translation Practice · Nationality sentences",
-      translationDescription: "Translate varied name and nationality combinations using 씨는 and 사람이에요.",
-      translationQuestions: TOPIC_TRANSLATION
-    },
-    {
-      id: "yes-no",
-      title: "N이에요? · 네 / 아니요",
-      label: "Identification questions",
-      meaning: "Turn an identification sentence into a question with rising intonation. Answer 네 for yes or 아니요 for no, then give the correct information.",
-      form: "Question: 자동차예요? Affirmative: 네, 자동차예요. Negative: 아니요, 기차예요.",
-      notes: "A complete negative answer usually supplies the correct noun rather than stopping after 아니요.",
-      examples: [["자동차예요? — 네, 자동차예요.", "Is it a car? — Yes, it is."], ["책이에요? — 아니요, 공책이에요.", "Is it a book? — No, it is a notebook."], ["왕단 씨는 의사예요? — 아니요, 회사원이에요.", "Is Wangdan a doctor? — No, an office worker."]],
-      sourceTitle: "Material Exercises 6–7 · Complete the dialogue",
-      sourceDescription: "Answer the original object, nationality, and occupation questions from Bab 1.",
-      sourceQuestions: YESNO_SOURCE,
-      translationTitle: "Translation Practice · Questions and answers",
-      translationDescription: "Build identification questions and complete negative answers with extra TOPIK I nouns.",
-      translationQuestions: YESNO_TRANSLATION
-    },
-    {
-      id: "profiles",
-      title: "Three-Sentence Introductions",
-      label: "Integrated pattern",
-      meaning: "Combine the lesson patterns to introduce a person: name, nationality, and occupation.",
-      form: "Name: N 씨예요. Nationality: N 씨는 [country] 사람이에요. Occupation: N 씨는 [job]이에요/예요.",
-      notes: "The source is internally inconsistent about Tim: the dialogue exercise calls Tim Australian, while the final profile-writing exercise calls Tim American. Each source-based exercise here preserves the wording of its own page.",
-      examples: [["왕단 씨예요. 왕단 씨는 중국 사람이에요. 왕단 씨는 회사원이에요.", "This is Wangdan. Wangdan is Chinese. Wangdan is an office worker."], ["아사코 씨예요. 아사코 씨는 일본 사람이에요. 아사코 씨는 학생이에요.", "This is Asako. Asako is Japanese. Asako is a student."]],
-      sourceTitle: "Material Final Exercise · Write the profile",
-      sourceDescription: "Produce the three sentences shown in the final Bab 1 writing exercise.",
-      sourceQuestions: PROFILE_SOURCE,
-      translationTitle: "Translation Practice · Full introductions",
-      translationDescription: "Translate varied three-sentence profiles using names, countries, and occupations.",
-      translationQuestions: PROFILE_TRANSLATION
-    }
-  ];
-
-  const EXERCISE_BANKS = new Map();
-  const exerciseStates = new Map();
-
-  function exerciseTemplate(key, title, description, defaultCount, questionDefault = "english", answerDefault = "korean") {
-    return `<article class="exercise" id="exercise-${esc(key)}" data-exercise-key="${esc(key)}">
-      <div class="exercise-head">
-        <div class="exercise-head-copy">
-          <span class="exercise-kicker">Practice</span>
-          <h3>${esc(title)}</h3>
-          <p>${esc(description)}</p>
-        </div>
-        <div class="score" aria-live="polite">Ready</div>
-      </div>
-      <div class="exercise-menu">
-        <h4>Exercise setup</h4>
-        <p>Choose typed or multiple choice, question count, and display languages. These exercises are untimed.</p>
-        <div class="exercise-menu-grid">
-          <label>Input method
-            <select class="menu-input">
-              <option value="typed" selected>Typed</option>
-              <option value="mcq">Multiple choice</option>
-            </select>
-          </label>
-          <label>Questions
-            <input class="menu-count" type="number" min="1" max="100" value="${defaultCount}" />
-          </label>
-          <label>Question language
-            <select class="menu-question">
-              <option value="english"${questionDefault === "english" ? " selected" : ""}>English</option>
-              <option value="korean"${questionDefault === "korean" ? " selected" : ""}>Korean</option>
-              <option value="romanization"${questionDefault === "romanization" ? " selected" : ""}>Romanization</option>
-            </select>
-          </label>
-          <label>Answer language
-            <select class="menu-answer">
-              <option value="english"${answerDefault === "english" ? " selected" : ""}>English</option>
-              <option value="korean"${answerDefault === "korean" ? " selected" : ""}>Korean</option>
-              <option value="romanization"${answerDefault === "romanization" ? " selected" : ""}>Romanization</option>
-            </select>
-          </label>
-        </div>
-        <p class="keyboard-note">Typed mode: Enter checks the answer; Enter again moves to the next question. Romanization mode: Space = dash, double Space = word space.</p>
-        <div class="exercise-menu-actions">
-          <button class="primary-btn start-exercise" type="button">Start exercise</button>
-        </div>
-      </div>
-      <div class="exercise-body hidden">
-        <div class="runtime-bar">
-          <span class="runtime-label">Untimed practice</span>
-          <div class="runtime-actions">
-            <button class="restart-top-btn" type="button">Restart</button>
-            <button class="end-early-btn" type="button">End exercise early</button>
-          </div>
-        </div>
-        <div class="status"><span class="count"></span><span class="mode-label"></span></div>
-        <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div></div></div>
-        <div class="prompt-label"></div>
-        <div class="prompt"></div>
-        <div class="zone"></div>
-        <div class="feedback" aria-live="polite"></div>
-        <button class="btn warning next hidden" type="button">Next</button>
-        <div class="finish">
-          <h4>Exercise complete</h4>
-          <p class="summary"></p>
-          <div class="finish-actions">
-            <button class="primary-btn restart-same" type="button">Restart exercise</button>
-            <button class="secondary-btn change-setup" type="button">Change setup</button>
-          </div>
-          <div class="review"></div>
-        </div>
-      </div>
-    </article>`;
-  }
-
-  function renderVocabulary() {
-    const body = document.getElementById("vocabBody");
-    body.innerHTML = VOCAB.map(item => `<tr data-search="${esc(`${item.meaning} ${item.romanization} ${item.korean} ${item.category} ${item.source}`.toLowerCase())}">
-      <td data-vocab-field="meaning" tabindex="0"><span class="blur-target">${esc(item.meaning)}</span></td>
-      <td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(item.romanization)}</span></td>
-      <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(item.korean)}</strong></span></td>
-      <td>${esc(item.category)}</td>
-      <td><span class="source-badge${item.source.includes("extra") ? " extra" : ""}">${esc(item.source)}</span></td>
-    </tr>`).join("");
-
-    const sourceKey = "vocab-source";
-    const fullKey = "vocab-full";
-    EXERCISE_BANKS.set(sourceKey, VOCAB_SOURCE_QUESTIONS);
-    EXERCISE_BANKS.set(fullKey, VOCAB_QUESTIONS);
-    document.getElementById("vocabExercises").innerHTML =
-      exerciseTemplate(sourceKey, "Material Exercises 1–2 · Jobs and Countries", "The image-based vocabulary tasks are converted into typed or multiple-choice recognition questions.", 12, "english", "korean") +
-      exerciseTemplate(fullKey, "Complete Vocabulary Practice", "Practice the entire combined Bab 1 and TOPIK I vocabulary bank.", 20, "korean", "english");
-  }
-
-  function renderGrammar() {
-    const container = document.getElementById("grammarSections");
-    container.innerHTML = GRAMMAR_SECTIONS.map((section, index) => {
-      const sourceKey = `${section.id}-source`;
-      const translationKey = `${section.id}-translation`;
-      EXERCISE_BANKS.set(sourceKey, section.sourceQuestions);
-      EXERCISE_BANKS.set(translationKey, section.translationQuestions);
-      return `<details class="section" id="${esc(section.id)}"${index === 0 ? " open" : ""}>
-        <summary><span>${esc(section.title)}</span></summary>
-        <div class="section-body">
-          <div class="section-intro">
-            <article class="info-card">
-              <span class="rule-label">${esc(section.label)}</span>
-              <h3>Meaning and form</h3>
-              <p><strong>Meaning:</strong> ${esc(section.meaning)}</p>
-              <p><strong>Form:</strong> ${esc(section.form)}</p>
-              <p><strong>Note:</strong> ${esc(section.notes)}</p>
-            </article>
-            <article class="info-card">
-              <span class="rule-label">Examples</span>
-              <h3>Model sentences</h3>
-              <div class="example-list">
-                ${section.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}
-              </div>
-            </article>
-          </div>
-          <div class="exercise-stack">
-            ${exerciseTemplate(sourceKey, section.sourceTitle, section.sourceDescription, Math.min(10, section.sourceQuestions.length), "korean", "korean")}
-            ${exerciseTemplate(translationKey, section.translationTitle, section.translationDescription, Math.min(12, section.translationQuestions.length), "english", "korean")}
-          </div>
-        </div>
-      </details>`;
-    }).join("");
-  }
-
-  function renderTOC() {
-    document.getElementById("tocGrid").innerHTML = `
-      <a class="toc-link" href="#vocabulary"><span>Vocabulary Bank</span><small>${VOCAB.length} items</small></a>
-      ${GRAMMAR_SECTIONS.map(section => `<a class="toc-link" href="#${esc(section.id)}"><span>${esc(section.title)}</span></a>`).join("")}
-    `;
-  }
-
-  function normalize(value, language) {
-    let text = String(value ?? "").trim().toLowerCase().normalize("NFKC");
-    if (language === "korean") return text.replace(/[\s.,!?;:'"“”‘’()\-–—]/g, "");
-    if (language === "romanization") {
-      return text
-        .replace(/[.,!?;:'"“”‘’()]/g, "")
-        .replace(/[–—]/g, "-")
-        .replace(/\s*\-\s*/g, "-")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
-    return text
-      .replace(/[^a-z0-9가-힣\s]/g, " ")
-      .replace(/\b(a|an|the)\b/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function answerIsCorrect(userAnswer, question, answerLanguage) {
-    const user = normalize(userAnswer, answerLanguage);
-    return question.answers[answerLanguage].some(answer => normalize(answer, answerLanguage) === user);
-  }
-
-  function buildQuestionRun(bank, count) {
-    const result = [];
-    let previous = null;
-    while (result.length < count) {
-      let cycle = shuffle(bank);
-      if (previous && cycle.length > 1 && cycle[0] === previous) [cycle[0], cycle[1]] = [cycle[1], cycle[0]];
-      result.push(...cycle);
-      previous = result.at(-1);
-    }
-    return result.slice(0, count);
-  }
-
-  function languageName(value) {
-    return ({ english: "English", korean: "Korean", romanization: "Romanization" })[value] || value;
-  }
-
-  function setupSpaceRule(input) {
-    input.addEventListener("keydown", event => {
-      const key = input.closest(".exercise").dataset.exerciseKey;
-      const state = exerciseStates.get(key);
-      if (!state || state.answerLanguage !== "romanization" || event.key !== " ") return;
-      event.preventDefault();
-      const start = input.selectionStart ?? input.value.length;
-      const end = input.selectionEnd ?? start;
-      const value = input.value;
-      if (start > 0 && value[start - 1] === "-") {
-        input.value = value.slice(0, start - 1) + " " + value.slice(end);
-        input.setSelectionRange(start, start);
-      } else {
-        input.value = value.slice(0, start) + "-" + value.slice(end);
-        input.setSelectionRange(start + 1, start + 1);
-      }
-    });
-  }
-
-  function startExercise(key, preserveSettings = false) {
-    const element = document.querySelector(`[data-exercise-key="${CSS.escape(key)}"]`);
-    const bank = EXERCISE_BANKS.get(key) || [];
-    const countInput = element.querySelector(".menu-count");
-    const requested = Math.max(1, Math.min(100, Math.round(Number(countInput.value) || Math.min(10, bank.length))));
-    countInput.value = requested;
-
-    const settings = {
-      inputMethod: element.querySelector(".menu-input").value,
-      questionLanguage: element.querySelector(".menu-question").value,
-      answerLanguage: element.querySelector(".menu-answer").value,
-      count: requested
-    };
-    const state = {
-      ...settings,
-      questions: buildQuestionRun(bank, requested),
-      index: 0,
-      score: 0,
-      results: [],
-      done: false,
-      finished: false
-    };
-    exerciseStates.set(key, state);
-    element.querySelector(".exercise-menu").classList.add("hidden");
-    element.querySelector(".exercise-body").classList.remove("hidden");
-    element.querySelector(".finish").style.display = "none";
-    element.querySelector(".score").textContent = "Score: 0";
-    showQuestion(key);
-  }
-
-  function showSetup(key) {
-    const element = document.querySelector(`[data-exercise-key="${CSS.escape(key)}"]`);
-    exerciseStates.delete(key);
-    element.querySelector(".exercise-menu").classList.remove("hidden");
-    element.querySelector(".exercise-body").classList.add("hidden");
-    element.querySelector(".score").textContent = "Ready";
-    element.querySelector(".feedback").className = "feedback";
-    element.querySelector(".next").classList.add("hidden");
-  }
-
-  function restartSame(key) {
-    startExercise(key, true);
-  }
-
-  function showQuestion(key) {
-    const state = exerciseStates.get(key);
-    const element = document.querySelector(`[data-exercise-key="${CSS.escape(key)}"]`);
-    if (!state || state.finished) return;
-    const question = state.questions[state.index];
-    state.done = false;
-
-    element.querySelector(".count").textContent = `Question ${state.index + 1} / ${state.questions.length}`;
-    element.querySelector(".mode-label").textContent = `${state.inputMethod === "typed" ? "Typed" : "Multiple choice"} · ${languageName(state.questionLanguage)} → ${languageName(state.answerLanguage)}`;
-    element.querySelector(".score").textContent = `Score: ${state.score}`;
-    const percent = state.questions.length ? (state.index / state.questions.length) * 100 : 0;
-    element.querySelector(".progress > div").style.width = `${percent}%`;
-    element.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(percent)));
-    element.querySelector(".prompt-label").textContent = `Translate / complete from ${languageName(state.questionLanguage)}`;
-    element.querySelector(".prompt").textContent = question.prompt[state.questionLanguage];
-    const feedback = element.querySelector(".feedback");
-    feedback.className = "feedback";
-    feedback.innerHTML = "";
-    element.querySelector(".next").classList.add("hidden");
-    element.querySelector(".finish").style.display = "none";
-
-    const zone = element.querySelector(".zone");
-    if (state.inputMethod === "typed") {
-      const inputId = `input-${key}-${state.index}`.replace(/[^a-zA-Z0-9_-]/g, "-");
-      zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${esc(inputId)}">Your answer</label><input id="${esc(inputId)}" class="answer-input" autocomplete="off" autocapitalize="off" spellcheck="false" /><button class="btn primary check-answer" type="button">Check</button></div>`;
-      const input = zone.querySelector("input");
-      input.placeholder = state.answerLanguage === "romanization" ? "Space = dash · double Space = word space" : `Type your answer in ${languageName(state.answerLanguage)}`;
-      setupSpaceRule(input);
-      const submit = () => submitTyped(key, input.value);
-      zone.querySelector("button").addEventListener("click", submit);
-      input.addEventListener("keydown", event => {
-        if (event.key !== "Enter") return;
-        event.preventDefault();
-        if (state.done) nextQuestion(key);
-        else submit();
-      });
-      requestAnimationFrame(() => input.focus({ preventScroll: true }));
-    } else {
-      const correct = question.model[state.answerLanguage];
-      const candidates = shuffle(state.questions)
-        .map(q => q.model[state.answerLanguage])
-        .filter((answer, index, list) => normalize(answer, state.answerLanguage) !== normalize(correct, state.answerLanguage) && list.findIndex(item => normalize(item, state.answerLanguage) === normalize(answer, state.answerLanguage)) === index)
-        .slice(0, 3);
-      const options = shuffle([correct, ...candidates]);
-      zone.innerHTML = `<div class="choices">${options.map((option, index) => `<button class="choice" type="button" data-option="${index}">${esc(option)}</button>`).join("")}</div>`;
-      zone.querySelectorAll(".choice").forEach(button => {
-        button.addEventListener("click", () => {
-          if (state.done) return;
-          const option = options[Number(button.dataset.option)];
-          const isCorrect = answerIsCorrect(option, question, state.answerLanguage);
-          zone.querySelectorAll(".choice").forEach(other => {
-            other.disabled = true;
-            const otherOption = options[Number(other.dataset.option)];
-            if (answerIsCorrect(otherOption, question, state.answerLanguage)) other.classList.add("correct");
-          });
-          if (!isCorrect) button.classList.add("wrong");
-          completeQuestion(key, option, isCorrect);
-        });
-      });
-    }
-  }
-
-  function submitTyped(key, value) {
-    const state = exerciseStates.get(key);
-    if (!state || state.done || state.finished) return;
-    const question = state.questions[state.index];
-    completeQuestion(key, value, answerIsCorrect(value, question, state.answerLanguage));
-  }
-
-  function completeQuestion(key, userAnswer, correct) {
-    const state = exerciseStates.get(key);
-    const element = document.querySelector(`[data-exercise-key="${CSS.escape(key)}"]`);
-    if (!state || state.done || state.finished) return;
-    const question = state.questions[state.index];
-    state.done = true;
-    if (correct) state.score += 1;
-    state.results.push({ question, userAnswer, correct });
-    element.querySelector(".score").textContent = `Score: ${state.score}`;
-
-    const feedback = element.querySelector(".feedback");
-    feedback.className = `feedback ${correct ? "good" : "bad"}`;
-    feedback.innerHTML = `<strong>${correct ? "Correct." : "Incorrect."}</strong><br>
-      <span class="roman">${esc(question.model.romanization)}</span><br>
-      ${esc(question.model.korean)}<br>
-      <strong>${esc(question.model.english)}</strong>
-      ${question.explanation ? `<br><small>${esc(question.explanation)}</small>` : ""}`;
-
-    const input = element.querySelector(".answer-input");
-    if (input) {
-      input.readOnly = true;
-      requestAnimationFrame(() => input.focus({ preventScroll: true }));
-    }
-    const next = element.querySelector(".next");
-    next.textContent = state.index === state.questions.length - 1 ? "Finish" : "Next";
-    next.classList.remove("hidden");
-    if (state.inputMethod === "mcq") requestAnimationFrame(() => next.focus({ preventScroll: true }));
-  }
-
-  function nextQuestion(key) {
-    const state = exerciseStates.get(key);
-    if (!state || !state.done || state.finished) return;
-    if (state.index < state.questions.length - 1) {
-      state.index += 1;
-      showQuestion(key);
-    } else {
-      finishExercise(key, "Exercise complete");
-    }
-  }
-
-  function finishExercise(key, reason) {
-    const state = exerciseStates.get(key);
-    const element = document.querySelector(`[data-exercise-key="${CSS.escape(key)}"]`);
-    if (!state || state.finished) return;
-    state.finished = true;
-    const answered = state.results.length;
-    const percent = answered ? Math.round((state.score / answered) * 100) : 0;
-    const finish = element.querySelector(".finish");
-    element.querySelector(".zone").innerHTML = "";
-    element.querySelector(".feedback").className = "feedback";
-    element.querySelector(".next").classList.add("hidden");
-    element.querySelector(".progress > div").style.width = `${state.questions.length ? (answered / state.questions.length) * 100 : 0}%`;
-    finish.style.display = "block";
-    finish.querySelector("h4").textContent = reason;
-    finish.querySelector(".summary").innerHTML = answered
-      ? `Score: <strong>${state.score} / ${answered}</strong> (${percent}%) · ${answered} of ${state.questions.length} questions answered.`
-      : `No questions were answered.`;
-    finish.querySelector(".review").innerHTML = state.results.map((result, index) => `<div class="review-row">
-      <strong>${index + 1}. ${esc(result.question.prompt[state.questionLanguage])}</strong><br>
-      <span class="result">${result.correct ? "✓ Correct" : "✗ Incorrect"}</span><br>
-      Your answer: ${esc(result.userAnswer || "(blank)")}<br>
-      Model answer: <strong>${esc(result.question.model[state.answerLanguage])}</strong>
-    </div>`).join("");
-    finish.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
-  function initializeExercises() {
-    document.querySelectorAll("[data-exercise-key]").forEach(element => {
-      const key = element.dataset.exerciseKey;
-      element.querySelector(".start-exercise").addEventListener("click", () => startExercise(key));
-      element.querySelector(".restart-top-btn").addEventListener("click", () => restartSame(key));
-      element.querySelector(".end-early-btn").addEventListener("click", () => finishExercise(key, "Exercise ended early"));
-      element.querySelector(".next").addEventListener("click", () => nextQuestion(key));
-      element.querySelector(".restart-same").addEventListener("click", () => restartSame(key));
-      element.querySelector(".change-setup").addEventListener("click", () => showSetup(key));
-      element.querySelector(".exercise-body").addEventListener("keydown", event => {
-        const state = exerciseStates.get(key);
-        if (event.key === "Enter" && state?.inputMethod === "mcq" && state.done && !state.finished) {
-          event.preventDefault();
-          nextQuestion(key);
+    function hasBatchim(text) { const chars = [...String(text)].filter(ch => { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; }); return !!chars.length && ((chars.at(-1).charCodeAt(0) - 0xAC00) % 28 !== 0); }
+    const topic = n => n + (hasBatchim(n) ? "은" : "는"), subject = n => n + (hasBatchim(n) ? "이" : "가"), object = n => n + (hasBatchim(n) ? "을" : "를"), andFormal = n => n + (hasBatchim(n) ? "과" : "와"), copula = n => n + (hasBatchim(n) ? "이에요" : "예요"), negativeN = n => n + (hasBatchim(n) ? "이" : "가");
+    const article = e => /^[aeiou]/i.test(e) ? `an ${e}` : `a ${e}`;
+    const q = (korean, english, alternatives = []) => ({ korean, english, romanization: romanizeKorean(korean), alternatives: alternatives.map(k => ({ korean: k, romanization: romanizeKorean(k) })) });
+    // -------------------------------------------------------------------------
+    // Word pools used to generate translation questions
+    // -------------------------------------------------------------------------
+    const NAMES = [
+        {
+            "k": "팀",
+            "e": "Tim"
+        },
+        {
+            "k": "상우",
+            "e": "Sang-woo"
+        },
+        {
+            "k": "아사코",
+            "e": "Asako"
+        },
+        {
+            "k": "왕단",
+            "e": "Wangdan"
+        },
+        {
+            "k": "투이",
+            "e": "Thuy"
+        },
+        {
+            "k": "티누",
+            "e": "Tinu"
+        },
+        {
+            "k": "소영",
+            "e": "So-young"
+        },
+        {
+            "k": "제니퍼",
+            "e": "Jennifer"
+        },
+        {
+            "k": "민수",
+            "e": "Minsu"
+        },
+        {
+            "k": "수진",
+            "e": "Sujin"
         }
-      });
-    });
-  }
-
-  function initializeVocabularyTools() {
-    const search = document.getElementById("vocabSearch");
-    search.addEventListener("input", () => {
-      const query = search.value.trim().toLowerCase();
-      document.querySelectorAll("#vocabBody tr").forEach(row => row.classList.toggle("hidden", query && !row.dataset.search.includes(query)));
-    });
-
-    document.querySelectorAll("[data-blur-field]").forEach(button => {
-      button.addEventListener("click", () => {
-        const field = button.dataset.blurField;
-        const pressed = button.getAttribute("aria-pressed") === "true";
-        button.setAttribute("aria-pressed", String(!pressed));
-        document.querySelectorAll(`[data-vocab-field="${field}"]`).forEach(cell => {
-          cell.classList.toggle("blurred", !pressed);
-          cell.classList.remove("revealed");
-        });
-      });
-    });
-
-    document.getElementById("vocabBody").addEventListener("click", event => {
-      const cell = event.target.closest("[data-vocab-field]");
-      if (cell?.classList.contains("blurred")) cell.classList.toggle("revealed");
-    });
-    document.getElementById("vocabBody").addEventListener("keydown", event => {
-      const cell = event.target.closest("[data-vocab-field]");
-      if (cell?.classList.contains("blurred") && (event.key === "Enter" || event.key === " ")) {
-        event.preventDefault();
-        cell.classList.toggle("revealed");
-      }
-    });
-  }
-
-  function initializeDetails() {
-    document.querySelectorAll("details.block, details.section").forEach(details => {
-      const summary = details.querySelector(":scope > summary");
-      const sync = () => summary?.setAttribute("aria-expanded", String(details.open));
-      sync();
-      details.addEventListener("toggle", sync);
-    });
-  }
-
-  renderVocabulary();
-  renderGrammar();
-  renderTOC();
-  initializeExercises();
-  initializeVocabularyTools();
-  initializeDetails();
-})();
-</script>
-
-<script>
-(() => {
-  const STORAGE_KEY = "koreanQuizThemeV2";
-  const ANCHOR_KEY = `koreanStudyAnchor:${location.pathname}`;
-  const root = document.documentElement;
-  const media = window.matchMedia("(prefers-color-scheme: dark)");
-  const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
-
-  function savedTheme() {
-    try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
-  }
-  function applyTheme(theme, persist = false) {
-    const next = theme === "dark" ? "dark" : "light";
-    root.dataset.theme = next;
-    root.style.colorScheme = next;
-    if (persist) {
-      try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+    ];
+    const JOBS = [
+        {
+            "k": "학생",
+            "e": "student"
+        },
+        {
+            "k": "선생님",
+            "e": "teacher"
+        },
+        {
+            "k": "회사원",
+            "e": "office worker"
+        },
+        {
+            "k": "요리사",
+            "e": "cook"
+        },
+        {
+            "k": "경찰",
+            "e": "police officer"
+        },
+        {
+            "k": "간호사",
+            "e": "nurse"
+        },
+        {
+            "k": "의사",
+            "e": "doctor"
+        },
+        {
+            "k": "가수",
+            "e": "singer"
+        },
+        {
+            "k": "연구원",
+            "e": "researcher"
+        },
+        {
+            "k": "직원",
+            "e": "employee"
+        }
+    ];
+    const COUNTRIES = [
+        {
+            "k": "한국",
+            "e": "Korean"
+        },
+        {
+            "k": "일본",
+            "e": "Japanese"
+        },
+        {
+            "k": "중국",
+            "e": "Chinese"
+        },
+        {
+            "k": "베트남",
+            "e": "Vietnamese"
+        },
+        {
+            "k": "영국",
+            "e": "British"
+        },
+        {
+            "k": "미국",
+            "e": "American"
+        },
+        {
+            "k": "호주",
+            "e": "Australian"
+        },
+        {
+            "k": "독일",
+            "e": "German"
+        },
+        {
+            "k": "캐나다",
+            "e": "Canadian"
+        },
+        {
+            "k": "러시아",
+            "e": "Russian"
+        }
+    ];
+    const NOUNS = [
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "연필",
+            "e": "pencil"
+        },
+        {
+            "k": "가방",
+            "e": "bag"
+        },
+        {
+            "k": "책상",
+            "e": "desk"
+        },
+        {
+            "k": "컴퓨터",
+            "e": "computer"
+        },
+        {
+            "k": "사과",
+            "e": "apple"
+        },
+        {
+            "k": "커피",
+            "e": "coffee"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "경험",
+            "e": "experience"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        },
+        {
+            "k": "사회",
+            "e": "society"
+        },
+        {
+            "k": "경제",
+            "e": "economy"
+        },
+        {
+            "k": "환경",
+            "e": "environment"
+        },
+        {
+            "k": "건강",
+            "e": "health"
+        },
+        {
+            "k": "습관",
+            "e": "habit"
+        },
+        {
+            "k": "목적",
+            "e": "purpose"
+        },
+        {
+            "k": "기회",
+            "e": "opportunity"
+        },
+        {
+            "k": "방법",
+            "e": "method"
+        },
+        {
+            "k": "결과",
+            "e": "result"
+        },
+        {
+            "k": "이유",
+            "e": "reason"
+        },
+        {
+            "k": "문제",
+            "e": "problem"
+        },
+        {
+            "k": "해결",
+            "e": "solution"
+        },
+        {
+            "k": "관계",
+            "e": "relationship"
+        },
+        {
+            "k": "책임",
+            "e": "responsibility"
+        },
+        {
+            "k": "약속",
+            "e": "appointment"
+        },
+        {
+            "k": "준비",
+            "e": "preparation"
+        },
+        {
+            "k": "발표",
+            "e": "presentation"
+        },
+        {
+            "k": "과제",
+            "e": "assignment"
+        },
+        {
+            "k": "수업",
+            "e": "class"
+        },
+        {
+            "k": "연구",
+            "e": "research"
+        },
+        {
+            "k": "정보",
+            "e": "information"
+        },
+        {
+            "k": "의견",
+            "e": "opinion"
+        },
+        {
+            "k": "변화",
+            "e": "change"
+        },
+        {
+            "k": "선택",
+            "e": "choice"
+        }
+    ];
+    const OBJECTS = [
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "신문",
+            "e": "newspaper"
+        },
+        {
+            "k": "사과",
+            "e": "apple"
+        },
+        {
+            "k": "커피",
+            "e": "coffee"
+        },
+        {
+            "k": "물",
+            "e": "water"
+        },
+        {
+            "k": "영화",
+            "e": "movie"
+        },
+        {
+            "k": "음악",
+            "e": "music"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "문제",
+            "e": "problem"
+        },
+        {
+            "k": "과제",
+            "e": "assignment"
+        },
+        {
+            "k": "정보",
+            "e": "information"
+        },
+        {
+            "k": "환경",
+            "e": "environment"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        },
+        {
+            "k": "경험",
+            "e": "experience"
+        }
+    ];
+    const PLACES = [
+        {
+            "k": "학교",
+            "e": "school"
+        },
+        {
+            "k": "도서관",
+            "e": "library"
+        },
+        {
+            "k": "식당",
+            "e": "restaurant"
+        },
+        {
+            "k": "커피숍",
+            "e": "coffee shop"
+        },
+        {
+            "k": "교실",
+            "e": "classroom"
+        },
+        {
+            "k": "집",
+            "e": "home"
+        },
+        {
+            "k": "회사",
+            "e": "company"
+        },
+        {
+            "k": "공원",
+            "e": "park"
+        },
+        {
+            "k": "시장",
+            "e": "market"
+        },
+        {
+            "k": "은행",
+            "e": "bank"
+        },
+        {
+            "k": "우체국",
+            "e": "post office"
+        },
+        {
+            "k": "영화관",
+            "e": "movie theater"
+        },
+        {
+            "k": "연구실",
+            "e": "research room"
+        },
+        {
+            "k": "회의실",
+            "e": "meeting room"
+        }
+    ];
+    const POSITIONS = [
+        {
+            "k": "위",
+            "e": "on top of"
+        },
+        {
+            "k": "아래",
+            "e": "under"
+        },
+        {
+            "k": "앞",
+            "e": "in front of"
+        },
+        {
+            "k": "뒤",
+            "e": "behind"
+        },
+        {
+            "k": "옆",
+            "e": "next to"
+        },
+        {
+            "k": "안",
+            "e": "inside"
+        },
+        {
+            "k": "밖",
+            "e": "outside"
+        }
+    ];
+    const TRANS = [
+        {
+            "base": "읽다",
+            "p": "읽어요",
+            "f": "읽습니다",
+            "fq": "읽습니까",
+            "c": "읽고",
+            "e": "read"
+        },
+        {
+            "base": "먹다",
+            "p": "먹어요",
+            "f": "먹습니다",
+            "fq": "먹습니까",
+            "c": "먹고",
+            "e": "eat"
+        },
+        {
+            "base": "마시다",
+            "p": "마셔요",
+            "f": "마십니다",
+            "fq": "마십니까",
+            "c": "마시고",
+            "e": "drink"
+        },
+        {
+            "base": "보다",
+            "p": "봐요",
+            "f": "봅니다",
+            "fq": "봅니까",
+            "c": "보고",
+            "e": "watch"
+        },
+        {
+            "base": "공부하다",
+            "p": "공부해요",
+            "f": "공부합니다",
+            "fq": "공부합니까",
+            "c": "공부하고",
+            "e": "study"
+        },
+        {
+            "base": "좋아하다",
+            "p": "좋아해요",
+            "f": "좋아합니다",
+            "fq": "좋아합니까",
+            "c": "좋아하고",
+            "e": "like"
+        },
+        {
+            "base": "사다",
+            "p": "사요",
+            "f": "삽니다",
+            "fq": "삽니까",
+            "c": "사고",
+            "e": "buy"
+        },
+        {
+            "base": "만들다",
+            "p": "만들어요",
+            "f": "만듭니다",
+            "fq": "만듭니까",
+            "c": "만들고",
+            "e": "make"
+        },
+        {
+            "base": "설명하다",
+            "p": "설명해요",
+            "f": "설명합니다",
+            "fq": "설명합니까",
+            "c": "설명하고",
+            "e": "explain"
+        },
+        {
+            "base": "준비하다",
+            "p": "준비해요",
+            "f": "준비합니다",
+            "fq": "준비합니까",
+            "c": "준비하고",
+            "e": "prepare"
+        }
+    ];
+    const INTRANS = [
+        {
+            "base": "가다",
+            "p": "가요",
+            "f": "갑니다",
+            "fq": "갑니까",
+            "c": "가고",
+            "e": "go"
+        },
+        {
+            "base": "오다",
+            "p": "와요",
+            "f": "옵니다",
+            "fq": "옵니까",
+            "c": "오고",
+            "e": "come"
+        },
+        {
+            "base": "자다",
+            "p": "자요",
+            "f": "잡니다",
+            "fq": "잡니까",
+            "c": "자고",
+            "e": "sleep"
+        },
+        {
+            "base": "일하다",
+            "p": "일해요",
+            "f": "일합니다",
+            "fq": "일합니까",
+            "c": "일하고",
+            "e": "work"
+        },
+        {
+            "base": "운동하다",
+            "p": "운동해요",
+            "f": "운동합니다",
+            "fq": "운동합니까",
+            "c": "운동하고",
+            "e": "exercise"
+        },
+        {
+            "base": "청소하다",
+            "p": "청소해요",
+            "f": "청소합니다",
+            "fq": "청소합니까",
+            "c": "청소하고",
+            "e": "clean"
+        },
+        {
+            "base": "수영하다",
+            "p": "수영해요",
+            "f": "수영합니다",
+            "fq": "수영합니까",
+            "c": "수영하고",
+            "e": "swim"
+        },
+        {
+            "base": "쇼핑하다",
+            "p": "쇼핑해요",
+            "f": "쇼핑합니다",
+            "fq": "쇼핑합니까",
+            "c": "쇼핑하고",
+            "e": "shop"
+        }
+    ];
+    const ADJS = [
+        {
+            "base": "맛있다",
+            "p": "맛있어요",
+            "f": "맛있습니다",
+            "c": "맛있고",
+            "e": "delicious"
+        },
+        {
+            "base": "맛없다",
+            "p": "맛없어요",
+            "f": "맛없습니다",
+            "c": "맛없고",
+            "e": "not delicious"
+        },
+        {
+            "base": "많다",
+            "p": "많아요",
+            "f": "많습니다",
+            "c": "많고",
+            "e": "numerous"
+        },
+        {
+            "base": "적다",
+            "p": "적어요",
+            "f": "적습니다",
+            "c": "적고",
+            "e": "few"
+        },
+        {
+            "base": "비싸다",
+            "p": "비싸요",
+            "f": "비쌉니다",
+            "c": "비싸고",
+            "e": "expensive"
+        },
+        {
+            "base": "싸다",
+            "p": "싸요",
+            "f": "쌉니다",
+            "c": "싸고",
+            "e": "cheap"
+        },
+        {
+            "base": "크다",
+            "p": "커요",
+            "f": "큽니다",
+            "c": "크고",
+            "e": "big"
+        },
+        {
+            "base": "작다",
+            "p": "작아요",
+            "f": "작습니다",
+            "c": "작고",
+            "e": "small"
+        },
+        {
+            "base": "넓다",
+            "p": "넓어요",
+            "f": "넓습니다",
+            "c": "넓고",
+            "e": "spacious"
+        },
+        {
+            "base": "좁다",
+            "p": "좁아요",
+            "f": "좁습니다",
+            "c": "좁고",
+            "e": "narrow"
+        },
+        {
+            "base": "길다",
+            "p": "길어요",
+            "f": "깁니다",
+            "c": "길고",
+            "e": "long"
+        },
+        {
+            "base": "짧다",
+            "p": "짧아요",
+            "f": "짧습니다",
+            "c": "짧고",
+            "e": "short"
+        },
+        {
+            "base": "좋다",
+            "p": "좋아요",
+            "f": "좋습니다",
+            "c": "좋고",
+            "e": "good"
+        },
+        {
+            "base": "재미있다",
+            "p": "재미있어요",
+            "f": "재미있습니다",
+            "c": "재미있고",
+            "e": "interesting"
+        },
+        {
+            "base": "어렵다",
+            "p": "어려워요",
+            "f": "어렵습니다",
+            "c": "어렵고",
+            "e": "difficult"
+        },
+        {
+            "base": "쉽다",
+            "p": "쉬워요",
+            "f": "쉽습니다",
+            "c": "쉽고",
+            "e": "easy"
+        },
+        {
+            "base": "깨끗하다",
+            "p": "깨끗해요",
+            "f": "깨끗합니다",
+            "c": "깨끗하고",
+            "e": "clean"
+        },
+        {
+            "base": "조용하다",
+            "p": "조용해요",
+            "f": "조용합니다",
+            "c": "조용하고",
+            "e": "quiet"
+        }
+    ];
+    const BIEUP = [
+        {
+            "p": "추워요",
+            "e": "cold"
+        },
+        {
+            "p": "더워요",
+            "e": "hot"
+        },
+        {
+            "p": "쉬워요",
+            "e": "easy"
+        },
+        {
+            "p": "어려워요",
+            "e": "difficult"
+        },
+        {
+            "p": "무거워요",
+            "e": "heavy"
+        },
+        {
+            "p": "가벼워요",
+            "e": "light"
+        },
+        {
+            "p": "귀여워요",
+            "e": "cute"
+        },
+        {
+            "p": "매워요",
+            "e": "spicy"
+        },
+        {
+            "p": "고마워요",
+            "e": "thankful"
+        },
+        {
+            "p": "아름다워요",
+            "e": "beautiful"
+        }
+    ];
+    const SEASONS = [
+        {
+            "k": "봄",
+            "e": "spring"
+        },
+        {
+            "k": "여름",
+            "e": "summer"
+        },
+        {
+            "k": "가을",
+            "e": "autumn"
+        },
+        {
+            "k": "겨울",
+            "e": "winter"
+        }
+    ];
+    const WEATHER = [
+        {
+            "p": "따뜻해요",
+            "c": "따뜻하고",
+            "e": "warm"
+        },
+        {
+            "p": "더워요",
+            "c": "덥고",
+            "e": "hot"
+        },
+        {
+            "p": "시원해요",
+            "c": "시원하고",
+            "e": "cool"
+        },
+        {
+            "p": "추워요",
+            "c": "춥고",
+            "e": "cold"
+        },
+        {
+            "p": "맑아요",
+            "c": "맑고",
+            "e": "clear"
+        },
+        {
+            "p": "흐려요",
+            "c": "흐리고",
+            "e": "cloudy"
+        }
+    ];
+    const KINDS = [
+        {
+            "k": "계절",
+            "e": "season"
+        },
+        {
+            "k": "음식",
+            "e": "food"
+        },
+        {
+            "k": "영화",
+            "e": "movie"
+        },
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "운동",
+            "e": "exercise"
+        },
+        {
+            "k": "음악",
+            "e": "music"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        }
+    ];
+    const MODIFIERS = [
+        {
+            "k": "한국",
+            "e": "Korean"
+        },
+        {
+            "k": "새로운",
+            "e": "new"
+        },
+        {
+            "k": "재미있는",
+            "e": "interesting"
+        },
+        {
+            "k": "건강한",
+            "e": "healthy"
+        },
+        {
+            "k": "조용한",
+            "e": "quiet"
+        },
+        {
+            "k": "중요한",
+            "e": "important"
+        },
+        {
+            "k": "어려운",
+            "e": "difficult"
+        },
+        {
+            "k": "봄",
+            "e": "spring"
+        }
+    ];
+    function greetingQuestion() {
+        return pick([
+            q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
+        ]);
     }
-    toggles.forEach(toggle => {
-      const dark = next === "dark";
-      toggle.setAttribute("aria-pressed", String(dark));
-      toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-      toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
-      const icon = toggle.querySelector("[data-theme-icon]");
-      if (icon) icon.textContent = dark ? "☀" : "☾";
-    });
-  }
-
-  applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
-  toggles.forEach(toggle => toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
-  media.addEventListener?.("change", event => { if (!savedTheme()) applyTheme(event.matches ? "dark" : "light"); });
-
-  function storeAnchor(hash) {
+    // -------------------------------------------------------------------------
+    // Grammar-aware question generation
+    // -------------------------------------------------------------------------
+    function generate(kind) {
+        let a, b, c, n, name, job, country, obj, place, verb, verb2, adj, position, owner, season, weather, kindN, mod;
+        switch (kind) {
+            case "greetings": return greetingQuestion();
+            case "copula":
+                n = pick([...NOUNS, ...JOBS]);
+                return q(copula(n.k), `It is ${article(n.e)}.`);
+            case "topic":
+                n = pick(NOUNS);
+                job = pick(JOBS);
+                return q(`${topic(n.k)} ${copula(job.k)}.`, `As for the ${n.e}, it is ${article(job.e)}.`);
+            case "yesno":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                if (Math.random() < .5)
+                    return q(`${copula(a.k)}? 네, ${copula(a.k)}.`, `Is it ${article(a.e)}? Yes, it is ${article(a.e)}.`);
+                return q(`${copula(a.k)}? 아니요, ${copula(b.k)}.`, `Is it ${article(a.e)}? No, it is ${article(b.e)}.`);
+            case "profile":
+                name = pick(NAMES);
+                country = pick(COUNTRIES);
+                job = pick(JOBS);
+                return q(`${name.k} 씨예요. ${name.k} 씨는 ${country.k} 사람이에요. ${name.k} 씨는 ${copula(job.k)}.`, `This is ${name.e}. ${name.e} is ${country.e}. ${name.e} is ${article(job.e)}.`);
+            case "demonstratives":
+                n = pick([...NOUNS, ...JOBS]);
+                a = pick([{ k: "이건", e: "This" }, { k: "그건", e: "That near you" }, { k: "저건", e: "That over there" }]);
+                return q(`${a.k} ${copula(n.k)}.`, `${a.e} is ${article(n.e)}.`);
+            case "negativeCopula":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                return q(`${a.k}${hasBatchim(a.k) ? "이" : "가"} 아니에요. ${copula(b.k)}.`, `It is not ${article(a.e)}. It is ${article(b.e)}.`);
+            case "negativeProfile":
+                name = pick(NAMES);
+                country = pick(COUNTRIES);
+                job = pick(JOBS);
+                a = pick(JOBS.filter(x => x.k !== job.k));
+                return q(`${name.k} 씨는 ${negativeN(a.k)} 아니에요. ${name.k} 씨는 ${copula(job.k)}.`, `${name.e} is not ${article(a.e)}. ${name.e} is ${article(job.e)}.`);
+            case "present":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
+            case "object":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
+            case "placeAction":
+                place = pick(PLACES);
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${place.k}에서 ${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e} at the ${place.e}.`);
+            case "also":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${obj.k}도 ${verb.p}.`, `I also ${verb.e} the ${obj.e}.`);
+            case "destination":
+                place = pick(PLACES);
+                if (Math.random() < .5)
+                    return q(`${place.k}에 가요.`, `I go to the ${place.e}.`);
+                return q(`${place.k}에 와요.`, `I come to the ${place.e}.`);
+            case "shortNegation":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} 안 ${verb.p}.`, `I do not ${verb.e} the ${obj.e}.`);
+            case "andThen":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                place = pick(PLACES);
+                verb2 = pick(INTRANS);
+                return q(`${object(obj.k)} ${verb.p}. 그리고 ${place.k}에서 ${verb2.p}.`, `I ${verb.e} the ${obj.e}. And then I ${verb2.e} at the ${place.e}.`);
+            case "adjective":
+                n = pick(NOUNS);
+                adj = pick(ADJS);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "subjectAdjective":
+                n = pick(NOUNS);
+                adj = pick(ADJS);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "whatKind":
+                kindN = pick(KINDS);
+                mod = pick(MODIFIERS);
+                return q(`무슨 ${object(kindN.k)} 좋아해요? ${mod.k} ${object(kindN.k)} 좋아해요.`, `What kind of ${kindN.e} do you like? I like ${mod.e} ${kindN.e}.`);
+            case "bieup":
+                n = pick(NOUNS);
+                adj = pick(BIEUP);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "weather":
+                season = pick(SEASONS);
+                weather = pick(WEATHER);
+                if (Math.random() < .5)
+                    return q(`${season.k} 날씨가 어때요? ${weather.p}.`, `How is the weather in ${season.e}? It is ${weather.e}.`);
+                a = pick([{ k: "비가 와요", e: "it rains" }, { k: "눈이 와요", e: "it snows" }]);
+                return q(`${season.k} 날씨가 어때요? ${weather.c} ${a.k}.`, `How is the weather in ${season.e}? It is ${weather.e}, and ${a.e}.`);
+            case "formal":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                if (Math.random() < .5)
+                    return q(`${object(obj.k)} ${verb.f}.`, `I ${verb.e} the ${obj.e}.`);
+                return q(`${object(obj.k)} ${verb.fq}?`, `Do you ${verb.e} the ${obj.e}?`);
+            case "clauseLink":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                b = pick(OBJECTS);
+                verb2 = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.c} ${object(b.k)} ${verb2.p}.`, `I ${verb.e} the ${obj.e} and ${verb2.e} the ${b.e}.`);
+            case "formalCopula":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                return q(`${topic(a.k)} ${b.k}입니까? 아니요, ${topic(a.k)} ${negativeN(b.k)} 아닙니다. ${topic(a.k)} ${a.k}입니다.`, `Is the ${a.e} ${article(b.e)}? No, the ${a.e} is not ${article(b.e)}. The ${a.e} is ${article(a.e)}.`);
+            case "numbers": {
+                const num = 1 + Math.floor(Math.random() * 99999);
+                return q(sinoNumber(num), num.toLocaleString("en-US"));
+            }
+            case "location":
+                n = pick(NOUNS);
+                a = pick([...NOUNS, ...PLACES]);
+                position = pick(POSITIONS);
+                if (Math.random() < .8)
+                    return q(`${topic(n.k)} ${a.k} ${position.k}에 있어요.`, `The ${n.e} is ${position.e} the ${a.e}.`);
+                return q(`${topic(n.k)} ${a.k} ${position.k}에 없어요.`, `The ${n.e} is not ${position.e} the ${a.e}.`);
+            case "nounAnd":
+                a = pick(NOUNS);
+                b = pick(NOUNS.filter(x => x.k !== a.k));
+                verb = pick(TRANS);
+                {
+                    const k1 = `${andFormal(a.k)} ${object(b.k)} ${verb.p}.`, k2 = `${a.k}하고 ${object(b.k)} ${verb.p}.`;
+                    return q(k1, `I ${verb.e} the ${a.e} and the ${b.e}.`, [k2]);
+                }
+            case "locationTopic":
+                place = pick(PLACES);
+                position = pick(POSITIONS);
+                n = pick(NOUNS);
+                return q(`${place.k} ${position.k}에는 ${subject(n.k)} 있어요.`, `As for ${position.e} the ${place.e}, there is the ${n.e}.`);
+            case "possessive":
+                owner = pick([...NAMES, ...JOBS]);
+                n = pick(NOUNS);
+                place = pick(PLACES);
+                position = pick(POSITIONS);
+                return q(`${owner.k}의 ${topic(n.k)} ${place.k} ${position.k}에 있어요.`, `${owner.e}'s ${n.e} is ${position.e} the ${place.e}.`);
+            default: return q("책이에요.", "It is a book.");
+        }
+    }
+    function sinoUnder(n) { const d = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"], u = ["", "십", "백", "천"]; let out = []; for (let pos = 3; pos >= 0; pos--) {
+        const p = 10 ** pos, v = Math.floor(n / p) % 10;
+        if (!v)
+            continue;
+        if (v !== 1 || pos === 0)
+            out.push(d[v]);
+        if (pos)
+            out.push(u[pos]);
+    } return out.join(" "); }
+    function sinoNumber(n) { const man = Math.floor(n / 10000), rest = n % 10000, parts = []; if (man) {
+        if (man !== 1)
+            parts.push(sinoUnder(man));
+        parts.push("만");
+    } if (rest)
+        parts.push(sinoUnder(rest)); return parts.join(" ") || "영"; }
+    // -------------------------------------------------------------------------
+    // Answer normalization and evaluation
+    // -------------------------------------------------------------------------
+    function normalize(value, lang) { let s = String(value ?? "").trim().toLowerCase(); if (lang === "romanization")
+        return s.replace(/[^a-z0-9]/g, ""); if (lang === "korean")
+        return s.replace(/[\s\-–—.,!?;:'"“”‘’()\[\]{}]/g, ""); return s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim(); }
+    function answersFor(question, lang) { const values = [question[lang]]; for (const alt of question.alternatives || []) {
+        if (alt[lang])
+            values.push(alt[lang]);
+    } return values; }
+    function isCorrect(question, value, lang) { const norm = normalize(value, lang); return answersFor(question, lang).some(a => normalize(a, lang) === norm); }
+    function pretty(question) { return `<strong>${esc(question.english)}</strong><br><span class="roman">${esc(question.romanization)}</span><br>${esc(question.korean)}`; }
+    function buildSet(generator, count) { const out = [], seen = new Set(); let attempts = 0; while (out.length < count && attempts < count * 40) {
+        const item = generator();
+        attempts++;
+        const key = item.korean;
+        if (!seen.has(key)) {
+            seen.add(key);
+            out.push(item);
+        }
+    } while (out.length < count)
+        out.push(generator()); return shuffle(out); }
+    // -------------------------------------------------------------------------
+    // Exercise templates and runtime state
+    // -------------------------------------------------------------------------
+    const STATES = new Map();
+    function exerciseTemplate(key, title, description, defaultCount = 20) { return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>Choose typed or multiple choice, the number of questions, and both languages.</p><div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`; }
+    // -------------------------------------------------------------------------
+    // Theme, rendering, and event wiring
+    // -------------------------------------------------------------------------
+    function applyTheme(theme, persist = false) { const next = theme === "dark" ? "dark" : "light"; root.dataset.theme = next; root.style.colorScheme = next; if (persist)
+        try {
+            localStorage.setItem(STORAGE_KEY, next);
+        }
+        catch (_) { } document.querySelectorAll("[data-theme-toggle]").forEach(btn => { const dark = next === "dark"; btn.setAttribute("aria-pressed", String(dark)); btn.querySelector("[data-theme-icon]").textContent = dark ? "☀" : "☾"; }); }
+    let saved = null;
     try {
-      if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
-      else localStorage.removeItem(ANCHOR_KEY);
-    } catch (_) {}
-  }
-  document.addEventListener("click", event => {
-    const link = event.target.closest('a[href^="#"]');
-    if (link) storeAnchor(link.getAttribute("href"));
-  });
-  window.addEventListener("hashchange", () => storeAnchor(location.hash));
-  if (!location.hash) {
-    let saved = "";
-    try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
-    if (saved && document.querySelector(saved)) requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
-    else requestAnimationFrame(() => window.scrollTo(0, 0));
-  }
+        saved = localStorage.getItem(STORAGE_KEY);
+    }
+    catch (_) { }
+    applyTheme(saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+    function render() {
+        document.title = `${LESSON.title} · ${LESSON.subtitle}`;
+        document.getElementById("heroTitle").textContent = LESSON.title;
+        document.getElementById("heroSubtitle").textContent = LESSON.subtitle;
+        document.getElementById("heroDesc").textContent = LESSON.description;
+        document.getElementById("tocGrid").innerHTML = `<a class="toc-link" href="#vocabulary">Vocabulary</a>` + LESSON.sections.map(s => `<a class="toc-link" href="#${esc(s.id)}">${esc(s.title)}</a>`).join("");
+        const body = document.getElementById("vocabBody");
+        body.innerHTML = LESSON.vocab.map(v => { const r = romanizeKorean(v.korean); return `<tr data-search="${esc(`${v.english} ${r} ${v.korean} ${v.category}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td>${esc(v.category || "")}</td></tr>`; }).join("");
+        document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        initInteractions();
+    }
+    function initInteractions() {
+        document.querySelectorAll("details").forEach(d => { const s = d.querySelector(":scope>summary"), sync = () => s?.setAttribute("aria-expanded", String(d.open)); sync(); d.addEventListener("toggle", sync); });
+        const search = document.getElementById("vocabSearch");
+        search.addEventListener("input", () => { const term = search.value.trim().toLowerCase(); document.querySelectorAll("#vocabBody tr").forEach(row => row.hidden = !!term && !row.dataset.search.includes(term)); });
+        document.querySelectorAll("[data-blur-field]").forEach(btn => btn.addEventListener("click", () => { const field = btn.dataset.blurField, on = btn.getAttribute("aria-pressed") !== "true"; btn.setAttribute("aria-pressed", String(on)); document.querySelectorAll(`#vocabBody [data-vocab-field="${field}"]`).forEach(cell => cell.classList.toggle("is-blurred", on)); }));
+        document.querySelectorAll("[data-theme-toggle]").forEach(btn => btn.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
+        document.querySelectorAll(".exercise").forEach(initExercise);
+    }
+    function initExercise(el) {
+        const key = el.id.replace(/^ex-/, "");
+        const section = LESSON.sections.find(s => s.id === key);
+        const generator = key === "vocabulary" ? () => { const v = pick(LESSON.vocab); return q(v.korean, v.english); } : () => generate(section.generator);
+        const state = { generator, questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null };
+        STATES.set(key, state);
+        el.querySelector(".start").onclick = () => start(el, state);
+        el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
+        el.querySelector(".next").onclick = () => next(el, state);
+        el.querySelector(".restart-same").onclick = () => start(el, state, true);
+        el.querySelector(".change-setup").onclick = () => showSetup(el, state);
+    }
+    function start(el, state, reuse = false) { const settings = reuse && state.settings ? state.settings : { mode: el.querySelector(".menu-mode").value, count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)), qLang: el.querySelector(".menu-q").value, aLang: el.querySelector(".menu-a").value }; state.settings = settings; state.questions = buildSet(state.generator, settings.count); state.i = 0; state.score = 0; state.results = []; state.done = false; state.finished = false; el.querySelector(".exercise-menu").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".live").classList.remove("hidden"); showQuestion(el, state); }
+    function showSetup(el, state) { state.finished = true; el.querySelector(".live").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".exercise-menu").classList.remove("hidden"); el.querySelector(".score").textContent = "Not started"; }
+    function showQuestion(el, state) {
+        if (state.finished)
+            return;
+        const question = state.questions[state.i], S = state.settings;
+        state.done = false;
+        el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.questions.length}`;
+        el.querySelector(".mode-label").textContent = S.mode === "typed" ? "Typed" : "Multiple choice";
+        el.querySelector(".score").textContent = `Score: ${state.score}`;
+        const pct = state.i / state.questions.length * 100;
+        el.querySelector(".progress>div").style.width = `${pct}%`;
+        el.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(pct)));
+        el.querySelector(".prompt-label").textContent = `${S.qLang} → ${S.aLang}`;
+        el.querySelector(".prompt").textContent = question[S.qLang];
+        const feedback = el.querySelector(".feedback");
+        feedback.className = "feedback";
+        feedback.innerHTML = "";
+        el.querySelector(".next").classList.add("hidden");
+        const zone = el.querySelector(".zone");
+        if (S.mode === "typed") {
+            zone.innerHTML = `<div class="answer-row"><label class="sr-only">Your answer</label><input class="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${S.aLang === "romanization" ? "Space = dash · Double space = word space" : "Type your answer"}"><button class="btn primary check" type="button">Check</button></div>`;
+            const input = zone.querySelector("input"), submit = () => submitTyped(el, state, input.value);
+            zone.querySelector(".check").onclick = submit;
+            input.addEventListener("keydown", ev => { if (ev.key === "Enter") {
+                ev.preventDefault();
+                if (state.done)
+                    next(el, state);
+                else
+                    submit();
+                return;
+            } if (S.aLang === "romanization" && ev.key === " ") {
+                ev.preventDefault();
+                const a = input.selectionStart ?? input.value.length, b = input.selectionEnd ?? a, v = input.value;
+                if (a > 0 && v[a - 1] === "-") {
+                    input.value = v.slice(0, a - 1) + " " + v.slice(b);
+                    input.setSelectionRange(a, a);
+                }
+                else {
+                    input.value = v.slice(0, a) + "-" + v.slice(b);
+                    input.setSelectionRange(a + 1, a + 1);
+                }
+            } });
+            requestAnimationFrame(() => input.focus({ preventScroll: true }));
+        }
+        else {
+            const correct = question[S.aLang];
+            let options = [correct], tries = 0;
+            while (options.length < 4 && tries < 50) {
+                tries++;
+                const other = state.generator()[S.aLang];
+                if (!options.some(x => normalize(x, S.aLang) === normalize(other, S.aLang)))
+                    options.push(other);
+            }
+            options = shuffle(options);
+            zone.innerHTML = `<div class="choices">${options.map(o => `<button class="choice" data-value="${esc(o)}" type="button">${esc(o)}</button>`).join("")}</div>`;
+            zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => { if (state.done)
+                return; const value = btn.dataset.value, ok = isCorrect(question, value, S.aLang); zone.querySelectorAll(".choice").forEach(b => { b.disabled = true; if (isCorrect(question, b.dataset.value, S.aLang))
+                b.classList.add("correct"); }); if (!ok)
+                btn.classList.add("wrong"); complete(el, state, value, ok); });
+        }
+    }
+    function submitTyped(el, state, value) { if (state.done)
+        return; const question = state.questions[state.i], ok = isCorrect(question, value, state.settings.aLang); complete(el, state, value, ok); const input = el.querySelector(".answer"); if (input) {
+        input.readOnly = true;
+        requestAnimationFrame(() => input.focus({ preventScroll: true }));
+    } }
+    function complete(el, state, value, ok) { if (state.done || state.finished)
+        return; state.done = true; if (ok)
+        state.score++; const question = state.questions[state.i]; state.results.push({ question, value, ok }); el.querySelector(".score").textContent = `Score: ${state.score}`; const f = el.querySelector(".feedback"); f.className = `feedback ${ok ? "good" : "bad"}`; f.innerHTML = `${ok ? "Correct." : "Not quite."}<br>${pretty(question)}`; const nextBtn = el.querySelector(".next"); nextBtn.textContent = state.i === state.questions.length - 1 ? "Finish" : "Next"; nextBtn.classList.remove("hidden"); }
+    function next(el, state) { if (!state.done)
+        return; if (state.i < state.questions.length - 1) {
+        state.i++;
+        showQuestion(el, state);
+    }
+    else
+        finish(el, state, "Exercise complete"); }
+    function finish(el, state, title) { if (state.finished)
+        return; state.finished = true; el.querySelector(".live").classList.add("hidden"); const fin = el.querySelector(".finish"); fin.style.display = "block"; fin.querySelector("h4").textContent = title; const answered = state.results.length, pct = answered ? Math.round(state.score / answered * 100) : 0; fin.querySelector(".summary").innerHTML = answered ? `Score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.` : "No questions were answered."; fin.querySelector(".review").innerHTML = state.results.map((r, i) => `<div class="review-item"><strong>${i + 1}. ${r.ok ? "Correct" : "Review"}</strong>Your answer: ${esc(r.value || "(blank)")}<br>${pretty(r.question)}</div>`).join(""); fin.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+    render();
 })();
-</script>
-</body>
+  </script>
+ </body>
 </html>
