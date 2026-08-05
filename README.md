@@ -1,11 +1,16 @@
 # Korean Vocab and Grammar Practice Hub
 
 # TODO
-- turn all babs into html files
-- update romanization file
-
 
 # FINISHED TASKS
+AUGUST 6, 2026
+- turn all babs into html files
+  - no material exercises
+  - lots of examples
+  - batchim notes
+  - dash/space is ignored internally
+- update romanization file
+
 AUGUST 4, 2026
 - make big test for grammar file
 - add more detailed batchim ending notes in relevant grammar points
