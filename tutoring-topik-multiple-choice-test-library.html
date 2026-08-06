@@ -1,0 +1,4480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem("koreanQuizThemeV2");
+        const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+
+        document.documentElement.dataset.theme = savedTheme || preferredTheme;
+        document.documentElement.style.colorScheme = savedTheme || preferredTheme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="A standalone multiple-choice TOPIK I practice-test library."
+  >
+  <title>TOPIK Test Library (Tutoring)</title>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
+
+    /* ---------------------------------------------------------------------
+       Theme
+    --------------------------------------------------------------------- */
+
+    :root {
+      color-scheme: light;
+
+      --background: #28468A;
+      --foreground: #F5F5F5;
+      --primary: #BCE0E6;
+      --primary-hover: #ADC6CB;
+      --secondary: #AD8FE6;
+      --secondary-soft: #8E7EBF;
+      --accent: #C74E33;
+      --accent-soft: #A24B36;
+      --muted: #A0E090;
+      --muted-strong: #99C588;
+      --blue-soft: #6375CF;
+      --border: #6674C8;
+      --subtle: #DEEAAE;
+
+      --surface: #F5F5F5;
+      --surface-text: #28468A;
+      --surface-muted: #E8ECF4;
+      --inverse: #20386E;
+      --inverse-text: #F5F5F5;
+
+      --radius-small: 6px;
+      --radius-large: 8px;
+      --font: "Outfit", system-ui, sans-serif;
+      --transition: 180ms ease;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+
+      --background: #111827;
+      --foreground: #F9FAFB;
+      --primary: #6CC2D0;
+      --primary-hover: #6CC0D0;
+      --secondary: #8B61DC;
+      --secondary-soft: #201933;
+      --accent: #E29D8D;
+      --accent-soft: #391B13;
+      --muted: #1F2937;
+      --muted-strong: #374151;
+      --blue-soft: #12193B;
+      --border: #374151;
+      --subtle: #CBD5E1;
+
+      --surface: #1F2937;
+      --surface-text: #F9FAFB;
+      --surface-muted: #111827;
+      --inverse: #0F172A;
+      --inverse-text: #F9FAFB;
+    }
+
+    /* ---------------------------------------------------------------------
+       Base
+    --------------------------------------------------------------------- */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--foreground);
+      background: var(--background);
+      font-family: var(--font);
+      line-height: 1.55;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ---------------------------------------------------------------------
+       Header and page shell
+    --------------------------------------------------------------------- */
+
+    .site-header {
+      color: var(--surface-text);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner,
+    .page-main {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .header-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--surface-text);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .header-link {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid transparent;
+      border-radius: var(--radius-small);
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform var(--transition), border-color var(--transition);
+    }
+
+    .header-link:hover {
+      border-color: var(--primary);
+      transform: scale(1.03);
+    }
+
+    .page-main {
+      margin-top: 24px;
+      margin-bottom: 72px;
+      overflow: hidden;
+      color: var(--surface-text);
+      background: var(--surface);
+      border-radius: var(--radius-large);
+    }
+
+    /* ---------------------------------------------------------------------
+       Hero and dashboard
+    --------------------------------------------------------------------- */
+
+    .hero {
+      color: #FFFFFF;
+      background: var(--background);
+    }
+
+    .hero-inner {
+      padding: clamp(48px, 7vw, 82px);
+    }
+
+    .hero-kicker {
+      margin: 0 0 18px;
+      color: var(--primary);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 14ch;
+      margin: 0;
+      font-size: clamp(3rem, 7vw, 5.7rem);
+      font-weight: 800;
+      line-height: 0.94;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      max-width: 66ch;
+      margin: 24px 0 0;
+      color: #EFF6FF;
+      font-size: 1.05rem;
+    }
+
+    .library-section {
+      padding: clamp(26px, 5vw, 58px);
+    }
+
+    .library-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .library-heading h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .library-heading p {
+      max-width: 42ch;
+      margin: 0;
+      opacity: 0.82;
+    }
+
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .test-card {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+    }
+
+    .test-card-header {
+      padding: 22px;
+      color: var(--inverse-text);
+      background: var(--inverse);
+    }
+
+    .test-card:nth-child(3n + 2) .test-card-header {
+      color: #192B5D;
+      background: var(--secondary);
+    }
+
+    .test-card:nth-child(3n + 3) .test-card-header {
+      color: #FFFFFF;
+      background: var(--accent);
+    }
+
+    .test-card-kicker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .test-card h3 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .test-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 22px;
+    }
+
+    .test-card-body p {
+      margin: 0;
+    }
+
+    .source-name {
+      overflow-wrap: anywhere;
+      font-size: 0.82rem;
+      opacity: 0.76;
+    }
+
+    .answer-note {
+      padding: 12px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-small);
+      font-size: 0.82rem;
+    }
+
+    .test-card-controls {
+      display: grid;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .test-card-controls label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .time-input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 12px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-small);
+      font-weight: 700;
+    }
+
+    .time-input:focus {
+      border-color: var(--primary);
+      outline: 3px solid color-mix(in srgb, var(--primary) 42%, transparent);
+      outline-offset: 2px;
+    }
+
+    .card-actions {
+      margin-top: 4px;
+    }
+
+    /* ---------------------------------------------------------------------
+       Buttons
+    --------------------------------------------------------------------- */
+
+    .button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 0;
+      border-radius: var(--radius-small);
+      font-weight: 800;
+      transition:
+        transform var(--transition),
+        background var(--transition);
+    }
+
+    .button:hover:not(:disabled) {
+      transform: scale(1.03);
+    }
+
+    .button.primary {
+      color: #192B5D;
+      background: var(--primary);
+    }
+
+    .button.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .button.secondary {
+      color: var(--surface-text);
+      background: var(--surface-muted);
+    }
+
+    .button.warning {
+      color: #FFFFFF;
+      background: var(--accent);
+    }
+
+    .button.full {
+      width: 100%;
+    }
+
+    /* ---------------------------------------------------------------------
+       Quiz view
+    --------------------------------------------------------------------- */
+
+    .quiz-shell {
+      border-top: 1px solid var(--border);
+    }
+
+    .quiz-banner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px 180px;
+      color: var(--inverse-text);
+      background: var(--inverse);
+    }
+
+    .quiz-banner-copy {
+      padding: clamp(26px, 5vw, 52px);
+    }
+
+    .quiz-banner-kicker {
+      color: var(--primary);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .quiz-banner h2 {
+      margin: 8px 0 0;
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    .quiz-stat {
+      min-width: 180px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 4px;
+      padding: 24px;
+      color: #192B5D;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .quiz-score {
+      background: var(--accent);
+    }
+
+    .quiz-timer {
+      background: var(--primary);
+    }
+
+    .quiz-stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .quiz-stat-value {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .quiz-timer.urgent {
+      color: #FFFFFF;
+      background: var(--accent);
+      animation: timerPulse 1s steps(2, end) infinite;
+    }
+
+    @keyframes timerPulse {
+      50% {
+        filter: brightness(1.18);
+      }
+    }
+
+    .quiz-body {
+      padding: clamp(24px, 5vw, 52px);
+    }
+
+    .runtime-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-small);
+    }
+
+    .runtime-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .progress {
+      height: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      background: var(--muted-strong);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: var(--secondary);
+      transition: width var(--transition);
+    }
+
+    .question-card {
+      padding: clamp(22px, 4vw, 38px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+    }
+
+    .section-label,
+    .instruction-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .section-label {
+      color: var(--accent);
+    }
+
+    .instruction-label {
+      margin-top: 8px;
+      color: var(--secondary);
+    }
+
+    .question-prompt {
+      margin: 18px 0 24px;
+      font-size: clamp(1.25rem, 2.6vw, 1.9rem);
+      font-weight: 650;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .context-table {
+      width: 100%;
+      margin: 18px 0;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    .context-table th,
+    .context-table td {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .context-table th {
+      background: var(--surface-muted);
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 60px;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 2px solid transparent;
+      border-radius: var(--radius-small);
+      font-weight: 700;
+      text-align: left;
+      transition:
+        transform var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+    }
+
+    .choice:hover:not(:disabled) {
+      border-color: var(--primary);
+      transform: scale(1.01);
+    }
+
+    .choice-number {
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+    }
+
+    .choice.correct {
+      color: #FFFFFF;
+      background: var(--secondary);
+    }
+
+    .choice.wrong {
+      color: #FFFFFF;
+      background: var(--accent);
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: var(--radius-large);
+    }
+
+    .feedback.good {
+      display: block;
+      background: var(--secondary-soft);
+      border-left: 8px solid var(--secondary);
+    }
+
+    .feedback.bad {
+      display: block;
+      background: var(--accent-soft);
+      border-left: 8px solid var(--accent);
+    }
+
+    html[data-theme="light"] .feedback {
+      color: #FFFFFF;
+    }
+
+    .next-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+
+    /* ---------------------------------------------------------------------
+       Results
+    --------------------------------------------------------------------- */
+
+    .results {
+      padding: clamp(26px, 5vw, 58px);
+    }
+
+    .results h2 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .result-summary {
+      margin: 20px 0;
+      padding: 22px;
+      color: var(--inverse-text);
+      background: var(--inverse);
+      border-radius: var(--radius-large);
+      font-size: 1.1rem;
+    }
+
+    .section-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .section-result {
+      padding: 14px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-small);
+    }
+
+    .review-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .review-item {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+    }
+
+    .review-item summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      background: var(--surface-muted);
+      cursor: pointer;
+      font-weight: 800;
+      list-style: none;
+    }
+
+    .review-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .review-content {
+      padding: 18px;
+    }
+
+    .review-prompt {
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    .review-answer {
+      margin-top: 8px;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    /* ---------------------------------------------------------------------
+       Floating utilities and responsive layout
+    --------------------------------------------------------------------- */
+
+    .utility-controls {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 20;
+    }
+
+    .utility-button {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      color: #192B5D;
+      background: var(--primary);
+      border: 0;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      font-weight: 800;
+      transition: transform var(--transition);
+    }
+
+    .utility-button:hover {
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 820px) {
+      .test-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .library-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .quiz-banner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .quiz-banner-copy {
+        grid-column: 1 / -1;
+      }
+
+      .quiz-stat {
+        min-width: 0;
+        min-height: 78px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .header-inner,
+      .page-main {
+        width: 100%;
+      }
+
+      .header-inner {
+        min-height: 60px;
+        padding: 0 14px;
+      }
+
+      .page-main {
+        margin-top: 0;
+        border-radius: 0;
+      }
+
+      .hero-inner {
+        padding: 48px 22px;
+      }
+
+      .library-section,
+      .quiz-body,
+      .results {
+        padding: 22px;
+      }
+
+      .runtime-bar,
+      .runtime-actions,
+      .result-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .runtime-actions .button,
+      .result-actions .button,
+      .next-row .button {
+        width: 100%;
+      }
+
+      .status-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .choice {
+        grid-template-columns: 34px minmax(0, 1fr);
+        padding-inline: 12px;
+      }
+
+      .utility-controls {
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">TOPIK Test Library (Tutoring)</div>
+      <a class="header-link" href="./index.html">Home</a>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="hero-kicker">Multiple-choice practice</p>
+        <h1>TOPIK I Test Library</h1>
+        <p>
+          Eight complete test sets with 216 questions.
+          Each test keeps the order, wording, choices, and supplied answer key
+          from its source document.
+        </p>
+      </div>
+    </section>
+
+    <section class="library-section" id="libraryView">
+      <div class="library-heading">
+        <h2>Choose a test</h2>
+        <p>
+          Choose an untimed session or a time limit before starting. Select an
+          answer, review the correction, and move through the questions in
+          their original order.
+        </p>
+      </div>
+
+      <div class="test-grid" id="testGrid"></div>
+    </section>
+
+    <section class="quiz-shell hidden" id="quizView">
+      <div class="quiz-banner">
+        <div class="quiz-banner-copy">
+          <span class="quiz-banner-kicker" id="quizSource"></span>
+          <h2 id="quizTitle"></h2>
+        </div>
+        <div class="quiz-stat quiz-score" aria-live="polite">
+          <span class="quiz-stat-label">Score</span>
+          <span class="quiz-stat-value" id="quizScore">0</span>
+        </div>
+
+        <div class="quiz-stat quiz-timer" id="quizTimer" aria-live="polite">
+          <span class="quiz-stat-label">Time</span>
+          <span class="quiz-stat-value" id="quizTimerValue">Untimed</span>
+        </div>
+      </div>
+
+      <div class="quiz-body">
+        <div class="runtime-bar">
+          <strong id="testAnswerNote"></strong>
+
+          <div class="runtime-actions">
+            <button class="button secondary" id="backToLibrary" type="button">
+              Test library
+            </button>
+            <button class="button warning" id="endEarly" type="button">
+              End test early
+            </button>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <span id="questionCount"></span>
+          <span>Keyboard: 1–4 to answer · Enter for next</span>
+        </div>
+
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Test progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <article class="question-card">
+          <div class="section-label" id="questionSection"></div>
+          <div class="instruction-label hidden" id="questionInstruction"></div>
+          <div id="questionContext"></div>
+          <div class="question-prompt" id="questionPrompt"></div>
+          <div class="choices" id="choices"></div>
+          <div class="feedback" id="feedback" aria-live="polite"></div>
+
+          <div class="next-row">
+            <button class="button primary hidden" id="nextQuestion" type="button">
+              Next question
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="results hidden" id="resultsView">
+      <h2 id="resultsTitle">Test complete</h2>
+      <div class="result-summary" id="resultSummary"></div>
+      <div class="section-results" id="sectionResults"></div>
+
+      <h3>Answer review</h3>
+      <div class="review-list" id="reviewList"></div>
+
+      <div class="result-actions">
+        <button class="button primary" id="restartTest" type="button">
+          Restart test
+        </button>
+        <button class="button secondary" id="resultsToLibrary" type="button">
+          Test library
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <div class="utility-controls">
+    <button
+      class="utility-button"
+      id="themeToggle"
+      type="button"
+      aria-label="Toggle color theme"
+      aria-pressed="false"
+    >
+      <span id="themeIcon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+
+  <script>
+    "use strict";
+
+    // -----------------------------------------------------------------------
+    // Test data
+    // -----------------------------------------------------------------------
+
+    const TESTS = [
+  {
+    "id": "intermediate-1",
+    "title": "TOPIK I 중급 1",
+    "source": "TOPIK 1 즁급 1.docx",
+    "description": "Vocabulary, grammar, short reading, and dialogue questions.",
+    "answerNote": "Answers follow the answer key supplied in the source document.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "만나요",
+          "만났어요",
+          "만나겠어요",
+          "만나세요"
+        ],
+        "prompt": "저는 어제 친구를 (      ).",
+        "answer": 1
+      },
+      {
+        "number": 2,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "샀어요",
+          "먹었어요",
+          "입었어요",
+          "만들었어요"
+        ],
+        "prompt": "비가 많이 와서 우산을 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 3,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "어렵지만",
+          "비싸지만",
+          "맵지만",
+          "멀지만"
+        ],
+        "prompt": "한국 음식은 조금 (      ) 맛있어요.",
+        "answer": 2
+      },
+      {
+        "number": 4,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "못 가요",
+          "안 먹어요",
+          "안 자요",
+          "못 공부해요"
+        ],
+        "prompt": "저는 시간이 없어서 오늘은 같이 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 5,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "후",
+          "지",
+          "때",
+          "동안"
+        ],
+        "prompt": "한국에 온 (      ) 6개월이 되었어요.",
+        "answer": 1
+      },
+      {
+        "number": 6,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "합니다",
+          "했습니다",
+          "하겠습니다",
+          "하십시오"
+        ],
+        "prompt": "주말마다 운동을 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 7,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "청소했어요",
+          "청소할 거예요",
+          "청소합니다",
+          "청소하세요"
+        ],
+        "prompt": "친구가 집에 오기 전에 방을 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 8,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "입으세요",
+          "먹으세요",
+          "마시세요",
+          "배우세요"
+        ],
+        "prompt": "날씨가 추우니까 따뜻하게 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 9,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "재미있어요",
+          "재미없어요",
+          "어렵어요",
+          "비싸어요"
+        ],
+        "prompt": "이 책은 생각보다 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 10,
+        "instruction": "",
+        "section": "1~10번. 알맞은 것을 고르십시오.",
+        "options": [
+          "걸려요",
+          "시작해요",
+          "끝나요",
+          "만나요"
+        ],
+        "prompt": "학교까지 버스로 20분쯤 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "고",
+          "서",
+          "는데",
+          "지만"
+        ],
+        "prompt": "친구를 만나(      ) 영화를 봤어요.",
+        "answer": 0
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "갔어요",
+          "가세요",
+          "갑니다",
+          "갈까요"
+        ],
+        "prompt": "배가 아파서 병원에 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "자요",
+          "잤어요",
+          "자겠어요",
+          "자세요"
+        ],
+        "prompt": "내일 시험이 있으니까 일찍 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "봐요",
+          "보세요",
+          "봤어요",
+          "보겠습니다"
+        ],
+        "prompt": "시간이 있으면 같이 영화 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 15,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "좋아해요",
+          "좋아했어요",
+          "좋아하세요",
+          "좋아할까요"
+        ],
+        "prompt": "저는 커피보다 차를 더 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 16,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "해요",
+          "했어요",
+          "하겠습니다",
+          "하십시오"
+        ],
+        "prompt": "비가 와도 운동을 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 17,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "고",
+          "서",
+          "면",
+          "지만"
+        ],
+        "prompt": "한국어를 배우(      ) 한국 친구를 많이 사귀었어요.",
+        "answer": 1
+      },
+      {
+        "number": 18,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "쉬어요",
+          "쉬었어요",
+          "쉬겠어요",
+          "쉬세요"
+        ],
+        "prompt": "주말에는 보통 집에서 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 19,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "고",
+          "서",
+          "지만",
+          "면"
+        ],
+        "prompt": "이 옷은 예쁜(      ) 조금 비싸요.",
+        "answer": 2
+      },
+      {
+        "number": 20,
+        "instruction": "",
+        "section": "11~20번. 알맞은 문법을 고르십시오.",
+        "options": [
+          "왔어요",
+          "와요",
+          "오세요",
+          "오겠습니다"
+        ],
+        "prompt": "버스를 놓쳐서 학교에 늦게 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 21,
+        "instruction": "",
+        "section": "21~25번. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "축구를 했습니다.",
+          "운동장이 더웠습니다.",
+          "눈이 많이 왔습니다.",
+          "학교에 가지 않았습니다."
+        ],
+        "prompt": "오늘은 눈이 많이 왔습니다.\n그래서 학교 운동장에서 축구를 하지 않았습니다.",
+        "answer": 2
+      },
+      {
+        "number": 22,
+        "instruction": "",
+        "section": "21~25번. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "민수 씨는 운동을 안 합니다.",
+          "민수 씨는 건강합니다.",
+          "민수 씨는 아침을 안 먹습니다.",
+          "민수 씨는 학생입니다."
+        ],
+        "prompt": "민수 씨는 아침마다 30분 동안 운동을 합니다.\n그래서 건강합니다.",
+        "answer": 1
+      },
+      {
+        "number": 23,
+        "instruction": "",
+        "section": "21~25번. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "음식이 맛없습니다.",
+          "가격이 비쌉니다.",
+          "손님이 많습니다.",
+          "식당이 작습니다."
+        ],
+        "prompt": "이 식당은 음식이 맛있고 가격도 저렴합니다.\n그래서 손님이 많습니다.",
+        "answer": 2
+      },
+      {
+        "number": 24,
+        "instruction": "",
+        "section": "21~25번. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "오늘은 금요일입니다.",
+          "내일은 월요일입니다.",
+          "내일은 일요일입니다.",
+          "오늘은 일요일입니다."
+        ],
+        "prompt": "오늘은 토요일입니다.\n내일은 일요일입니다.",
+        "answer": 2
+      },
+      {
+        "number": 25,
+        "instruction": "",
+        "section": "21~25번. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "오전 8시에 엽니다.",
+          "오후 6시에 닫습니다.",
+          "밤 10시에 닫습니다.",
+          "오후 3시에 엽니다."
+        ],
+        "prompt": "도서관은 오전 9시에 문을 열고 오후 6시에 닫습니다.",
+        "answer": 1
+      },
+      {
+        "number": 26,
+        "instruction": "",
+        "section": "26~30번. 대화를 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "점심을 먹었습니다.",
+          "아직 점심을 안 먹었습니다.",
+          "저녁을 먹었습니다.",
+          "아침을 안 먹었습니다."
+        ],
+        "prompt": "가: 점심 먹었어요?\n나: 아직 못 먹었어요.",
+        "answer": 1
+      },
+      {
+        "number": 27,
+        "instruction": "",
+        "section": "26~30번. 대화를 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "혼자 여행 갑니다.",
+          "친구를 만납니다.",
+          "가족과 여행 갑니다.",
+          "집에서 쉽니다."
+        ],
+        "prompt": "가: 이번 주말에 뭐 할 거예요?\n나: 가족하고 여행 갈 거예요.",
+        "answer": 2
+      },
+      {
+        "number": 28,
+        "instruction": "",
+        "section": "26~30번. 대화를 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "은행이 없습니다.",
+          "은행은 편의점 옆에 있습니다.",
+          "은행은 학교 안에 있습니다.",
+          "은행은 병원 앞에 있습니다."
+        ],
+        "prompt": "가: 이 근처에 은행이 있어요?\n나: 네, 저기 편의점 옆에 있어요.",
+        "answer": 1
+      },
+      {
+        "number": 29,
+        "instruction": "",
+        "section": "26~30번. 대화를 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "버스를 놓쳤습니다.",
+          "버스가 빨리 왔습니다.",
+          "버스가 늦게 왔습니다.",
+          "걸어서 왔습니다."
+        ],
+        "prompt": "가: 왜 늦었어요?\n나: 버스가 늦게 왔어요.",
+        "answer": 2
+      },
+      {
+        "number": 30,
+        "instruction": "",
+        "section": "26~30번. 대화를 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "15만 원입니다.",
+          "5천 원입니다.",
+          "5만 원입니다.",
+          "50만 원입니다."
+        ],
+        "prompt": "가: 이 가방 얼마예요?\n나: 5만 원입니다.",
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "level-1-2-practice",
+    "title": "TOPIK I (Level 1–2) Practice Test",
+    "source": "TOPIK I Reading Practice. 2 docx.docx",
+    "description": "Vocabulary and grammar, dialogue, and reading.",
+    "answerNote": "The source document did not include an answer table. The answers in this test were inferred from the question text.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "이다",
+          "입니다",
+          "있어요",
+          "합니다"
+        ],
+        "prompt": "저는 학생___.",
+        "answer": 1
+      },
+      {
+        "number": 2,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "가",
+          "를",
+          "에",
+          "와"
+        ],
+        "prompt": "오늘은 날씨___ 좋습니다.",
+        "answer": 0
+      },
+      {
+        "number": 3,
+        "instruction": "빈칸에 들어갈 말을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "에",
+          "을",
+          "도",
+          "와"
+        ],
+        "prompt": "저는 매일 학교___ 갑니다.",
+        "answer": 0
+      },
+      {
+        "number": 4,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "먹어요",
+          "먹었습니다",
+          "먹겠습니다",
+          "먹지"
+        ],
+        "prompt": "가: 점심을 먹었어요?\n나: 네, ______.",
+        "answer": 1
+      },
+      {
+        "number": 5,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "를",
+          "에",
+          "은",
+          "과"
+        ],
+        "prompt": "가: 어디에 갑니까?\n나: 도서관___ 갑니다.",
+        "answer": 1
+      },
+      {
+        "number": 6,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "를",
+          "에",
+          "와",
+          "도"
+        ],
+        "prompt": "저는 커피___ 좋아합니다.",
+        "answer": 0
+      },
+      {
+        "number": 7,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "먹습니까",
+          "먹어요?",
+          "먹습니까?",
+          "먹어요"
+        ],
+        "prompt": "지금 무엇을 ______?",
+        "answer": 0
+      },
+      {
+        "number": 8,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "갑니다",
+          "갑니까",
+          "가세요",
+          "가겠다"
+        ],
+        "prompt": "오늘은 학교에 ______.",
+        "answer": 0
+      },
+      {
+        "number": 9,
+        "instruction": "빈칸에 들어갈 말을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "어렵어요",
+          "어렵습니다.",
+          "어렵다요",
+          "어려워합니다"
+        ],
+        "prompt": "한국어가 ______.",
+        "answer": 1
+      },
+      {
+        "number": 10,
+        "instruction": "알맞은 것을 고르십시오.",
+        "section": "Part 1. Vocabulary & Grammar (1–10)",
+        "options": [
+          "미안합니다.",
+          "천만에요.",
+          "괜찮아요?",
+          "안녕하세요."
+        ],
+        "prompt": "가: 감사합니다.\n나: ______.",
+        "answer": 1
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "안녕하세요.",
+          "감사합니다.",
+          "미안합니다.",
+          "잘 먹었습니다."
+        ],
+        "prompt": "가: 안녕하세요?\n나: __________",
+        "answer": 0
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "학생입니다.",
+          "김민수입니다.",
+          "한국입니다.",
+          "스무 살입니다."
+        ],
+        "prompt": "가: 이름이 뭐예요?\n나: __________________.",
+        "answer": 1
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "월요일입니다.",
+          "세 시입니다.",
+          "학교입니다.",
+          "친구입니다."
+        ],
+        "prompt": "가: 몇 시예요?\n나: __________________.",
+        "answer": 1
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "인도네시아에서 왔어요.",
+          "학교에 가요.",
+          "학생이에요.",
+          "집입니다."
+        ],
+        "prompt": "가: 어디에서 왔어요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 15,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "네, 주세요.",
+          "네, 갑니다.",
+          "네, 학교예요.",
+          "네, 먹어요."
+        ],
+        "prompt": "가: 커피 드실래요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 16,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "더워요.",
+          "학생이에요.",
+          "한국 사람이에요.",
+          "운동해요."
+        ],
+        "prompt": "가: 오늘 날씨가 어때요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 17,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "네, 있어요.",
+          "아니요, 학교.",
+          "네, 먹어요.",
+          "아니요, 갑니다."
+        ],
+        "prompt": "가: 내일 시간이 있어요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 18,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "비빔밥을 좋아해요.",
+          "학교를 좋아해요.",
+          "한국에 좋아해요.",
+          "공부를 갑니다."
+        ],
+        "prompt": "가: 무슨 음식을 좋아해요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 19,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "책을 읽어요.",
+          "학교예요.",
+          "학생이에요.",
+          "집에요."
+        ],
+        "prompt": "가: 지금 뭐 해요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 20,
+        "instruction": "",
+        "section": "Part 2. Dialogue (11–20)",
+        "options": [
+          "영화를 봤어요.",
+          "영화를 봐요.",
+          "영화를 보겠습니다.",
+          "영화를 보다."
+        ],
+        "prompt": "가: 주말에 뭐 했어요?\n나: __________________.",
+        "answer": 0
+      },
+      {
+        "number": 21,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "6시",
+          "7시",
+          "8시",
+          "9시"
+        ],
+        "prompt": "저는 매일 아침 7시에 일어납니다.\n그리고 학교에 갑니다.\n이 사람은 언제 일어납니까?",
+        "answer": 1
+      },
+      {
+        "number": 22,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "눈이 와서",
+          "비가 와서",
+          "더워서",
+          "바빠서"
+        ],
+        "prompt": "오늘은 비가 옵니다.\n우산을 가져가세요.\n왜 우산이 필요합니까?",
+        "answer": 1
+      },
+      {
+        "number": 23,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "야구",
+          "농구",
+          "축구",
+          "수영"
+        ],
+        "prompt": "민수 씨는 축구를 좋아합니다.\n주말마다 친구와 축구를 합니다.\n민수 씨는 무엇을 좋아합니까?",
+        "answer": 2
+      },
+      {
+        "number": 24,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "8시",
+          "9시",
+          "10시",
+          "11시"
+        ],
+        "prompt": "도서관은 오전 9시에 문을 엽니다.\n도서관은 언제 엽니까?",
+        "answer": 1
+      },
+      {
+        "number": 25,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "금요일",
+          "일요일",
+          "월요일",
+          "화요일"
+        ],
+        "prompt": "오늘은 토요일입니다.\n내일은 ______.",
+        "answer": 1
+      },
+      {
+        "number": 26,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "500원",
+          "1,000원",
+          "2,000원",
+          "같습니다."
+        ],
+        "prompt": "김치찌개: 8,000원\n비빔밥: 7,000원\n비빔밥이 김치찌개보다 얼마 더 쌉니까?",
+        "answer": 1
+      },
+      {
+        "number": 27,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "지금",
+          "5분 후",
+          "10분 후",
+          "내일"
+        ],
+        "prompt": "버스는 10분 후에 출발합니다.\n버스는 언제 출발합니까?",
+        "answer": 2
+      },
+      {
+        "number": 28,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "더워서",
+          "추워서",
+          "배고파서",
+          "피곤해서"
+        ],
+        "prompt": "오늘은 매우 춥습니다.\n코트를 입으세요.\n왜 코트를 입습니까?",
+        "answer": 1
+      },
+      {
+        "number": 29,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "30분",
+          "1시간",
+          "2시간",
+          "3시간"
+        ],
+        "prompt": "영화는 오후 3시에 시작합니다.\n지금은 오후 2시입니다.\n영화까지 얼마나 남았습니까?",
+        "answer": 1
+      },
+      {
+        "number": 30,
+        "instruction": "",
+        "section": "Part 3. Reading (21–30)",
+        "options": [
+          "운동을 안 해서",
+          "운동을 해서",
+          "공부를 해서",
+          "일을 해서"
+        ],
+        "prompt": "저는 매일 저녁 운동을 합니다.\n그래서 건강합니다.\n왜 건강합니까?",
+        "answer": 1
+      }
+    ]
+  },
+  {
+    "id": "level-2-mock",
+    "title": "TOPIK I (2급) 실전 연습문제",
+    "source": "TOPIK I Reading Practice. 3 docx.docx",
+    "description": "Fifteen vocabulary and grammar questions followed by fifteen reading questions.",
+    "answerNote": "Answers follow the answer key supplied in the source document.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "마셨어요",
+          "먹었어요",
+          "입었어요",
+          "탔어요"
+        ],
+        "prompt": "가: 오늘 날씨가 정말 덥네요.\n나: 네, 그래서 물을 많이 (     ).",
+        "answer": 0
+      },
+      {
+        "number": 2,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "공부하면",
+          "공부해서",
+          "공부하지만",
+          "공부하고"
+        ],
+        "prompt": "가: 한국어를 잘하고 싶어요.\n나: 매일 한국어를 (      ) 좋아요.",
+        "answer": 0
+      },
+      {
+        "number": 3,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "입니다",
+          "있어요",
+          "갑니다",
+          "만나요"
+        ],
+        "prompt": "가: 지금 몇 시예요?\n나: 열두 시 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 4,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "와",
+          "를",
+          "에",
+          "에게"
+        ],
+        "prompt": "저는 친구(  ) 영화를 봤어요.",
+        "answer": 0
+      },
+      {
+        "number": 5,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "를",
+          "에",
+          "와",
+          "도"
+        ],
+        "prompt": "가: 어디에 가요?\n나: 학교(   ) 가요.",
+        "answer": 1
+      },
+      {
+        "number": 6,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "을",
+          "에",
+          "만",
+          "보다"
+        ],
+        "prompt": "가: 커피 드릴까요?\n나: 아니요. 저는 차(   ) 주세요.",
+        "answer": 0
+      },
+      {
+        "number": 7,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "읽었어요",
+          "읽어요",
+          "읽겠습니다",
+          "읽는"
+        ],
+        "prompt": "가: 어제 뭐 했어요?\n나: 집에서 책을 (       ).",
+        "answer": 0
+      },
+      {
+        "number": 8,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "합니다",
+          "했습니다",
+          "할까요",
+          "하겠습니다"
+        ],
+        "prompt": "저는 아침마다 운동(      ).",
+        "answer": 0
+      },
+      {
+        "number": 9,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "이에요",
+          "있어요",
+          "합니다",
+          "갑니다"
+        ],
+        "prompt": "가: 생일이 언제예요?\n나: 5월 20일(     ).",
+        "answer": 0
+      },
+      {
+        "number": 10,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "맛있어요",
+          "맛있습니다",
+          "맛있지만",
+          "①,② 모두 가능"
+        ],
+        "prompt": "가: 한국 음식이 어때요?\n나: 아주 (        ).",
+        "answer": 3
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "가서",
+          "가지만",
+          "가거나",
+          "가려고"
+        ],
+        "prompt": "학교에 (     ) 공부합니다.",
+        "answer": 0
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "오니까",
+          "와도",
+          "오지만",
+          "오려고"
+        ],
+        "prompt": "비가 많이 (       ) 우산을 가져가세요.",
+        "answer": 0
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "보다",
+          "보다도",
+          "보다보다",
+          "보다가"
+        ],
+        "prompt": "저는 고기를 (     ) 생선을 더 좋아해요.",
+        "answer": 0
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "지만",
+          "면",
+          "고",
+          "서"
+        ],
+        "prompt": "시험이 어려웠(    ) 끝까지 열심히 했어요.",
+        "answer": 0
+      },
+      {
+        "number": 15,
+        "instruction": "",
+        "section": "Ⅰ. 어휘 및 문법 (1~15)",
+        "options": [
+          "있어요",
+          "갔어요",
+          "했어요",
+          "왔어요"
+        ],
+        "prompt": "가: 한국에 가 본 적이 있어요?\n나: 네, 한 번 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 16,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "회사",
+          "학교",
+          "병원",
+          "은행"
+        ],
+        "prompt": "오늘은 월요일입니다.\n민수는 학교에 갑니다.\n민수는 어디에 갑니까?",
+        "answer": 1
+      },
+      {
+        "number": 17,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "아침에 운동한다.",
+          "저녁에 운동한다.",
+          "운동을 안 한다.",
+          "8시에 일어난다."
+        ],
+        "prompt": "저는 매일 아침 7시에 일어납니다.\n그리고 운동을 합니다.\n맞는 것은?",
+        "answer": 0
+      },
+      {
+        "number": 18,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "8시",
+          "9시",
+          "10시",
+          "11시"
+        ],
+        "prompt": "버스는 오전 9시에 출발합니다.\n버스는 언제 출발합니까?",
+        "answer": 1
+      },
+      {
+        "number": 19,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "눈이 와서",
+          "바람이 불어서",
+          "비가 와서",
+          "더워서"
+        ],
+        "prompt": "오늘은 비가 옵니다.\n우산을 가져가세요.\n왜 우산이 필요합니까?",
+        "answer": 2
+      },
+      {
+        "number": 20,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "오전 9시",
+          "오후 9시",
+          "오후 8시",
+          "오전 10시"
+        ],
+        "prompt": "식당은 오전 10시부터 오후 9시까지입니다.\n식당은 언제 문을 닫습니까?",
+        "answer": 1
+      },
+      {
+        "number": 21,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "사과를 싫어한다.",
+          "바나나를 좋아한다.",
+          "사과를 좋아한다.",
+          "과일을 안 먹는다."
+        ],
+        "prompt": "저는 사과를 좋아합니다.\n하지만 바나나는 좋아하지 않습니다.\n맞는 것은?",
+        "answer": 2
+      },
+      {
+        "number": 22,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "금요일",
+          "토요일",
+          "일요일",
+          "월요일"
+        ],
+        "prompt": "오늘은 토요일입니다.\n내일은 일요일입니다.\n내일은 무슨 요일입니까?",
+        "answer": 2
+      },
+      {
+        "number": 23,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "버스를 못 타서",
+          "지하철이 늦어서",
+          "아파서",
+          "길을 몰라서"
+        ],
+        "prompt": "지하철이 조금 늦었습니다.\n그래서 회사에 늦게 갔습니다.\n왜 회사에 늦었습니까?",
+        "answer": 1
+      },
+      {
+        "number": 24,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "여행하려고",
+          "일하려고",
+          "한국어를 배우려고",
+          "친구를 만나려고"
+        ],
+        "prompt": "저는 한국어를 배우려고 한국에 왔습니다.\n왜 한국에 왔습니까?",
+        "answer": 2
+      },
+      {
+        "number": 25,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "맵고 맛있다.",
+          "달다.",
+          "짜다.",
+          "싱겁다."
+        ],
+        "prompt": "김치는 맵지만 맛있습니다.\n김치는 어떻습니까?",
+        "answer": 0
+      },
+      {
+        "number": 26,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "오전",
+          "오후",
+          "밤",
+          "하루 종일"
+        ],
+        "prompt": "가: 내일 시간이 있어요?\n나: 네, 오후에는 괜찮아요.\n언제 시간이 있습니까?",
+        "answer": 1
+      },
+      {
+        "number": 27,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "월요일",
+          "화요일",
+          "토요일",
+          "일요일"
+        ],
+        "prompt": "은행은 일요일에 쉽니다.\n언제 은행에 갈 수 없습니까?",
+        "answer": 3
+      },
+      {
+        "number": 28,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "현금",
+          "교통카드",
+          "여권",
+          "학생증"
+        ],
+        "prompt": "한국에서는 버스를 탈 때 교통카드를 많이 사용합니다.\n무엇을 사용합니까?",
+        "answer": 1
+      },
+      {
+        "number": 29,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "여행 때문에",
+          "시험 때문에",
+          "친구 때문에",
+          "운동 때문에"
+        ],
+        "prompt": "오늘은 시험이 있습니다.\n그래서 어제 늦게까지 공부했습니다.\n왜 공부를 많이 했습니까?",
+        "answer": 1
+      },
+      {
+        "number": 30,
+        "instruction": "",
+        "section": "Ⅱ. 읽기 (16~30)",
+        "options": [
+          "학교",
+          "회사",
+          "도서관",
+          "은행"
+        ],
+        "prompt": "저는 매주 토요일마다 도서관에서 책을 빌립니다.\n어디에서 책을 빌립니까?",
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "level-2-practice",
+    "title": "TOPIK I (2급) 연습문제",
+    "source": "TOPIK I Reading Practice. 4 docx.docx",
+    "description": "Grammar, expressions, short reading, and longer passages.",
+    "answerNote": "Answers follow the answer key supplied in the source document.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "합니다",
+          "했습니다",
+          "하겠습니다",
+          "하세요"
+        ],
+        "prompt": "저는 아침마다 운동을 (     ).",
+        "answer": 0
+      },
+      {
+        "number": 2,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "와서",
+          "오니까",
+          "오면",
+          "오려고"
+        ],
+        "prompt": "비가 많이 (    ) 우산을 가져가세요.",
+        "answer": 2
+      },
+      {
+        "number": 3,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "아서",
+          "고",
+          "지만",
+          "는데"
+        ],
+        "prompt": "친구를 만나(    ) 같이 영화를 봤어요.",
+        "answer": 1
+      },
+      {
+        "number": 4,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "지만",
+          "고",
+          "면",
+          "도록"
+        ],
+        "prompt": "시험이 어려웠(     ) 모두 열심히 풀었습니다.",
+        "answer": 0
+      },
+      {
+        "number": 5,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "졸려요",
+          "졸렸어요",
+          "졸립니다",
+          "졸릴까요"
+        ],
+        "prompt": "어제 늦게 자서 오늘은 정말 (     ).",
+        "answer": 0
+      },
+      {
+        "number": 6,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "좋아해요",
+          "좋아했어요",
+          "좋아하세요",
+          "좋아할까요"
+        ],
+        "prompt": "저는 커피보다 차를 더 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 7,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "아도",
+          "지만",
+          "고",
+          "면"
+        ],
+        "prompt": "한국 음식은 맵(    ) 맛있어요.",
+        "answer": 1
+      },
+      {
+        "number": 8,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "타고",
+          "타서",
+          "타니까",
+          "타면"
+        ],
+        "prompt": "버스를 (    ) 학교에 갑니다.",
+        "answer": 0
+      },
+      {
+        "number": 9,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "못 했어요",
+          "안 했어요",
+          "하지 마세요",
+          "했습니다"
+        ],
+        "prompt": "시간이 없어서 숙제를 다 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 10,
+        "instruction": "",
+        "section": "1~10. 알맞은 것을 고르십시오.",
+        "options": [
+          "에",
+          "의",
+          "와",
+          "에서"
+        ],
+        "prompt": "저 사람은 우리 학교(   ) 선생님이에요.",
+        "answer": 1
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "잘 거예요",
+          "자고 있어요",
+          "잤어요",
+          "자세요"
+        ],
+        "prompt": "오늘은 너무 피곤해서 일찍 (       ).",
+        "answer": 0
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "먹읍시다",
+          "먹습니다",
+          "먹었어요",
+          "먹을까요"
+        ],
+        "prompt": "배가 고프니까 먼저 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "자야 해요",
+          "자고 있어요",
+          "잤어요",
+          "잘까요"
+        ],
+        "prompt": "내일 시험이 있으니까 오늘은 일찍 (       ).",
+        "answer": 0
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "무거워서",
+          "무겁지만",
+          "무겁고",
+          "무거우면"
+        ],
+        "prompt": "가방이 너무 (      ) 들기 힘들어요.",
+        "answer": 0
+      },
+      {
+        "number": 15,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "나가요",
+          "나갔어요",
+          "나갈 거예요",
+          "나가세요"
+        ],
+        "prompt": "친구가 전화해서 지금 밖으로 (      ).",
+        "answer": 2
+      },
+      {
+        "number": 16,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "지만",
+          "고",
+          "면",
+          "아서"
+        ],
+        "prompt": "이 책은 조금 어렵(    ) 재미있어요.",
+        "answer": 0
+      },
+      {
+        "number": 17,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "있었어요",
+          "있어요",
+          "있을 거예요",
+          "있으세요"
+        ],
+        "prompt": "어제는 비가 와서 집에 (     ).",
+        "answer": 0
+      },
+      {
+        "number": 18,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "일어나요",
+          "일어났어요",
+          "일어나세요",
+          "일어날까요"
+        ],
+        "prompt": "저는 매일 아침 7시에 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 19,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "먹었어요",
+          "먹어요?",
+          "먹으세요",
+          "먹겠습니다"
+        ],
+        "prompt": "친구와 같이 식당에서 밥을 (       ).",
+        "answer": 0
+      },
+      {
+        "number": 20,
+        "instruction": "",
+        "section": "11~20. 알맞은 표현을 고르십시오.",
+        "options": [
+          "합니다",
+          "할 수 있어요",
+          "하세요",
+          "했어요"
+        ],
+        "prompt": "공부를 많이 하면 한국어를 잘 (       ).",
+        "answer": 1
+      },
+      {
+        "number": 21,
+        "instruction": "",
+        "section": "21~25. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "모자",
+          "우산",
+          "신발",
+          "책"
+        ],
+        "prompt": "오늘은 비가 많이 옵니다.\n바람도 많이 붑니다.\n우산을 가지고 나오세요.\n무엇을 가져와야 합니까?",
+        "answer": 1
+      },
+      {
+        "number": 22,
+        "instruction": "",
+        "section": "21~25. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "오전 8시에 엽니다.",
+          "오후 6시에 닫습니다.",
+          "밤 9시에 닫습니다.",
+          "하루 종일 엽니다."
+        ],
+        "prompt": "도서관은 오전 9시에 문을 엽니다.\n오후 6시에 문을 닫습니다.\n맞는 것은?",
+        "answer": 1
+      },
+      {
+        "number": 23,
+        "instruction": "",
+        "section": "21~25. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "오늘 축구를 합니다.",
+          "어제 다리가 아팠습니다.",
+          "오늘 집에 있습니다.",
+          "오늘 학교에 갑니다."
+        ],
+        "prompt": "민수 씨는 어제 축구를 했습니다.\n오늘은 다리가 아파서 집에서 쉽니다.\n맞는 것은?",
+        "answer": 2
+      },
+      {
+        "number": 24,
+        "instruction": "",
+        "section": "21~25. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "사람이 항상 없습니다.",
+          "김치찌개가 맛없습니다.",
+          "점심에 사람이 많습니다.",
+          "저녁에만 엽니다."
+        ],
+        "prompt": "이 식당은 김치찌개가 맛있습니다.\n점심시간에는 사람이 많습니다.\n맞는 것은?",
+        "answer": 2
+      },
+      {
+        "number": 25,
+        "instruction": "",
+        "section": "21~25. 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "자동차가 없어서",
+          "지하철이 늦어서",
+          "비행기를 타서",
+          "집이 가까워서"
+        ],
+        "prompt": "지하철이 늦어서 회사에 조금 늦었습니다.\n왜 늦었습니까?",
+        "answer": 1
+      },
+      {
+        "number": 26,
+        "instruction": "",
+        "section": "26~30. 긴 글 읽기",
+        "options": [
+          "공부만 합니다.",
+          "친구를 만납니다.",
+          "집에서 쉽니다.",
+          "쇼핑합니다."
+        ],
+        "prompt": "저는 주말마다 공원에 갑니다.\n공원에서 친구를 만나 운동도 하고 커피도 마십니다.\n그래서 주말이 가장 좋습니다.\n주말에 무엇을 합니까?",
+        "answer": 1
+      },
+      {
+        "number": 27,
+        "instruction": "",
+        "section": "26~30. 긴 글 읽기",
+        "options": [
+          "겨울 이야기입니다.",
+          "봄 이야기입니다.",
+          "여름 이야기입니다.",
+          "가을 이야기입니다."
+        ],
+        "prompt": "한국에서는 봄에 꽃이 많이 핍니다.\n많은 사람들이 공원으로 꽃을 보러 갑니다.\n맞는 것은?",
+        "answer": 1
+      },
+      {
+        "number": 28,
+        "instruction": "",
+        "section": "26~30. 긴 글 읽기",
+        "options": [
+          "요리를 아주 잘합니다.",
+          "요리를 싫어합니다.",
+          "매일 연습합니다.",
+          "요리를 하지 않습니다."
+        ],
+        "prompt": "저는 요리를 잘 못합니다.\n하지만 요리하는 것을 좋아해서 매일 연습합니다.\n맞는 것은?",
+        "answer": 2
+      },
+      {
+        "number": 29,
+        "instruction": "",
+        "section": "26~30. 긴 글 읽기",
+        "options": [
+          "친구를 만납니다.",
+          "운동합니다.",
+          "공부합니다.",
+          "영화를 봅니다."
+        ],
+        "prompt": "내일은 시험이 있습니다.\n오늘 저녁에는 친구를 만나지 않고 집에서 공부할 것입니다.\n오늘 저녁에 무엇을 합니까?",
+        "answer": 2
+      },
+      {
+        "number": 30,
+        "instruction": "",
+        "section": "26~30. 긴 글 읽기",
+        "options": [
+          "한국어를 하루 공부했습니다.",
+          "아직 공부하지 않았습니다.",
+          "지금은 조금 이해합니다.",
+          "한국 드라마를 싫어합니다."
+        ],
+        "prompt": "저는 한국어를 공부한 지 1년이 되었습니다.\n처음에는 어려웠지만 지금은 한국 드라마를 조금 이해할 수 있습니다.\n맞는 것은?",
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "reading-skills-set",
+    "title": "TOPIK I Reading Practice — Parts 1–10",
+    "source": "TOPIK I Reading Practice.docx",
+    "description": "Vocabulary, completion, conversations, notices, advertisements, passages, and schedules.",
+    "answerNote": "The source document did not include an answer table for this first set. The answers were inferred from the passages and choices.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "",
+        "section": "Part 1. Vocabulary",
+        "options": [
+          "회사",
+          "병원",
+          "학교",
+          "시장"
+        ],
+        "prompt": "다음을 읽고 맞는 것을 고르십시오.\n학교",
+        "answer": 2
+      },
+      {
+        "number": 2,
+        "instruction": "",
+        "section": "Part 1. Vocabulary",
+        "options": [
+          "과일",
+          "동물",
+          "음식점",
+          "나라"
+        ],
+        "prompt": "다음을 읽고 맞는 것을 고르십시오.\n사과",
+        "answer": 0
+      },
+      {
+        "number": 3,
+        "instruction": "",
+        "section": "Part 2. Sentence Completion",
+        "options": [
+          "먹습니다",
+          "갑니다",
+          "잡니다",
+          "만듭니다"
+        ],
+        "prompt": "저는 아침에 밥을 (     ).",
+        "answer": 0
+      },
+      {
+        "number": 4,
+        "instruction": "",
+        "section": "Part 2. Sentence Completion",
+        "options": [
+          "큽니다",
+          "춥습니다",
+          "읽습니다",
+          "만납니다"
+        ],
+        "prompt": "오늘은 날씨가 (          ).",
+        "answer": 1
+      },
+      {
+        "number": 5,
+        "instruction": "",
+        "section": "Part 3. Short Conversation",
+        "options": [
+          "감사합니다.",
+          "안녕하세요.",
+          "죄송합니다.",
+          "괜찮습니다."
+        ],
+        "prompt": "가: 안녕하세요.\n나: __________.",
+        "answer": 1
+      },
+      {
+        "number": 6,
+        "instruction": "",
+        "section": "Part 3. Short Conversation",
+        "options": [
+          "학교에 갑니다.",
+          "학생입니다.",
+          "책입니다.",
+          "맛있습니다."
+        ],
+        "prompt": "가: 어디에 갑니까?\n나: __________.",
+        "answer": 0
+      },
+      {
+        "number": 7,
+        "instruction": "",
+        "section": "Part 4. Reading a Notice",
+        "options": [
+          "네, 갈 수 있습니다.",
+          "아니요, 쉽니다.",
+          "오전만 엽니다.",
+          "오후만 엽니다."
+        ],
+        "prompt": "도서관 안내\n월요일~금요일: 오전 9시~오후 6시\n토요일: 오전 9시~오후 1시\n일요일: 쉽니다.\n일요일에 도서관에 갈 수 있습니까?",
+        "answer": 1
+      },
+      {
+        "number": 8,
+        "instruction": "",
+        "section": "Part 5. Reading an Advertisement",
+        "options": [
+          "3,000원",
+          "4,000원",
+          "5,000원",
+          "6,000원"
+        ],
+        "prompt": "김밥 3,000원\n라면 4,000원\n우동 5,000원\n우동은 얼마입니까?",
+        "answer": 2
+      },
+      {
+        "number": 9,
+        "instruction": "",
+        "section": "Part 6. Short Passage",
+        "options": [
+          "운동합니다.",
+          "공부합니다.",
+          "일합니다.",
+          "쉽니다."
+        ],
+        "prompt": "민수 씨는 학생입니다.\n아침에 학교에 갑니다.\n오후에는 도서관에서 공부합니다.\n민수 씨는 오후에 무엇을 합니까?",
+        "answer": 1
+      },
+      {
+        "number": 10,
+        "instruction": "",
+        "section": "Part 6. Short Passage",
+        "options": [
+          "오전 8시",
+          "오후 6시",
+          "오후 2시",
+          "밤 10시"
+        ],
+        "prompt": "영희 씨는 회사원입니다.\n아침 8시에 회사에 갑니다.\n저녁 6시에 집에 옵니다.\n영희 씨는 언제 집에 옵니까?",
+        "answer": 1
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "Part 7. Longer Reading",
+        "options": [
+          "한국 여행을 위해서",
+          "한국 드라마를 좋아해서",
+          "한국 음식을 좋아해서",
+          "한국에서 일해서"
+        ],
+        "prompt": "저는 한국어를 공부합니다.\n한국 드라마를 좋아해서 한국어를 배우기 시작했습니다.\n매일 두 시간씩 공부합니다.\n주말에는 친구와 한국어로 이야기합니다.\n왜 한국어를 배우기 시작했습니까?",
+        "answer": 1
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "Part 7. Longer Reading",
+        "options": [
+          "운동합니다.",
+          "시장에 갑니다.",
+          "집에서 쉽니다.",
+          "친구를 만납니다."
+        ],
+        "prompt": "오늘은 토요일입니다.\n저는 오전에 시장에 갑니다.\n과일과 채소를 삽니다.\n오후에는 집에서 쉽니다.\n오후에 무엇을 합니까?",
+        "answer": 2
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "Part 8. Information Table",
+        "options": [
+          "9시",
+          "12시",
+          "14시",
+          "18시"
+        ],
+        "prompt": "운동은 몇 시에 합니까?",
+        "answer": 2,
+        "contextTable": [
+          [
+            "시간",
+            "일정"
+          ],
+          [
+            "09:00",
+            "한국어 수업"
+          ],
+          [
+            "12:00",
+            "점심"
+          ],
+          [
+            "14:00",
+            "운동"
+          ],
+          [
+            "18:00",
+            "저녁"
+          ]
+        ]
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "Part 9. Reading an Email",
+        "options": [
+          "오늘 오후 3시",
+          "내일 오후 3시",
+          "내일 오전 3시",
+          "오늘 오전 3시"
+        ],
+        "prompt": "안녕하세요.\n내일 오후 3시에 우리 집에서 생일 파티를 합니다.\n꼭 오세요.\n생일 파티는 언제입니까?",
+        "answer": 1
+      },
+      {
+        "number": "15-1",
+        "instruction": "질문 1",
+        "section": "Part 10. Reading Comprehension",
+        "prompt": "저는 매일 아침 일찍 일어납니다.\n운동을 하고 아침을 먹습니다.\n그리고 학교에 갑니다.\n학교에서 공부를 합니다.\n저녁에는 집에서 숙제를 합니다.\n아침에 먼저 무엇을 합니까?",
+        "options": [
+          "운동",
+          "숙제",
+          "학교",
+          "저녁"
+        ],
+        "answer": 0
+      },
+      {
+        "number": "15-2",
+        "instruction": "질문 2",
+        "section": "Part 10. Reading Comprehension",
+        "prompt": "저는 매일 아침 일찍 일어납니다.\n운동을 하고 아침을 먹습니다.\n그리고 학교에 갑니다.\n학교에서 공부를 합니다.\n저녁에는 집에서 숙제를 합니다.\n저녁에는 무엇을 합니까?",
+        "options": [
+          "운동",
+          "숙제",
+          "학교",
+          "친구를 만남"
+        ],
+        "answer": 1
+      }
+    ]
+  },
+  {
+    "id": "reading-20",
+    "title": "TOPIK I Reading Practice — 20 Questions",
+    "source": "TOPIK I Reading Practice.docx",
+    "description": "A separate twenty-question reading and sentence-completion practice set.",
+    "answerNote": "Answers follow the answer key supplied in the source document.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "빈칸에 들어갈 말",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "먹어요",
+          "가요",
+          "자요",
+          "만나요"
+        ],
+        "prompt": "저는 매일 아침에 학교에 _____.",
+        "answer": 1
+      },
+      {
+        "number": 2,
+        "instruction": "알맞은 것을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "맛있어요",
+          "예뻐요",
+          "좋아요",
+          "먹어요"
+        ],
+        "prompt": "오늘은 날씨가 아주 _____.",
+        "answer": 2
+      },
+      {
+        "number": 3,
+        "instruction": "다음을 읽고 맞는 것을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "민수 씨는 회사원입니다.",
+          "민수 씨는 학생입니다.",
+          "민수 씨는 선생님입니다.",
+          "민수 씨는 의사입니다."
+        ],
+        "prompt": "민수 씨는 학생입니다.\n한국어를 공부합니다.",
+        "answer": 1
+      },
+      {
+        "number": 4,
+        "instruction": "무엇을 마십니까?",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "먹어요",
+          "마셔요",
+          "들어요",
+          "만나요"
+        ],
+        "prompt": "커피를 _____.",
+        "answer": 1
+      },
+      {
+        "number": 5,
+        "instruction": "다음 대화를 읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "2시",
+          "3시",
+          "4시",
+          "5시"
+        ],
+        "prompt": "가: 지금 몇 시예요?\n나: 세 시예요.\n지금은 몇 시입니까?",
+        "answer": 1
+      },
+      {
+        "number": 6,
+        "instruction": "알맞은 그림을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "☀️",
+          "🌧️",
+          "❄️",
+          "🌙"
+        ],
+        "prompt": "오늘은 비가 옵니다.",
+        "answer": 1
+      },
+      {
+        "number": 7,
+        "instruction": "빈칸에 들어갈 말",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "를",
+          "에",
+          "에서",
+          "와"
+        ],
+        "prompt": "저는 사과 _____ 좋아합니다.",
+        "answer": 0
+      },
+      {
+        "number": 8,
+        "instruction": "읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "토요일이라서",
+          "월요일이라서",
+          "시험이라서",
+          "아파서"
+        ],
+        "prompt": "오늘은 토요일입니다.\n학교에 가지 않습니다.\n왜 학교에 가지 않습니까?",
+        "answer": 0
+      },
+      {
+        "number": 9,
+        "instruction": "알맞은 말을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "학교에",
+          "학생을",
+          "학교가",
+          "학교와"
+        ],
+        "prompt": "가: 어디에 가요?\n나: _____ 갑니다.",
+        "answer": 0
+      },
+      {
+        "number": 10,
+        "instruction": "읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "과일",
+          "빵과 우유",
+          "책",
+          "커피"
+        ],
+        "prompt": "지수 씨는 빵과 우유를 샀습니다.\n무엇을 샀습니까?",
+        "answer": 1
+      },
+      {
+        "number": 11,
+        "instruction": "빈칸에 들어갈 말",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "만났어요",
+          "만나요",
+          "만날까요",
+          "만나겠습니다"
+        ],
+        "prompt": "저는 어제 친구를 _____.",
+        "answer": 0
+      },
+      {
+        "number": 12,
+        "instruction": "읽고 맞는 것을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "오늘은 월요일입니다.",
+          "내일은 화요일입니다.",
+          "내일은 월요일입니다.",
+          "오늘은 금요일입니다."
+        ],
+        "prompt": "오늘은 일요일입니다.\n내일은 월요일입니다.",
+        "answer": 2
+      },
+      {
+        "number": 13,
+        "instruction": "알맞은 말을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "김민수입니다.",
+          "학생입니다.",
+          "한국입니다.",
+          "학교입니다."
+        ],
+        "prompt": "가: 이름이 뭐예요?\n나: _____.",
+        "answer": 0
+      },
+      {
+        "number": 14,
+        "instruction": "읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "공부해서",
+          "운동해서",
+          "많이 먹어서",
+          "여행해서"
+        ],
+        "prompt": "수미 씨는 매일 운동을 합니다.\n그래서 건강합니다.\n왜 건강합니까?",
+        "answer": 1
+      },
+      {
+        "number": 15,
+        "instruction": "빈칸에 들어갈 말",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "덥습니다",
+          "춥습니다",
+          "맛있습니다",
+          "쉽습니다"
+        ],
+        "prompt": "한국은 겨울에 _____.",
+        "answer": 1
+      },
+      {
+        "number": 16,
+        "instruction": "읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "김치",
+          "라면",
+          "비빔밥",
+          "불고기"
+        ],
+        "prompt": "가: 무엇을 먹고 싶어요?\n나: 비빔밥을 먹고 싶어요.\n무엇을 먹고 싶습니까?",
+        "answer": 2
+      },
+      {
+        "number": 17,
+        "instruction": "알맞은 것을 고르세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "걸어서",
+          "비행기로",
+          "버스로",
+          "자전거로"
+        ],
+        "prompt": "저는 버스를 타고 회사에 갑니다.\n어떻게 회사에 갑니까?",
+        "answer": 2
+      },
+      {
+        "number": 18,
+        "instruction": "읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "돈",
+          "책",
+          "선물",
+          "음식"
+        ],
+        "prompt": "오늘은 제 생일입니다.\n친구들이 선물을 주었습니다.\n친구들은 무엇을 주었습니까?",
+        "answer": 2
+      },
+      {
+        "number": 19,
+        "instruction": "빈칸에 들어갈 말",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "먹어요",
+          "공부해요",
+          "산책해요",
+          "모두 가능합니다."
+        ],
+        "prompt": "저녁에 가족과 함께 _____.",
+        "answer": 3
+      },
+      {
+        "number": 20,
+        "instruction": "다음 글을 읽고 답하세요.",
+        "section": "20 Practice Questions with Answers",
+        "options": [
+          "러시아",
+          "일본",
+          "한국",
+          "중국"
+        ],
+        "prompt": "안녕하세요.\n저는 안나입니다.\n러시아 사람입니다.\n지금 한국에서 한국어를 공부합니다.\n주말에는 친구와 영화를 봅니다.\n안나 씨는 지금 어디에서 공부합니까?",
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "intermediate-advanced-2",
+    "title": "TOPIK I 중급 심화 연습문제",
+    "source": "TOPIK I 중급 2.docx",
+    "description": "Intermediate grammar, vocabulary, reading, and longer dialogue questions.",
+    "answerNote": "Answers follow the answer key supplied in the source document.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "전에",
+          "동안",
+          "후에",
+          "까지"
+        ],
+        "prompt": "친구가 오기 (      ) 방을 깨끗이 청소했습니다.",
+        "answer": 0
+      },
+      {
+        "number": 2,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "지",
+          "때",
+          "동안",
+          "후"
+        ],
+        "prompt": "한국에 온 (      )  벌써 2년이 되었습니다.",
+        "answer": 0
+      },
+      {
+        "number": 3,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "오니까",
+          "오지만",
+          "오는데",
+          "오려고"
+        ],
+        "prompt": "비가 많이 (      )  우산을 가져가세요.",
+        "answer": 0
+      },
+      {
+        "number": 4,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "읽을 수 있습니다.",
+          "읽지 않습니다.",
+          "읽어 보겠습니다.",
+          "읽고 싶습니다."
+        ],
+        "prompt": "한국어를 열심히 공부해서 지금은 신문도 (      ).",
+        "answer": 0
+      },
+      {
+        "number": 5,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "못했습니다.",
+          "않겠습니다.",
+          "말았습니다.",
+          "않았습니다."
+        ],
+        "prompt": "시간이 없어서 같이 가지 (      ) .",
+        "answer": 0
+      },
+      {
+        "number": 6,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "수 없습니다.",
+          "줄 압니다.",
+          "수 있겠습니다.",
+          "것 같습니다."
+        ],
+        "prompt": "배가 너무 불러서 더 이상 먹을 (      )",
+        "answer": 0
+      },
+      {
+        "number": 7,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "갔습니다.",
+          "갈까요?",
+          "갑시다.",
+          "가십시오."
+        ],
+        "prompt": "감기에 걸렸는데도 회사에 (      ) .",
+        "answer": 0
+      },
+      {
+        "number": 8,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "것이",
+          "것을",
+          "것은",
+          "것에"
+        ],
+        "prompt": "비행기 표를 미리 예약하는 (      ) 좋습니다.",
+        "answer": 0
+      },
+      {
+        "number": 9,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "후에",
+          "동안",
+          "전에",
+          "까지"
+        ],
+        "prompt": "책을 다 읽은 (      )  친구에게 빌려줄게요.",
+        "answer": 0
+      },
+      {
+        "number": 10,
+        "instruction": "",
+        "section": "1~10번. 문법",
+        "options": [
+          "잠이 들었습니다.",
+          "잠을 잡았습니다.",
+          "잠을 만들었습니다.",
+          "잠을 열었습니다."
+        ],
+        "prompt": "어제는 너무 피곤해서 TV를 보다가 (      ) .",
+        "answer": 0
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "아끼다",
+          "버리다",
+          "낭비하다",
+          "구경하다"
+        ],
+        "prompt": "'절약하다'와 가장 가까운 뜻은?",
+        "answer": 0
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "직접 해 본 일",
+          "계획한 일",
+          "앞으로 할 일",
+          "어려운 시험"
+        ],
+        "prompt": "'경험'의 의미는?",
+        "answer": 0
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "놀라다",
+          "준비하다",
+          "기억하다",
+          "설명하다"
+        ],
+        "prompt": "'예상하다'와 반대되는 것은?",
+        "answer": 0
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "지키다",
+          "쓰다",
+          "만들다",
+          "놓다"
+        ],
+        "prompt": "\"약속을 (      ) .\"",
+        "answer": 0
+      },
+      {
+        "number": 15,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "참석하다",
+          "이용하다",
+          "해결하다",
+          "개발하다"
+        ],
+        "prompt": "\"회의를 (      ) .\"",
+        "answer": 0
+      },
+      {
+        "number": 16,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "작동하다",
+          "연습하다",
+          "공부하다",
+          "준비하다"
+        ],
+        "prompt": "\"기계를 (      ) .\"",
+        "answer": 0
+      },
+      {
+        "number": 17,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "해결하다",
+          "출발하다",
+          "관리하다",
+          "전달하다"
+        ],
+        "prompt": "\"문제를 (      ) .\"",
+        "answer": 0
+      },
+      {
+        "number": 18,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "불편하다",
+          "안전하다",
+          "정확하다",
+          "조용하다"
+        ],
+        "prompt": "'편리하다'의 반대말은?",
+        "answer": 0
+      },
+      {
+        "number": 19,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "접수하다",
+          "거절하다",
+          "취소하다",
+          "준비하다"
+        ],
+        "prompt": "'신청하다'와 가장 가까운 뜻은?",
+        "answer": 0
+      },
+      {
+        "number": 20,
+        "instruction": "",
+        "section": "11~20번. 어휘",
+        "options": [
+          "유지하다",
+          "소비하다",
+          "종료하다",
+          "분실하다"
+        ],
+        "prompt": "\"건강을 (      ).\"",
+        "answer": 0
+      },
+      {
+        "number": 21,
+        "instruction": "",
+        "section": "21~25번. 읽기",
+        "options": [
+          "사람들이 인터넷으로 물건을 많이 삽니다.",
+          "인터넷에서는 상품을 비교할 수 없습니다.",
+          "사람들은 매장에서만 물건을 삽니다.",
+          "인터넷 쇼핑은 시간이 오래 걸립니다."
+        ],
+        "prompt": "최근에는 인터넷으로 물건을 구입하는 사람이 많아졌습니다. 직접 매장에 가지 않아도 다양한 상품을 쉽게 비교할 수 있기 때문입니다.\n이 글의 내용과 같은 것은?",
+        "answer": 0
+      },
+      {
+        "number": 22,
+        "instruction": "",
+        "section": "21~25번. 읽기",
+        "options": [
+          "운동의 장점",
+          "운동 경기",
+          "병원 이용",
+          "식사 습관"
+        ],
+        "prompt": "규칙적인 운동은 건강뿐 아니라 스트레스를 줄이는 데도 도움이 됩니다.\n무엇에 대한 글입니까?",
+        "answer": 0
+      },
+      {
+        "number": 23,
+        "instruction": "",
+        "section": "21~25번. 읽기",
+        "options": [
+          "조용히 이용해야 합니다.",
+          "전화해도 됩니다.",
+          "음식을 먹어도 됩니다.",
+          "친구와 크게 이야기해야 합니다."
+        ],
+        "prompt": "도서관에서는 큰 소리로 이야기하거나 휴대전화를 사용하면 안 됩니다.\n알맞은 것은?",
+        "answer": 0
+      },
+      {
+        "number": 24,
+        "instruction": "",
+        "section": "21~25번. 읽기",
+        "options": [
+          "입장료가 없습니다.",
+          "학생만 들어갈 수 있습니다.",
+          "예약이 필요합니다.",
+          "어린이는 입장할 수 없습니다."
+        ],
+        "prompt": "이번 전시는 무료이며 누구나 관람할 수 있습니다.\n맞는 것은?",
+        "answer": 0
+      },
+      {
+        "number": 25,
+        "instruction": "",
+        "section": "21~25번. 읽기",
+        "options": [
+          "시간이 정확해서",
+          "요금이 비싸서",
+          "사람이 없어서",
+          "좌석이 많아서"
+        ],
+        "prompt": "지하철은 버스보다 시간이 정확해서 출퇴근할 때 많이 이용합니다.\n왜 지하철을 많이 이용합니까?",
+        "answer": 0
+      },
+      {
+        "number": 26,
+        "instruction": "",
+        "section": "26~30번. 긴 대화",
+        "options": [
+          "1시",
+          "2시",
+          "3시",
+          "4시"
+        ],
+        "prompt": "가: 오늘 회의가 몇 시에 시작해요?\n나: 원래 두 시였는데 한 시간 늦춰졌어요.\n회의는 몇 시에 시작합니까?",
+        "answer": 2
+      },
+      {
+        "number": 27,
+        "instruction": "",
+        "section": "26~30번. 긴 대화",
+        "options": [
+          "살이 찌려고",
+          "건강을 위해",
+          "친구를 만나려고",
+          "시간을 보내려고"
+        ],
+        "prompt": "가: 왜 운동을 시작했어요?\n나: 건강도 좋아지고 스트레스도 줄이고 싶었어요.\n운동을 시작한 이유는?",
+        "answer": 1
+      },
+      {
+        "number": 28,
+        "instruction": "",
+        "section": "26~30번. 긴 대화",
+        "options": [
+          "화면이 커서",
+          "배터리 문제 때문에",
+          "선물을 받아서",
+          "가격이 싸서"
+        ],
+        "prompt": "가: 새 휴대전화를 샀네요.\n나: 네. 예전 것은 배터리가 너무 빨리 닳았어요.\n왜 새 휴대전화를 샀습니까?",
+        "answer": 1
+      },
+      {
+        "number": 29,
+        "instruction": "",
+        "section": "26~30번. 긴 대화",
+        "options": [
+          "함께 등산 갑니다.",
+          "시험이 없습니다.",
+          "등산을 못 갑니다.",
+          "등산을 싫어합니다."
+        ],
+        "prompt": "가: 이번 주말에 등산 갈래요?\n나: 가고 싶은데 시험 공부를 해야 해서 못 갈 것 같아요.\n맞는 것은?",
+        "answer": 2
+      },
+      {
+        "number": 30,
+        "instruction": "",
+        "section": "26~30번. 긴 대화",
+        "options": [
+          "날씨가 나빴습니다.",
+          "사람이 적었습니다.",
+          "사람이 많았습니다.",
+          "여행을 취소했습니다."
+        ],
+        "prompt": "가: 이번 여행은 어땠어요?\n나: 날씨는 좋았지만 사람이 너무 많아서 조금 힘들었어요.\n여행에 대해 맞는 것은?",
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "intermediate-reading-3",
+    "title": "TOPIK I 중급 읽기 예시문제",
+    "source": "TOPIK I 중급 3.docx",
+    "description": "Notices, short passages, and main-idea reading questions.",
+    "answerNote": "Answers follow the answer key supplied in the source document.",
+    "questions": [
+      {
+        "number": 1,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "하루 종일 비가 온다.",
+          "오후에 바람이 분다.",
+          "날씨가 흐리다.",
+          "눈이 많이 온다."
+        ],
+        "prompt": "오늘은 날씨가 맑지만 오후부터 바람이 강하게 불겠습니다.",
+        "answer": 1
+      },
+      {
+        "number": 2,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "2시 10분에 온다.",
+          "2시 전에 도착한다.",
+          "1시에 온다.",
+          "늦어도 괜찮다."
+        ],
+        "prompt": "회의는 오후 2시에 시작합니다. 10분 전에 오십시오.",
+        "answer": 1
+      },
+      {
+        "number": 3,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "월요일에 문을 연다.",
+          "화요일에 쉰다.",
+          "월요일에는 이용할 수 없다.",
+          "매일 쉰다."
+        ],
+        "prompt": "이 식당은 매주 월요일에 쉽니다.",
+        "answer": 2
+      },
+      {
+        "number": 4,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "버스 안에서 카드를 산다.",
+          "먼저 교통카드를 준비한다.",
+          "걸어간다.",
+          "택시를 탄다."
+        ],
+        "prompt": "버스를 타기 전에 교통카드를 준비해 주세요.",
+        "answer": 1
+      },
+      {
+        "number": 5,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "조용히 해야 한다.",
+          "음악을 크게 듣는다.",
+          "휴대전화를 사용한다.",
+          "뛰어다닌다."
+        ],
+        "prompt": "도서관에서는 큰 소리로 이야기하지 마십시오.",
+        "answer": 0
+      },
+      {
+        "number": 6,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "과일을 할인한다.",
+          "우유와 빵을 싸게 판다.",
+          "모든 상품을 할인한다.",
+          "고기를 할인한다."
+        ],
+        "prompt": "오늘 할인 상품은 우유와 빵입니다.",
+        "answer": 1
+      },
+      {
+        "number": 7,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "음식을 먹어야 한다.",
+          "지하철에서 음식을 먹는 것이 좋다.",
+          "음식을 먹지 않는 것이 좋다.",
+          "음식을 나누어 먹는다."
+        ],
+        "prompt": "한국에서는 지하철 안에서 음식을 먹지 않는 것이 좋습니다.",
+        "answer": 2
+      },
+      {
+        "number": 8,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "예약 시간보다 늦게 간다.",
+          "예약 시간보다 먼저 간다.",
+          "예약을 하지 않는다.",
+          "병원에 가지 않는다."
+        ],
+        "prompt": "병원 예약 시간보다 15분 먼저 오십시오.",
+        "answer": 1
+      },
+      {
+        "number": 9,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "마스크가 필요하다.",
+          "우산을 가져간다.",
+          "모자를 쓴다.",
+          "장갑을 낀다."
+        ],
+        "prompt": "오늘은 미세먼지가 많으니 마스크를 착용하세요.",
+        "answer": 0
+      },
+      {
+        "number": 10,
+        "instruction": "",
+        "section": "1~10. 다음을 읽고 알맞은 것을 고르십시오.",
+        "options": [
+          "바로 마신다.",
+          "차갑게 만든다.",
+          "조금 기다렸다가 마신다.",
+          "버린다."
+        ],
+        "prompt": "커피가 너무 뜨거우니 조금 식힌 후 드세요.",
+        "answer": 2
+      },
+      {
+        "number": 11,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "한국어를 못한다.",
+          "한국어를 잘하게 되었다.",
+          "친구가 없다.",
+          "한국에 처음 왔다."
+        ],
+        "prompt": "민수 씨는 한국어를 배우기 시작한 지 1년이 되었습니다. 지금은 한국 친구들과 자연스럽게 이야기할 수 있습니다.",
+        "answer": 1
+      },
+      {
+        "number": 12,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "등산은 건강에 좋지 않다.",
+          "가족과 등산하면 도움이 된다.",
+          "주말에는 집에만 있다.",
+          "등산은 위험하다."
+        ],
+        "prompt": "주말마다 가족과 등산을 하면 건강에도 좋고 기분도 좋아집니다.",
+        "answer": 1
+      },
+      {
+        "number": 13,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "아침에 책을 읽는다.",
+          "자기 전에 책을 읽는다.",
+          "책을 좋아하지 않는다.",
+          "매주 책을 읽는다."
+        ],
+        "prompt": "수진 씨는 매일 자기 전에 책을 30분 정도 읽습니다.",
+        "answer": 1
+      },
+      {
+        "number": 14,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "오늘 경기를 한다.",
+          "경기가 취소되었다.",
+          "경기가 다음 주에 열린다.",
+          "경기가 끝났다."
+        ],
+        "prompt": "비가 와서 축구 경기가 다음 주로 연기되었습니다.",
+        "answer": 2
+      },
+      {
+        "number": 15,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "말하지 않아도 된다.",
+          "말하는 연습이 중요하다.",
+          "듣기만 하면 된다.",
+          "책만 읽으면 된다."
+        ],
+        "prompt": "외국어를 배우려면 자주 말하는 연습을 해야 합니다.",
+        "answer": 1
+      },
+      {
+        "number": 16,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "은행에 직접 가는 사람이 많아졌다.",
+          "인터넷으로 은행 업무를 한다.",
+          "은행이 없어졌다.",
+          "인터넷을 사용하지 않는다."
+        ],
+        "prompt": "요즘에는 인터넷으로 은행 업무를 보는 사람이 많아졌습니다.",
+        "answer": 1
+      },
+      {
+        "number": 17,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "영화가 지루했다.",
+          "영화가 재미있었다.",
+          "영화가 짧았다.",
+          "영화를 보지 않았다."
+        ],
+        "prompt": "영화가 재미있어서 두 시간 동안 시간이 빨리 지나갔습니다.",
+        "answer": 1
+      },
+      {
+        "number": 18,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "물을 적게 마셔야 한다.",
+          "물은 건강에 도움이 된다.",
+          "물은 필요 없다.",
+          "음료수만 마신다."
+        ],
+        "prompt": "매일 물을 충분히 마시면 건강을 유지하는 데 도움이 됩니다.",
+        "answer": 1
+      },
+      {
+        "number": 19,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "겨울 이야기이다.",
+          "벚꽃을 보러 여행 간다.",
+          "여행을 하지 않는다.",
+          "여름 이야기이다."
+        ],
+        "prompt": "한국의 봄에는 벚꽃을 보러 많은 사람이 여행을 갑니다.",
+        "answer": 1
+      },
+      {
+        "number": 20,
+        "instruction": "",
+        "section": "11~20. 다음 글을 읽고 맞는 것을 고르십시오.",
+        "options": [
+          "지갑을 찾았다.",
+          "경찰서에 갔다.",
+          "친구에게 말했다.",
+          "지갑을 샀다."
+        ],
+        "prompt": "지갑을 잃어버려서 경찰서에 신고했습니다.",
+        "answer": 1
+      },
+      {
+        "number": 21,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "잠은 공부에 도움이 된다.",
+          "잠을 적게 자야 한다.",
+          "공부는 어렵다.",
+          "피곤하면 운동한다."
+        ],
+        "prompt": "충분한 잠을 자면 피곤함이 줄어들고 공부할 때 집중하기도 쉬워집니다.",
+        "answer": 0
+      },
+      {
+        "number": 22,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "장바구니 사용이 늘고 있다.",
+          "비닐봉지를 많이 사용한다.",
+          "환경은 중요하지 않다.",
+          "장바구니는 비싸다."
+        ],
+        "prompt": "요즘에는 환경을 위해 장바구니를 사용하는 사람이 많습니다.",
+        "answer": 0
+      },
+      {
+        "number": 23,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "운동은 몸에만 좋다.",
+          "운동은 몸과 마음에 도움이 된다.",
+          "운동은 필요 없다.",
+          "운동은 피곤하기만 하다."
+        ],
+        "prompt": "운동은 몸뿐 아니라 마음 건강에도 좋은 영향을 줍니다.",
+        "answer": 1
+      },
+      {
+        "number": 24,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "아침 식사는 중요하다.",
+          "점심만 먹는다.",
+          "저녁을 많이 먹는다.",
+          "식사는 필요 없다."
+        ],
+        "prompt": "아침 식사를 하면 하루를 더 활기차게 시작할 수 있습니다.",
+        "answer": 0
+      },
+      {
+        "number": 25,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "단어는 외울 필요가 없다.",
+          "문장을 만들어 연습하면 도움이 된다.",
+          "읽기만 하면 된다.",
+          "쓰기는 필요 없다."
+        ],
+        "prompt": "새로운 단어를 배운 후 문장을 만들어 보면 더 오래 기억할 수 있습니다.",
+        "answer": 1
+      },
+      {
+        "number": 26,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "휴대전화를 오래 사용해도 괜찮다.",
+          "오래 사용하면 눈이 피곤할 수 있다.",
+          "눈은 휴대전화와 관계없다.",
+          "책이 더 나쁘다."
+        ],
+        "prompt": "휴대전화 사용 시간이 너무 길면 눈이 피로해질 수 있습니다.",
+        "answer": 1
+      },
+      {
+        "number": 27,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "대중교통은 환경 보호에 도움이 된다.",
+          "자동차만 이용해야 한다.",
+          "대중교통은 비싸다.",
+          "대중교통은 위험하다."
+        ],
+        "prompt": "대중교통을 이용하면 교통비를 절약하고 환경도 보호할 수 있습니다.",
+        "answer": 0
+      },
+      {
+        "number": 28,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "취미는 스트레스를 줄여 준다.",
+          "취미는 시간이 아깝다.",
+          "친구를 만날 수 없다.",
+          "취미는 어렵다."
+        ],
+        "prompt": "취미 생활은 스트레스를 줄이고 새로운 사람을 만나는 좋은 기회가 됩니다.",
+        "answer": 0
+      },
+      {
+        "number": 29,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "식사 후 커피를 마시는 사람이 많다.",
+          "식사 전에 커피를 마신다.",
+          "커피를 마시지 않는다.",
+          "차만 마신다."
+        ],
+        "prompt": "한국에서는 식사 후에 함께 커피를 마시는 문화가 있습니다.",
+        "answer": 0
+      },
+      {
+        "number": 30,
+        "instruction": "",
+        "section": "21~30. 다음 글의 중심 내용을 고르십시오.",
+        "options": [
+          "꾸준한 공부는 실력을 향상시킨다.",
+          "공부해도 변하지 않는다.",
+          "한국어는 배우기 어렵다.",
+          "학생은 공부를 그만두었다."
+        ],
+        "prompt": "꾸준히 한국어를 공부한 학생은 처음보다 자신 있게 한국어로 이야기할 수 있게 되었습니다.",
+        "answer": 0
+      }
+    ]
+  }
+];
+    const CHOICE_SYMBOLS = ["①", "②", "③", "④"];
+
+    // -----------------------------------------------------------------------
+    // Application state
+    // -----------------------------------------------------------------------
+
+    const state = {
+      test: null,
+      questionIndex: 0,
+      score: 0,
+      answered: false,
+      results: [],
+      durationMinutes: 0,
+      timeRemaining: 0,
+      timerId: null,
+      finished: false
+    };
+
+    // -----------------------------------------------------------------------
+    // Cached elements
+    // -----------------------------------------------------------------------
+
+    const libraryView = document.getElementById("libraryView");
+    const quizView = document.getElementById("quizView");
+    const resultsView = document.getElementById("resultsView");
+    const testGrid = document.getElementById("testGrid");
+
+    const quizSource = document.getElementById("quizSource");
+    const quizTitle = document.getElementById("quizTitle");
+    const quizScore = document.getElementById("quizScore");
+    const quizTimer = document.getElementById("quizTimer");
+    const quizTimerValue = document.getElementById("quizTimerValue");
+    const testAnswerNote = document.getElementById("testAnswerNote");
+
+    const questionCount = document.getElementById("questionCount");
+    const progressFill = document.getElementById("progressFill");
+    const questionSection = document.getElementById("questionSection");
+    const questionInstruction = document.getElementById("questionInstruction");
+    const questionContext = document.getElementById("questionContext");
+    const questionPrompt = document.getElementById("questionPrompt");
+    const choices = document.getElementById("choices");
+    const feedback = document.getElementById("feedback");
+    const nextQuestion = document.getElementById("nextQuestion");
+
+    const resultsTitle = document.getElementById("resultsTitle");
+    const resultSummary = document.getElementById("resultSummary");
+    const sectionResults = document.getElementById("sectionResults");
+    const reviewList = document.getElementById("reviewList");
+
+    // -----------------------------------------------------------------------
+    // General helpers
+    // -----------------------------------------------------------------------
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(
+        /[&<>"']/g,
+        character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[character]
+      );
+    }
+
+    function visibleSections(test) {
+      return [...new Set(test.questions.map(question => question.section))];
+    }
+
+    function formatTable(rows) {
+      if (!rows?.length) {
+        return "";
+      }
+
+      const [header, ...body] = rows;
+
+      return `
+        <table class="context-table">
+          <thead>
+            <tr>
+              ${header.map(cell => `<th>${escapeHtml(cell)}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${body.map(row => `
+              <tr>
+                ${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function showOnly(view) {
+      [libraryView, quizView, resultsView].forEach(section => {
+        section.classList.toggle("hidden", section !== view);
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function formatTime(totalSeconds) {
+      const safeSeconds = Math.max(0, totalSeconds);
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = safeSeconds % 60;
+
+      return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function updateTimerDisplay() {
+      if (!state.durationMinutes) {
+        quizTimerValue.textContent = "Untimed";
+        quizTimer.classList.remove("urgent");
+        return;
+      }
+
+      quizTimerValue.textContent = formatTime(state.timeRemaining);
+      quizTimer.classList.toggle("urgent", state.timeRemaining <= 60);
+    }
+
+    function stopTimer() {
+      if (state.timerId !== null) {
+        window.clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function startTimer() {
+      stopTimer();
+      updateTimerDisplay();
+
+      if (!state.durationMinutes) {
+        return;
+      }
+
+      state.timerId = window.setInterval(() => {
+        state.timeRemaining -= 1;
+        updateTimerDisplay();
+
+        if (state.timeRemaining <= 0) {
+          stopTimer();
+          finishTest("Time is up");
+        }
+      }, 1000);
+    }
+
+    // -----------------------------------------------------------------------
+    // Dashboard
+    // -----------------------------------------------------------------------
+
+    function renderTestLibrary() {
+      testGrid.innerHTML = TESTS.map((test, index) => {
+        const sections = visibleSections(test);
+
+        return `
+          <article class="test-card">
+            <div class="test-card-header">
+              <div class="test-card-kicker">
+                <span>Test ${index + 1}</span>
+                <span>${test.questions.length} questions</span>
+              </div>
+              <h3>${escapeHtml(test.title)}</h3>
+            </div>
+
+            <div class="test-card-body">
+              <p>${escapeHtml(test.description)}</p>
+              <p><strong>${sections.length}</strong> section${sections.length === 1 ? "" : "s"}</p>
+              <p class="source-name">Source: ${escapeHtml(test.source)}</p>
+              <div class="answer-note">${escapeHtml(test.answerNote)}</div>
+
+              <div class="test-card-controls">
+                <label for="time-${escapeHtml(test.id)}">
+                  Time limit in minutes
+                </label>
+                <input
+                  class="time-input"
+                  id="time-${escapeHtml(test.id)}"
+                  data-time-for="${escapeHtml(test.id)}"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  inputmode="decimal"
+                  value="0"
+                  placeholder="0 = untimed"
+                  aria-describedby="time-help-${escapeHtml(test.id)}"
+                >
+                <small id="time-help-${escapeHtml(test.id)}">
+                  Enter any number of minutes. Use 0 for no time limit.
+                </small>
+
+                <div class="card-actions">
+                  <button
+                    class="button primary full start-test"
+                    type="button"
+                    data-test-id="${escapeHtml(test.id)}"
+                  >
+                    Start test
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".start-test").forEach(button => {
+        button.addEventListener("click", () => {
+          const testId = button.dataset.testId;
+          const timeInput = document.querySelector(`[data-time-for="${testId}"]`);
+          const enteredMinutes = Number(timeInput?.value || 0);
+          const durationMinutes = Number.isFinite(enteredMinutes)
+            ? Math.max(0, enteredMinutes)
+            : 0;
+
+          if (timeInput) {
+            timeInput.value = String(durationMinutes);
+          }
+
+          startTest(testId, durationMinutes);
+        });
+      });
+    }
+
+    // -----------------------------------------------------------------------
+    // Test runtime
+    // -----------------------------------------------------------------------
+
+    function startTest(testId, durationMinutes = 0) {
+      const test = TESTS.find(item => item.id === testId);
+
+      if (!test) {
+        return;
+      }
+
+      stopTimer();
+
+      state.test = test;
+      state.questionIndex = 0;
+      state.score = 0;
+      state.answered = false;
+      state.results = [];
+      state.durationMinutes = durationMinutes;
+      state.timeRemaining = Math.round(durationMinutes * 60);
+      state.finished = false;
+
+      quizSource.textContent = test.source;
+      quizTitle.textContent = test.title;
+      const minuteLabel = durationMinutes === 1 ? "minute" : "minutes";
+
+      testAnswerNote.textContent = durationMinutes
+        ? `${test.answerNote} Time limit: ${durationMinutes} ${minuteLabel}.`
+        : `${test.answerNote} This attempt is untimed.`;
+
+      showOnly(quizView);
+      renderQuestion();
+      startTimer();
+    }
+
+    function renderQuestion() {
+      const question = state.test.questions[state.questionIndex];
+      const progress = state.questionIndex / state.test.questions.length * 100;
+
+      state.answered = false;
+
+      questionCount.textContent =
+        `Question ${state.questionIndex + 1} / ${state.test.questions.length}`;
+
+      quizScore.textContent = String(state.score);
+      progressFill.style.width = `${progress}%`;
+      progressFill.parentElement.setAttribute(
+        "aria-valuenow",
+        String(Math.round(progress))
+      );
+
+      questionSection.textContent = question.section || "Questions";
+
+      if (question.instruction) {
+        questionInstruction.textContent = question.instruction;
+        questionInstruction.classList.remove("hidden");
+      } else {
+        questionInstruction.textContent = "";
+        questionInstruction.classList.add("hidden");
+      }
+
+      questionContext.innerHTML = formatTable(question.contextTable);
+      questionPrompt.textContent = question.prompt;
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      nextQuestion.classList.add("hidden");
+
+      choices.innerHTML = question.options.map((option, index) => `
+        <button
+          class="choice"
+          type="button"
+          data-choice-index="${index}"
+        >
+          <span class="choice-number">${CHOICE_SYMBOLS[index]}</span>
+          <span>${escapeHtml(option)}</span>
+        </button>
+      `).join("");
+
+      choices.querySelectorAll(".choice").forEach(button => {
+        button.addEventListener("click", () => {
+          answerQuestion(Number(button.dataset.choiceIndex));
+        });
+      });
+
+      requestAnimationFrame(() => {
+        choices.querySelector(".choice")?.focus({ preventScroll: true });
+      });
+    }
+
+    function answerQuestion(selectedIndex) {
+      if (state.answered) {
+        return;
+      }
+
+      const question = state.test.questions[state.questionIndex];
+      const correct = selectedIndex === question.answer;
+
+      state.answered = true;
+
+      if (correct) {
+        state.score += 1;
+      }
+
+      state.results.push({
+        question,
+        selectedIndex,
+        correct
+      });
+
+      quizScore.textContent = String(state.score);
+
+      choices.querySelectorAll(".choice").forEach(button => {
+        const choiceIndex = Number(button.dataset.choiceIndex);
+        button.disabled = true;
+
+        if (choiceIndex === question.answer) {
+          button.classList.add("correct");
+        }
+
+        if (choiceIndex === selectedIndex && !correct) {
+          button.classList.add("wrong");
+        }
+      });
+
+      feedback.className = `feedback ${correct ? "good" : "bad"}`;
+      feedback.innerHTML = correct
+        ? `<strong>Correct.</strong>`
+        : `
+          <strong>Review this answer.</strong><br>
+          Correct answer:
+          ${CHOICE_SYMBOLS[question.answer]}
+          ${escapeHtml(question.options[question.answer])}
+        `;
+
+      nextQuestion.textContent =
+        state.questionIndex === state.test.questions.length - 1
+          ? "Finish test"
+          : "Next question";
+
+      nextQuestion.classList.remove("hidden");
+      nextQuestion.focus({ preventScroll: true });
+    }
+
+    function goToNextQuestion() {
+      if (!state.answered) {
+        return;
+      }
+
+      if (state.questionIndex < state.test.questions.length - 1) {
+        state.questionIndex += 1;
+        renderQuestion();
+      } else {
+        finishTest("Test complete");
+      }
+    }
+
+    function finishTest(title) {
+      if (state.finished || !state.test) {
+        return;
+      }
+
+      state.finished = true;
+      stopTimer();
+
+      const answered = state.results.length;
+      const total = state.test.questions.length;
+      const unanswered = total - answered;
+      const percentage = Math.round(state.score / total * 100);
+      const timeMessage = state.durationMinutes
+        ? `Time remaining: ${formatTime(state.timeRemaining)}.`
+        : "Untimed attempt.";
+
+      resultsTitle.textContent = title;
+      resultSummary.innerHTML = `
+        Score: <strong>${state.score} / ${total}</strong>
+        (${percentage}%).
+        ${answered} answered · ${unanswered} unanswered.
+        ${timeMessage}
+      `;
+
+      renderSectionResults();
+      renderReview();
+      showOnly(resultsView);
+    }
+
+    function renderSectionResults() {
+      const sectionMap = new Map();
+
+      state.results.forEach(result => {
+        const section = result.question.section || "Questions";
+        const current = sectionMap.get(section) || { correct: 0, total: 0 };
+
+        current.total += 1;
+
+        if (result.correct) {
+          current.correct += 1;
+        }
+
+        sectionMap.set(section, current);
+      });
+
+      sectionResults.innerHTML = [...sectionMap.entries()].map(([section, data]) => `
+        <div class="section-result">
+          <strong>${escapeHtml(section)}</strong><br>
+          ${data.correct} / ${data.total}
+        </div>
+      `).join("");
+    }
+
+    function renderReview() {
+      reviewList.innerHTML = state.results.map((result, index) => {
+        const question = result.question;
+        const selectedText = question.options[result.selectedIndex];
+        const correctText = question.options[question.answer];
+
+        return `
+          <details class="review-item">
+            <summary>
+              <span>
+                Question ${index + 1}
+                · ${result.correct ? "Correct" : "Review"}
+              </span>
+              <span>${result.correct ? "✓" : "✕"}</span>
+            </summary>
+
+            <div class="review-content">
+              <div class="review-prompt">${escapeHtml(question.prompt)}</div>
+
+              <div class="review-answer">
+                <strong>Your answer:</strong>
+                ${CHOICE_SYMBOLS[result.selectedIndex]}
+                ${escapeHtml(selectedText)}
+              </div>
+
+              <div class="review-answer">
+                <strong>Correct answer:</strong>
+                ${CHOICE_SYMBOLS[question.answer]}
+                ${escapeHtml(correctText)}
+              </div>
+            </div>
+          </details>
+        `;
+      }).join("");
+    }
+
+    function returnToLibrary() {
+      stopTimer();
+
+      state.test = null;
+      state.questionIndex = 0;
+      state.score = 0;
+      state.answered = false;
+      state.results = [];
+      state.durationMinutes = 0;
+      state.timeRemaining = 0;
+      state.finished = false;
+
+      updateTimerDisplay();
+      showOnly(libraryView);
+    }
+
+    // -----------------------------------------------------------------------
+    // Theme
+    // -----------------------------------------------------------------------
+
+    const root = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function applyTheme(theme, persist = false) {
+      const nextTheme = theme === "dark" ? "dark" : "light";
+      const dark = nextTheme === "dark";
+
+      root.dataset.theme = nextTheme;
+      root.style.colorScheme = nextTheme;
+      themeToggle.setAttribute("aria-pressed", String(dark));
+      themeToggle.setAttribute(
+        "aria-label",
+        dark ? "Switch to light mode" : "Switch to dark mode"
+      );
+      themeIcon.textContent = dark ? "☀" : "☾";
+
+      if (persist) {
+        try {
+          localStorage.setItem("koreanQuizThemeV2", nextTheme);
+        } catch (_) {}
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // Event wiring
+    // -----------------------------------------------------------------------
+
+    document.getElementById("backToLibrary").addEventListener(
+      "click",
+      returnToLibrary
+    );
+
+    document.getElementById("resultsToLibrary").addEventListener(
+      "click",
+      returnToLibrary
+    );
+
+    document.getElementById("endEarly").addEventListener("click", () => {
+      finishTest("Test ended early");
+    });
+
+    document.getElementById("restartTest").addEventListener("click", () => {
+      if (state.test) {
+        startTest(state.test.id, state.durationMinutes);
+      }
+    });
+
+    nextQuestion.addEventListener("click", goToNextQuestion);
+
+    themeToggle.addEventListener("click", () => {
+      applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (quizView.classList.contains("hidden")) {
+        return;
+      }
+
+      if (!state.answered && ["1", "2", "3", "4"].includes(event.key)) {
+        event.preventDefault();
+        answerQuestion(Number(event.key) - 1);
+        return;
+      }
+
+      if (state.answered && event.key === "Enter") {
+        event.preventDefault();
+        goToNextQuestion();
+      }
+    });
+
+    // -----------------------------------------------------------------------
+    // Initialization
+    // -----------------------------------------------------------------------
+
+    applyTheme(root.dataset.theme);
+    updateTimerDisplay();
+    renderTestLibrary();
+  </script>
+</body>
+</html>
