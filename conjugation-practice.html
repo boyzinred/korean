@@ -759,6 +759,9 @@
       right: 18px;
       bottom: 18px;
       z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .utility-button {
@@ -778,6 +781,17 @@
 
     .utility-button:hover {
       transform: scale(1.05);
+    }
+
+    .utility-button.toc-button {
+      width: auto;
+      min-width: 46px;
+      padding: 0 14px;
+      color: #FFFFFF;
+      background: var(--accent);
+      border-radius: 999px;
+      text-decoration: none;
+      white-space: nowrap;
     }
 
     /* ---------------------------------------------------------------------
@@ -914,7 +928,7 @@
       </div>
     </section>
 
-    <nav class="toc-card" aria-label="Jump to a grammar section">
+    <nav class="toc-card" id="toc" aria-label="Jump to a grammar section">
       <span class="toc-label">Jump to a section</span>
       <div class="toc-grid" id="tocGrid"></div>
     </nav>
@@ -923,6 +937,12 @@
   </main>
 
   <div class="utility-controls">
+    <a
+      class="utility-button toc-button"
+      href="#toc"
+      aria-label="Back to table of contents"
+      title="Back to table of contents"
+    >TOC ↑</a>
     <button
       class="utility-button"
       id="themeToggle"
@@ -1837,6 +1857,494 @@
     {
       "k": "준비",
       "e": "preparation"
+    },
+    {
+      "k": "사람",
+      "e": "person"
+    },
+    {
+      "k": "가족",
+      "e": "family"
+    },
+    {
+      "k": "부모님",
+      "e": "parents"
+    },
+    {
+      "k": "어머니",
+      "e": "mother"
+    },
+    {
+      "k": "아버지",
+      "e": "father"
+    },
+    {
+      "k": "형",
+      "e": "older brother (male speaker)"
+    },
+    {
+      "k": "누나",
+      "e": "older sister (male speaker)"
+    },
+    {
+      "k": "언니",
+      "e": "older sister (female speaker)"
+    },
+    {
+      "k": "오빠",
+      "e": "older brother (female speaker)"
+    },
+    {
+      "k": "동생",
+      "e": "younger sibling"
+    },
+    {
+      "k": "아이",
+      "e": "child"
+    },
+    {
+      "k": "남자",
+      "e": "man"
+    },
+    {
+      "k": "여자",
+      "e": "woman"
+    },
+    {
+      "k": "아기",
+      "e": "baby"
+    },
+    {
+      "k": "강아지",
+      "e": "dog / puppy"
+    },
+    {
+      "k": "고양이",
+      "e": "cat"
+    },
+    {
+      "k": "동물",
+      "e": "animal"
+    },
+    {
+      "k": "꽃",
+      "e": "flower"
+    },
+    {
+      "k": "나무",
+      "e": "tree"
+    },
+    {
+      "k": "산",
+      "e": "mountain"
+    },
+    {
+      "k": "바다",
+      "e": "sea"
+    },
+    {
+      "k": "강",
+      "e": "river"
+    },
+    {
+      "k": "길",
+      "e": "road / way"
+    },
+    {
+      "k": "도시",
+      "e": "city"
+    },
+    {
+      "k": "마을",
+      "e": "village"
+    },
+    {
+      "k": "나라",
+      "e": "country"
+    },
+    {
+      "k": "언어",
+      "e": "language"
+    },
+    {
+      "k": "영어",
+      "e": "English"
+    },
+    {
+      "k": "중국",
+      "e": "China"
+    },
+    {
+      "k": "캐나다",
+      "e": "Canada"
+    },
+    {
+      "k": "독일",
+      "e": "Germany"
+    },
+    {
+      "k": "프랑스",
+      "e": "France"
+    },
+    {
+      "k": "오늘",
+      "e": "today"
+    },
+    {
+      "k": "내일",
+      "e": "tomorrow"
+    },
+    {
+      "k": "어제",
+      "e": "yesterday"
+    },
+    {
+      "k": "아침",
+      "e": "morning"
+    },
+    {
+      "k": "점심",
+      "e": "lunch / noon"
+    },
+    {
+      "k": "저녁",
+      "e": "evening / dinner"
+    },
+    {
+      "k": "밤",
+      "e": "night"
+    },
+    {
+      "k": "시간",
+      "e": "time / hour"
+    },
+    {
+      "k": "주말",
+      "e": "weekend"
+    },
+    {
+      "k": "월요일",
+      "e": "Monday"
+    },
+    {
+      "k": "화요일",
+      "e": "Tuesday"
+    },
+    {
+      "k": "수요일",
+      "e": "Wednesday"
+    },
+    {
+      "k": "목요일",
+      "e": "Thursday"
+    },
+    {
+      "k": "금요일",
+      "e": "Friday"
+    },
+    {
+      "k": "토요일",
+      "e": "Saturday"
+    },
+    {
+      "k": "일요일",
+      "e": "Sunday"
+    },
+    {
+      "k": "돈",
+      "e": "money"
+    },
+    {
+      "k": "가격",
+      "e": "price"
+    },
+    {
+      "k": "옷",
+      "e": "clothes"
+    },
+    {
+      "k": "신발",
+      "e": "shoes"
+    },
+    {
+      "k": "모자",
+      "e": "hat"
+    },
+    {
+      "k": "안경",
+      "e": "glasses"
+    },
+    {
+      "k": "열쇠",
+      "e": "key"
+    },
+    {
+      "k": "지갑",
+      "e": "wallet"
+    },
+    {
+      "k": "우산",
+      "e": "umbrella"
+    },
+    {
+      "k": "컵",
+      "e": "cup"
+    },
+    {
+      "k": "접시",
+      "e": "plate"
+    },
+    {
+      "k": "숟가락",
+      "e": "spoon"
+    },
+    {
+      "k": "젓가락",
+      "e": "chopsticks"
+    },
+    {
+      "k": "냉장고",
+      "e": "refrigerator"
+    },
+    {
+      "k": "부엌",
+      "e": "kitchen"
+    },
+    {
+      "k": "화장실",
+      "e": "bathroom"
+    },
+    {
+      "k": "거실",
+      "e": "living room"
+    },
+    {
+      "k": "건물",
+      "e": "building"
+    },
+    {
+      "k": "병원",
+      "e": "hospital"
+    },
+    {
+      "k": "약국",
+      "e": "pharmacy"
+    },
+    {
+      "k": "호텔",
+      "e": "hotel"
+    },
+    {
+      "k": "공항",
+      "e": "airport"
+    },
+    {
+      "k": "역",
+      "e": "station"
+    },
+    {
+      "k": "정류장",
+      "e": "bus stop"
+    },
+    {
+      "k": "기차",
+      "e": "train"
+    },
+    {
+      "k": "택시",
+      "e": "taxi"
+    },
+    {
+      "k": "자전거",
+      "e": "bicycle"
+    },
+    {
+      "k": "지도",
+      "e": "map"
+    },
+    {
+      "k": "표",
+      "e": "ticket"
+    },
+    {
+      "k": "여권",
+      "e": "passport"
+    },
+    {
+      "k": "카드",
+      "e": "card"
+    },
+    {
+      "k": "편지",
+      "e": "letter"
+    },
+    {
+      "k": "소포",
+      "e": "parcel"
+    },
+    {
+      "k": "선물",
+      "e": "gift"
+    },
+    {
+      "k": "약",
+      "e": "medicine"
+    },
+    {
+      "k": "몸",
+      "e": "body"
+    },
+    {
+      "k": "머리",
+      "e": "head / hair"
+    },
+    {
+      "k": "손",
+      "e": "hand"
+    },
+    {
+      "k": "발",
+      "e": "foot"
+    },
+    {
+      "k": "눈",
+      "e": "eye / snow"
+    },
+    {
+      "k": "코",
+      "e": "nose"
+    },
+    {
+      "k": "입",
+      "e": "mouth"
+    },
+    {
+      "k": "마음",
+      "e": "heart / mind"
+    },
+    {
+      "k": "생각",
+      "e": "thought"
+    },
+    {
+      "k": "꿈",
+      "e": "dream"
+    },
+    {
+      "k": "취미",
+      "e": "hobby"
+    },
+    {
+      "k": "게임",
+      "e": "game"
+    },
+    {
+      "k": "영화",
+      "e": "movie"
+    },
+    {
+      "k": "드라마",
+      "e": "drama"
+    },
+    {
+      "k": "책방",
+      "e": "bookstore"
+    },
+    {
+      "k": "카페",
+      "e": "cafe"
+    },
+    {
+      "k": "빵",
+      "e": "bread"
+    },
+    {
+      "k": "고기",
+      "e": "meat"
+    },
+    {
+      "k": "채소",
+      "e": "vegetable"
+    },
+    {
+      "k": "계란",
+      "e": "egg"
+    },
+    {
+      "k": "치즈",
+      "e": "cheese"
+    },
+    {
+      "k": "차",
+      "e": "tea / car"
+    },
+    {
+      "k": "주스",
+      "e": "juice"
+    },
+    {
+      "k": "맥주",
+      "e": "beer"
+    },
+    {
+      "k": "메뉴",
+      "e": "menu"
+    },
+    {
+      "k": "주문",
+      "e": "order"
+    },
+    {
+      "k": "숙제",
+      "e": "homework"
+    },
+    {
+      "k": "질문",
+      "e": "question"
+    },
+    {
+      "k": "대답",
+      "e": "answer"
+    },
+    {
+      "k": "단어",
+      "e": "word"
+    },
+    {
+      "k": "문장",
+      "e": "sentence"
+    },
+    {
+      "k": "이야기",
+      "e": "story / conversation"
+    },
+    {
+      "k": "소리",
+      "e": "sound"
+    },
+    {
+      "k": "색",
+      "e": "color"
+    },
+    {
+      "k": "빨간색",
+      "e": "red color"
+    },
+    {
+      "k": "파란색",
+      "e": "blue color"
+    },
+    {
+      "k": "노란색",
+      "e": "yellow color"
+    },
+    {
+      "k": "검은색",
+      "e": "black color"
+    },
+    {
+      "k": "흰색",
+      "e": "white color"
     }
   ],
   "verbs": [
@@ -2019,6 +2527,281 @@
       "base": "쉬다",
       "e": "to rest",
       "answer": "쉬어요"
+    },
+    {
+      "base": "걷다",
+      "e": "to walk",
+      "answer": "걸어요"
+    },
+    {
+      "base": "듣다",
+      "e": "to listen / hear",
+      "answer": "들어요"
+    },
+    {
+      "base": "묻다",
+      "e": "to ask",
+      "answer": "물어요"
+    },
+    {
+      "base": "웃다",
+      "e": "to laugh / smile",
+      "answer": "웃어요"
+    },
+    {
+      "base": "울다",
+      "e": "to cry",
+      "answer": "울어요"
+    },
+    {
+      "base": "말하다",
+      "e": "to speak / say",
+      "answer": "말해요"
+    },
+    {
+      "base": "이야기하다",
+      "e": "to talk / tell a story",
+      "answer": "이야기해요"
+    },
+    {
+      "base": "질문하다",
+      "e": "to ask a question",
+      "answer": "질문해요"
+    },
+    {
+      "base": "대답하다",
+      "e": "to answer",
+      "answer": "대답해요"
+    },
+    {
+      "base": "이해하다",
+      "e": "to understand",
+      "answer": "이해해요"
+    },
+    {
+      "base": "기억하다",
+      "e": "to remember",
+      "answer": "기억해요"
+    },
+    {
+      "base": "생각하다",
+      "e": "to think",
+      "answer": "생각해요"
+    },
+    {
+      "base": "좋아하다",
+      "e": "to like",
+      "answer": "좋아해요"
+    },
+    {
+      "base": "싫어하다",
+      "e": "to dislike",
+      "answer": "싫어해요"
+    },
+    {
+      "base": "사랑하다",
+      "e": "to love",
+      "answer": "사랑해요"
+    },
+    {
+      "base": "예약하다",
+      "e": "to reserve / book",
+      "answer": "예약해요"
+    },
+    {
+      "base": "준비하다",
+      "e": "to prepare",
+      "answer": "준비해요"
+    },
+    {
+      "base": "출발하다",
+      "e": "to depart",
+      "answer": "출발해요"
+    },
+    {
+      "base": "도착하다",
+      "e": "to arrive",
+      "answer": "도착해요"
+    },
+    {
+      "base": "여행하다",
+      "e": "to travel",
+      "answer": "여행해요"
+    },
+    {
+      "base": "운전하다",
+      "e": "to drive",
+      "answer": "운전해요"
+    },
+    {
+      "base": "뛰다",
+      "e": "to run / jump",
+      "answer": "뛰어요"
+    },
+    {
+      "base": "수영하다",
+      "e": "to swim",
+      "answer": "수영해요"
+    },
+    {
+      "base": "일어나다",
+      "e": "to get up",
+      "answer": "일어나요"
+    },
+    {
+      "base": "씻다",
+      "e": "to wash",
+      "answer": "씻어요"
+    },
+    {
+      "base": "샤워하다",
+      "e": "to shower",
+      "answer": "샤워해요"
+    },
+    {
+      "base": "입다",
+      "e": "to wear",
+      "answer": "입어요"
+    },
+    {
+      "base": "벗다",
+      "e": "to take off clothes",
+      "answer": "벗어요"
+    },
+    {
+      "base": "열다",
+      "e": "to open",
+      "answer": "열어요"
+    },
+    {
+      "base": "찾다",
+      "e": "to find / look for",
+      "answer": "찾아요"
+    },
+    {
+      "base": "잃어버리다",
+      "e": "to lose",
+      "answer": "잃어버려요"
+    },
+    {
+      "base": "빌리다",
+      "e": "to borrow",
+      "answer": "빌려요"
+    },
+    {
+      "base": "돌려주다",
+      "e": "to return / give back",
+      "answer": "돌려줘요"
+    },
+    {
+      "base": "주문하다",
+      "e": "to order",
+      "answer": "주문해요"
+    },
+    {
+      "base": "선택하다",
+      "e": "to choose",
+      "answer": "선택해요"
+    },
+    {
+      "base": "사용하다",
+      "e": "to use",
+      "answer": "사용해요"
+    },
+    {
+      "base": "연습하다",
+      "e": "to practice",
+      "answer": "연습해요"
+    },
+    {
+      "base": "설명하다",
+      "e": "to explain",
+      "answer": "설명해요"
+    },
+    {
+      "base": "도와주다",
+      "e": "to help",
+      "answer": "도와줘요"
+    },
+    {
+      "base": "끝내다",
+      "e": "to finish something",
+      "answer": "끝내요"
+    },
+    {
+      "base": "들어가다",
+      "e": "to go in",
+      "answer": "들어가요"
+    },
+    {
+      "base": "나오다",
+      "e": "to come out",
+      "answer": "나와요"
+    },
+    {
+      "base": "올라가다",
+      "e": "to go up",
+      "answer": "올라가요"
+    },
+    {
+      "base": "내려가다",
+      "e": "to go down",
+      "answer": "내려가요"
+    },
+    {
+      "base": "가져오다",
+      "e": "to bring",
+      "answer": "가져와요"
+    },
+    {
+      "base": "가져가다",
+      "e": "to take / carry away",
+      "answer": "가져가요"
+    },
+    {
+      "base": "켜다",
+      "e": "to turn on",
+      "answer": "켜요"
+    },
+    {
+      "base": "찍다",
+      "e": "to take a photo / stamp",
+      "answer": "찍어요"
+    },
+    {
+      "base": "춤추다",
+      "e": "to dance",
+      "answer": "춤춰요"
+    },
+    {
+      "base": "걱정하다",
+      "e": "to worry",
+      "answer": "걱정해요"
+    },
+    {
+      "base": "결정하다",
+      "e": "to decide",
+      "answer": "결정해요"
+    },
+    {
+      "base": "약속하다",
+      "e": "to promise",
+      "answer": "약속해요"
+    },
+    {
+      "base": "방문하다",
+      "e": "to visit",
+      "answer": "방문해요"
+    },
+    {
+      "base": "전화받다",
+      "e": "to answer the phone",
+      "answer": "전화받아요"
+    },
+    {
+      "base": "일찍 일어나다",
+      "e": "to get up early",
+      "answer": "일찍 일어나요"
     }
   ],
   "adjectives": [
@@ -2231,6 +3014,201 @@
       "base": "흐리다",
       "e": "cloudy",
       "answer": "흐려요"
+    },
+    {
+      "base": "빠르다",
+      "e": "fast",
+      "answer": "빨라요"
+    },
+    {
+      "base": "다르다",
+      "e": "different",
+      "answer": "달라요"
+    },
+    {
+      "base": "같다",
+      "e": "same / alike",
+      "answer": "같아요"
+    },
+    {
+      "base": "젊다",
+      "e": "young",
+      "answer": "젊어요"
+    },
+    {
+      "base": "늙다",
+      "e": "old (age)",
+      "answer": "늙어요"
+    },
+    {
+      "base": "밝다",
+      "e": "bright",
+      "answer": "밝아요"
+    },
+    {
+      "base": "편하다",
+      "e": "comfortable",
+      "answer": "편해요"
+    },
+    {
+      "base": "불편하다",
+      "e": "uncomfortable / inconvenient",
+      "answer": "불편해요"
+    },
+    {
+      "base": "복잡하다",
+      "e": "complicated / crowded",
+      "answer": "복잡해요"
+    },
+    {
+      "base": "간단하다",
+      "e": "simple",
+      "answer": "간단해요"
+    },
+    {
+      "base": "이상하다",
+      "e": "strange",
+      "answer": "이상해요"
+    },
+    {
+      "base": "특별하다",
+      "e": "special",
+      "answer": "특별해요"
+    },
+    {
+      "base": "평범하다",
+      "e": "ordinary",
+      "answer": "평범해요"
+    },
+    {
+      "base": "강하다",
+      "e": "strong",
+      "answer": "강해요"
+    },
+    {
+      "base": "약하다",
+      "e": "weak",
+      "answer": "약해요"
+    },
+    {
+      "base": "딱딱하다",
+      "e": "hard / stiff",
+      "answer": "딱딱해요"
+    },
+    {
+      "base": "달다",
+      "e": "sweet",
+      "answer": "달아요"
+    },
+    {
+      "base": "쓰다",
+      "e": "bitter",
+      "answer": "써요"
+    },
+    {
+      "base": "짜다",
+      "e": "salty",
+      "answer": "짜요"
+    },
+    {
+      "base": "시다",
+      "e": "sour",
+      "answer": "셔요"
+    },
+    {
+      "base": "신선하다",
+      "e": "fresh",
+      "answer": "신선해요"
+    },
+    {
+      "base": "배고프다",
+      "e": "hungry",
+      "answer": "배고파요"
+    },
+    {
+      "base": "목마르다",
+      "e": "thirsty",
+      "answer": "목말라요"
+    },
+    {
+      "base": "졸리다",
+      "e": "sleepy",
+      "answer": "졸려요"
+    },
+    {
+      "base": "튼튼하다",
+      "e": "sturdy / healthy",
+      "answer": "튼튼해요"
+    },
+    {
+      "base": "똑똑하다",
+      "e": "smart",
+      "answer": "똑똑해요"
+    },
+    {
+      "base": "불친절하다",
+      "e": "unkind",
+      "answer": "불친절해요"
+    },
+    {
+      "base": "답답하다",
+      "e": "frustrating / stuffy",
+      "answer": "답답해요"
+    },
+    {
+      "base": "심심하다",
+      "e": "bored",
+      "answer": "심심해요"
+    },
+    {
+      "base": "편안하다",
+      "e": "relaxed / comfortable",
+      "answer": "편안해요"
+    },
+    {
+      "base": "위험하다",
+      "e": "dangerous",
+      "answer": "위험해요"
+    },
+    {
+      "base": "가능하다",
+      "e": "possible",
+      "answer": "가능해요"
+    },
+    {
+      "base": "불가능하다",
+      "e": "impossible",
+      "answer": "불가능해요"
+    },
+    {
+      "base": "비슷하다",
+      "e": "similar",
+      "answer": "비슷해요"
+    },
+    {
+      "base": "정직하다",
+      "e": "honest",
+      "answer": "정직해요"
+    },
+    {
+      "base": "부지런하다",
+      "e": "diligent",
+      "answer": "부지런해요"
+    },
+    {
+      "base": "게으르다",
+      "e": "lazy",
+      "answer": "게을러요"
+    },
+    {
+      "base": "급하다",
+      "e": "urgent / hurried",
+      "answer": "급해요"
+    },
+    {
+      "base": "느긋하다",
+      "e": "relaxed / unhurried",
+      "answer": "느긋해요"
     }
   ],
   "sentenceAdjectives": [
@@ -2498,6 +3476,261 @@
       "base": "귀엽다",
       "e": "cute",
       "answer": "귀여워요"
+    },
+    {
+      "base": "빠르다",
+      "e": "fast",
+      "answer": "빨라요"
+    },
+    {
+      "base": "다르다",
+      "e": "different",
+      "answer": "달라요"
+    },
+    {
+      "base": "같다",
+      "e": "same / alike",
+      "answer": "같아요"
+    },
+    {
+      "base": "젊다",
+      "e": "young",
+      "answer": "젊어요"
+    },
+    {
+      "base": "늙다",
+      "e": "old (age)",
+      "answer": "늙어요"
+    },
+    {
+      "base": "밝다",
+      "e": "bright",
+      "answer": "밝아요"
+    },
+    {
+      "base": "편하다",
+      "e": "comfortable",
+      "answer": "편해요"
+    },
+    {
+      "base": "불편하다",
+      "e": "uncomfortable / inconvenient",
+      "answer": "불편해요"
+    },
+    {
+      "base": "복잡하다",
+      "e": "complicated / crowded",
+      "answer": "복잡해요"
+    },
+    {
+      "base": "간단하다",
+      "e": "simple",
+      "answer": "간단해요"
+    },
+    {
+      "base": "이상하다",
+      "e": "strange",
+      "answer": "이상해요"
+    },
+    {
+      "base": "특별하다",
+      "e": "special",
+      "answer": "특별해요"
+    },
+    {
+      "base": "평범하다",
+      "e": "ordinary",
+      "answer": "평범해요"
+    },
+    {
+      "base": "강하다",
+      "e": "strong",
+      "answer": "강해요"
+    },
+    {
+      "base": "약하다",
+      "e": "weak",
+      "answer": "약해요"
+    },
+    {
+      "base": "딱딱하다",
+      "e": "hard / stiff",
+      "answer": "딱딱해요"
+    },
+    {
+      "base": "달다",
+      "e": "sweet",
+      "answer": "달아요"
+    },
+    {
+      "base": "쓰다",
+      "e": "bitter",
+      "answer": "써요"
+    },
+    {
+      "base": "짜다",
+      "e": "salty",
+      "answer": "짜요"
+    },
+    {
+      "base": "시다",
+      "e": "sour",
+      "answer": "셔요"
+    },
+    {
+      "base": "신선하다",
+      "e": "fresh",
+      "answer": "신선해요"
+    },
+    {
+      "base": "배고프다",
+      "e": "hungry",
+      "answer": "배고파요"
+    },
+    {
+      "base": "목마르다",
+      "e": "thirsty",
+      "answer": "목말라요"
+    },
+    {
+      "base": "졸리다",
+      "e": "sleepy",
+      "answer": "졸려요"
+    },
+    {
+      "base": "튼튼하다",
+      "e": "sturdy / healthy",
+      "answer": "튼튼해요"
+    },
+    {
+      "base": "똑똑하다",
+      "e": "smart",
+      "answer": "똑똑해요"
+    },
+    {
+      "base": "불친절하다",
+      "e": "unkind",
+      "answer": "불친절해요"
+    },
+    {
+      "base": "답답하다",
+      "e": "frustrating / stuffy",
+      "answer": "답답해요"
+    },
+    {
+      "base": "심심하다",
+      "e": "bored",
+      "answer": "심심해요"
+    },
+    {
+      "base": "편안하다",
+      "e": "relaxed / comfortable",
+      "answer": "편안해요"
+    },
+    {
+      "base": "위험하다",
+      "e": "dangerous",
+      "answer": "위험해요"
+    },
+    {
+      "base": "가능하다",
+      "e": "possible",
+      "answer": "가능해요"
+    },
+    {
+      "base": "불가능하다",
+      "e": "impossible",
+      "answer": "불가능해요"
+    },
+    {
+      "base": "비슷하다",
+      "e": "similar",
+      "answer": "비슷해요"
+    },
+    {
+      "base": "정직하다",
+      "e": "honest",
+      "answer": "정직해요"
+    },
+    {
+      "base": "부지런하다",
+      "e": "diligent",
+      "answer": "부지런해요"
+    },
+    {
+      "base": "게으르다",
+      "e": "lazy",
+      "answer": "게을러요"
+    },
+    {
+      "base": "급하다",
+      "e": "urgent / hurried",
+      "answer": "급해요"
+    },
+    {
+      "base": "느긋하다",
+      "e": "relaxed / unhurried",
+      "answer": "느긋해요"
+    },
+    {
+      "base": "무섭다",
+      "e": "scary",
+      "answer": "무서워요"
+    },
+    {
+      "base": "즐겁다",
+      "e": "enjoyable / pleasant",
+      "answer": "즐거워요"
+    },
+    {
+      "base": "반갑다",
+      "e": "glad to meet / welcome",
+      "answer": "반가워요"
+    },
+    {
+      "base": "부드럽다",
+      "e": "soft / gentle",
+      "answer": "부드러워요"
+    },
+    {
+      "base": "시끄럽다",
+      "e": "noisy",
+      "answer": "시끄러워요"
+    },
+    {
+      "base": "새롭다",
+      "e": "new",
+      "answer": "새로워요"
+    },
+    {
+      "base": "외롭다",
+      "e": "lonely",
+      "answer": "외로워요"
+    },
+    {
+      "base": "아쉽다",
+      "e": "regrettable / a pity",
+      "answer": "아쉬워요"
+    },
+    {
+      "base": "어지럽다",
+      "e": "dizzy / messy",
+      "answer": "어지러워요"
+    },
+    {
+      "base": "아깝다",
+      "e": "wasteful / too good to waste",
+      "answer": "아까워요"
+    },
+    {
+      "base": "까다롭다",
+      "e": "picky / demanding",
+      "answer": "까다로워요"
+    },
+    {
+      "base": "흥미롭다",
+      "e": "interesting",
+      "answer": "흥미로워요"
     }
   ],
   "bieup": [
@@ -2631,6 +3864,84 @@
       "base": "뽑다",
       "e": "to pull out / select — regular exception",
       "answer": "뽑아요",
+      "kind": "regular exception"
+    },
+    {
+      "base": "무섭다",
+      "e": "scary",
+      "answer": "무서워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "즐겁다",
+      "e": "enjoyable / pleasant",
+      "answer": "즐거워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "반갑다",
+      "e": "glad to meet / welcome",
+      "answer": "반가워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "부드럽다",
+      "e": "soft / gentle",
+      "answer": "부드러워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "시끄럽다",
+      "e": "noisy",
+      "answer": "시끄러워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "새롭다",
+      "e": "new",
+      "answer": "새로워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "외롭다",
+      "e": "lonely",
+      "answer": "외로워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "아쉽다",
+      "e": "regrettable / a pity",
+      "answer": "아쉬워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "어지럽다",
+      "e": "dizzy / messy",
+      "answer": "어지러워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "아깝다",
+      "e": "wasteful / too good to waste",
+      "answer": "아까워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "까다롭다",
+      "e": "picky / demanding",
+      "answer": "까다로워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "흥미롭다",
+      "e": "interesting",
+      "answer": "흥미로워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "접다",
+      "e": "to fold — regular exception",
+      "answer": "접어요",
       "kind": "regular exception"
     }
   ],
@@ -2826,6 +4137,234 @@
       "e": "to not exist / not have",
       "statement": "없습니다",
       "question": "없습니까?"
+    },
+    {
+      "base": "걷다",
+      "e": "to walk",
+      "statement": "걷습니다",
+      "question": "걷습니까?"
+    },
+    {
+      "base": "듣다",
+      "e": "to listen / hear",
+      "statement": "듣습니다",
+      "question": "듣습니까?"
+    },
+    {
+      "base": "묻다",
+      "e": "to ask",
+      "statement": "묻습니다",
+      "question": "묻습니까?"
+    },
+    {
+      "base": "웃다",
+      "e": "to laugh / smile",
+      "statement": "웃습니다",
+      "question": "웃습니까?"
+    },
+    {
+      "base": "울다",
+      "e": "to cry",
+      "statement": "웁니다",
+      "question": "웁니까?"
+    },
+    {
+      "base": "닫다",
+      "e": "to close",
+      "statement": "닫습니다",
+      "question": "닫습니까?"
+    },
+    {
+      "base": "찾다",
+      "e": "to find / look for",
+      "statement": "찾습니다",
+      "question": "찾습니까?"
+    },
+    {
+      "base": "입다",
+      "e": "to wear",
+      "statement": "입습니다",
+      "question": "입습니까?"
+    },
+    {
+      "base": "벗다",
+      "e": "to take off clothes",
+      "statement": "벗습니다",
+      "question": "벗습니까?"
+    },
+    {
+      "base": "쓰다",
+      "e": "to write / use",
+      "statement": "씁니다",
+      "question": "씁니까?"
+    },
+    {
+      "base": "쉬다",
+      "e": "to rest",
+      "statement": "쉽니다",
+      "question": "쉽니까?"
+    },
+    {
+      "base": "기다리다",
+      "e": "to wait",
+      "statement": "기다립니다",
+      "question": "기다립니까?"
+    },
+    {
+      "base": "일하다",
+      "e": "to work",
+      "statement": "일합니다",
+      "question": "일합니까?"
+    },
+    {
+      "base": "운동하다",
+      "e": "to exercise",
+      "statement": "운동합니다",
+      "question": "운동합니까?"
+    },
+    {
+      "base": "준비하다",
+      "e": "to prepare",
+      "statement": "준비합니다",
+      "question": "준비합니까?"
+    },
+    {
+      "base": "여행하다",
+      "e": "to travel",
+      "statement": "여행합니다",
+      "question": "여행합니까?"
+    },
+    {
+      "base": "운전하다",
+      "e": "to drive",
+      "statement": "운전합니다",
+      "question": "운전합니까?"
+    },
+    {
+      "base": "설명하다",
+      "e": "to explain",
+      "statement": "설명합니다",
+      "question": "설명합니까?"
+    },
+    {
+      "base": "질문하다",
+      "e": "to ask a question",
+      "statement": "질문합니다",
+      "question": "질문합니까?"
+    },
+    {
+      "base": "대답하다",
+      "e": "to answer",
+      "statement": "대답합니다",
+      "question": "대답합니까?"
+    },
+    {
+      "base": "사다",
+      "e": "to buy",
+      "statement": "삽니다",
+      "question": "삽니까?"
+    },
+    {
+      "base": "타다",
+      "e": "to ride",
+      "statement": "탑니다",
+      "question": "탑니까?"
+    },
+    {
+      "base": "크다",
+      "e": "big",
+      "statement": "큽니다",
+      "question": "큽니까?"
+    },
+    {
+      "base": "예쁘다",
+      "e": "pretty",
+      "statement": "예쁩니다",
+      "question": "예쁩니까?"
+    },
+    {
+      "base": "바쁘다",
+      "e": "busy",
+      "statement": "바쁩니다",
+      "question": "바쁩니까?"
+    },
+    {
+      "base": "빠르다",
+      "e": "fast",
+      "statement": "빠릅니다",
+      "question": "빠릅니까?"
+    },
+    {
+      "base": "다르다",
+      "e": "different",
+      "statement": "다릅니다",
+      "question": "다릅니까?"
+    },
+    {
+      "base": "편하다",
+      "e": "comfortable",
+      "statement": "편합니다",
+      "question": "편합니까?"
+    },
+    {
+      "base": "불편하다",
+      "e": "uncomfortable",
+      "statement": "불편합니다",
+      "question": "불편합니까?"
+    },
+    {
+      "base": "복잡하다",
+      "e": "complicated / crowded",
+      "statement": "복잡합니다",
+      "question": "복잡합니까?"
+    },
+    {
+      "base": "밝다",
+      "e": "bright",
+      "statement": "밝습니다",
+      "question": "밝습니까?"
+    },
+    {
+      "base": "젊다",
+      "e": "young",
+      "statement": "젊습니다",
+      "question": "젊습니까?"
+    },
+    {
+      "base": "맑다",
+      "e": "clear",
+      "statement": "맑습니다",
+      "question": "맑습니까?"
+    },
+    {
+      "base": "필요하다",
+      "e": "necessary",
+      "statement": "필요합니다",
+      "question": "필요합니까?"
+    },
+    {
+      "base": "중요하다",
+      "e": "important",
+      "statement": "중요합니다",
+      "question": "중요합니까?"
+    },
+    {
+      "base": "유명하다",
+      "e": "famous",
+      "statement": "유명합니다",
+      "question": "유명합니까?"
+    },
+    {
+      "base": "행복하다",
+      "e": "happy",
+      "statement": "행복합니다",
+      "question": "행복합니까?"
+    },
+    {
+      "base": "피곤하다",
+      "e": "tired",
+      "statement": "피곤합니다",
+      "question": "피곤합니까?"
     }
   ]
 };
