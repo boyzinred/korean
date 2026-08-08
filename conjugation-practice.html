@@ -1,0 +1,3651 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const preferred = matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+
+        document.documentElement.dataset.theme = saved || preferred;
+        document.documentElement.style.colorScheme = saved || preferred;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Interactive Korean conjugation and particle practice."
+  >
+  <title>Korean Conjugation Practice</title>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
+
+    /* ---------------------------------------------------------------------
+       Theme
+    --------------------------------------------------------------------- */
+
+    :root {
+      color-scheme: light;
+
+      --background: #28468A;
+      --foreground: #F5F5F5;
+      --primary: #BCE0E6;
+      --primary-hover: #ADC6CB;
+      --secondary: #AD8FE6;
+      --secondary-soft: #8E7EBF;
+      --accent: #C74E33;
+      --accent-soft: #A24B36;
+      --muted: #A0E090;
+      --muted-strong: #99C588;
+      --blue-soft: #6375CF;
+      --border: #6674C8;
+      --subtle: #DEEAAE;
+
+      --surface: #F5F5F5;
+      --surface-text: #28468A;
+      --surface-muted: #E8ECF4;
+      --inverse: #20386E;
+      --inverse-text: #F5F5F5;
+
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --font: "Outfit", system-ui, sans-serif;
+      --transition: 180ms ease;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+
+      --background: #111827;
+      --foreground: #F9FAFB;
+      --primary: #6CC2D0;
+      --primary-hover: #6CC0D0;
+      --secondary: #8B61DC;
+      --secondary-soft: #201933;
+      --accent: #E29D8D;
+      --accent-soft: #391B13;
+      --muted: #1F2937;
+      --muted-strong: #374151;
+      --blue-soft: #12193B;
+      --border: #374151;
+      --subtle: #CBD5E1;
+
+      --surface: #1F2937;
+      --surface-text: #F9FAFB;
+      --surface-muted: #111827;
+      --inverse: #0F172A;
+      --inverse-text: #F9FAFB;
+    }
+
+    /* ---------------------------------------------------------------------
+       Base
+    --------------------------------------------------------------------- */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--foreground);
+      background: var(--background);
+      font-family: var(--font);
+      line-height: 1.55;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ---------------------------------------------------------------------
+       Header and page shell
+    --------------------------------------------------------------------- */
+
+    .site-header {
+      color: var(--surface-text);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner,
+    .page-main {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .header-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--surface-text);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .header-link {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      text-decoration: none;
+      transition:
+        transform var(--transition),
+        border-color var(--transition);
+    }
+
+    .header-link:hover {
+      border-color: var(--primary);
+      transform: scale(1.03);
+    }
+
+    .page-main {
+      margin-top: 24px;
+      margin-bottom: 72px;
+      overflow: hidden;
+      color: var(--surface-text);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+    }
+
+    /* ---------------------------------------------------------------------
+       Hero and table of contents
+    --------------------------------------------------------------------- */
+
+    .hero {
+      color: #FFFFFF;
+      background: var(--background);
+    }
+
+    .hero-inner {
+      padding: clamp(48px, 7vw, 82px);
+    }
+
+    .hero-kicker {
+      margin: 0 0 18px;
+      color: var(--primary);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 12ch;
+      margin: 0;
+      font-size: clamp(3rem, 7vw, 5.6rem);
+      font-weight: 800;
+      line-height: 0.94;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      max-width: 70ch;
+      margin: 24px 0 0;
+      color: #EFF6FF;
+      font-size: 1.05rem;
+    }
+
+    .toc-card {
+      padding: 24px clamp(22px, 5vw, 52px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-label {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .toc-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .toc-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 0 12px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .toc-link:hover {
+      border-color: var(--primary);
+    }
+
+    /* ---------------------------------------------------------------------
+       Section cards
+    --------------------------------------------------------------------- */
+
+    .sections {
+      padding: clamp(22px, 5vw, 52px);
+    }
+
+    details.section {
+      overflow: hidden;
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    details.section > summary {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 20px 24px;
+      color: var(--inverse-text);
+      background: var(--inverse);
+      cursor: pointer;
+      font-size: clamp(1.35rem, 2.8vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      list-style: none;
+    }
+
+    details.section > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.section > summary::after {
+      content: "+";
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      color: #192B5D;
+      background: var(--primary);
+      border-radius: 50%;
+      font-size: 1.5rem;
+    }
+
+    details.section[open] > summary::after {
+      content: "−";
+    }
+
+    .section-body {
+      padding: clamp(22px, 4vw, 36px);
+    }
+
+    .section-intro {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .info-card {
+      min-width: 0;
+      padding: 22px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-lg);
+    }
+
+    .rule-label {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .info-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .info-card p {
+      margin: 0;
+    }
+
+    .guide-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .guide-step {
+      padding: 14px;
+      background: var(--surface);
+      border-left: 5px solid var(--primary);
+      border-radius: var(--radius-md);
+    }
+
+    .guide-step strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .rule-table-wrap {
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    .rule-table {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+    }
+
+    .rule-table th,
+    .rule-table td {
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .rule-table th {
+      background: var(--surface-muted);
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .example {
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .example-base {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .example-answer {
+      margin-top: 7px;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .roman {
+      opacity: 0.74;
+      font-size: 0.9rem;
+    }
+
+    /* ---------------------------------------------------------------------
+       Exercise
+    --------------------------------------------------------------------- */
+
+    .exercise {
+      overflow: hidden;
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .exercise-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 160px;
+      color: var(--inverse-text);
+      background: var(--inverse);
+    }
+
+    .exercise-head-copy {
+      padding: 22px;
+    }
+
+    .exercise-kicker {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .exercise-head h3 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .exercise-head p {
+      margin: 8px 0 0;
+      opacity: 0.9;
+    }
+
+    .score {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      color: #192B5D;
+      background: var(--secondary);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .exercise-body {
+      padding: 22px;
+    }
+
+    .exercise-menu {
+      padding: 18px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-lg);
+    }
+
+    .exercise-menu h4 {
+      margin: 0 0 5px;
+      font-size: 1.15rem;
+    }
+
+    .exercise-menu > p {
+      margin: 0 0 16px;
+      opacity: 0.8;
+    }
+
+    .exercise-menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .exercise-menu-grid label,
+    .menu-static {
+      min-width: 0;
+      min-height: 76px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .exercise-menu-grid input {
+      width: 100%;
+      min-height: 36px;
+      padding: 0 8px;
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-weight: 700;
+    }
+
+    .menu-static strong {
+      overflow: hidden;
+      font-size: 0.95rem;
+      letter-spacing: 0;
+      text-overflow: ellipsis;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .exercise-menu-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .btn,
+    .end-early-btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border: 0;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      transition:
+        transform var(--transition),
+        background var(--transition);
+    }
+
+    .btn:hover,
+    .end-early-btn:hover {
+      transform: scale(1.02);
+    }
+
+    .btn.primary {
+      color: #192B5D;
+      background: var(--primary);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn.secondary {
+      color: var(--surface-text);
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn.warning,
+    .end-early-btn {
+      color: #FFFFFF;
+      background: var(--accent);
+    }
+
+    .runtime-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .progress {
+      height: 10px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      background: var(--muted-strong);
+    }
+
+    .progress > div {
+      width: 0;
+      height: 100%;
+      background: var(--secondary);
+      transition: width var(--transition);
+    }
+
+    .prompt-card {
+      padding: clamp(22px, 4vw, 34px);
+      background: var(--surface-muted);
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+
+    .prompt-target {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 6px 9px;
+      color: #192B5D;
+      background: var(--primary);
+      border-radius: var(--radius-md);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .prompt-word {
+      font-size: clamp(2.4rem, 7vw, 4.7rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .prompt-meaning {
+      margin-top: 12px;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .answer-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .answer {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 14px;
+      color: var(--surface-text);
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+    }
+
+    .feedback.good {
+      display: block;
+      color: #FFFFFF;
+      background: var(--secondary-soft);
+      border-left: 7px solid var(--secondary);
+    }
+
+    .feedback.bad {
+      display: block;
+      color: #FFFFFF;
+      background: var(--accent-soft);
+      border-left: 7px solid var(--accent);
+    }
+
+    html[data-theme="dark"] .feedback.good,
+    html[data-theme="dark"] .feedback.bad {
+      color: var(--foreground);
+    }
+
+    .answer-display {
+      margin-top: 7px;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .next-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .finish {
+      display: none;
+    }
+
+    .finish h4 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .finish-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .review {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .review-item {
+      padding: 12px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-md);
+    }
+
+    /* ---------------------------------------------------------------------
+       Floating theme control
+    --------------------------------------------------------------------- */
+
+    .utility-controls {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 20;
+    }
+
+    .utility-button {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      color: #192B5D;
+      background: var(--primary);
+      border: 0;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      font-weight: 800;
+      transition: transform var(--transition);
+    }
+
+    .utility-button:hover {
+      transform: scale(1.05);
+    }
+
+    /* ---------------------------------------------------------------------
+       Responsive
+    --------------------------------------------------------------------- */
+
+    @media (max-width: 900px) {
+      .section-intro {
+        grid-template-columns: 1fr;
+      }
+
+      .exercise-head {
+        grid-template-columns: 1fr;
+      }
+
+      .score {
+        min-height: 72px;
+      }
+
+      .examples {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .header-inner,
+      .page-main {
+        width: 100%;
+      }
+
+      .header-inner {
+        min-height: 60px;
+        padding: 0 14px;
+      }
+
+      .page-main {
+        margin-top: 0;
+        border-radius: 0;
+      }
+
+      .hero-inner {
+        padding: 48px 22px;
+      }
+
+      .toc-card,
+      .sections {
+        padding-inline: 22px;
+      }
+
+      .toc-card {
+        overflow-x: auto;
+      }
+
+      .toc-grid {
+        width: max-content;
+        flex-wrap: nowrap;
+      }
+
+      details.section > summary {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 28px 22px;
+      }
+
+      details.section > summary::after {
+        width: 100%;
+        border-radius: var(--radius-md);
+      }
+
+      .section-body,
+      .exercise-body {
+        padding: 18px;
+      }
+
+      .exercise-menu-grid,
+      .answer-row {
+        grid-template-columns: 1fr;
+      }
+
+      .exercise-menu-actions,
+      .runtime-bar,
+      .finish-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .exercise-menu-actions .btn,
+      .runtime-bar .end-early-btn,
+      .answer-row .btn,
+      .next-row .btn {
+        width: 100%;
+      }
+
+      .status {
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .utility-controls {
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">Korean Language Resources</div>
+      <a class="header-link" href="./index.html">Home</a>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="hero-kicker">Conjugation & particles</p>
+        <h1>Korean Conjugation Practice</h1>
+        <p>
+          Ten focused sections for the noun particles and predicate endings
+          from the Bab lessons. Each section gives the rule first, then one
+          typed exercise: you see a base word with its meaning and produce the
+          requested Korean form.
+        </p>
+      </div>
+    </section>
+
+    <nav class="toc-card" aria-label="Jump to a grammar section">
+      <span class="toc-label">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid"></div>
+    </nav>
+
+    <section class="sections" id="sections"></section>
+  </main>
+
+  <div class="utility-controls">
+    <button
+      class="utility-button"
+      id="themeToggle"
+      type="button"
+      aria-label="Toggle color theme"
+      aria-pressed="false"
+    >
+      <span id="themeIcon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+
+  <script>
+    "use strict";
+
+    // -----------------------------------------------------------------------
+    // Study data
+    // -----------------------------------------------------------------------
+
+    const DATA = {
+  "sections": [
+    {
+      "id": "copula",
+      "title": "N이에요 / 예요",
+      "label": "Polite noun copula",
+      "meaning": "Attach the polite-casual form of “to be” directly to a noun.",
+      "guide": [
+        {
+          "heading": "1. Check the final syllable of the noun",
+          "text": "If the noun ends with a final consonant (받침), use 이에요. If it ends in a vowel, use 예요."
+        },
+        {
+          "heading": "2. Attach it directly",
+          "text": "There is no space between the noun and the ending: 학생 + 이에요 → 학생이에요; 의사 + 예요 → 의사예요."
+        },
+        {
+          "heading": "Question form",
+          "text": "In polite casual speech, the written form stays the same; add a question mark and use rising intonation: 학생이에요?"
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final noun",
+          "N + 이에요",
+          "학생 → 학생이에요"
+        ],
+        [
+          "Vowel-final noun",
+          "N + 예요",
+          "의사 → 의사예요"
+        ]
+      ],
+      "examples": [
+        [
+          "학생",
+          "student",
+          "학생이에요"
+        ],
+        [
+          "의사",
+          "doctor",
+          "의사예요"
+        ],
+        [
+          "학교",
+          "school",
+          "학교예요"
+        ]
+      ],
+      "generator": "copula"
+    },
+    {
+      "id": "topic",
+      "title": "N은 / 는",
+      "label": "Topic particle",
+      "meaning": "Mark the noun that the sentence is about, or contrast it with another topic.",
+      "guide": [
+        {
+          "heading": "1. Check for 받침",
+          "text": "Use 은 after a consonant-final noun and 는 after a vowel-final noun."
+        },
+        {
+          "heading": "2. Attach the particle directly",
+          "text": "학생 + 은 → 학생은; 학교 + 는 → 학교는. The particle is written without a space."
+        },
+        {
+          "heading": "Meaning",
+          "text": "은/는 often has no separate English word. Think of it loosely as “as for N...” when learning the structure."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final noun",
+          "N + 은",
+          "학생 → 학생은"
+        ],
+        [
+          "Vowel-final noun",
+          "N + 는",
+          "학교 → 학교는"
+        ]
+      ],
+      "examples": [
+        [
+          "학생",
+          "student",
+          "학생은"
+        ],
+        [
+          "학교",
+          "school",
+          "학교는"
+        ],
+        [
+          "친구",
+          "friend",
+          "친구는"
+        ]
+      ],
+      "generator": "topic"
+    },
+    {
+      "id": "negative-copula",
+      "title": "N이/가 아니에요",
+      "label": "Negative noun copula",
+      "meaning": "Say that something is not a particular noun.",
+      "guide": [
+        {
+          "heading": "1. Choose 이 or 가",
+          "text": "Use 이 after a consonant-final noun and 가 after a vowel-final noun."
+        },
+        {
+          "heading": "2. Add 아니에요",
+          "text": "The noun and particle stay together, followed by a space before 아니에요: 학생이 아니에요; 의사가 아니에요."
+        },
+        {
+          "heading": "Do not use 이에요/예요 inside the negative form",
+          "text": "The pattern itself is N이/가 아니에요. For example: 물이 아니에요, not 물이에요 아니에요."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final noun",
+          "N + 이 아니에요",
+          "학생 → 학생이 아니에요"
+        ],
+        [
+          "Vowel-final noun",
+          "N + 가 아니에요",
+          "의사 → 의사가 아니에요"
+        ]
+      ],
+      "examples": [
+        [
+          "사과",
+          "apple",
+          "사과가 아니에요"
+        ],
+        [
+          "물",
+          "water",
+          "물이 아니에요"
+        ],
+        [
+          "선생님",
+          "teacher",
+          "선생님이 아니에요"
+        ]
+      ],
+      "generator": "negativeCopula"
+    },
+    {
+      "id": "object",
+      "title": "N을 / 를",
+      "label": "Object particle",
+      "meaning": "Mark the noun that is directly affected by an action.",
+      "guide": [
+        {
+          "heading": "1. Check for 받침",
+          "text": "Use 을 after a consonant-final noun and 를 after a vowel-final noun."
+        },
+        {
+          "heading": "2. Attach it directly to the noun",
+          "text": "밥 + 을 → 밥을; 커피 + 를 → 커피를."
+        },
+        {
+          "heading": "Then add the action separately",
+          "text": "In a full sentence the verb comes later: 밥을 먹어요; 커피를 마셔요. This exercise practices only the noun + particle form."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final noun",
+          "N + 을",
+          "밥 → 밥을"
+        ],
+        [
+          "Vowel-final noun",
+          "N + 를",
+          "커피 → 커피를"
+        ]
+      ],
+      "examples": [
+        [
+          "책",
+          "book",
+          "책을"
+        ],
+        [
+          "한국어",
+          "Korean language",
+          "한국어를"
+        ],
+        [
+          "운동",
+          "exercise",
+          "운동을"
+        ]
+      ],
+      "generator": "object"
+    },
+    {
+      "id": "verb-present",
+      "title": "V-아요 / 어요 / 해요",
+      "label": "Polite-casual present",
+      "meaning": "Conjugate a dictionary-form action verb into the everyday polite present.",
+      "guide": [
+        {
+          "heading": "Core rule: drop 다",
+          "text": "Start with the dictionary form and remove 다. Look at the final vowel of the remaining stem."
+        },
+        {
+          "heading": "Stem has 받침",
+          "text": "There is normally no spelling contraction. If the last stem vowel is ㅏ or ㅗ, add 아요; otherwise add 어요. Examples: 앉다 → 앉아요, 먹다 → 먹어요, 읽다 → 읽어요."
+        },
+        {
+          "heading": "Stem ends in a vowel",
+          "text": "The ending usually merges with the final vowel: 가다 → 가요; 서다 → 서요; 오다 → 와요; 보다 → 봐요; 배우다 → 배워요; 주다 → 줘요; 마시다 → 마셔요; 가르치다 → 가르쳐요; 보내다 → 보내요."
+        },
+        {
+          "heading": "하다 verbs",
+          "text": "하다 becomes 해요: 공부하다 → 공부해요; 운동하다 → 운동해요."
+        },
+        {
+          "heading": "ㅡ drop",
+          "text": "When the stem ends in ㅡ, ㅡ drops. Use the preceding vowel to decide 아/어. If there is no preceding vowel, default to 어요: 바쁘다 → 바빠요; 예쁘다 → 예뻐요; 쓰다 → 써요."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Last stem vowel ㅏ / ㅗ",
+          "Stem + 아요",
+          "앉다 → 앉아요"
+        ],
+        [
+          "Other stem vowels",
+          "Stem + 어요",
+          "먹다 → 먹어요"
+        ],
+        [
+          "하다",
+          "해요",
+          "공부하다 → 공부해요"
+        ],
+        [
+          "Vowel-final stem",
+          "Merge / contract",
+          "보다 → 봐요"
+        ],
+        [
+          "Stem-final ㅡ",
+          "Drop ㅡ, then choose 아/어",
+          "쓰다 → 써요"
+        ]
+      ],
+      "examples": [
+        [
+          "보다",
+          "to watch / see",
+          "봐요"
+        ],
+        [
+          "마시다",
+          "to drink",
+          "마셔요"
+        ],
+        [
+          "공부하다",
+          "to study",
+          "공부해요"
+        ],
+        [
+          "쓰다",
+          "to write",
+          "써요"
+        ]
+      ],
+      "generator": "verbPresent"
+    },
+    {
+      "id": "adjective-present",
+      "title": "A-아요 / 어요",
+      "label": "Polite descriptive form",
+      "meaning": "Conjugate Korean adjectives (descriptive verbs) into the everyday polite form.",
+      "guide": [
+        {
+          "heading": "Use the same basic 아/어 system",
+          "text": "Drop 다. If the final stem vowel is ㅏ or ㅗ, use 아요; otherwise use 어요. 하다 adjectives become 해요."
+        },
+        {
+          "heading": "Regular vowel contractions still apply",
+          "text": "Vowel-final stems merge just like verbs. The ㅡ-drop rule also applies: 크다 → 커요, 예쁘다 → 예뻐요, 바쁘다 → 바빠요."
+        },
+        {
+          "heading": "하다 adjectives",
+          "text": "Descriptive 하다 words use 해요: 깨끗하다 → 깨끗해요; 조용하다 → 조용해요."
+        },
+        {
+          "heading": "ㅂ-ending adjectives are separated out",
+          "text": "The next section practices the ㅂ irregular pattern. This section focuses on regular adjectives and the regular contraction rules."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Last stem vowel ㅏ / ㅗ",
+          "Stem + 아요",
+          "작다 → 작아요"
+        ],
+        [
+          "Other stem vowels",
+          "Stem + 어요",
+          "적다 → 적어요"
+        ],
+        [
+          "하다 adjective",
+          "해요",
+          "깨끗하다 → 깨끗해요"
+        ],
+        [
+          "ㅡ-ending stem",
+          "Drop ㅡ",
+          "예쁘다 → 예뻐요"
+        ]
+      ],
+      "examples": [
+        [
+          "작다",
+          "small",
+          "작아요"
+        ],
+        [
+          "비싸다",
+          "expensive",
+          "비싸요"
+        ],
+        [
+          "예쁘다",
+          "pretty",
+          "예뻐요"
+        ],
+        [
+          "깨끗하다",
+          "clean",
+          "깨끗해요"
+        ]
+      ],
+      "generator": "adjectivePresent"
+    },
+    {
+      "id": "subject-adjective",
+      "title": "N이/가 + adjective",
+      "label": "Subject + description",
+      "meaning": "Mark the thing being described with 이/가, then conjugate the adjective.",
+      "guide": [
+        {
+          "heading": "1. Choose the subject particle",
+          "text": "Use 이 after a consonant-final noun and 가 after a vowel-final noun."
+        },
+        {
+          "heading": "2. Conjugate the adjective",
+          "text": "Use the appropriate polite adjective form: 넓다 → 넓어요; 좋다 → 좋아요; 춥다 → 추워요."
+        },
+        {
+          "heading": "3. Build the phrase",
+          "text": "N + 이/가 + adjective: 교실이 넓어요; 날씨가 좋아요; 가방이 무거워요."
+        },
+        {
+          "heading": "Exercise format",
+          "text": "You will see a noun and an adjective together. Type the complete Korean phrase, including the correct 이/가 particle and the conjugated adjective."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final noun",
+          "N이 + adjective",
+          "교실 + 넓다 → 교실이 넓어요"
+        ],
+        [
+          "Vowel-final noun",
+          "N가 + adjective",
+          "날씨 + 좋다 → 날씨가 좋아요"
+        ]
+      ],
+      "examples": [
+        [
+          "교실 + 넓다",
+          "classroom + spacious",
+          "교실이 넓어요"
+        ],
+        [
+          "날씨 + 좋다",
+          "weather + good",
+          "날씨가 좋아요"
+        ],
+        [
+          "가방 + 무겁다",
+          "bag + heavy",
+          "가방이 무거워요"
+        ]
+      ],
+      "generator": "subjectAdjective"
+    },
+    {
+      "id": "bieup",
+      "title": "ㅂ 불규칙",
+      "label": "ㅂ irregular",
+      "meaning": "Many stems ending in ㅂ change when a vowel-starting ending such as -아/어요 is attached.",
+      "guide": [
+        {
+          "heading": "Basic Bab 5 pattern",
+          "text": "For the irregular words practiced here, remove final ㅂ and use the 워요-type form: 덥다 → 더워요; 춥다 → 추워요; 어렵다 → 어려워요."
+        },
+        {
+          "heading": "Common examples",
+          "text": "무겁다 → 무거워요; 가볍다 → 가벼워요; 맵다 → 매워요; 차갑다 → 차가워요; 뜨겁다 → 뜨거워요; 가깝다 → 가까워요."
+        },
+        {
+          "heading": "Not every ㅂ word is irregular",
+          "text": "The Bab 5 material explicitly contrasts regular words that keep ㅂ: 입다 → 입어요; 잡다 → 잡아요; 좁다 → 좁아요."
+        },
+        {
+          "heading": "When the following ending starts with a consonant",
+          "text": "The ㅂ does not undergo this vowel-triggered change. For example, formal -습니다 begins with a consonant: 덥다 → 덥습니다."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Irregular ㅂ + -아/어요",
+          "ㅂ drops; 워요-type result",
+          "춥다 → 추워요"
+        ],
+        [
+          "Regular ㅂ exception",
+          "Keep ㅂ",
+          "입다 → 입어요"
+        ],
+        [
+          "Consonant-starting ending",
+          "Keep ㅂ",
+          "덥다 → 덥습니다"
+        ]
+      ],
+      "examples": [
+        [
+          "덥다",
+          "hot",
+          "더워요"
+        ],
+        [
+          "어렵다",
+          "difficult",
+          "어려워요"
+        ],
+        [
+          "가볍다",
+          "light",
+          "가벼워요"
+        ],
+        [
+          "좁다",
+          "narrow — regular exception",
+          "좁아요"
+        ]
+      ],
+      "generator": "bieup"
+    },
+    {
+      "id": "formal",
+      "title": "A/V-(스)ㅂ니다 · -(스)ㅂ니까?",
+      "label": "Formal polite",
+      "meaning": "Conjugate verbs and adjectives into formal polite statements or questions.",
+      "guide": [
+        {
+          "heading": "Consonant-final stem",
+          "text": "If the stem ends in a consonant other than ㄹ, add 습니다 for a statement or 습니까? for a question: 먹다 → 먹습니다 / 먹습니까?"
+        },
+        {
+          "heading": "Vowel-final stem",
+          "text": "If the stem ends in a vowel, add ㅂ니다 or ㅂ니까?: 가다 → 갑니다 / 갑니까?; 보다 → 봅니다 / 봅니까?"
+        },
+        {
+          "heading": "ㄹ-final stem",
+          "text": "ㄹ drops before ㅂ: 만들다 → 만듭니다; 살다 → 삽니다; 길다 → 깁니다."
+        },
+        {
+          "heading": "하다",
+          "text": "하다 becomes 합니다 in a statement and 합니까? in a question."
+        },
+        {
+          "heading": "The exercise tells you which one to make",
+          "text": "A small target label will say Statement (-습니다) or Question (-습니까?). Type only the requested conjugated form."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final stem",
+          "-습니다 / -습니까?",
+          "먹다 → 먹습니다 / 먹습니까?"
+        ],
+        [
+          "Vowel-final stem",
+          "-ㅂ니다 / -ㅂ니까?",
+          "가다 → 갑니다 / 갑니까?"
+        ],
+        [
+          "ㄹ-final stem",
+          "Drop ㄹ + ㅂ니다/ㅂ니까",
+          "만들다 → 만듭니다"
+        ],
+        [
+          "하다",
+          "합니다 / 합니까?",
+          "공부하다 → 공부합니다"
+        ]
+      ],
+      "examples": [
+        [
+          "읽다",
+          "to read",
+          "읽습니다 / 읽습니까?"
+        ],
+        [
+          "가다",
+          "to go",
+          "갑니다 / 갑니까?"
+        ],
+        [
+          "만들다",
+          "to make",
+          "만듭니다 / 만듭니까?"
+        ],
+        [
+          "춥다",
+          "cold",
+          "춥습니다 / 춥습니까?"
+        ]
+      ],
+      "generator": "formal"
+    },
+    {
+      "id": "noun-and",
+      "title": "N와/과 · N하고",
+      "label": "And / with",
+      "meaning": "Attach a noun connector meaning “and” or “with.”",
+      "guide": [
+        {
+          "heading": "와/과 follows 받침",
+          "text": "Use 과 after a consonant-final noun and 와 after a vowel-final noun: 책과, 친구와."
+        },
+        {
+          "heading": "하고 works after either",
+          "text": "하고 does not change for 받침: 책하고, 친구하고. It is especially common in conversation."
+        },
+        {
+          "heading": "Exercise target",
+          "text": "Each question tells you whether to attach 와/과 or 하고. Type the noun with the requested connector."
+        }
+      ],
+      "ruleRows": [
+        [
+          "Consonant-final noun",
+          "N + 과",
+          "책 → 책과"
+        ],
+        [
+          "Vowel-final noun",
+          "N + 와",
+          "친구 → 친구와"
+        ],
+        [
+          "Any noun",
+          "N + 하고",
+          "책 → 책하고; 친구 → 친구하고"
+        ]
+      ],
+      "examples": [
+        [
+          "겨울",
+          "winter — use 와/과",
+          "겨울과"
+        ],
+        [
+          "시계",
+          "clock — use 와/과",
+          "시계와"
+        ],
+        [
+          "피자",
+          "pizza — use 하고",
+          "피자하고"
+        ]
+      ],
+      "generator": "nounAnd"
+    }
+  ],
+  "nouns": [
+    {
+      "k": "책",
+      "e": "book"
+    },
+    {
+      "k": "학교",
+      "e": "school"
+    },
+    {
+      "k": "학생",
+      "e": "student"
+    },
+    {
+      "k": "의사",
+      "e": "doctor"
+    },
+    {
+      "k": "가수",
+      "e": "singer"
+    },
+    {
+      "k": "선생님",
+      "e": "teacher"
+    },
+    {
+      "k": "사과",
+      "e": "apple"
+    },
+    {
+      "k": "바나나",
+      "e": "banana"
+    },
+    {
+      "k": "물",
+      "e": "water"
+    },
+    {
+      "k": "커피",
+      "e": "coffee"
+    },
+    {
+      "k": "우유",
+      "e": "milk"
+    },
+    {
+      "k": "책상",
+      "e": "desk"
+    },
+    {
+      "k": "의자",
+      "e": "chair"
+    },
+    {
+      "k": "컴퓨터",
+      "e": "computer"
+    },
+    {
+      "k": "전화",
+      "e": "phone call"
+    },
+    {
+      "k": "신문",
+      "e": "newspaper"
+    },
+    {
+      "k": "한국",
+      "e": "Korea"
+    },
+    {
+      "k": "일본",
+      "e": "Japan"
+    },
+    {
+      "k": "미국",
+      "e": "United States"
+    },
+    {
+      "k": "회사",
+      "e": "company"
+    },
+    {
+      "k": "집",
+      "e": "home"
+    },
+    {
+      "k": "도서관",
+      "e": "library"
+    },
+    {
+      "k": "식당",
+      "e": "restaurant"
+    },
+    {
+      "k": "공원",
+      "e": "park"
+    },
+    {
+      "k": "시장",
+      "e": "market"
+    },
+    {
+      "k": "은행",
+      "e": "bank"
+    },
+    {
+      "k": "우체국",
+      "e": "post office"
+    },
+    {
+      "k": "영화관",
+      "e": "movie theater"
+    },
+    {
+      "k": "방",
+      "e": "room"
+    },
+    {
+      "k": "가방",
+      "e": "bag"
+    },
+    {
+      "k": "연필",
+      "e": "pencil"
+    },
+    {
+      "k": "지우개",
+      "e": "eraser"
+    },
+    {
+      "k": "시계",
+      "e": "clock / watch"
+    },
+    {
+      "k": "사진",
+      "e": "photo"
+    },
+    {
+      "k": "친구",
+      "e": "friend"
+    },
+    {
+      "k": "이름",
+      "e": "name"
+    },
+    {
+      "k": "생일",
+      "e": "birthday"
+    },
+    {
+      "k": "시험",
+      "e": "exam"
+    },
+    {
+      "k": "수업",
+      "e": "class"
+    },
+    {
+      "k": "운동",
+      "e": "exercise"
+    },
+    {
+      "k": "음악",
+      "e": "music"
+    },
+    {
+      "k": "노래",
+      "e": "song"
+    },
+    {
+      "k": "음식",
+      "e": "food"
+    },
+    {
+      "k": "과일",
+      "e": "fruit"
+    },
+    {
+      "k": "날씨",
+      "e": "weather"
+    },
+    {
+      "k": "기분",
+      "e": "mood"
+    },
+    {
+      "k": "문제",
+      "e": "problem"
+    },
+    {
+      "k": "계획",
+      "e": "plan"
+    },
+    {
+      "k": "문화",
+      "e": "culture"
+    },
+    {
+      "k": "사회",
+      "e": "society"
+    },
+    {
+      "k": "경제",
+      "e": "economy"
+    },
+    {
+      "k": "환경",
+      "e": "environment"
+    },
+    {
+      "k": "건강",
+      "e": "health"
+    },
+    {
+      "k": "여행",
+      "e": "travel"
+    },
+    {
+      "k": "버스",
+      "e": "bus"
+    },
+    {
+      "k": "지하철",
+      "e": "subway"
+    },
+    {
+      "k": "자동차",
+      "e": "car"
+    },
+    {
+      "k": "비행기",
+      "e": "airplane"
+    },
+    {
+      "k": "봄",
+      "e": "spring"
+    },
+    {
+      "k": "여름",
+      "e": "summer"
+    },
+    {
+      "k": "가을",
+      "e": "autumn"
+    },
+    {
+      "k": "겨울",
+      "e": "winter"
+    },
+    {
+      "k": "피자",
+      "e": "pizza"
+    },
+    {
+      "k": "콜라",
+      "e": "cola"
+    },
+    {
+      "k": "김밥",
+      "e": "gimbap"
+    },
+    {
+      "k": "라면",
+      "e": "ramyeon"
+    },
+    {
+      "k": "햄버거",
+      "e": "hamburger"
+    },
+    {
+      "k": "교실",
+      "e": "classroom"
+    },
+    {
+      "k": "침대",
+      "e": "bed"
+    },
+    {
+      "k": "창문",
+      "e": "window"
+    },
+    {
+      "k": "문",
+      "e": "door"
+    },
+    {
+      "k": "약속",
+      "e": "appointment / promise"
+    },
+    {
+      "k": "방법",
+      "e": "method"
+    },
+    {
+      "k": "결과",
+      "e": "result"
+    },
+    {
+      "k": "준비",
+      "e": "preparation"
+    }
+  ],
+  "verbs": [
+    {
+      "base": "가다",
+      "e": "to go",
+      "answer": "가요"
+    },
+    {
+      "base": "오다",
+      "e": "to come",
+      "answer": "와요"
+    },
+    {
+      "base": "보다",
+      "e": "to see / watch",
+      "answer": "봐요"
+    },
+    {
+      "base": "먹다",
+      "e": "to eat",
+      "answer": "먹어요"
+    },
+    {
+      "base": "읽다",
+      "e": "to read",
+      "answer": "읽어요"
+    },
+    {
+      "base": "마시다",
+      "e": "to drink",
+      "answer": "마셔요"
+    },
+    {
+      "base": "배우다",
+      "e": "to learn",
+      "answer": "배워요"
+    },
+    {
+      "base": "주다",
+      "e": "to give",
+      "answer": "줘요"
+    },
+    {
+      "base": "서다",
+      "e": "to stand",
+      "answer": "서요"
+    },
+    {
+      "base": "보내다",
+      "e": "to send",
+      "answer": "보내요"
+    },
+    {
+      "base": "지내다",
+      "e": "to spend time / get along",
+      "answer": "지내요"
+    },
+    {
+      "base": "쓰다",
+      "e": "to write / use",
+      "answer": "써요"
+    },
+    {
+      "base": "끄다",
+      "e": "to turn off",
+      "answer": "꺼요"
+    },
+    {
+      "base": "바꾸다",
+      "e": "to change",
+      "answer": "바꿔요"
+    },
+    {
+      "base": "가르치다",
+      "e": "to teach",
+      "answer": "가르쳐요"
+    },
+    {
+      "base": "기다리다",
+      "e": "to wait",
+      "answer": "기다려요"
+    },
+    {
+      "base": "만나다",
+      "e": "to meet",
+      "answer": "만나요"
+    },
+    {
+      "base": "닫다",
+      "e": "to close",
+      "answer": "닫아요"
+    },
+    {
+      "base": "앉다",
+      "e": "to sit",
+      "answer": "앉아요"
+    },
+    {
+      "base": "놀다",
+      "e": "to play",
+      "answer": "놀아요"
+    },
+    {
+      "base": "만들다",
+      "e": "to make",
+      "answer": "만들어요"
+    },
+    {
+      "base": "공부하다",
+      "e": "to study",
+      "answer": "공부해요"
+    },
+    {
+      "base": "운동하다",
+      "e": "to exercise",
+      "answer": "운동해요"
+    },
+    {
+      "base": "전화하다",
+      "e": "to call",
+      "answer": "전화해요"
+    },
+    {
+      "base": "일하다",
+      "e": "to work",
+      "answer": "일해요"
+    },
+    {
+      "base": "목욕하다",
+      "e": "to bathe",
+      "answer": "목욕해요"
+    },
+    {
+      "base": "청소하다",
+      "e": "to clean",
+      "answer": "청소해요"
+    },
+    {
+      "base": "쇼핑하다",
+      "e": "to shop",
+      "answer": "쇼핑해요"
+    },
+    {
+      "base": "노래하다",
+      "e": "to sing",
+      "answer": "노래해요"
+    },
+    {
+      "base": "요리하다",
+      "e": "to cook",
+      "answer": "요리해요"
+    },
+    {
+      "base": "시작하다",
+      "e": "to start",
+      "answer": "시작해요"
+    },
+    {
+      "base": "끝나다",
+      "e": "to end",
+      "answer": "끝나요"
+    },
+    {
+      "base": "사다",
+      "e": "to buy",
+      "answer": "사요"
+    },
+    {
+      "base": "자다",
+      "e": "to sleep",
+      "answer": "자요"
+    },
+    {
+      "base": "타다",
+      "e": "to ride",
+      "answer": "타요"
+    },
+    {
+      "base": "쉬다",
+      "e": "to rest",
+      "answer": "쉬어요"
+    }
+  ],
+  "adjectives": [
+    {
+      "base": "작다",
+      "e": "small",
+      "answer": "작아요"
+    },
+    {
+      "base": "많다",
+      "e": "many / much",
+      "answer": "많아요"
+    },
+    {
+      "base": "적다",
+      "e": "few / little",
+      "answer": "적어요"
+    },
+    {
+      "base": "비싸다",
+      "e": "expensive",
+      "answer": "비싸요"
+    },
+    {
+      "base": "싸다",
+      "e": "cheap",
+      "answer": "싸요"
+    },
+    {
+      "base": "맛있다",
+      "e": "delicious",
+      "answer": "맛있어요"
+    },
+    {
+      "base": "맛없다",
+      "e": "not tasty",
+      "answer": "맛없어요"
+    },
+    {
+      "base": "재미있다",
+      "e": "interesting / fun",
+      "answer": "재미있어요"
+    },
+    {
+      "base": "재미없다",
+      "e": "not interesting / boring",
+      "answer": "재미없어요"
+    },
+    {
+      "base": "좋다",
+      "e": "good",
+      "answer": "좋아요"
+    },
+    {
+      "base": "싫다",
+      "e": "disliked / unpleasant",
+      "answer": "싫어요"
+    },
+    {
+      "base": "넓다",
+      "e": "spacious / wide",
+      "answer": "넓어요"
+    },
+    {
+      "base": "좁다",
+      "e": "narrow",
+      "answer": "좁아요"
+    },
+    {
+      "base": "길다",
+      "e": "long",
+      "answer": "길어요"
+    },
+    {
+      "base": "짧다",
+      "e": "short",
+      "answer": "짧아요"
+    },
+    {
+      "base": "높다",
+      "e": "high",
+      "answer": "높아요"
+    },
+    {
+      "base": "낮다",
+      "e": "low",
+      "answer": "낮아요"
+    },
+    {
+      "base": "멀다",
+      "e": "far",
+      "answer": "멀어요"
+    },
+    {
+      "base": "크다",
+      "e": "big",
+      "answer": "커요"
+    },
+    {
+      "base": "예쁘다",
+      "e": "pretty",
+      "answer": "예뻐요"
+    },
+    {
+      "base": "바쁘다",
+      "e": "busy",
+      "answer": "바빠요"
+    },
+    {
+      "base": "아프다",
+      "e": "sick / painful",
+      "answer": "아파요"
+    },
+    {
+      "base": "나쁘다",
+      "e": "bad",
+      "answer": "나빠요"
+    },
+    {
+      "base": "기쁘다",
+      "e": "glad",
+      "answer": "기뻐요"
+    },
+    {
+      "base": "슬프다",
+      "e": "sad",
+      "answer": "슬퍼요"
+    },
+    {
+      "base": "느리다",
+      "e": "slow",
+      "answer": "느려요"
+    },
+    {
+      "base": "깨끗하다",
+      "e": "clean",
+      "answer": "깨끗해요"
+    },
+    {
+      "base": "조용하다",
+      "e": "quiet",
+      "answer": "조용해요"
+    },
+    {
+      "base": "친절하다",
+      "e": "kind",
+      "answer": "친절해요"
+    },
+    {
+      "base": "필요하다",
+      "e": "necessary",
+      "answer": "필요해요"
+    },
+    {
+      "base": "중요하다",
+      "e": "important",
+      "answer": "중요해요"
+    },
+    {
+      "base": "건강하다",
+      "e": "healthy",
+      "answer": "건강해요"
+    },
+    {
+      "base": "유명하다",
+      "e": "famous",
+      "answer": "유명해요"
+    },
+    {
+      "base": "편리하다",
+      "e": "convenient",
+      "answer": "편리해요"
+    },
+    {
+      "base": "안전하다",
+      "e": "safe",
+      "answer": "안전해요"
+    },
+    {
+      "base": "정확하다",
+      "e": "accurate",
+      "answer": "정확해요"
+    },
+    {
+      "base": "행복하다",
+      "e": "happy",
+      "answer": "행복해요"
+    },
+    {
+      "base": "피곤하다",
+      "e": "tired",
+      "answer": "피곤해요"
+    },
+    {
+      "base": "시원하다",
+      "e": "cool / refreshing",
+      "answer": "시원해요"
+    },
+    {
+      "base": "따뜻하다",
+      "e": "warm",
+      "answer": "따뜻해요"
+    },
+    {
+      "base": "맑다",
+      "e": "clear",
+      "answer": "맑아요"
+    },
+    {
+      "base": "흐리다",
+      "e": "cloudy",
+      "answer": "흐려요"
+    }
+  ],
+  "sentenceAdjectives": [
+    {
+      "base": "작다",
+      "e": "small",
+      "answer": "작아요"
+    },
+    {
+      "base": "많다",
+      "e": "many / much",
+      "answer": "많아요"
+    },
+    {
+      "base": "적다",
+      "e": "few / little",
+      "answer": "적어요"
+    },
+    {
+      "base": "비싸다",
+      "e": "expensive",
+      "answer": "비싸요"
+    },
+    {
+      "base": "싸다",
+      "e": "cheap",
+      "answer": "싸요"
+    },
+    {
+      "base": "맛있다",
+      "e": "delicious",
+      "answer": "맛있어요"
+    },
+    {
+      "base": "맛없다",
+      "e": "not tasty",
+      "answer": "맛없어요"
+    },
+    {
+      "base": "재미있다",
+      "e": "interesting / fun",
+      "answer": "재미있어요"
+    },
+    {
+      "base": "재미없다",
+      "e": "not interesting / boring",
+      "answer": "재미없어요"
+    },
+    {
+      "base": "좋다",
+      "e": "good",
+      "answer": "좋아요"
+    },
+    {
+      "base": "싫다",
+      "e": "disliked / unpleasant",
+      "answer": "싫어요"
+    },
+    {
+      "base": "넓다",
+      "e": "spacious / wide",
+      "answer": "넓어요"
+    },
+    {
+      "base": "좁다",
+      "e": "narrow",
+      "answer": "좁아요"
+    },
+    {
+      "base": "길다",
+      "e": "long",
+      "answer": "길어요"
+    },
+    {
+      "base": "짧다",
+      "e": "short",
+      "answer": "짧아요"
+    },
+    {
+      "base": "높다",
+      "e": "high",
+      "answer": "높아요"
+    },
+    {
+      "base": "낮다",
+      "e": "low",
+      "answer": "낮아요"
+    },
+    {
+      "base": "멀다",
+      "e": "far",
+      "answer": "멀어요"
+    },
+    {
+      "base": "크다",
+      "e": "big",
+      "answer": "커요"
+    },
+    {
+      "base": "예쁘다",
+      "e": "pretty",
+      "answer": "예뻐요"
+    },
+    {
+      "base": "바쁘다",
+      "e": "busy",
+      "answer": "바빠요"
+    },
+    {
+      "base": "아프다",
+      "e": "sick / painful",
+      "answer": "아파요"
+    },
+    {
+      "base": "나쁘다",
+      "e": "bad",
+      "answer": "나빠요"
+    },
+    {
+      "base": "기쁘다",
+      "e": "glad",
+      "answer": "기뻐요"
+    },
+    {
+      "base": "슬프다",
+      "e": "sad",
+      "answer": "슬퍼요"
+    },
+    {
+      "base": "느리다",
+      "e": "slow",
+      "answer": "느려요"
+    },
+    {
+      "base": "깨끗하다",
+      "e": "clean",
+      "answer": "깨끗해요"
+    },
+    {
+      "base": "조용하다",
+      "e": "quiet",
+      "answer": "조용해요"
+    },
+    {
+      "base": "친절하다",
+      "e": "kind",
+      "answer": "친절해요"
+    },
+    {
+      "base": "필요하다",
+      "e": "necessary",
+      "answer": "필요해요"
+    },
+    {
+      "base": "중요하다",
+      "e": "important",
+      "answer": "중요해요"
+    },
+    {
+      "base": "건강하다",
+      "e": "healthy",
+      "answer": "건강해요"
+    },
+    {
+      "base": "유명하다",
+      "e": "famous",
+      "answer": "유명해요"
+    },
+    {
+      "base": "편리하다",
+      "e": "convenient",
+      "answer": "편리해요"
+    },
+    {
+      "base": "안전하다",
+      "e": "safe",
+      "answer": "안전해요"
+    },
+    {
+      "base": "정확하다",
+      "e": "accurate",
+      "answer": "정확해요"
+    },
+    {
+      "base": "행복하다",
+      "e": "happy",
+      "answer": "행복해요"
+    },
+    {
+      "base": "피곤하다",
+      "e": "tired",
+      "answer": "피곤해요"
+    },
+    {
+      "base": "시원하다",
+      "e": "cool / refreshing",
+      "answer": "시원해요"
+    },
+    {
+      "base": "따뜻하다",
+      "e": "warm",
+      "answer": "따뜻해요"
+    },
+    {
+      "base": "맑다",
+      "e": "clear",
+      "answer": "맑아요"
+    },
+    {
+      "base": "흐리다",
+      "e": "cloudy",
+      "answer": "흐려요"
+    },
+    {
+      "base": "덥다",
+      "e": "hot",
+      "answer": "더워요"
+    },
+    {
+      "base": "춥다",
+      "e": "cold",
+      "answer": "추워요"
+    },
+    {
+      "base": "어렵다",
+      "e": "difficult",
+      "answer": "어려워요"
+    },
+    {
+      "base": "쉽다",
+      "e": "easy",
+      "answer": "쉬워요"
+    },
+    {
+      "base": "무겁다",
+      "e": "heavy",
+      "answer": "무거워요"
+    },
+    {
+      "base": "가볍다",
+      "e": "light",
+      "answer": "가벼워요"
+    },
+    {
+      "base": "맵다",
+      "e": "spicy",
+      "answer": "매워요"
+    },
+    {
+      "base": "차갑다",
+      "e": "cold to the touch",
+      "answer": "차가워요"
+    },
+    {
+      "base": "뜨겁다",
+      "e": "hot to the touch",
+      "answer": "뜨거워요"
+    },
+    {
+      "base": "가깝다",
+      "e": "near",
+      "answer": "가까워요"
+    },
+    {
+      "base": "귀엽다",
+      "e": "cute",
+      "answer": "귀여워요"
+    }
+  ],
+  "bieup": [
+    {
+      "base": "덥다",
+      "e": "hot",
+      "answer": "더워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "춥다",
+      "e": "cold",
+      "answer": "추워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "어렵다",
+      "e": "difficult",
+      "answer": "어려워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "쉽다",
+      "e": "easy",
+      "answer": "쉬워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "무겁다",
+      "e": "heavy",
+      "answer": "무거워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "가볍다",
+      "e": "light (weight)",
+      "answer": "가벼워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "맵다",
+      "e": "spicy",
+      "answer": "매워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "차갑다",
+      "e": "cold (to the touch)",
+      "answer": "차가워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "뜨겁다",
+      "e": "hot (to the touch)",
+      "answer": "뜨거워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "가깝다",
+      "e": "near / close",
+      "answer": "가까워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "귀엽다",
+      "e": "cute",
+      "answer": "귀여워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "아름답다",
+      "e": "beautiful",
+      "answer": "아름다워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "더럽다",
+      "e": "dirty",
+      "answer": "더러워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "어둡다",
+      "e": "dark",
+      "answer": "어두워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "두렵다",
+      "e": "afraid / fearful",
+      "answer": "두려워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "부럽다",
+      "e": "envious",
+      "answer": "부러워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "고맙다",
+      "e": "thankful",
+      "answer": "고마워요",
+      "kind": "irregular"
+    },
+    {
+      "base": "입다",
+      "e": "to wear — regular exception",
+      "answer": "입어요",
+      "kind": "regular exception"
+    },
+    {
+      "base": "잡다",
+      "e": "to catch / hold — regular exception",
+      "answer": "잡아요",
+      "kind": "regular exception"
+    },
+    {
+      "base": "좁다",
+      "e": "narrow — regular exception",
+      "answer": "좁아요",
+      "kind": "regular exception"
+    },
+    {
+      "base": "씹다",
+      "e": "to chew — regular exception",
+      "answer": "씹어요",
+      "kind": "regular exception"
+    },
+    {
+      "base": "뽑다",
+      "e": "to pull out / select — regular exception",
+      "answer": "뽑아요",
+      "kind": "regular exception"
+    }
+  ],
+  "formal": [
+    {
+      "base": "먹다",
+      "e": "to eat",
+      "statement": "먹습니다",
+      "question": "먹습니까?"
+    },
+    {
+      "base": "읽다",
+      "e": "to read",
+      "statement": "읽습니다",
+      "question": "읽습니까?"
+    },
+    {
+      "base": "가다",
+      "e": "to go",
+      "statement": "갑니다",
+      "question": "갑니까?"
+    },
+    {
+      "base": "오다",
+      "e": "to come",
+      "statement": "옵니다",
+      "question": "옵니까?"
+    },
+    {
+      "base": "보다",
+      "e": "to see / watch",
+      "statement": "봅니다",
+      "question": "봅니까?"
+    },
+    {
+      "base": "마시다",
+      "e": "to drink",
+      "statement": "마십니다",
+      "question": "마십니까?"
+    },
+    {
+      "base": "배우다",
+      "e": "to learn",
+      "statement": "배웁니다",
+      "question": "배웁니까?"
+    },
+    {
+      "base": "주다",
+      "e": "to give",
+      "statement": "줍니다",
+      "question": "줍니까?"
+    },
+    {
+      "base": "서다",
+      "e": "to stand",
+      "statement": "섭니다",
+      "question": "섭니까?"
+    },
+    {
+      "base": "자다",
+      "e": "to sleep",
+      "statement": "잡니다",
+      "question": "잡니까?"
+    },
+    {
+      "base": "만나다",
+      "e": "to meet",
+      "statement": "만납니다",
+      "question": "만납니까?"
+    },
+    {
+      "base": "공부하다",
+      "e": "to study",
+      "statement": "공부합니다",
+      "question": "공부합니까?"
+    },
+    {
+      "base": "좋아하다",
+      "e": "to like",
+      "statement": "좋아합니다",
+      "question": "좋아합니까?"
+    },
+    {
+      "base": "청소하다",
+      "e": "to clean",
+      "statement": "청소합니다",
+      "question": "청소합니까?"
+    },
+    {
+      "base": "살다",
+      "e": "to live",
+      "statement": "삽니다",
+      "question": "삽니까?"
+    },
+    {
+      "base": "만들다",
+      "e": "to make",
+      "statement": "만듭니다",
+      "question": "만듭니까?"
+    },
+    {
+      "base": "알다",
+      "e": "to know",
+      "statement": "압니다",
+      "question": "압니까?"
+    },
+    {
+      "base": "놀다",
+      "e": "to play",
+      "statement": "놉니다",
+      "question": "놉니까?"
+    },
+    {
+      "base": "열다",
+      "e": "to open",
+      "statement": "엽니다",
+      "question": "엽니까?"
+    },
+    {
+      "base": "작다",
+      "e": "small",
+      "statement": "작습니다",
+      "question": "작습니까?"
+    },
+    {
+      "base": "좋다",
+      "e": "good",
+      "statement": "좋습니다",
+      "question": "좋습니까?"
+    },
+    {
+      "base": "길다",
+      "e": "long",
+      "statement": "깁니다",
+      "question": "깁니까?"
+    },
+    {
+      "base": "멀다",
+      "e": "far",
+      "statement": "멉니다",
+      "question": "멉니까?"
+    },
+    {
+      "base": "춥다",
+      "e": "cold",
+      "statement": "춥습니다",
+      "question": "춥습니까?"
+    },
+    {
+      "base": "덥다",
+      "e": "hot",
+      "statement": "덥습니다",
+      "question": "덥습니까?"
+    },
+    {
+      "base": "어렵다",
+      "e": "difficult",
+      "statement": "어렵습니다",
+      "question": "어렵습니까?"
+    },
+    {
+      "base": "쉽다",
+      "e": "easy",
+      "statement": "쉽습니다",
+      "question": "쉽습니까?"
+    },
+    {
+      "base": "깨끗하다",
+      "e": "clean",
+      "statement": "깨끗합니다",
+      "question": "깨끗합니까?"
+    },
+    {
+      "base": "시원하다",
+      "e": "cool / refreshing",
+      "statement": "시원합니다",
+      "question": "시원합니까?"
+    },
+    {
+      "base": "따뜻하다",
+      "e": "warm",
+      "statement": "따뜻합니다",
+      "question": "따뜻합니까?"
+    },
+    {
+      "base": "있다",
+      "e": "to exist / have",
+      "statement": "있습니다",
+      "question": "있습니까?"
+    },
+    {
+      "base": "없다",
+      "e": "to not exist / not have",
+      "statement": "없습니다",
+      "question": "없습니까?"
+    }
+  ]
+};
+
+    // -----------------------------------------------------------------------
+    // General utilities
+    // -----------------------------------------------------------------------
+
+    const root = document.documentElement;
+    const STORAGE_KEY = "koreanQuizThemeV2";
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(
+        /[&<>"']/g,
+        character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[character]
+      );
+    }
+
+    function randomItem(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+
+      for (let index = copy.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+      }
+
+      return copy;
+    }
+
+    function hasBatchim(text) {
+      const hangul = [...String(text)].filter(character => {
+        const code = character.charCodeAt(0);
+        return code >= 0xAC00 && code <= 0xD7A3;
+      });
+
+      if (!hangul.length) {
+        return false;
+      }
+
+      const lastCode = hangul.at(-1).charCodeAt(0);
+      return (lastCode - 0xAC00) % 28 !== 0;
+    }
+
+    function normalizeKorean(value) {
+      return String(value ?? "")
+        .normalize("NFC")
+        .replace(/[\s\-–—.,!?;:'"“”‘’()[\]{}]/g, "")
+        .trim();
+    }
+
+    // Literal transliteration used throughout the previous Bab files.
+    // No pronunciation assimilation is applied.
+    function romanizeKorean(text) {
+      const CHO = [
+        "g", "kk", "n", "d", "tt", "r", "m", "b", "pp",
+        "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"
+      ];
+
+      const JUNG = [
+        "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye",
+        "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue",
+        "ui", "yu", "eu", "eui", "i"
+      ];
+
+      const JONG = [
+        "", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk",
+        "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s",
+        "ss", "ng", "j", "ch", "k", "t", "p", "h"
+      ];
+
+      let result = "";
+      let previousWasHangul = false;
+
+      for (const character of String(text ?? "")) {
+        const code = character.charCodeAt(0);
+
+        if (code >= 0xAC00 && code <= 0xD7A3) {
+          const offset = code - 0xAC00;
+          const jong = offset % 28;
+          const jung = Math.floor(offset / 28) % 21;
+          const cho = Math.floor(offset / (28 * 21));
+
+          if (previousWasHangul) {
+            result += "-";
+          }
+
+          result += CHO[cho] + JUNG[jung] + JONG[jong];
+          previousWasHangul = true;
+        } else {
+          result += character;
+          previousWasHangul = false;
+        }
+      }
+
+      return result;
+    }
+
+    function makeQuestion(prompt, meaning, answer, target) {
+      return {
+        prompt,
+        meaning,
+        answer,
+        target,
+        romanization: romanizeKorean(answer)
+      };
+    }
+
+    // -----------------------------------------------------------------------
+    // Question generators
+    // -----------------------------------------------------------------------
+
+    function generateQuestion(kind) {
+      const noun = () => randomItem(DATA.nouns);
+
+      switch (kind) {
+        case "copula": {
+          const item = noun();
+          const ending = hasBatchim(item.k) ? "이에요" : "예요";
+
+          return makeQuestion(
+            item.k,
+            item.e,
+            item.k + ending,
+            "Attach 이에요 / 예요"
+          );
+        }
+
+        case "topic": {
+          const item = noun();
+          const particle = hasBatchim(item.k) ? "은" : "는";
+
+          return makeQuestion(
+            item.k,
+            item.e,
+            item.k + particle,
+            "Attach 은 / 는"
+          );
+        }
+
+        case "negativeCopula": {
+          const item = noun();
+          const particle = hasBatchim(item.k) ? "이" : "가";
+
+          return makeQuestion(
+            item.k,
+            item.e,
+            `${item.k}${particle} 아니에요`,
+            "Make N이/가 아니에요"
+          );
+        }
+
+        case "object": {
+          const item = noun();
+          const particle = hasBatchim(item.k) ? "을" : "를";
+
+          return makeQuestion(
+            item.k,
+            item.e,
+            item.k + particle,
+            "Attach 을 / 를"
+          );
+        }
+
+        case "verbPresent": {
+          const item = randomItem(DATA.verbs);
+
+          return makeQuestion(
+            item.base,
+            item.e,
+            item.answer,
+            "Make V-아요 / 어요 / 해요"
+          );
+        }
+
+        case "adjectivePresent": {
+          const item = randomItem(DATA.adjectives);
+
+          return makeQuestion(
+            item.base,
+            item.e,
+            item.answer,
+            "Make A-아요 / 어요"
+          );
+        }
+
+        case "subjectAdjective": {
+          const item = noun();
+          const adjective = randomItem(DATA.sentenceAdjectives);
+          const particle = hasBatchim(item.k) ? "이" : "가";
+
+          return makeQuestion(
+            `${item.k} + ${adjective.base}`,
+            `${item.e} + ${adjective.e}`,
+            `${item.k}${particle} ${adjective.answer}`,
+            "Make N이/가 + adjective"
+          );
+        }
+
+        case "bieup": {
+          const item = randomItem(DATA.bieup);
+
+          return makeQuestion(
+            item.base,
+            item.e,
+            item.answer,
+            item.kind === "irregular"
+              ? "Conjugate the ㅂ word"
+              : "Watch for a regular ㅂ exception"
+          );
+        }
+
+        case "formal": {
+          const item = randomItem(DATA.formal);
+          const isQuestion = Math.random() < 0.5;
+
+          return makeQuestion(
+            item.base,
+            item.e,
+            isQuestion ? item.question : item.statement,
+            isQuestion
+              ? "Question · -(스)ㅂ니까?"
+              : "Statement · -(스)ㅂ니다"
+          );
+        }
+
+        case "nounAnd": {
+          const item = noun();
+          const useHago = Math.random() < 0.35;
+
+          if (useHago) {
+            return makeQuestion(
+              item.k,
+              item.e,
+              item.k + "하고",
+              "Attach 하고"
+            );
+          }
+
+          const particle = hasBatchim(item.k) ? "과" : "와";
+
+          return makeQuestion(
+            item.k,
+            item.e,
+            item.k + particle,
+            "Attach 와 / 과"
+          );
+        }
+
+        default:
+          throw new Error(`Unknown generator: ${kind}`);
+      }
+    }
+
+    function buildQuestionSet(generator, count) {
+      const questions = [];
+      const seen = new Set();
+      let attempts = 0;
+
+      while (questions.length < count && attempts < count * 80) {
+        const question = generator();
+        const key = [
+          question.prompt,
+          question.answer,
+          question.target
+        ].join("|");
+
+        if (!seen.has(key)) {
+          seen.add(key);
+          questions.push(question);
+        }
+
+        attempts += 1;
+      }
+
+      while (questions.length < count) {
+        questions.push(generator());
+      }
+
+      return shuffle(questions);
+    }
+
+    // -----------------------------------------------------------------------
+    // Section rendering
+    // -----------------------------------------------------------------------
+
+    function renderPage() {
+      const toc = document.getElementById("tocGrid");
+      const container = document.getElementById("sections");
+
+      toc.innerHTML = DATA.sections
+        .map(section => `
+          <a class="toc-link" href="#${escapeHtml(section.id)}">
+            ${escapeHtml(section.title)}
+          </a>
+        `)
+        .join("");
+
+      container.innerHTML = DATA.sections
+        .map((section, index) => renderSection(section, index === 0))
+        .join("");
+
+      initializeSections();
+      initializeExercises();
+    }
+
+    function renderSection(section, open) {
+      const guideHtml = section.guide
+        .map(step => `
+          <div class="guide-step">
+            <strong>${escapeHtml(step.heading)}</strong>
+            <span>${escapeHtml(step.text)}</span>
+          </div>
+        `)
+        .join("");
+
+      const rowsHtml = section.ruleRows
+        .map(row => `
+          <tr>
+            <td>${escapeHtml(row[0])}</td>
+            <td><strong>${escapeHtml(row[1])}</strong></td>
+            <td>${escapeHtml(row[2])}</td>
+          </tr>
+        `)
+        .join("");
+
+      const examplesHtml = section.examples
+        .map(example => `
+          <div class="example">
+            <div class="example-base">
+              ${escapeHtml(example[0])}
+              <span class="roman">(${escapeHtml(example[1])})</span>
+            </div>
+            <div class="example-answer">${escapeHtml(example[2])}</div>
+            <div class="roman">${escapeHtml(romanizeKorean(example[2]))}</div>
+          </div>
+        `)
+        .join("");
+
+      return `
+        <details
+          class="section"
+          id="${escapeHtml(section.id)}"
+          ${open ? "open" : ""}
+        >
+          <summary>${escapeHtml(section.title)}</summary>
+
+          <div class="section-body">
+            <div class="section-intro">
+              <article class="info-card">
+                <span class="rule-label">${escapeHtml(section.label)}</span>
+                <h3>Meaning</h3>
+                <p>${escapeHtml(section.meaning)}</p>
+
+                <div class="examples">
+                  ${examplesHtml}
+                </div>
+              </article>
+
+              <article class="info-card">
+                <span class="rule-label">Complete guide</span>
+                <h3>How to form it</h3>
+                <div class="guide-list">${guideHtml}</div>
+              </article>
+            </div>
+
+            <div class="rule-table-wrap">
+              <table class="rule-table">
+                <thead>
+                  <tr>
+                    <th>Condition</th>
+                    <th>Form</th>
+                    <th>Example</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
+
+            ${renderExercise(section)}
+          </div>
+        </details>
+      `;
+    }
+
+    function renderExercise(section) {
+      return `
+        <article
+          class="exercise"
+          id="exercise-${escapeHtml(section.id)}"
+          data-generator="${escapeHtml(section.generator)}"
+        >
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Typed practice</span>
+              <h3>Conjugation Practice</h3>
+              <p>
+                You get a base word and its meaning. Type the requested Korean
+                form.
+              </p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="exercise-menu">
+              <h4>Exercise setup</h4>
+              <p>
+                Choose the number of questions. The prompt and answer format
+                stay fixed for this conjugation drill.
+              </p>
+
+              <div class="exercise-menu-grid">
+                <label>
+                  Questions
+                  <input
+                    class="menu-count"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value="20"
+                  >
+                </label>
+
+                <div class="menu-static">
+                  <span>Prompt</span>
+                  <strong>Base word + meaning</strong>
+                </div>
+
+                <div class="menu-static">
+                  <span>Answer</span>
+                  <strong>Korean form</strong>
+                </div>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary start" type="button">
+                  Start exercise
+                </button>
+              </div>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <button class="end-early-btn" type="button">
+                  End exercise early
+                </button>
+              </div>
+
+              <div class="status">
+                <span class="count"></span>
+                <span>Typed · Enter to check · Enter again for next</span>
+              </div>
+
+              <div
+                class="progress"
+                role="progressbar"
+                aria-label="Exercise progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div></div>
+              </div>
+
+              <div class="prompt-card">
+                <div class="prompt-target"></div>
+                <div class="prompt-word"></div>
+                <div class="prompt-meaning"></div>
+              </div>
+
+              <div class="answer-row">
+                <label class="sr-only">Your answer</label>
+                <input
+                  class="answer"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  placeholder="Type the Korean form"
+                >
+                <button class="btn primary check" type="button">Check</button>
+              </div>
+
+              <div class="feedback" aria-live="polite"></div>
+
+              <div class="next-row">
+                <button class="btn warning next hidden" type="button">
+                  Next
+                </button>
+              </div>
+            </div>
+
+            <div class="finish">
+              <h4>Exercise complete</h4>
+              <p class="summary"></p>
+              <div class="review"></div>
+
+              <div class="finish-actions">
+                <button class="btn primary restart-same" type="button">
+                  Restart
+                </button>
+                <button class="btn secondary change-setup" type="button">
+                  Change setup
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // -----------------------------------------------------------------------
+    // Exercise runtime
+    // -----------------------------------------------------------------------
+
+    const exerciseStates = new Map();
+
+    function initializeSections() {
+      document.querySelectorAll("details.section").forEach(details => {
+        const summary = details.querySelector(":scope > summary");
+
+        function syncExpanded() {
+          summary.setAttribute("aria-expanded", String(details.open));
+        }
+
+        syncExpanded();
+        details.addEventListener("toggle", syncExpanded);
+      });
+    }
+
+    function initializeExercises() {
+      document.querySelectorAll(".exercise").forEach(exercise => {
+        const generator = exercise.dataset.generator;
+
+        const state = {
+          generator,
+          questions: [],
+          index: 0,
+          score: 0,
+          results: [],
+          answered: false,
+          finished: false,
+          questionCount: 20
+        };
+
+        exerciseStates.set(exercise.id, state);
+
+        exercise.querySelector(".start").addEventListener("click", () => {
+          startExercise(exercise, state);
+        });
+
+        exercise.querySelector(".check").addEventListener("click", () => {
+          submitAnswer(exercise, state);
+        });
+
+        exercise.querySelector(".next").addEventListener("click", () => {
+          nextQuestion(exercise, state);
+        });
+
+        exercise.querySelector(".end-early-btn").addEventListener("click", () => {
+          finishExercise(exercise, state, "Exercise ended early");
+        });
+
+        exercise.querySelector(".restart-same").addEventListener("click", () => {
+          startExercise(exercise, state, true);
+        });
+
+        exercise.querySelector(".change-setup").addEventListener("click", () => {
+          showSetup(exercise, state);
+        });
+
+        exercise.querySelector(".answer").addEventListener("keydown", event => {
+          if (event.key !== "Enter") {
+            return;
+          }
+
+          event.preventDefault();
+
+          if (state.answered) {
+            nextQuestion(exercise, state);
+          } else {
+            submitAnswer(exercise, state);
+          }
+        });
+      });
+    }
+
+    function startExercise(exercise, state, reuseCount = false) {
+      const countInput = exercise.querySelector(".menu-count");
+
+      if (!reuseCount) {
+        state.questionCount = Math.max(
+          1,
+          Math.min(100, Number(countInput.value) || 20)
+        );
+      }
+
+      countInput.value = String(state.questionCount);
+
+      state.questions = buildQuestionSet(
+        () => generateQuestion(state.generator),
+        state.questionCount
+      );
+
+      state.index = 0;
+      state.score = 0;
+      state.results = [];
+      state.answered = false;
+      state.finished = false;
+
+      exercise.querySelector(".exercise-menu").classList.add("hidden");
+      exercise.querySelector(".finish").style.display = "none";
+      exercise.querySelector(".live").classList.remove("hidden");
+
+      showQuestion(exercise, state);
+    }
+
+    function showQuestion(exercise, state) {
+      if (state.finished) {
+        return;
+      }
+
+      const question = state.questions[state.index];
+      const input = exercise.querySelector(".answer");
+      const feedback = exercise.querySelector(".feedback");
+      const nextButton = exercise.querySelector(".next");
+      const progress = state.index / state.questions.length * 100;
+
+      state.answered = false;
+
+      exercise.querySelector(".count").textContent =
+        `Question ${state.index + 1} / ${state.questions.length}`;
+
+      exercise.querySelector(".score").textContent =
+        `Score: ${state.score}`;
+
+      exercise.querySelector(".progress > div").style.width =
+        `${progress}%`;
+
+      exercise.querySelector(".progress").setAttribute(
+        "aria-valuenow",
+        String(Math.round(progress))
+      );
+
+      exercise.querySelector(".prompt-target").textContent = question.target;
+      exercise.querySelector(".prompt-word").textContent = question.prompt;
+      exercise.querySelector(".prompt-meaning").textContent =
+        `(${question.meaning})`;
+
+      input.value = "";
+      input.readOnly = false;
+
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+
+      nextButton.classList.add("hidden");
+      nextButton.textContent =
+        state.index === state.questions.length - 1 ? "Finish" : "Next";
+
+      requestAnimationFrame(() => {
+        input.focus({ preventScroll: true });
+      });
+    }
+
+    function submitAnswer(exercise, state) {
+      if (state.answered || state.finished) {
+        return;
+      }
+
+      const question = state.questions[state.index];
+      const input = exercise.querySelector(".answer");
+      const value = input.value;
+      const correct =
+        normalizeKorean(value) === normalizeKorean(question.answer);
+
+      state.answered = true;
+      input.readOnly = true;
+
+      if (correct) {
+        state.score += 1;
+      }
+
+      state.results.push({
+        question,
+        value,
+        correct
+      });
+
+      exercise.querySelector(".score").textContent =
+        `Score: ${state.score}`;
+
+      const feedback = exercise.querySelector(".feedback");
+      feedback.className = `feedback ${correct ? "good" : "bad"}`;
+      feedback.innerHTML = `
+        <strong>${correct ? "Correct." : "Not quite."}</strong>
+        <div class="answer-display">${escapeHtml(question.answer)}</div>
+        <div class="roman">${escapeHtml(question.romanization)}</div>
+      `;
+
+      exercise.querySelector(".next").classList.remove("hidden");
+
+      requestAnimationFrame(() => {
+        input.focus({ preventScroll: true });
+      });
+    }
+
+    function nextQuestion(exercise, state) {
+      if (!state.answered || state.finished) {
+        return;
+      }
+
+      if (state.index < state.questions.length - 1) {
+        state.index += 1;
+        showQuestion(exercise, state);
+      } else {
+        finishExercise(exercise, state, "Exercise complete");
+      }
+    }
+
+    function finishExercise(exercise, state, title) {
+      if (state.finished) {
+        return;
+      }
+
+      state.finished = true;
+
+      exercise.querySelector(".live").classList.add("hidden");
+
+      const finish = exercise.querySelector(".finish");
+      const answered = state.results.length;
+      const total = state.questions.length;
+      const percentage = answered
+        ? Math.round(state.score / answered * 100)
+        : 0;
+
+      finish.style.display = "block";
+      finish.querySelector("h4").textContent = title;
+      finish.querySelector(".summary").textContent =
+        `${state.score} correct out of ${answered} answered ` +
+        `(${percentage}%).`;
+
+      finish.querySelector(".review").innerHTML = state.results
+        .filter(result => !result.correct)
+        .map(result => `
+          <div class="review-item">
+            <strong>${escapeHtml(result.question.prompt)}</strong>
+            <span> · ${escapeHtml(result.question.meaning)}</span><br>
+            Your answer: ${escapeHtml(result.value || "—")}<br>
+            Correct: <strong>${escapeHtml(result.question.answer)}</strong>
+            <span class="roman">
+              · ${escapeHtml(result.question.romanization)}
+            </span>
+          </div>
+        `)
+        .join("");
+
+      if (!state.results.some(result => !result.correct)) {
+        finish.querySelector(".review").innerHTML =
+          '<div class="review-item"><strong>No missed questions.</strong></div>';
+      }
+
+      exercise.querySelector(".score").textContent =
+        `Score: ${state.score}`;
+    }
+
+    function showSetup(exercise, state) {
+      state.finished = true;
+      exercise.querySelector(".live").classList.add("hidden");
+      exercise.querySelector(".finish").style.display = "none";
+      exercise.querySelector(".exercise-menu").classList.remove("hidden");
+      exercise.querySelector(".score").textContent = "Not started";
+    }
+
+    // -----------------------------------------------------------------------
+    // Theme
+    // -----------------------------------------------------------------------
+
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function applyTheme(theme, persist = false) {
+      const next = theme === "dark" ? "dark" : "light";
+      const dark = next === "dark";
+
+      root.dataset.theme = next;
+      root.style.colorScheme = next;
+
+      themeToggle.setAttribute("aria-pressed", String(dark));
+      themeToggle.setAttribute(
+        "aria-label",
+        dark ? "Switch to light mode" : "Switch to dark mode"
+      );
+
+      themeIcon.textContent = dark ? "☀" : "☾";
+
+      if (persist) {
+        try {
+          localStorage.setItem(STORAGE_KEY, next);
+        } catch (_) {}
+      }
+    }
+
+    themeToggle.addEventListener("click", () => {
+      applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+    });
+
+    // -----------------------------------------------------------------------
+    // Initialization
+    // -----------------------------------------------------------------------
+
+    applyTheme(root.dataset.theme);
+    renderPage();
+  </script>
+</body>
+</html>
