@@ -516,7 +516,7 @@
 
     .exercise-menu-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -538,7 +538,8 @@
       text-transform: uppercase;
     }
 
-    .exercise-menu-grid input {
+    .exercise-menu-grid input,
+    .exercise-menu-grid select {
       width: 100%;
       min-height: 36px;
       padding: 0 8px;
@@ -652,6 +653,19 @@
       font-weight: 800;
     }
 
+    .prompt-english {
+      margin-bottom: 10px;
+      font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+      font-weight: 800;
+    }
+
+    .prompt-roman {
+      margin-bottom: 14px;
+      color: var(--accent);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 800;
+    }
+
     .prompt-word {
       font-size: clamp(2.4rem, 7vw, 4.7rem);
       font-weight: 800;
@@ -663,6 +677,10 @@
       margin-top: 12px;
       font-size: 1rem;
       opacity: 0.8;
+    }
+
+    .prompt-meaning:empty {
+      display: none;
     }
 
     .answer-row {
@@ -714,6 +732,14 @@
       margin-top: 7px;
       font-size: 1.1rem;
       font-weight: 800;
+    }
+
+    .feedback-language {
+      margin-top: 6px;
+    }
+
+    .feedback-language .roman {
+      display: inline;
     }
 
     .next-row {
@@ -784,14 +810,9 @@
     }
 
     .utility-button.toc-button {
-      width: auto;
-      min-width: 46px;
-      padding: 0 14px;
       color: #FFFFFF;
       background: var(--accent);
-      border-radius: 999px;
       text-decoration: none;
-      white-space: nowrap;
     }
 
     /* ---------------------------------------------------------------------
@@ -937,12 +958,6 @@
   </main>
 
   <div class="utility-controls">
-    <a
-      class="utility-button toc-button"
-      href="#toc"
-      aria-label="Back to table of contents"
-      title="Back to table of contents"
-    >TOC ↑</a>
     <button
       class="utility-button"
       id="themeToggle"
@@ -952,6 +967,12 @@
     >
       <span id="themeIcon" aria-hidden="true">☾</span>
     </button>
+    <a
+      class="utility-button toc-button"
+      href="#top"
+      aria-label="Back to top"
+      title="Back to top"
+    >↑</a>
   </div>
 
   <script>
@@ -4425,6 +4446,23 @@
         .trim();
     }
 
+    function normalizeAnswer(value, language) {
+      const text = String(value ?? "").normalize("NFC").trim().toLowerCase();
+
+      if (language === "romanization") {
+        return text.replace(/[^a-z0-9]/g, "");
+      }
+
+      if (language === "korean") {
+        return normalizeKorean(text);
+      }
+
+      return text
+        .replace(/[^a-z0-9가-힣]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
     // Literal transliteration used throughout the previous Bab files.
     // No pronunciation assimilation is applied.
     function romanizeKorean(text) {
@@ -4478,8 +4516,33 @@
         meaning,
         answer,
         target,
+        promptRomanization: romanizeKorean(prompt),
         romanization: romanizeKorean(answer)
       };
+    }
+
+    function questionText(question, language) {
+      if (language === "english") {
+        return question.meaning;
+      }
+
+      if (language === "romanization") {
+        return question.promptRomanization;
+      }
+
+      return question.prompt;
+    }
+
+    function answerText(question, language) {
+      if (language === "english") {
+        return question.meaning;
+      }
+
+      if (language === "romanization") {
+        return question.romanization;
+      }
+
+      return question.answer;
     }
 
     // -----------------------------------------------------------------------
@@ -4771,8 +4834,8 @@
               <span class="exercise-kicker">Typed practice</span>
               <h3>Conjugation Practice</h3>
               <p>
-                You get a base word and its meaning. Type the requested Korean
-                form.
+                Every prompt shows English, romanization, and Korean. Choose
+                whether to type the answer in Korean or romanization.
               </p>
             </div>
             <div class="score">Not started</div>
@@ -4782,8 +4845,8 @@
             <div class="exercise-menu">
               <h4>Exercise setup</h4>
               <p>
-                Choose the number of questions. The prompt and answer format
-                stay fixed for this conjugation drill.
+                Every question shows all three languages. Choose the number of
+                questions and whether to answer in Korean or romanization.
               </p>
 
               <div class="exercise-menu-grid">
@@ -4798,15 +4861,14 @@
                   >
                 </label>
 
-                <div class="menu-static">
-                  <span>Prompt</span>
-                  <strong>Base word + meaning</strong>
-                </div>
 
-                <div class="menu-static">
-                  <span>Answer</span>
-                  <strong>Korean form</strong>
-                </div>
+                <label>
+                  Answer language
+                  <select class="menu-a">
+                    <option value="korean" selected>Korean</option>
+                    <option value="romanization">Romanization</option>
+                  </select>
+                </label>
               </div>
 
               <div class="exercise-menu-actions">
@@ -4840,6 +4902,8 @@
 
               <div class="prompt-card">
                 <div class="prompt-target"></div>
+                <div class="prompt-english"></div>
+                <div class="prompt-roman"></div>
                 <div class="prompt-word"></div>
                 <div class="prompt-meaning"></div>
               </div>
@@ -4915,7 +4979,10 @@
           results: [],
           answered: false,
           finished: false,
-          questionCount: 20
+          settings: {
+            count: 20,
+            aLang: "korean"
+          }
         };
 
         exerciseStates.set(exercise.id, state);
@@ -4945,36 +5012,58 @@
         });
 
         exercise.querySelector(".answer").addEventListener("keydown", event => {
-          if (event.key !== "Enter") {
+          const input = event.currentTarget;
+
+          if (event.key === "Enter") {
+            event.preventDefault();
+
+            if (state.answered) {
+              nextQuestion(exercise, state);
+            } else {
+              submitAnswer(exercise, state);
+            }
             return;
           }
 
-          event.preventDefault();
+          if (state.settings.aLang === "romanization" && event.key === " ") {
+            event.preventDefault();
 
-          if (state.answered) {
-            nextQuestion(exercise, state);
-          } else {
-            submitAnswer(exercise, state);
+            const start = input.selectionStart ?? input.value.length;
+            const end = input.selectionEnd ?? start;
+            const value = input.value;
+
+            if (start > 0 && value[start - 1] === "-") {
+              input.value = value.slice(0, start - 1) + " " + value.slice(end);
+              input.setSelectionRange(start, start);
+            } else {
+              input.value = value.slice(0, start) + "-" + value.slice(end);
+              input.setSelectionRange(start + 1, start + 1);
+            }
           }
         });
       });
     }
 
-    function startExercise(exercise, state, reuseCount = false) {
+    function startExercise(exercise, state, reuseSettings = false) {
       const countInput = exercise.querySelector(".menu-count");
+      const answerLanguage = exercise.querySelector(".menu-a");
 
-      if (!reuseCount) {
-        state.questionCount = Math.max(
-          1,
-          Math.min(100, Number(countInput.value) || 20)
-        );
+      if (!reuseSettings) {
+        state.settings = {
+          count: Math.max(
+            1,
+            Math.min(100, Number(countInput.value) || 20)
+          ),
+          aLang: answerLanguage.value
+        };
       }
 
-      countInput.value = String(state.questionCount);
+      countInput.value = String(state.settings.count);
+      answerLanguage.value = state.settings.aLang;
 
       state.questions = buildQuestionSet(
         () => generateQuestion(state.generator),
-        state.questionCount
+        state.settings.count
       );
 
       state.index = 0;
@@ -5017,13 +5106,18 @@
         String(Math.round(progress))
       );
 
-      exercise.querySelector(".prompt-target").textContent = question.target;
+      exercise.querySelector(".prompt-target").textContent =
+        `${question.target} · Answer in ${state.settings.aLang}`;
+      exercise.querySelector(".prompt-english").textContent = question.meaning;
+      exercise.querySelector(".prompt-roman").textContent = question.promptRomanization;
       exercise.querySelector(".prompt-word").textContent = question.prompt;
-      exercise.querySelector(".prompt-meaning").textContent =
-        `(${question.meaning})`;
+      exercise.querySelector(".prompt-meaning").textContent = "";
 
       input.value = "";
       input.readOnly = false;
+      input.placeholder = state.settings.aLang === "romanization"
+        ? "Space = dash · Double space = word space"
+        : `Type the ${state.settings.aLang} answer`;
 
       feedback.className = "feedback";
       feedback.innerHTML = "";
@@ -5045,8 +5139,10 @@
       const question = state.questions[state.index];
       const input = exercise.querySelector(".answer");
       const value = input.value;
+      const expected = answerText(question, state.settings.aLang);
       const correct =
-        normalizeKorean(value) === normalizeKorean(question.answer);
+        normalizeAnswer(value, state.settings.aLang) ===
+        normalizeAnswer(expected, state.settings.aLang);
 
       state.answered = true;
       input.readOnly = true;
@@ -5068,8 +5164,11 @@
       feedback.className = `feedback ${correct ? "good" : "bad"}`;
       feedback.innerHTML = `
         <strong>${correct ? "Correct." : "Not quite."}</strong>
-        <div class="answer-display">${escapeHtml(question.answer)}</div>
-        <div class="roman">${escapeHtml(question.romanization)}</div>
+        <div class="answer-display">
+          <div class="feedback-language"><strong>English:</strong> ${escapeHtml(question.meaning)}</div>
+          <div class="feedback-language"><strong>Romanization:</strong> <span class="roman">${escapeHtml(question.romanization)}</span></div>
+          <div class="feedback-language"><strong>Korean:</strong> ${escapeHtml(question.answer)}</div>
+        </div>
       `;
 
       exercise.querySelector(".next").classList.remove("hidden");
@@ -5118,13 +5217,13 @@
         .filter(result => !result.correct)
         .map(result => `
           <div class="review-item">
-            <strong>${escapeHtml(result.question.prompt)}</strong>
-            <span> · ${escapeHtml(result.question.meaning)}</span><br>
+            <strong>${escapeHtml(result.question.meaning)}</strong><br>
+            <span class="roman">${escapeHtml(result.question.promptRomanization)}</span><br>
+            ${escapeHtml(result.question.prompt)}<br>
             Your answer: ${escapeHtml(result.value || "—")}<br>
-            Correct: <strong>${escapeHtml(result.question.answer)}</strong>
-            <span class="roman">
-              · ${escapeHtml(result.question.romanization)}
-            </span>
+            Correct (English): ${escapeHtml(result.question.meaning)}<br>
+            Correct (Romanization): <strong>${escapeHtml(result.question.romanization)}</strong><br>
+            Correct (Korean): <strong>${escapeHtml(result.question.answer)}</strong>
           </div>
         `)
         .join("");
