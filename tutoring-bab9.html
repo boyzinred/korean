@@ -1,0 +1,2889 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <script>
+   (() => { try {
+    const s = localStorage.getItem('koreanQuizThemeV2');
+    document.documentElement.dataset.theme = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+catch (_) { } })();
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="Interactive Korean lesson study guide" name="description"/>
+  <title>Bab 9 · 태권도 수업은 몇 시에 시작해요?</title>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* Theme variables */
+:root {
+  color-scheme: light;
+  --background: #28468A;
+  --foreground: #F5F5F5;
+  --primary: #BCE0E6;
+  --primary-hover: #ADC6CB;
+  --secondary: #AD8FE6;
+  --secondary-soft: #8E7EBF;
+  --accent: #C74E33;
+  --accent-soft: #A24B36;
+  --muted: #A0E090;
+  --muted-strong: #99C588;
+  --blue-soft: #6375CF;
+  --border: #6674C8;
+  --subtle: #DEEAAE;
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit',system-ui,sans-serif;
+  --transition: all 180ms ease;
+}
+
+html[data-theme=dark] {
+  color-scheme: dark;
+  --background: #111827;
+  --foreground: #F9FAFB;
+  --primary: #6CC2D0;
+  --primary-hover: #6CC0D0;
+  --secondary: #8B61DC;
+  --secondary-soft: #201933;
+  --accent: #E29D8D;
+  --accent-soft: #391B13;
+  --muted: #1F2937;
+  --muted-strong: #374151;
+  --blue-soft: #12193B;
+  --border: #374151;
+  --subtle: #CBD5E1;
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+/* Base elements and accessibility */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.55;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Header and page shell */
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner,
+.page-main {
+  width: min(1120px,calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+
+.hero {
+  color: #fff;
+  background: var(--background);
+}
+
+.hero-inner {
+  padding: clamp(48px,7vw,82px);
+}
+
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(3rem,7vw,5.7rem);
+  font-weight: 800;
+  line-height: .94;
+  letter-spacing: -.03em;
+}
+
+.hero p {
+  max-width: 68ch;
+  margin: 24px 0 0;
+  color: #EFF6FF;
+  font-size: 1.05rem;
+}
+
+.toc-card {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-color: var(--primary);
+}
+
+/* Collapsible sections */
+.block,
+.section {
+  scroll-margin-top: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+details.block>summary,
+details.section>summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px,5vw,64px);
+  color: #192B5D;
+  background: var(--secondary);
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(2.2rem,5vw,4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+
+details.block>summary::-webkit-details-marker,
+details.section>summary::-webkit-details-marker {
+  display: none;
+}
+
+details.block>summary::after,
+details.section>summary::after {
+  content: 'Collapse';
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #fff;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+details:not([open])>summary::after {
+  content: 'Expand';
+}
+
+#vocabulary>summary {
+  color: #fff;
+  background: var(--accent);
+}
+
+#grammarSections>details:nth-child(3n+2)>summary {
+  color: #fff;
+  background: var(--accent);
+}
+
+#grammarSections>details:nth-child(3n)>summary {
+  background: var(--primary);
+}
+
+.block-inner,
+.section-body {
+  padding: clamp(26px,5vw,64px);
+}
+
+/* Information cards and examples */
+.guide-grid,
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.guide-card,
+.info-card {
+  padding: 22px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+
+.rule-label {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 9px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.guide-card h3,
+.info-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.2rem;
+}
+
+.guide-card p,
+.info-card p {
+  margin: 0 0 12px;
+}
+
+.example-list {
+  display: grid;
+  gap: 9px;
+}
+
+.example {
+  padding: 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  white-space: pre-line;
+}
+
+.roman {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* Vocabulary table */
+.vocab-tools {
+  display: grid;
+  grid-template-columns: minmax(220px,1fr) repeat(3,minmax(130px,auto));
+  gap: 8px;
+  margin: 24px 0 14px;
+}
+
+.vocab-search,
+input,
+select {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+input:focus,
+select:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+
+.blur-toggle,
+.btn,
+.primary-btn,
+.secondary-btn,
+.choice,
+.end-early-btn {
+  min-height: 52px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+
+.blur-toggle {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.blur-toggle[aria-pressed=true] {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--inverse-text);
+  background: var(--inverse);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.is-blurred .blur-target {
+  filter: blur(7px);
+  user-select: none;
+}
+
+.is-blurred:hover .blur-target,
+.is-blurred:focus .blur-target {
+  filter: none;
+}
+
+.source-note {
+  margin: 14px 0 0;
+  font-size: .9rem;
+  opacity: .8;
+}
+
+/* Translation exercises */
+.exercise-stack {
+  display: grid;
+  gap: 28px;
+  margin-top: 28px;
+}
+
+.exercise {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(158px,auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+
+.exercise-head-copy {
+  padding: 24px 28px;
+}
+
+.exercise-kicker,
+.prompt-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem,3vw,2.3rem);
+  line-height: 1;
+}
+
+.exercise-head p {
+  margin: 10px 0 0;
+  color: var(--subtle);
+}
+
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-weight: 800;
+}
+
+.exercise-body {
+  padding: clamp(24px,4vw,38px);
+}
+
+.exercise-menu {
+  display: grid;
+  gap: 20px;
+}
+
+.exercise-menu h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.exercise-menu p {
+  margin: 0;
+  opacity: .82;
+}
+
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 14px;
+}
+
+.exercise-menu label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.exercise-menu label>* {
+  width: 100%;
+  height: 56px;
+  min-width: 0;
+}
+
+.primary-btn,
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.secondary-btn,
+.btn.secondary {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.btn.warning,
+.end-early-btn {
+  color: #fff;
+  background: var(--accent);
+}
+
+.exercise-menu-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.runtime-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.progress {
+  height: 12px;
+  overflow: hidden;
+  background: var(--muted-strong);
+}
+
+.progress>div {
+  height: 100%;
+  background: var(--secondary);
+}
+
+.prompt {
+  min-height: 88px;
+  margin: 8px 0 22px;
+  font-size: clamp(1.35rem,2.5vw,2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: pre-line;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.choices {
+  display: grid;
+  gap: 8px;
+}
+
+.choice {
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+}
+
+.choice.correct {
+  color: #fff;
+  background: var(--secondary);
+}
+
+.choice.wrong {
+  color: #fff;
+  background: var(--accent);
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  white-space: pre-line;
+}
+
+.feedback.good {
+  display: block;
+  background: var(--secondary-soft);
+  border-left: 8px solid var(--secondary);
+}
+
+.feedback.bad {
+  display: block;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+}
+
+.next {
+  margin-top: 12px;
+}
+
+.finish {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+
+.finish h4 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.review {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.review-item {
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  white-space: pre-line;
+}
+
+.review-item strong {
+  display: block;
+}
+
+.finish-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Floating page controls */
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.utility-button.top {
+  background: var(--accent);
+}
+
+@media (max-width:900px) {
+  .exercise-head {
+    grid-template-columns: 1fr;
+  }
+  .score {
+    min-height: 74px;
+  }
+  .exercise-menu-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width:680px) {
+  .header-inner,
+  .page-main {
+    width: 100%;
+  }
+  .header-inner {
+    padding: 0 14px;
+  }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner {
+    padding: 48px 22px;
+  }
+  .toc-card {
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .guide-grid,
+  .section-intro,
+  .exercise-menu-grid,
+  .answer-row {
+    grid-template-columns: 1fr;
+  }
+  details.block>summary,
+  details.section>summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.block>summary::after,
+  details.section>summary::after {
+    width: 100%;
+  }
+  .block-inner,
+  .section-body,
+  .exercise-body {
+    padding: 22px;
+  }
+  .vocab-tools {
+    grid-template-columns: 1fr;
+  }
+  .exercise-menu-actions,
+  .finish-actions {
+    flex-direction: column;
+  }
+  .exercise-menu-actions .btn,
+  .finish-actions .btn,
+  .end-early-btn {
+    width: 100%;
+  }
+  .utility-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+  </style>
+ </head>
+ <body id="top">
+  <!-- Page header -->
+  <header class="site-header">
+   <div class="header-inner">
+    <a class="brand" href="./index.html">
+     Korean Language Resources
+    </a>
+    <div class="header-actions">
+     <a class="header-link" href="./index.html">
+      Home
+     </a>
+    </div>
+   </div>
+  </header>
+  <!-- Lesson content -->
+  <main class="page-main">
+   <section class="hero">
+    <div class="hero-inner">
+     <p class="hero-kicker">
+      Interactive Korean Study Guide
+     </p>
+     <h1 id="heroTitle">
+     </h1>
+     <p>
+      <strong id="heroSubtitle">
+      </strong>
+     </p>
+     <p id="heroDesc">
+     </p>
+    </div>
+   </section>
+   <nav aria-label="Lesson sections" class="toc-card">
+    <span class="toc-label">
+     Jump to a section
+    </span>
+    <div class="toc-grid" id="tocGrid">
+    </div>
+   </nav>
+   <details class="block" id="vocabulary" open="">
+    <summary>
+     <span>
+      Complete Vocabulary Bank
+     </span>
+    </summary>
+    <div class="block-inner">
+     <div class="guide-grid">
+      <article class="guide-card">
+       <span class="rule-label">
+        Lesson vocabulary
+       </span>
+       <h3>
+        One visible vocabulary bank
+       </h3>
+       <p>
+        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here.
+       </p>
+      </article>
+      <article class="guide-card">
+       <span class="rule-label">
+        Literal romanization
+       </span>
+       <h3>
+        Keyboard and checking
+       </h3>
+       <p>
+        Romanization follows the supplied character-by-character system. Press
+        <strong>
+         Space once
+        </strong>
+        for a syllable dash and
+        <strong>
+         Space twice
+        </strong>
+        for a word space. Grading ignores dash and space placement, while correct answers display the intended formatting.
+       </p>
+      </article>
+     </div>
+     <div class="vocab-tools">
+      <input class="vocab-search" id="vocabSearch" placeholder="Search Korean, romanization, English, or category" type="search"/>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="english" type="button">
+       Blur English
+      </button>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="romanization" type="button">
+       Blur Romanization
+      </button>
+      <button aria-pressed="false" class="blur-toggle" data-blur-field="korean" type="button">
+       Blur Korean
+      </button>
+     </div>
+     <div class="table-wrap">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          English
+         </th>
+         <th>
+          Romanization
+         </th>
+         <th>
+          Korean
+         </th>
+         <th>
+          Category
+         </th>
+        </tr>
+       </thead>
+       <tbody id="vocabBody">
+       </tbody>
+      </table>
+     </div>
+     <p class="source-note">
+      Workbook-style material questions have been removed. Every exercise below is translation practice.
+     </p>
+     <div class="exercise-stack" id="vocabExercises">
+     </div>
+    </div>
+   </details>
+   <div id="grammarSections">
+   </div>
+  </main>
+  <!-- Floating controls -->
+  <div class="utility-controls">
+   <button aria-pressed="false" class="utility-button" data-theme-toggle="" type="button">
+    <span data-theme-icon="">
+     ☾
+    </span>
+    <span class="sr-only">
+     Toggle theme
+    </span>
+   </button>
+   <a aria-label="Back to top" class="utility-button top" href="#top">
+    ↑
+   </a>
+  </div>
+  <script>
+   (() => {
+    "use strict";
+    // -------------------------------------------------------------------------
+    // Lesson content
+    // -------------------------------------------------------------------------
+    const LESSON = {
+        "title": "Bab 9",
+        "subtitle": "태권도 수업은 몇 시에 시작해요?",
+        "description": "Tell clock time with native-Korean hours and Sino-Korean minutes, say when actions happen, connect actions with -고, and express ranges with 부터 and 까지.",
+        "vocab": [
+                {
+                        "korean": "하나",
+                        "english": "one",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "둘",
+                        "english": "two",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "셋",
+                        "english": "three",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "넷",
+                        "english": "four",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "다섯",
+                        "english": "five",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "여섯",
+                        "english": "six",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "일곱",
+                        "english": "seven",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "여덟",
+                        "english": "eight",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "아홉",
+                        "english": "nine",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열",
+                        "english": "ten",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열하나",
+                        "english": "eleven",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열둘",
+                        "english": "twelve",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열셋",
+                        "english": "thirteen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열넷",
+                        "english": "fourteen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열다섯",
+                        "english": "fifteen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열여섯",
+                        "english": "sixteen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열일곱",
+                        "english": "seventeen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열여덟",
+                        "english": "eighteen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열아홉",
+                        "english": "nineteen",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "스물",
+                        "english": "twenty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "한",
+                        "english": "one (before a counter)",
+                        "category": "Counter forms"
+                },
+                {
+                        "korean": "두",
+                        "english": "two (before a counter)",
+                        "category": "Counter forms"
+                },
+                {
+                        "korean": "세",
+                        "english": "three (before a counter)",
+                        "category": "Counter forms"
+                },
+                {
+                        "korean": "네",
+                        "english": "four (before a counter)",
+                        "category": "Counter forms"
+                },
+                {
+                        "korean": "시",
+                        "english": "o'clock / hour",
+                        "category": "Time units"
+                },
+                {
+                        "korean": "분",
+                        "english": "minute",
+                        "category": "Time units"
+                },
+                {
+                        "korean": "반",
+                        "english": "half / thirty minutes",
+                        "category": "Time units"
+                },
+                {
+                        "korean": "몇 시",
+                        "english": "what time",
+                        "category": "Questions"
+                },
+                {
+                        "korean": "오전",
+                        "english": "A.M. / morning",
+                        "category": "Time"
+                },
+                {
+                        "korean": "오후",
+                        "english": "P.M. / afternoon",
+                        "category": "Time"
+                },
+                {
+                        "korean": "매일",
+                        "english": "every day",
+                        "category": "Frequency"
+                },
+                {
+                        "korean": "점심",
+                        "english": "lunch",
+                        "category": "Meals"
+                },
+                {
+                        "korean": "점심시간",
+                        "english": "lunch time",
+                        "category": "Meals"
+                },
+                {
+                        "korean": "방학",
+                        "english": "school vacation",
+                        "category": "School"
+                },
+                {
+                        "korean": "여름 방학",
+                        "english": "summer vacation",
+                        "category": "School"
+                },
+                {
+                        "korean": "시험",
+                        "english": "exam / test",
+                        "category": "School"
+                },
+                {
+                        "korean": "유학생",
+                        "english": "international student",
+                        "category": "People"
+                },
+                {
+                        "korean": "태권도",
+                        "english": "taekwondo",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "태권도 수업",
+                        "english": "taekwondo class",
+                        "category": "School"
+                },
+                {
+                        "korean": "한국어 수업",
+                        "english": "Korean-language class",
+                        "category": "School"
+                },
+                {
+                        "korean": "일본어",
+                        "english": "Japanese language",
+                        "category": "Language"
+                },
+                {
+                        "korean": "피아노",
+                        "english": "piano",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "도서관",
+                        "english": "library",
+                        "category": "Places"
+                },
+                {
+                        "korean": "회사",
+                        "english": "company / workplace",
+                        "category": "Places"
+                },
+                {
+                        "korean": "학교",
+                        "english": "school",
+                        "category": "Places"
+                },
+                {
+                        "korean": "집",
+                        "english": "home",
+                        "category": "Places"
+                },
+                {
+                        "korean": "가르치다",
+                        "english": "to teach",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "배우다",
+                        "english": "to learn",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "수영하다",
+                        "english": "to swim",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "끝나다",
+                        "english": "to end / finish",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "자다",
+                        "english": "to sleep",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "가다",
+                        "english": "to go",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "일어나다",
+                        "english": "to get up",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "일하다",
+                        "english": "to work",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "먹다",
+                        "english": "to eat",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "마시다",
+                        "english": "to drink",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "청소하다",
+                        "english": "to clean",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "만나다",
+                        "english": "to meet",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "쇼핑하다",
+                        "english": "to shop",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "공부하다",
+                        "english": "to study",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "목욕하다",
+                        "english": "to bathe",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "샤워하다",
+                        "english": "to shower",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "설거지하다",
+                        "english": "to wash dishes",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "세수하다",
+                        "english": "to wash one's face",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "이를 닦다",
+                        "english": "to brush one's teeth",
+                        "category": "Daily routine"
+                },
+                {
+                        "korean": "손을 씻다",
+                        "english": "to wash one's hands",
+                        "category": "Daily routine"
+                },
+                {
+                        "korean": "피아노를 치다",
+                        "english": "to play the piano",
+                        "category": "Daily routine"
+                },
+                {
+                        "korean": "시작하다",
+                        "english": "to start",
+                        "category": "Verbs"
+                },
+                {
+                        "korean": "부터",
+                        "english": "from / starting at",
+                        "category": "Particles"
+                },
+                {
+                        "korean": "까지",
+                        "english": "until / up to",
+                        "category": "Particles"
+                },
+                {
+                        "korean": "고",
+                        "english": "and / then (clause connector)",
+                        "category": "Grammar"
+                }
+        ],
+        "sections": [
+                {
+                        "id": "clock-time",
+                        "title": "Native-Korean hours · Sino-Korean minutes",
+                        "label": "Clock time",
+                        "meaning": "Tell the time using native-Korean number forms for hours and Sino-Korean numbers for minutes.",
+                        "form": "한/두/세/네/다섯... + 시; Sino-Korean number + 분. 반 can mean :30.",
+                        "notes": "Before 시, 하나/둘/셋/넷 change to 한/두/세/네. Twelve o'clock is 열두 시.",
+                        "examples": [
+                                [
+                                        "세 시 오 분이에요.",
+                                        "It is 3:05."
+                                ],
+                                [
+                                        "한 시 반이에요.",
+                                        "It is 1:30."
+                                ],
+                                [
+                                        "열한 시 사십오 분이에요.",
+                                        "It is 11:45."
+                                ]
+                        ],
+                        "generator": "b9Clock"
+                },
+                {
+                        "id": "time-e",
+                        "title": "몇 시에 · Time + 에",
+                        "label": "At what time?",
+                        "meaning": "Ask when an action happens and mark the clock time with 에.",
+                        "form": "몇 시에 + action? · Time + 에 + action.",
+                        "notes": "The source combines a clock expression with ordinary present-tense verbs.",
+                        "examples": [
+                                [
+                                        "몇 시에 수영해요? 열한 시에 수영해요.",
+                                        "What time do you swim? I swim at 11:00."
+                                ],
+                                [
+                                        "몇 시에 도서관에 가요? 세 시 십 분에 도서관에 가요.",
+                                        "What time do you go to the library? I go at 3:10."
+                                ],
+                                [
+                                        "몇 시에 생일 파티가 끝나요? 열 시 오십 분에 끝나요.",
+                                        "What time does the birthday party end? It ends at 10:50."
+                                ]
+                        ],
+                        "generator": "b9TimeE"
+                },
+                {
+                        "id": "clause-go",
+                        "title": "S-고 S",
+                        "label": "And / then",
+                        "meaning": "Connect two actions or descriptions in one sentence.",
+                        "form": "Verb/adjective stem + 고 + second clause.",
+                        "notes": "The first clause uses -고 instead of a final polite ending. The final clause carries the sentence ending.",
+                        "examples": [
+                                [
+                                        "이를 닦고 세수해요.",
+                                        "I brush my teeth and wash my face."
+                                ],
+                                [
+                                        "손을 씻고 밥을 먹어요.",
+                                        "I wash my hands and eat a meal."
+                                ],
+                                [
+                                        "샤워하고 잠을 자요.",
+                                        "I shower and sleep."
+                                ]
+                        ],
+                        "generator": "b9Go"
+                },
+                {
+                        "id": "from-to",
+                        "title": "N부터 N까지",
+                        "label": "From · until",
+                        "meaning": "Mark the starting and ending point of a time, day, date, month, or year range.",
+                        "form": "Start + 부터 + end + 까지.",
+                        "notes": "The same pattern works with clock times, weekdays, calendar dates, months, and years.",
+                        "examples": [
+                                [
+                                        "월요일부터 수요일까지",
+                                        "from Monday to Wednesday"
+                                ],
+                                [
+                                        "오전 여덟 시부터 오후 두 시까지",
+                                        "from 8:00 A.M. to 2:00 P.M."
+                                ],
+                                [
+                                        "시월 칠일부터 시월 십이일까지 여행을 가요.",
+                                        "I travel from October 7 to October 12."
+                                ]
+                        ],
+                        "generator": "b9FromTo"
+                },
+                {
+                        "id": "range-questions",
+                        "title": "몇 시부터 몇 시까지 · 언제까지 · 몇 월부터",
+                        "label": "Range questions",
+                        "meaning": "Ask for the starting point, ending point, or full range.",
+                        "form": "몇 시부터...? · 언제까지...? · 몇 시부터 몇 시까지...?",
+                        "notes": "The question word changes depending on which boundary you need to know.",
+                        "examples": [
+                                [
+                                        "몇 시부터 수업을 해요? 아홉 시부터 수업을 해요.",
+                                        "From what time do you have class? From 9:00."
+                                ],
+                                [
+                                        "언제까지 시험이 있어요? 수요일까지 시험이 있어요.",
+                                        "Until when are there exams? Until Wednesday."
+                                ],
+                                [
+                                        "몇 시부터 몇 시까지 점심시간이에요? 열두 시 삼십 분부터 한 시 삼십 분까지 점심시간이에요.",
+                                        "From what time to what time is lunch? From 12:30 to 1:30."
+                                ]
+                        ],
+                        "generator": "b9RangeQ"
+                }
+        ]
+};
+    // -------------------------------------------------------------------------
+    // Shared page state and small utilities
+    // -------------------------------------------------------------------------
+    const root = document.documentElement;
+    const STORAGE_KEY = "koreanQuizThemeV2";
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [b[i], b[j]] = [b[j], b[i]];
+    } return b; };
+    // Literal transliteration requested by the learner. No pronunciation assimilation is applied.
+    function romanizeKorean(text) {
+        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+        const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+        const JONG = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+        let out = "", previousHangul = false;
+        for (const ch of String(text ?? "")) {
+            const code = ch.charCodeAt(0);
+            if (code >= 0xAC00 && code <= 0xD7A3) {
+                const offset = code - 0xAC00, jong = offset % 28, jung = Math.floor(offset / 28) % 21, cho = Math.floor(offset / (28 * 21));
+                if (previousHangul)
+                    out += "-";
+                out += CHO[cho] + JUNG[jung] + JONG[jong];
+                previousHangul = true;
+            }
+            else {
+                out += ch;
+                previousHangul = false;
+            }
+        }
+        return out;
+    }
+    function hasBatchim(text) { const chars = [...String(text)].filter(ch => { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; }); return !!chars.length && ((chars.at(-1).charCodeAt(0) - 0xAC00) % 28 !== 0); }
+    const topic = n => n + (hasBatchim(n) ? "은" : "는"), subject = n => n + (hasBatchim(n) ? "이" : "가"), object = n => n + (hasBatchim(n) ? "을" : "를"), andFormal = n => n + (hasBatchim(n) ? "과" : "와"), copula = n => n + (hasBatchim(n) ? "이에요" : "예요"), negativeN = n => n + (hasBatchim(n) ? "이" : "가");
+    const article = e => /^[aeiou]/i.test(e) ? `an ${e}` : `a ${e}`;
+    const q = (korean, english, alternatives = []) => ({ korean, english, romanization: romanizeKorean(korean), alternatives: alternatives.map(k => ({ korean: k, romanization: romanizeKorean(k) })) });
+    // -------------------------------------------------------------------------
+    // Word pools used to generate translation questions
+    // -------------------------------------------------------------------------
+    const NAMES = [
+        {
+            "k": "팀",
+            "e": "Tim"
+        },
+        {
+            "k": "상우",
+            "e": "Sang-woo"
+        },
+        {
+            "k": "아사코",
+            "e": "Asako"
+        },
+        {
+            "k": "왕단",
+            "e": "Wangdan"
+        },
+        {
+            "k": "투이",
+            "e": "Thuy"
+        },
+        {
+            "k": "티누",
+            "e": "Tinu"
+        },
+        {
+            "k": "소영",
+            "e": "So-young"
+        },
+        {
+            "k": "제니퍼",
+            "e": "Jennifer"
+        },
+        {
+            "k": "민수",
+            "e": "Minsu"
+        },
+        {
+            "k": "수진",
+            "e": "Sujin"
+        }
+    ];
+    const JOBS = [
+        {
+            "k": "학생",
+            "e": "student"
+        },
+        {
+            "k": "선생님",
+            "e": "teacher"
+        },
+        {
+            "k": "회사원",
+            "e": "office worker"
+        },
+        {
+            "k": "요리사",
+            "e": "cook"
+        },
+        {
+            "k": "경찰",
+            "e": "police officer"
+        },
+        {
+            "k": "간호사",
+            "e": "nurse"
+        },
+        {
+            "k": "의사",
+            "e": "doctor"
+        },
+        {
+            "k": "가수",
+            "e": "singer"
+        },
+        {
+            "k": "연구원",
+            "e": "researcher"
+        },
+        {
+            "k": "직원",
+            "e": "employee"
+        }
+    ];
+    const COUNTRIES = [
+        {
+            "k": "한국",
+            "e": "Korean"
+        },
+        {
+            "k": "일본",
+            "e": "Japanese"
+        },
+        {
+            "k": "중국",
+            "e": "Chinese"
+        },
+        {
+            "k": "베트남",
+            "e": "Vietnamese"
+        },
+        {
+            "k": "영국",
+            "e": "British"
+        },
+        {
+            "k": "미국",
+            "e": "American"
+        },
+        {
+            "k": "호주",
+            "e": "Australian"
+        },
+        {
+            "k": "독일",
+            "e": "German"
+        },
+        {
+            "k": "캐나다",
+            "e": "Canadian"
+        },
+        {
+            "k": "러시아",
+            "e": "Russian"
+        }
+    ];
+    const NOUNS = [
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "연필",
+            "e": "pencil"
+        },
+        {
+            "k": "가방",
+            "e": "bag"
+        },
+        {
+            "k": "책상",
+            "e": "desk"
+        },
+        {
+            "k": "컴퓨터",
+            "e": "computer"
+        },
+        {
+            "k": "사과",
+            "e": "apple"
+        },
+        {
+            "k": "커피",
+            "e": "coffee"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "경험",
+            "e": "experience"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        },
+        {
+            "k": "사회",
+            "e": "society"
+        },
+        {
+            "k": "경제",
+            "e": "economy"
+        },
+        {
+            "k": "환경",
+            "e": "environment"
+        },
+        {
+            "k": "건강",
+            "e": "health"
+        },
+        {
+            "k": "습관",
+            "e": "habit"
+        },
+        {
+            "k": "목적",
+            "e": "purpose"
+        },
+        {
+            "k": "기회",
+            "e": "opportunity"
+        },
+        {
+            "k": "방법",
+            "e": "method"
+        },
+        {
+            "k": "결과",
+            "e": "result"
+        },
+        {
+            "k": "이유",
+            "e": "reason"
+        },
+        {
+            "k": "문제",
+            "e": "problem"
+        },
+        {
+            "k": "해결",
+            "e": "solution"
+        },
+        {
+            "k": "관계",
+            "e": "relationship"
+        },
+        {
+            "k": "책임",
+            "e": "responsibility"
+        },
+        {
+            "k": "약속",
+            "e": "appointment"
+        },
+        {
+            "k": "준비",
+            "e": "preparation"
+        },
+        {
+            "k": "발표",
+            "e": "presentation"
+        },
+        {
+            "k": "과제",
+            "e": "assignment"
+        },
+        {
+            "k": "수업",
+            "e": "class"
+        },
+        {
+            "k": "연구",
+            "e": "research"
+        },
+        {
+            "k": "정보",
+            "e": "information"
+        },
+        {
+            "k": "의견",
+            "e": "opinion"
+        },
+        {
+            "k": "변화",
+            "e": "change"
+        },
+        {
+            "k": "선택",
+            "e": "choice"
+        }
+    ];
+    const OBJECTS = [
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "신문",
+            "e": "newspaper"
+        },
+        {
+            "k": "사과",
+            "e": "apple"
+        },
+        {
+            "k": "커피",
+            "e": "coffee"
+        },
+        {
+            "k": "물",
+            "e": "water"
+        },
+        {
+            "k": "영화",
+            "e": "movie"
+        },
+        {
+            "k": "음악",
+            "e": "music"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "문제",
+            "e": "problem"
+        },
+        {
+            "k": "과제",
+            "e": "assignment"
+        },
+        {
+            "k": "정보",
+            "e": "information"
+        },
+        {
+            "k": "환경",
+            "e": "environment"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        },
+        {
+            "k": "경험",
+            "e": "experience"
+        }
+    ];
+    const PLACES = [
+        {
+            "k": "학교",
+            "e": "school"
+        },
+        {
+            "k": "도서관",
+            "e": "library"
+        },
+        {
+            "k": "식당",
+            "e": "restaurant"
+        },
+        {
+            "k": "커피숍",
+            "e": "coffee shop"
+        },
+        {
+            "k": "교실",
+            "e": "classroom"
+        },
+        {
+            "k": "집",
+            "e": "home"
+        },
+        {
+            "k": "회사",
+            "e": "company"
+        },
+        {
+            "k": "공원",
+            "e": "park"
+        },
+        {
+            "k": "시장",
+            "e": "market"
+        },
+        {
+            "k": "은행",
+            "e": "bank"
+        },
+        {
+            "k": "우체국",
+            "e": "post office"
+        },
+        {
+            "k": "영화관",
+            "e": "movie theater"
+        },
+        {
+            "k": "연구실",
+            "e": "research room"
+        },
+        {
+            "k": "회의실",
+            "e": "meeting room"
+        }
+    ];
+    const POSITIONS = [
+        {
+            "k": "위",
+            "e": "on top of"
+        },
+        {
+            "k": "아래",
+            "e": "under"
+        },
+        {
+            "k": "앞",
+            "e": "in front of"
+        },
+        {
+            "k": "뒤",
+            "e": "behind"
+        },
+        {
+            "k": "옆",
+            "e": "next to"
+        },
+        {
+            "k": "안",
+            "e": "inside"
+        },
+        {
+            "k": "밖",
+            "e": "outside"
+        }
+    ];
+    const TRANS = [
+        {
+            "base": "읽다",
+            "p": "읽어요",
+            "f": "읽습니다",
+            "fq": "읽습니까",
+            "c": "읽고",
+            "e": "read"
+        },
+        {
+            "base": "먹다",
+            "p": "먹어요",
+            "f": "먹습니다",
+            "fq": "먹습니까",
+            "c": "먹고",
+            "e": "eat"
+        },
+        {
+            "base": "마시다",
+            "p": "마셔요",
+            "f": "마십니다",
+            "fq": "마십니까",
+            "c": "마시고",
+            "e": "drink"
+        },
+        {
+            "base": "보다",
+            "p": "봐요",
+            "f": "봅니다",
+            "fq": "봅니까",
+            "c": "보고",
+            "e": "watch"
+        },
+        {
+            "base": "공부하다",
+            "p": "공부해요",
+            "f": "공부합니다",
+            "fq": "공부합니까",
+            "c": "공부하고",
+            "e": "study"
+        },
+        {
+            "base": "좋아하다",
+            "p": "좋아해요",
+            "f": "좋아합니다",
+            "fq": "좋아합니까",
+            "c": "좋아하고",
+            "e": "like"
+        },
+        {
+            "base": "사다",
+            "p": "사요",
+            "f": "삽니다",
+            "fq": "삽니까",
+            "c": "사고",
+            "e": "buy"
+        },
+        {
+            "base": "만들다",
+            "p": "만들어요",
+            "f": "만듭니다",
+            "fq": "만듭니까",
+            "c": "만들고",
+            "e": "make"
+        },
+        {
+            "base": "설명하다",
+            "p": "설명해요",
+            "f": "설명합니다",
+            "fq": "설명합니까",
+            "c": "설명하고",
+            "e": "explain"
+        },
+        {
+            "base": "준비하다",
+            "p": "준비해요",
+            "f": "준비합니다",
+            "fq": "준비합니까",
+            "c": "준비하고",
+            "e": "prepare"
+        }
+    ];
+    const INTRANS = [
+        {
+            "base": "가다",
+            "p": "가요",
+            "f": "갑니다",
+            "fq": "갑니까",
+            "c": "가고",
+            "e": "go"
+        },
+        {
+            "base": "오다",
+            "p": "와요",
+            "f": "옵니다",
+            "fq": "옵니까",
+            "c": "오고",
+            "e": "come"
+        },
+        {
+            "base": "자다",
+            "p": "자요",
+            "f": "잡니다",
+            "fq": "잡니까",
+            "c": "자고",
+            "e": "sleep"
+        },
+        {
+            "base": "일하다",
+            "p": "일해요",
+            "f": "일합니다",
+            "fq": "일합니까",
+            "c": "일하고",
+            "e": "work"
+        },
+        {
+            "base": "운동하다",
+            "p": "운동해요",
+            "f": "운동합니다",
+            "fq": "운동합니까",
+            "c": "운동하고",
+            "e": "exercise"
+        },
+        {
+            "base": "청소하다",
+            "p": "청소해요",
+            "f": "청소합니다",
+            "fq": "청소합니까",
+            "c": "청소하고",
+            "e": "clean"
+        },
+        {
+            "base": "수영하다",
+            "p": "수영해요",
+            "f": "수영합니다",
+            "fq": "수영합니까",
+            "c": "수영하고",
+            "e": "swim"
+        },
+        {
+            "base": "쇼핑하다",
+            "p": "쇼핑해요",
+            "f": "쇼핑합니다",
+            "fq": "쇼핑합니까",
+            "c": "쇼핑하고",
+            "e": "shop"
+        }
+    ];
+    const ADJS = [
+        {
+            "base": "맛있다",
+            "p": "맛있어요",
+            "f": "맛있습니다",
+            "c": "맛있고",
+            "e": "delicious"
+        },
+        {
+            "base": "맛없다",
+            "p": "맛없어요",
+            "f": "맛없습니다",
+            "c": "맛없고",
+            "e": "not delicious"
+        },
+        {
+            "base": "많다",
+            "p": "많아요",
+            "f": "많습니다",
+            "c": "많고",
+            "e": "numerous"
+        },
+        {
+            "base": "적다",
+            "p": "적어요",
+            "f": "적습니다",
+            "c": "적고",
+            "e": "few"
+        },
+        {
+            "base": "비싸다",
+            "p": "비싸요",
+            "f": "비쌉니다",
+            "c": "비싸고",
+            "e": "expensive"
+        },
+        {
+            "base": "싸다",
+            "p": "싸요",
+            "f": "쌉니다",
+            "c": "싸고",
+            "e": "cheap"
+        },
+        {
+            "base": "크다",
+            "p": "커요",
+            "f": "큽니다",
+            "c": "크고",
+            "e": "big"
+        },
+        {
+            "base": "작다",
+            "p": "작아요",
+            "f": "작습니다",
+            "c": "작고",
+            "e": "small"
+        },
+        {
+            "base": "넓다",
+            "p": "넓어요",
+            "f": "넓습니다",
+            "c": "넓고",
+            "e": "spacious"
+        },
+        {
+            "base": "좁다",
+            "p": "좁아요",
+            "f": "좁습니다",
+            "c": "좁고",
+            "e": "narrow"
+        },
+        {
+            "base": "길다",
+            "p": "길어요",
+            "f": "깁니다",
+            "c": "길고",
+            "e": "long"
+        },
+        {
+            "base": "짧다",
+            "p": "짧아요",
+            "f": "짧습니다",
+            "c": "짧고",
+            "e": "short"
+        },
+        {
+            "base": "좋다",
+            "p": "좋아요",
+            "f": "좋습니다",
+            "c": "좋고",
+            "e": "good"
+        },
+        {
+            "base": "재미있다",
+            "p": "재미있어요",
+            "f": "재미있습니다",
+            "c": "재미있고",
+            "e": "interesting"
+        },
+        {
+            "base": "어렵다",
+            "p": "어려워요",
+            "f": "어렵습니다",
+            "c": "어렵고",
+            "e": "difficult"
+        },
+        {
+            "base": "쉽다",
+            "p": "쉬워요",
+            "f": "쉽습니다",
+            "c": "쉽고",
+            "e": "easy"
+        },
+        {
+            "base": "깨끗하다",
+            "p": "깨끗해요",
+            "f": "깨끗합니다",
+            "c": "깨끗하고",
+            "e": "clean"
+        },
+        {
+            "base": "조용하다",
+            "p": "조용해요",
+            "f": "조용합니다",
+            "c": "조용하고",
+            "e": "quiet"
+        }
+    ];
+    const BIEUP = [
+        {
+            "p": "추워요",
+            "e": "cold"
+        },
+        {
+            "p": "더워요",
+            "e": "hot"
+        },
+        {
+            "p": "쉬워요",
+            "e": "easy"
+        },
+        {
+            "p": "어려워요",
+            "e": "difficult"
+        },
+        {
+            "p": "무거워요",
+            "e": "heavy"
+        },
+        {
+            "p": "가벼워요",
+            "e": "light"
+        },
+        {
+            "p": "귀여워요",
+            "e": "cute"
+        },
+        {
+            "p": "매워요",
+            "e": "spicy"
+        },
+        {
+            "p": "고마워요",
+            "e": "thankful"
+        },
+        {
+            "p": "아름다워요",
+            "e": "beautiful"
+        }
+    ];
+    const SEASONS = [
+        {
+            "k": "봄",
+            "e": "spring"
+        },
+        {
+            "k": "여름",
+            "e": "summer"
+        },
+        {
+            "k": "가을",
+            "e": "autumn"
+        },
+        {
+            "k": "겨울",
+            "e": "winter"
+        }
+    ];
+    const WEATHER = [
+        {
+            "p": "따뜻해요",
+            "c": "따뜻하고",
+            "e": "warm"
+        },
+        {
+            "p": "더워요",
+            "c": "덥고",
+            "e": "hot"
+        },
+        {
+            "p": "시원해요",
+            "c": "시원하고",
+            "e": "cool"
+        },
+        {
+            "p": "추워요",
+            "c": "춥고",
+            "e": "cold"
+        },
+        {
+            "p": "맑아요",
+            "c": "맑고",
+            "e": "clear"
+        },
+        {
+            "p": "흐려요",
+            "c": "흐리고",
+            "e": "cloudy"
+        }
+    ];
+    const KINDS = [
+        {
+            "k": "계절",
+            "e": "season"
+        },
+        {
+            "k": "음식",
+            "e": "food"
+        },
+        {
+            "k": "영화",
+            "e": "movie"
+        },
+        {
+            "k": "책",
+            "e": "book"
+        },
+        {
+            "k": "운동",
+            "e": "exercise"
+        },
+        {
+            "k": "음악",
+            "e": "music"
+        },
+        {
+            "k": "계획",
+            "e": "plan"
+        },
+        {
+            "k": "문화",
+            "e": "culture"
+        }
+    ];
+    const MODIFIERS = [
+        {
+            "k": "한국",
+            "e": "Korean"
+        },
+        {
+            "k": "새로운",
+            "e": "new"
+        },
+        {
+            "k": "재미있는",
+            "e": "interesting"
+        },
+        {
+            "k": "건강한",
+            "e": "healthy"
+        },
+        {
+            "k": "조용한",
+            "e": "quiet"
+        },
+        {
+            "k": "중요한",
+            "e": "important"
+        },
+        {
+            "k": "어려운",
+            "e": "difficult"
+        },
+        {
+            "k": "봄",
+            "e": "spring"
+        }
+    ];
+    function greetingQuestion() {
+        return pick([
+            q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
+        ]);
+    }
+
+    // -------------------------------------------------------------------------
+    // Bab 9 time, sequence, and range-practice helpers
+    // -------------------------------------------------------------------------
+
+    const B9_NATIVE_HOURS = [
+        { n: 1, k: "한", e: "one" },
+        { n: 2, k: "두", e: "two" },
+        { n: 3, k: "세", e: "three" },
+        { n: 4, k: "네", e: "four" },
+        { n: 5, k: "다섯", e: "five" },
+        { n: 6, k: "여섯", e: "six" },
+        { n: 7, k: "일곱", e: "seven" },
+        { n: 8, k: "여덟", e: "eight" },
+        { n: 9, k: "아홉", e: "nine" },
+        { n: 10, k: "열", e: "ten" },
+        { n: 11, k: "열한", e: "eleven" },
+        { n: 12, k: "열두", e: "twelve" }
+    ];
+
+    const B9_WEEKDAYS = [
+        { k: "월요일", e: "Monday" },
+        { k: "화요일", e: "Tuesday" },
+        { k: "수요일", e: "Wednesday" },
+        { k: "목요일", e: "Thursday" },
+        { k: "금요일", e: "Friday" },
+        { k: "토요일", e: "Saturday" },
+        { k: "일요일", e: "Sunday" }
+    ];
+
+    const B9_MONTHS = [
+        { n: 1, k: "일월", e: "January" },
+        { n: 2, k: "이월", e: "February" },
+        { n: 3, k: "삼월", e: "March" },
+        { n: 4, k: "사월", e: "April" },
+        { n: 5, k: "오월", e: "May" },
+        { n: 6, k: "유월", e: "June" },
+        { n: 7, k: "칠월", e: "July" },
+        { n: 8, k: "팔월", e: "August" },
+        { n: 9, k: "구월", e: "September" },
+        { n: 10, k: "시월", e: "October" },
+        { n: 11, k: "십일월", e: "November" },
+        { n: 12, k: "십이월", e: "December" }
+    ];
+
+    const B9_TIME_ACTIONS = [
+        { q: "수영해요", a: "수영해요", e: "swim" },
+        { q: "도서관에 가요", a: "도서관에 가요", e: "go to the library" },
+        { q: "잠을 자요", a: "잠을 자요", e: "go to sleep" },
+        { q: "일본어를 가르쳐요", a: "일본어를 가르쳐요", e: "teach Japanese" },
+        { q: "한국어를 배워요", a: "한국어를 배워요", e: "learn Korean" },
+        { q: "회사에 가요", a: "회사에 가요", e: "go to work" },
+        { q: "저녁을 먹어요", a: "저녁을 먹어요", e: "eat dinner" },
+        { q: "태권도를 배워요", a: "태권도를 배워요", e: "learn taekwondo" }
+    ];
+
+    const B9_GO_ACTIONS = [
+        { plain: "이를 닦아요", go: "이를 닦고", e: "brush my teeth" },
+        { plain: "세수해요", go: "세수하고", e: "wash my face" },
+        { plain: "손을 씻어요", go: "손을 씻고", e: "wash my hands" },
+        { plain: "밥을 먹어요", go: "밥을 먹고", e: "eat a meal" },
+        { plain: "청소해요", go: "청소하고", e: "clean" },
+        { plain: "친구를 만나요", go: "친구를 만나고", e: "meet a friend" },
+        { plain: "샤워해요", go: "샤워하고", e: "shower" },
+        { plain: "잠을 자요", go: "잠을 자고", e: "sleep" },
+        { plain: "설거지해요", go: "설거지하고", e: "wash the dishes" },
+        { plain: "쇼핑해요", go: "쇼핑하고", e: "shop" },
+        { plain: "커피를 마셔요", go: "커피를 마시고", e: "drink coffee" },
+        { plain: "학교에 가요", go: "학교에 가고", e: "go to school" },
+        { plain: "피아노를 쳐요", go: "피아노를 치고", e: "play the piano" },
+        { plain: "시험공부를 해요", go: "시험공부를 하고", e: "study for an exam" }
+    ];
+
+    function b9CompactSino(n) {
+        return sinoNumber(n).replace(/\s+/g, "");
+    }
+
+    function b9ClockPhrase(hour, minute = 0, period = "") {
+        const hourWord = B9_NATIVE_HOURS.find(item => item.n === hour).k;
+        const periodPrefix = period ? `${period} ` : "";
+
+        if (minute === 0) {
+            return `${periodPrefix}${hourWord} 시`;
+        }
+
+        if (minute === 30 && Math.random() < 0.35) {
+            return `${periodPrefix}${hourWord} 시 반`;
+        }
+
+        return `${periodPrefix}${hourWord} 시 ${b9CompactSino(minute)} 분`;
+    }
+
+    function b9EnglishClock(hour, minute = 0, period = "") {
+        const minuteText = String(minute).padStart(2, "0");
+        const suffix = period === "오전" ? " A.M." : period === "오후" ? " P.M." : "";
+        return `${hour}:${minuteText}${suffix}`;
+    }
+
+    // -------------------------------------------------------------------------
+    // Grammar-aware question generation
+    // -------------------------------------------------------------------------
+    function generate(kind) {
+        let a, b, c, n, name, job, country, obj, place, verb, verb2, adj, position, owner, season, weather, kindN, mod;
+        switch (kind) {
+
+            case "b9Clock": {
+                const hour = 1 + Math.floor(Math.random() * 12);
+                const minutes = pick([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]);
+                const period = Math.random() < 0.35 ? pick(["오전", "오후"]) : "";
+
+                return q(
+                    `${b9ClockPhrase(hour, minutes, period)}이에요.`,
+                    `It is ${b9EnglishClock(hour, minutes, period)}.`
+                );
+            }
+
+            case "b9TimeE": {
+                const hour = 1 + Math.floor(Math.random() * 12);
+                const minutes = pick([0, 10, 20, 30, 40, 50]);
+                const action = pick(B9_TIME_ACTIONS);
+                const clock = b9ClockPhrase(hour, minutes);
+
+                return q(
+                    `몇 시에 ${action.q}? ${clock}에 ${action.a}.`,
+                    `What time do you ${action.e}? I ${action.e} at ${b9EnglishClock(hour, minutes)}.`
+                );
+            }
+
+            case "b9Go": {
+                const first = pick(B9_GO_ACTIONS);
+                const second = pick(B9_GO_ACTIONS.filter(item => item.plain !== first.plain));
+
+                return q(
+                    `${first.go} ${second.plain}.`,
+                    `I ${first.e} and ${second.e}.`
+                );
+            }
+
+            case "b9FromTo": {
+                const mode = Math.floor(Math.random() * 4);
+
+                if (mode === 0) {
+                    const startHour = 1 + Math.floor(Math.random() * 8);
+                    const endHour = startHour + 1 + Math.floor(Math.random() * (12 - startHour));
+                    const start = b9ClockPhrase(startHour, 0);
+                    const end = b9ClockPhrase(endHour, 0);
+
+                    return q(
+                        `${start}부터 ${end}까지 공부해요.`,
+                        `I study from ${b9EnglishClock(startHour, 0)} to ${b9EnglishClock(endHour, 0)}.`
+                    );
+                }
+
+                if (mode === 1) {
+                    const startIndex = Math.floor(Math.random() * 5);
+                    const endIndex = startIndex + 1 + Math.floor(Math.random() * (6 - startIndex));
+                    const start = B9_WEEKDAYS[startIndex];
+                    const end = B9_WEEKDAYS[endIndex];
+
+                    return q(
+                        `${start.k}부터 ${end.k}까지 수업이 있어요.`,
+                        `There are classes from ${start.e} to ${end.e}.`
+                    );
+                }
+
+                if (mode === 2) {
+                    const month = pick(B9_MONTHS);
+                    const startDay = 1 + Math.floor(Math.random() * 14);
+                    const endDay = startDay + 1 + Math.floor(Math.random() * (28 - startDay));
+
+                    return q(
+                        `${month.k} ${b9CompactSino(startDay)}일부터 ${month.k} ${b9CompactSino(endDay)}일까지 여행을 가요.`,
+                        `I travel from ${month.e} ${startDay} to ${month.e} ${endDay}.`
+                    );
+                }
+
+                const startYear = 2000 + Math.floor(Math.random() * 20);
+                const endYear = startYear + 1 + Math.floor(Math.random() * 6);
+
+                return q(
+                    `${b9CompactSino(startYear)}년부터 ${b9CompactSino(endYear)}년까지 한국어를 공부해요.`,
+                    `I study Korean from ${startYear} to ${endYear}.`
+                );
+            }
+
+            case "b9RangeQ": {
+                const mode = Math.floor(Math.random() * 3);
+
+                if (mode === 0) {
+                    const hour = 1 + Math.floor(Math.random() * 12);
+
+                    return q(
+                        `몇 시부터 수업을 해요? ${b9ClockPhrase(hour, 0)}부터 수업을 해요.`,
+                        `From what time do you have class? I have class from ${b9EnglishClock(hour, 0)}.`
+                    );
+                }
+
+                if (mode === 1) {
+                    const weekday = pick(B9_WEEKDAYS);
+
+                    return q(
+                        `언제까지 시험이 있어요? ${weekday.k}까지 시험이 있어요.`,
+                        `Until when are there exams? There are exams until ${weekday.e}.`
+                    );
+                }
+
+                const startHour = 10 + Math.floor(Math.random() * 2);
+                const startMinute = pick([0, 30]);
+                const endHour = Math.min(12, startHour + 1);
+                const endMinute = startMinute;
+
+                return q(
+                    `몇 시부터 몇 시까지 점심시간이에요? ${b9ClockPhrase(startHour, startMinute)}부터 ${b9ClockPhrase(endHour, endMinute)}까지 점심시간이에요.`,
+                    `From what time to what time is lunch? Lunch is from ${b9EnglishClock(startHour, startMinute)} to ${b9EnglishClock(endHour, endMinute)}.`
+                );
+            }
+            case "greetings": return greetingQuestion();
+            case "copula":
+                n = pick([...NOUNS, ...JOBS]);
+                return q(copula(n.k), `It is ${article(n.e)}.`);
+            case "topic":
+                n = pick(NOUNS);
+                job = pick(JOBS);
+                return q(`${topic(n.k)} ${copula(job.k)}.`, `As for the ${n.e}, it is ${article(job.e)}.`);
+            case "yesno":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                if (Math.random() < .5)
+                    return q(`${copula(a.k)}? 네, ${copula(a.k)}.`, `Is it ${article(a.e)}? Yes, it is ${article(a.e)}.`);
+                return q(`${copula(a.k)}? 아니요, ${copula(b.k)}.`, `Is it ${article(a.e)}? No, it is ${article(b.e)}.`);
+            case "profile":
+                name = pick(NAMES);
+                country = pick(COUNTRIES);
+                job = pick(JOBS);
+                return q(`${name.k} 씨예요. ${name.k} 씨는 ${country.k} 사람이에요. ${name.k} 씨는 ${copula(job.k)}.`, `This is ${name.e}. ${name.e} is ${country.e}. ${name.e} is ${article(job.e)}.`);
+            case "demonstratives":
+                n = pick([...NOUNS, ...JOBS]);
+                a = pick([{ k: "이건", e: "This" }, { k: "그건", e: "That near you" }, { k: "저건", e: "That over there" }]);
+                return q(`${a.k} ${copula(n.k)}.`, `${a.e} is ${article(n.e)}.`);
+            case "negativeCopula":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                return q(`${a.k}${hasBatchim(a.k) ? "이" : "가"} 아니에요. ${copula(b.k)}.`, `It is not ${article(a.e)}. It is ${article(b.e)}.`);
+            case "negativeProfile":
+                name = pick(NAMES);
+                country = pick(COUNTRIES);
+                job = pick(JOBS);
+                a = pick(JOBS.filter(x => x.k !== job.k));
+                return q(`${name.k} 씨는 ${negativeN(a.k)} 아니에요. ${name.k} 씨는 ${copula(job.k)}.`, `${name.e} is not ${article(a.e)}. ${name.e} is ${article(job.e)}.`);
+            case "present":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
+            case "object":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
+            case "placeAction":
+                place = pick(PLACES);
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${place.k}에서 ${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e} at the ${place.e}.`);
+            case "also":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${obj.k}도 ${verb.p}.`, `I also ${verb.e} the ${obj.e}.`);
+            case "destination":
+                place = pick(PLACES);
+                if (Math.random() < .5)
+                    return q(`${place.k}에 가요.`, `I go to the ${place.e}.`);
+                return q(`${place.k}에 와요.`, `I come to the ${place.e}.`);
+            case "shortNegation":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                return q(`${object(obj.k)} 안 ${verb.p}.`, `I do not ${verb.e} the ${obj.e}.`);
+            case "andThen":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                place = pick(PLACES);
+                verb2 = pick(INTRANS);
+                return q(`${object(obj.k)} ${verb.p}. 그리고 ${place.k}에서 ${verb2.p}.`, `I ${verb.e} the ${obj.e}. And then I ${verb2.e} at the ${place.e}.`);
+            case "adjective":
+                n = pick(NOUNS);
+                adj = pick(ADJS);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "subjectAdjective":
+                n = pick(NOUNS);
+                adj = pick(ADJS);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "whatKind":
+                kindN = pick(KINDS);
+                mod = pick(MODIFIERS);
+                return q(`무슨 ${object(kindN.k)} 좋아해요? ${mod.k} ${object(kindN.k)} 좋아해요.`, `What kind of ${kindN.e} do you like? I like ${mod.e} ${kindN.e}.`);
+            case "bieup":
+                n = pick(NOUNS);
+                adj = pick(BIEUP);
+                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
+            case "weather":
+                season = pick(SEASONS);
+                weather = pick(WEATHER);
+                if (Math.random() < .5)
+                    return q(`${season.k} 날씨가 어때요? ${weather.p}.`, `How is the weather in ${season.e}? It is ${weather.e}.`);
+                a = pick([{ k: "비가 와요", e: "it rains" }, { k: "눈이 와요", e: "it snows" }]);
+                return q(`${season.k} 날씨가 어때요? ${weather.c} ${a.k}.`, `How is the weather in ${season.e}? It is ${weather.e}, and ${a.e}.`);
+            case "formal":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                if (Math.random() < .5)
+                    return q(`${object(obj.k)} ${verb.f}.`, `I ${verb.e} the ${obj.e}.`);
+                return q(`${object(obj.k)} ${verb.fq}?`, `Do you ${verb.e} the ${obj.e}?`);
+            case "clauseLink":
+                obj = pick(OBJECTS);
+                verb = pick(TRANS);
+                b = pick(OBJECTS);
+                verb2 = pick(TRANS);
+                return q(`${object(obj.k)} ${verb.c} ${object(b.k)} ${verb2.p}.`, `I ${verb.e} the ${obj.e} and ${verb2.e} the ${b.e}.`);
+            case "formalCopula":
+                a = pick([...NOUNS, ...JOBS]);
+                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
+                return q(`${topic(a.k)} ${b.k}입니까? 아니요, ${topic(a.k)} ${negativeN(b.k)} 아닙니다. ${topic(a.k)} ${a.k}입니다.`, `Is the ${a.e} ${article(b.e)}? No, the ${a.e} is not ${article(b.e)}. The ${a.e} is ${article(a.e)}.`);
+            case "numbers": {
+                const num = 1 + Math.floor(Math.random() * 99999);
+                return q(sinoNumber(num), num.toLocaleString("en-US"));
+            }
+            case "location":
+                n = pick(NOUNS);
+                a = pick([...NOUNS, ...PLACES]);
+                position = pick(POSITIONS);
+                if (Math.random() < .8)
+                    return q(`${topic(n.k)} ${a.k} ${position.k}에 있어요.`, `The ${n.e} is ${position.e} the ${a.e}.`);
+                return q(`${topic(n.k)} ${a.k} ${position.k}에 없어요.`, `The ${n.e} is not ${position.e} the ${a.e}.`);
+            case "nounAnd":
+                a = pick(NOUNS);
+                b = pick(NOUNS.filter(x => x.k !== a.k));
+                verb = pick(TRANS);
+                {
+                    const k1 = `${andFormal(a.k)} ${object(b.k)} ${verb.p}.`, k2 = `${a.k}하고 ${object(b.k)} ${verb.p}.`;
+                    return q(k1, `I ${verb.e} the ${a.e} and the ${b.e}.`, [k2]);
+                }
+            case "locationTopic":
+                place = pick(PLACES);
+                position = pick(POSITIONS);
+                n = pick(NOUNS);
+                return q(`${place.k} ${position.k}에는 ${subject(n.k)} 있어요.`, `As for ${position.e} the ${place.e}, there is the ${n.e}.`);
+            case "possessive":
+                owner = pick([...NAMES, ...JOBS]);
+                n = pick(NOUNS);
+                place = pick(PLACES);
+                position = pick(POSITIONS);
+                return q(`${owner.k}의 ${topic(n.k)} ${place.k} ${position.k}에 있어요.`, `${owner.e}'s ${n.e} is ${position.e} the ${place.e}.`);
+            default: return q("책이에요.", "It is a book.");
+        }
+    }
+    function sinoUnder(n) { const d = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"], u = ["", "십", "백", "천"]; let out = []; for (let pos = 3; pos >= 0; pos--) {
+        const p = 10 ** pos, v = Math.floor(n / p) % 10;
+        if (!v)
+            continue;
+        if (v !== 1 || pos === 0)
+            out.push(d[v]);
+        if (pos)
+            out.push(u[pos]);
+    } return out.join(" "); }
+    function sinoNumber(n) { const man = Math.floor(n / 10000), rest = n % 10000, parts = []; if (man) {
+        if (man !== 1)
+            parts.push(sinoUnder(man));
+        parts.push("만");
+    } if (rest)
+        parts.push(sinoUnder(rest)); return parts.join(" ") || "영"; }
+    // -------------------------------------------------------------------------
+    // Answer normalization and evaluation
+    // -------------------------------------------------------------------------
+    function normalize(value, lang) { let s = String(value ?? "").trim().toLowerCase(); if (lang === "romanization")
+        return s.replace(/[^a-z0-9]/g, ""); if (lang === "korean")
+        return s.replace(/[\s\-–—.,!?;:'"“”‘’()\[\]{}]/g, ""); return s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim(); }
+    function answersFor(question, lang) { const values = [question[lang]]; for (const alt of question.alternatives || []) {
+        if (alt[lang])
+            values.push(alt[lang]);
+    } return values; }
+    function isCorrect(question, value, lang) { const norm = normalize(value, lang); return answersFor(question, lang).some(a => normalize(a, lang) === norm); }
+    function pretty(question) { return `<strong>${esc(question.english)}</strong><br><span class="roman">${esc(question.romanization)}</span><br>${esc(question.korean)}`; }
+    function buildSet(generator, count) { const out = [], seen = new Set(); let attempts = 0; while (out.length < count && attempts < count * 40) {
+        const item = generator();
+        attempts++;
+        const key = item.korean;
+        if (!seen.has(key)) {
+            seen.add(key);
+            out.push(item);
+        }
+    } while (out.length < count)
+        out.push(generator()); return shuffle(out); }
+    // -------------------------------------------------------------------------
+    // Exercise templates and runtime state
+    // -------------------------------------------------------------------------
+    const STATES = new Map();
+    function exerciseTemplate(key, title, description, defaultCount = 20) { return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>Choose typed or multiple choice, the number of questions, and both languages.</p><div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`; }
+    // -------------------------------------------------------------------------
+    // Theme, rendering, and event wiring
+    // -------------------------------------------------------------------------
+    function applyTheme(theme, persist = false) { const next = theme === "dark" ? "dark" : "light"; root.dataset.theme = next; root.style.colorScheme = next; if (persist)
+        try {
+            localStorage.setItem(STORAGE_KEY, next);
+        }
+        catch (_) { } document.querySelectorAll("[data-theme-toggle]").forEach(btn => { const dark = next === "dark"; btn.setAttribute("aria-pressed", String(dark)); btn.querySelector("[data-theme-icon]").textContent = dark ? "☀" : "☾"; }); }
+    let saved = null;
+    try {
+        saved = localStorage.getItem(STORAGE_KEY);
+    }
+    catch (_) { }
+    applyTheme(saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+    function render() {
+        document.title = `${LESSON.title} · ${LESSON.subtitle}`;
+        document.getElementById("heroTitle").textContent = LESSON.title;
+        document.getElementById("heroSubtitle").textContent = LESSON.subtitle;
+        document.getElementById("heroDesc").textContent = LESSON.description;
+        document.getElementById("tocGrid").innerHTML = `<a class="toc-link" href="#vocabulary">Vocabulary</a>` + LESSON.sections.map(s => `<a class="toc-link" href="#${esc(s.id)}">${esc(s.title)}</a>`).join("");
+        const body = document.getElementById("vocabBody");
+        body.innerHTML = LESSON.vocab.map(v => { const r = romanizeKorean(v.korean); return `<tr data-search="${esc(`${v.english} ${r} ${v.korean} ${v.category}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td>${esc(v.category || "")}</td></tr>`; }).join("");
+        document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        initInteractions();
+    }
+    function initInteractions() {
+        document.querySelectorAll("details").forEach(d => { const s = d.querySelector(":scope>summary"), sync = () => s?.setAttribute("aria-expanded", String(d.open)); sync(); d.addEventListener("toggle", sync); });
+        const search = document.getElementById("vocabSearch");
+        search.addEventListener("input", () => { const term = search.value.trim().toLowerCase(); document.querySelectorAll("#vocabBody tr").forEach(row => row.hidden = !!term && !row.dataset.search.includes(term)); });
+        document.querySelectorAll("[data-blur-field]").forEach(btn => btn.addEventListener("click", () => { const field = btn.dataset.blurField, on = btn.getAttribute("aria-pressed") !== "true"; btn.setAttribute("aria-pressed", String(on)); document.querySelectorAll(`#vocabBody [data-vocab-field="${field}"]`).forEach(cell => cell.classList.toggle("is-blurred", on)); }));
+        document.querySelectorAll("[data-theme-toggle]").forEach(btn => btn.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
+        document.querySelectorAll(".exercise").forEach(initExercise);
+    }
+    function initExercise(el) {
+        const key = el.id.replace(/^ex-/, "");
+        const section = LESSON.sections.find(s => s.id === key);
+        const generator = key === "vocabulary" ? () => { const v = pick(LESSON.vocab); return q(v.korean, v.english); } : () => generate(section.generator);
+        const state = { generator, questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null };
+        STATES.set(key, state);
+        el.querySelector(".start").onclick = () => start(el, state);
+        el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
+        el.querySelector(".next").onclick = () => next(el, state);
+        el.querySelector(".restart-same").onclick = () => start(el, state, true);
+        el.querySelector(".change-setup").onclick = () => showSetup(el, state);
+    }
+    function start(el, state, reuse = false) { const settings = reuse && state.settings ? state.settings : { mode: el.querySelector(".menu-mode").value, count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)), qLang: el.querySelector(".menu-q").value, aLang: el.querySelector(".menu-a").value }; state.settings = settings; state.questions = buildSet(state.generator, settings.count); state.i = 0; state.score = 0; state.results = []; state.done = false; state.finished = false; el.querySelector(".exercise-menu").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".live").classList.remove("hidden"); showQuestion(el, state); }
+    function showSetup(el, state) { state.finished = true; el.querySelector(".live").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".exercise-menu").classList.remove("hidden"); el.querySelector(".score").textContent = "Not started"; }
+    function showQuestion(el, state) {
+        if (state.finished)
+            return;
+        const question = state.questions[state.i], S = state.settings;
+        state.done = false;
+        el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.questions.length}`;
+        el.querySelector(".mode-label").textContent = S.mode === "typed" ? "Typed" : "Multiple choice";
+        el.querySelector(".score").textContent = `Score: ${state.score}`;
+        const pct = state.i / state.questions.length * 100;
+        el.querySelector(".progress>div").style.width = `${pct}%`;
+        el.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(pct)));
+        el.querySelector(".prompt-label").textContent = `${S.qLang} → ${S.aLang}`;
+        el.querySelector(".prompt").textContent = question[S.qLang];
+        const feedback = el.querySelector(".feedback");
+        feedback.className = "feedback";
+        feedback.innerHTML = "";
+        el.querySelector(".next").classList.add("hidden");
+        const zone = el.querySelector(".zone");
+        if (S.mode === "typed") {
+            zone.innerHTML = `<div class="answer-row"><label class="sr-only">Your answer</label><input class="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${S.aLang === "romanization" ? "Space = dash · Double space = word space" : "Type your answer"}"><button class="btn primary check" type="button">Check</button></div>`;
+            const input = zone.querySelector("input"), submit = () => submitTyped(el, state, input.value);
+            zone.querySelector(".check").onclick = submit;
+            input.addEventListener("keydown", ev => { if (ev.key === "Enter") {
+                ev.preventDefault();
+                if (state.done)
+                    next(el, state);
+                else
+                    submit();
+                return;
+            } if (S.aLang === "romanization" && ev.key === " ") {
+                ev.preventDefault();
+                const a = input.selectionStart ?? input.value.length, b = input.selectionEnd ?? a, v = input.value;
+                if (a > 0 && v[a - 1] === "-") {
+                    input.value = v.slice(0, a - 1) + " " + v.slice(b);
+                    input.setSelectionRange(a, a);
+                }
+                else {
+                    input.value = v.slice(0, a) + "-" + v.slice(b);
+                    input.setSelectionRange(a + 1, a + 1);
+                }
+            } });
+            requestAnimationFrame(() => input.focus({ preventScroll: true }));
+        }
+        else {
+            const correct = question[S.aLang];
+            let options = [correct], tries = 0;
+            while (options.length < 4 && tries < 50) {
+                tries++;
+                const other = state.generator()[S.aLang];
+                if (!options.some(x => normalize(x, S.aLang) === normalize(other, S.aLang)))
+                    options.push(other);
+            }
+            options = shuffle(options);
+            zone.innerHTML = `<div class="choices">${options.map(o => `<button class="choice" data-value="${esc(o)}" type="button">${esc(o)}</button>`).join("")}</div>`;
+            zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => { if (state.done)
+                return; const value = btn.dataset.value, ok = isCorrect(question, value, S.aLang); zone.querySelectorAll(".choice").forEach(b => { b.disabled = true; if (isCorrect(question, b.dataset.value, S.aLang))
+                b.classList.add("correct"); }); if (!ok)
+                btn.classList.add("wrong"); complete(el, state, value, ok); });
+        }
+    }
+    function submitTyped(el, state, value) { if (state.done)
+        return; const question = state.questions[state.i], ok = isCorrect(question, value, state.settings.aLang); complete(el, state, value, ok); const input = el.querySelector(".answer"); if (input) {
+        input.readOnly = true;
+        requestAnimationFrame(() => input.focus({ preventScroll: true }));
+    } }
+    function complete(el, state, value, ok) { if (state.done || state.finished)
+        return; state.done = true; if (ok)
+        state.score++; const question = state.questions[state.i]; state.results.push({ question, value, ok }); el.querySelector(".score").textContent = `Score: ${state.score}`; const f = el.querySelector(".feedback"); f.className = `feedback ${ok ? "good" : "bad"}`; f.innerHTML = `${ok ? "Correct." : "Not quite."}<br>${pretty(question)}`; const nextBtn = el.querySelector(".next"); nextBtn.textContent = state.i === state.questions.length - 1 ? "Finish" : "Next"; nextBtn.classList.remove("hidden"); }
+    function next(el, state) { if (!state.done)
+        return; if (state.i < state.questions.length - 1) {
+        state.i++;
+        showQuestion(el, state);
+    }
+    else
+        finish(el, state, "Exercise complete"); }
+    function finish(el, state, title) { if (state.finished)
+        return; state.finished = true; el.querySelector(".live").classList.add("hidden"); const fin = el.querySelector(".finish"); fin.style.display = "block"; fin.querySelector("h4").textContent = title; const answered = state.results.length, pct = answered ? Math.round(state.score / answered * 100) : 0; fin.querySelector(".summary").innerHTML = answered ? `Score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.` : "No questions were answered."; fin.querySelector(".review").innerHTML = state.results.map((r, i) => `<div class="review-item"><strong>${i + 1}. ${r.ok ? "Correct" : "Review"}</strong>Your answer: ${esc(r.value || "(blank)")}<br>${pretty(r.question)}</div>`).join(""); fin.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+    render();
+})();
+  </script>
+ </body>
+</html>
