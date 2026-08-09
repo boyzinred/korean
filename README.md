@@ -2,6 +2,8 @@
 
 # TODO
 - add a "repeat question if wrong" option in menus
+- be able to choose which sections to include in master quiz
+- update romanization in topik 1 vocab
   
 # FINISHED TASKS
 AUGUST 6, 2026
