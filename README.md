@@ -1,7 +1,8 @@
 # Korean Vocab and Grammar Practice Hub
 
 # TODO
-
+- add a "repeat question if wrong" option in menus
+  
 # FINISHED TASKS
 AUGUST 6, 2026
 - turn all babs into html files
