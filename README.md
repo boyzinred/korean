@@ -1,12 +1,15 @@
 # Korean Vocab and Grammar Practice Hub
 
 # TODO
-- add a "repeat question if wrong" option in menus
-- be able to choose which sections to include in master quiz
-- update romanization in topik 1 vocab
-- helper exercise of which number system to use
   
 # FINISHED TASKS
+AUGUST 10, 2026
+- TOPIK 1 VOCAB fixes:
+  - add a "repeat question if wrong" option in menus
+  - be able to choose which sections to include in master quiz
+  - update romanization
+- helper exercise of which number system to use
+
 AUGUST 6, 2026
 - turn all babs into html files
   - no material exercises
