@@ -1,0 +1,3422 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <script>
+   (() => {
+  try {
+    const savedTheme = localStorage.getItem("koreanQuizThemeV2");
+    const preferredTheme = matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+    const theme = savedTheme || preferredTheme;
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  } catch (_) {}
+})();
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="Interactive Korean number systems, counters, place values, and common measurement practice." name="description"/>
+  <title>
+   Numbers Practice
+  </title>
+  <style>
+   @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
+
+/* --------------------------------------------------------------------------
+   Theme
+   -------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+  --background: #28468A;
+  --foreground: #F5F5F5;
+  --primary: #BCE0E6;
+  --primary-hover: #ADC6CB;
+  --secondary: #AD8FE6;
+  --secondary-soft: #8E7EBF;
+  --accent: #C74E33;
+  --accent-soft: #A24B36;
+  --muted: #A0E090;
+  --muted-strong: #99C588;
+  --blue-soft: #6375CF;
+  --border: #6674C8;
+  --subtle: #DEEAAE;
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: "Outfit", system-ui, sans-serif;
+  --transition: 180ms ease;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #111827;
+  --foreground: #F9FAFB;
+  --primary: #6CC2D0;
+  --primary-hover: #6CC0D0;
+  --secondary: #8B61DC;
+  --secondary-soft: #201933;
+  --accent: #E29D8D;
+  --accent-soft: #391B13;
+  --muted: #1F2937;
+  --muted-strong: #374151;
+  --blue-soft: #12193B;
+  --border: #374151;
+  --subtle: #CBD5E1;
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+/* --------------------------------------------------------------------------
+   Base styles
+   -------------------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.55;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+.hidden {
+  display: none!important;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Page shell and navigation
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner, .page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.header-link:hover {
+  border-color: var(--primary);
+}
+
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+
+.hero {
+  color: #fff;
+  background: var(--background);
+}
+
+.hero-inner {
+  padding: clamp(48px, 7vw, 82px);
+}
+
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 5.6rem);
+  font-weight: 800;
+  line-height: .94;
+  letter-spacing: -.03em;
+}
+
+.hero p {
+  max-width: 70ch;
+  margin: 24px 0 0;
+  color: #EFF6FF;
+  font-size: 1.05rem;
+}
+
+.toc-card {
+  padding: 24px clamp(22px, 5vw, 52px);
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-label {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.toc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toc-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sections {
+  padding: clamp(22px, 5vw, 52px);
+}
+
+details.section {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+details.section>summary {
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 24px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  font-size: clamp(1.35rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  list-style: none;
+}
+
+details.section>summary::-webkit-details-marker {
+  display: none;
+}
+
+details.section>summary::after {
+  content: "−";
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+
+details.section:not([open])>summary::after {
+  content: "+";
+}
+
+.section-body {
+  padding: clamp(22px, 4vw, 36px);
+}
+
+/* --------------------------------------------------------------------------
+   Explanation and examples
+   -------------------------------------------------------------------------- */
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.guide-topic {
+  overflow: hidden;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.guide-topic>summary {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.16rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+.guide-topic>summary::-webkit-details-marker {
+  display: none;
+}
+
+.guide-topic>summary::after {
+  content: "+";
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 50%;
+  font-size: 1.25rem;
+}
+
+.guide-topic[open]>summary::after {
+  content: "−";
+}
+
+.guide-topic-summary {
+  display: grid;
+  gap: 2px;
+}
+
+.guide-topic-summary small {
+  color: var(--accent);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.guide-topic-body {
+  padding: 0 20px 20px;
+}
+
+.info-card {
+  min-width: 0;
+  padding: 22px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-lg);
+}
+
+.info-card.wide {
+  grid-column: auto;
+}
+
+.rule-label {
+  display: inline-flex;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.info-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.35rem;
+}
+
+.info-card p {
+  margin: 0 0 10px;
+}
+
+.info-card p:last-child {
+  margin-bottom: 0;
+}
+
+.guide-list {
+  display: grid;
+  gap: 10px;
+}
+
+.guide-step {
+  padding: 14px;
+  background: var(--surface);
+  border-left: 5px solid var(--primary);
+  border-radius: var(--radius-md);
+}
+
+.guide-step strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.rule-table-wrap {
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.rule-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.rule-table th, .rule-table td {
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.rule-table th {
+  background: var(--surface-muted);
+}
+
+.examples {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.example {
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.example-base {
+  font-weight: 800;
+}
+
+.example-answer {
+  margin-top: 6px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.small {
+  font-size: .86rem;
+  opacity: .78;
+}
+
+.callout {
+  margin-top: 14px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+/* --------------------------------------------------------------------------
+   Exercise UI
+   -------------------------------------------------------------------------- */
+
+.exercise {
+  overflow: hidden;
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+
+.exercise-head-copy {
+  padding: 22px;
+}
+
+.exercise-kicker {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.exercise-head h3 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.exercise-head p {
+  margin: 8px 0 0;
+  opacity: .9;
+}
+
+.score {
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  color: #192B5D;
+  background: var(--secondary);
+  font-weight: 800;
+  text-align: center;
+}
+
+.exercise-body {
+  padding: 22px;
+}
+
+.exercise-menu {
+  padding: 18px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-lg);
+}
+
+.exercise-menu h4 {
+  margin: 0 0 5px;
+  font-size: 1.15rem;
+}
+
+.exercise-menu>p {
+  margin: 0 0 16px;
+  opacity: .8;
+}
+
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.exercise-menu-grid label {
+  min-width: 0;
+  min-height: 76px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.exercise-menu-grid input, .exercise-menu-grid select {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 8px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.exercise-menu-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.btn, .end-early-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.btn:hover, .end-early-btn:hover {
+  transform: scale(1.02);
+}
+
+.btn.primary {
+  color: #192B5D;
+  background: var(--primary);
+}
+
+.btn.primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn.secondary {
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+
+.btn.warning, .end-early-btn {
+  color: #fff;
+  background: var(--accent);
+}
+
+.runtime-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: .88rem;
+  font-weight: 800;
+}
+
+.progress {
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 22px;
+  background: var(--muted-strong);
+}
+
+.progress>div {
+  width: 0;
+  height: 100%;
+  background: var(--secondary);
+  transition: width var(--transition);
+}
+
+.prompt-card {
+  padding: clamp(22px, 4vw, 34px);
+  background: var(--surface-muted);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.prompt-target {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 6px 9px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+}
+
+.prompt-system {
+  margin-bottom: 9px;
+  color: var(--accent);
+  font-size: .88rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+.prompt-word {
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+}
+
+.prompt-hint {
+  margin-top: 12px;
+  font-size: .96rem;
+  opacity: .8;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.answer {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.feedback {
+  display: none;
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+
+.feedback.good {
+  display: block;
+  color: #fff;
+  background: var(--secondary-soft);
+  border-left: 7px solid var(--secondary);
+}
+
+.feedback.bad {
+  display: block;
+  color: #fff;
+  background: var(--accent-soft);
+  border-left: 7px solid var(--accent);
+}
+
+html[data-theme="dark"] .feedback.good, html[data-theme="dark"] .feedback.bad {
+  color: var(--foreground);
+}
+
+.answer-display {
+  margin-top: 7px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.feedback-note {
+  margin-top: 8px;
+  font-size: .9rem;
+  opacity: .9;
+}
+
+.next-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.finish {
+  display: none;
+}
+
+.finish h4 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.finish-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.review {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.review-item {
+  padding: 12px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+
+/* --------------------------------------------------------------------------
+   Floating utilities
+   -------------------------------------------------------------------------- */
+
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.utility-button.toc-button {
+  color: #fff;
+  background: var(--accent);
+  text-decoration: none;
+}
+
+@media(max-width:900px) {
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-card.wide {
+    grid-column: auto;
+  }
+  .exercise-head {
+    grid-template-columns: 1fr;
+  }
+  .score {
+    min-height: 72px;
+  }
+  .examples {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width:680px) {
+  .header-inner, .page-main {
+    width: 100%;
+  }
+  .header-inner {
+    min-height: 60px;
+    padding: 0 14px;
+  }
+  .page-main {
+    margin-top: 0;
+    border-radius: 0;
+  }
+  .hero-inner {
+    padding: 48px 22px;
+  }
+  .toc-card, .sections {
+    padding-inline: 22px;
+  }
+  .toc-card {
+    overflow-x: auto;
+  }
+  .toc-grid {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  details.section>summary {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 28px 22px;
+  }
+  details.section>summary::after {
+    width: 100%;
+    border-radius: var(--radius-md);
+  }
+  .section-body, .exercise-body {
+    padding: 18px;
+  }
+  .exercise-menu-grid, .answer-row {
+    grid-template-columns: 1fr;
+  }
+  .exercise-menu-actions, .runtime-bar, .finish-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .exercise-menu-actions .btn, .runtime-bar .end-early-btn, .answer-row .btn, .next-row .btn {
+    width: 100%;
+  }
+  .status {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .utility-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  * {
+    scroll-behavior: auto!important;
+    transition: none!important;
+    transform: none!important;
+  }
+}
+
+.exercise-menu-grid select:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+  </style>
+ </head>
+ <body id="top">
+  <!-- Site header -->
+  <header class="site-header">
+   <div class="header-inner">
+    <div class="brand">
+     Korean Language Resources
+    </div>
+    <a class="header-link" href="./index.html">
+     Home
+    </a>
+   </div>
+  </header>
+  <!-- Main content -->
+  <main class="page-main">
+   <section class="hero">
+    <div class="hero-inner">
+     <p class="hero-kicker">
+      Numbers &middot; counters &middot; measurements
+     </p>
+     <h1>
+      Korean Numbers Practice
+     </h1>
+     <p>
+      Learn when Korean uses native numbers and when it uses Sino-Korean numbers, then practice the system inside real situations: counters, age, time, dates, money, floors, measurements, phone numbers, and large place values.
+     </p>
+    </div>
+   </section>
+   <nav aria-label="Jump to content" class="toc-card">
+    <span class="toc-label">
+     Jump to
+    </span>
+    <div class="toc-grid">
+     <a class="toc-link" href="#numbers">
+      Complete guide
+     </a>
+     <a class="toc-link" href="#exercise-numbers">
+      Big exercise
+     </a>
+    </div>
+   </nav>
+   <section class="sections">
+    <details class="section" id="numbers" open="">
+     <summary>
+      Korean Number Systems
+     </summary>
+     <div class="section-body">
+      <div class="guide-grid">
+       <details class="guide-topic" open="">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           The core decision
+          </small>
+          <span>
+           Native or Sino-Korean?
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <p>
+          Korean uses two number systems. The number itself is not chosen randomly: the
+          <strong>
+           situation or counter
+          </strong>
+          usually determines which system you need.
+         </p>
+         <div class="guide-list">
+          <div class="guide-step">
+           <strong>
+            Native Korean
+           </strong>
+           Common for counting things with counters, people, animals, age with
+           <strong>
+            살
+           </strong>
+           , clock hours with
+           <strong>
+            시
+           </strong>
+           , durations in
+           <strong>
+            시간
+           </strong>
+           , and occurrences with
+           <strong>
+            번
+           </strong>
+           .
+          </div>
+          <div class="guide-step">
+           <strong>
+            Sino-Korean
+           </strong>
+           Common for money, calendar dates, years, minutes and seconds, floors, school grades, percentages, measurements, phone/serial digits, mathematics, and large values.
+          </div>
+          <div class="guide-step">
+           <strong>
+            Mixed situations are normal
+           </strong>
+           A time such as 3:20 mixes systems:
+           <strong>
+            세 시 이십 분
+           </strong>
+           &mdash; native for the hour, Sino-Korean for the minutes.
+          </div>
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Native Korean
+          </small>
+          <span>
+           1&ndash;99 and counter forms
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <p>
+          Native numbers have special tens. Before most counters, 1, 2, 3, 4, and 20 contract.
+         </p>
+         <div class="rule-table-wrap">
+          <table class="rule-table">
+           <thead>
+            <tr>
+             <th>
+              Value
+             </th>
+             <th>
+              Standalone
+             </th>
+             <th>
+              Before a counter
+             </th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr>
+             <td>
+              1
+             </td>
+             <td>
+              하나
+             </td>
+             <td>
+              <strong>
+               한
+              </strong>
+              개
+             </td>
+            </tr>
+            <tr>
+             <td>
+              2
+             </td>
+             <td>
+              둘
+             </td>
+             <td>
+              <strong>
+               두
+              </strong>
+              명
+             </td>
+            </tr>
+            <tr>
+             <td>
+              3
+             </td>
+             <td>
+              셋
+             </td>
+             <td>
+              <strong>
+               세
+              </strong>
+              마리
+             </td>
+            </tr>
+            <tr>
+             <td>
+              4
+             </td>
+             <td>
+              넷
+             </td>
+             <td>
+              <strong>
+               네
+              </strong>
+              권
+             </td>
+            </tr>
+            <tr>
+             <td>
+              10
+             </td>
+             <td>
+              열
+             </td>
+             <td>
+              열 장
+             </td>
+            </tr>
+            <tr>
+             <td>
+              20
+             </td>
+             <td>
+              스물
+             </td>
+             <td>
+              <strong>
+               스무
+              </strong>
+              살
+             </td>
+            </tr>
+            <tr>
+             <td>
+              30 / 40 / 50
+             </td>
+             <td>
+              서른 / 마흔 / 쉰
+             </td>
+             <td>
+              서른한 명 / 마흔두 개 / 쉰세 살
+             </td>
+            </tr>
+            <tr>
+             <td>
+              60 / 70 / 80 / 90
+             </td>
+             <td>
+              예순 / 일흔 / 여든 / 아흔
+             </td>
+             <td>
+              예순네 권 / 일흔다섯 번 / 여든여섯 마리 / 아흔아홉 개
+             </td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+         <div class="callout">
+          <strong>
+           Important:
+          </strong>
+          the contraction happens inside larger numbers too: 21개 =
+          <strong>
+           스물한 개
+          </strong>
+          , 22명 =
+          <strong>
+           스물두 명
+          </strong>
+          , 23살 =
+          <strong>
+           스물세 살
+          </strong>
+          , 24시간 =
+          <strong>
+           스물네 시간
+          </strong>
+          .
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Sino-Korean
+          </small>
+          <span>
+           Digits, place values, and large-number grouping
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <p>
+          The basic digits are
+          <strong>
+           일 1, 이 2, 삼 3, 사 4, 오 5, 육 6, 칠 7, 팔 8, 구 9
+          </strong>
+          . Zero is usually
+          <strong>
+           영
+          </strong>
+          , while
+          <strong>
+           공
+          </strong>
+          is very common when reading phone numbers and other identifiers.
+         </p>
+         <div class="rule-table-wrap">
+          <table class="rule-table">
+           <thead>
+            <tr>
+             <th>
+              Place
+             </th>
+             <th>
+              Korean
+             </th>
+             <th>
+              Example
+             </th>
+             <th>
+              Meaning
+             </th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr>
+             <td>
+              10
+             </td>
+             <td>
+              십
+             </td>
+             <td>
+              23 = 이십삼
+             </td>
+             <td>
+              2&times;10 + 3
+             </td>
+            </tr>
+            <tr>
+             <td>
+              100
+             </td>
+             <td>
+              백
+             </td>
+             <td>
+              405 = 사백오
+             </td>
+             <td>
+              4&times;100 + 5
+             </td>
+            </tr>
+            <tr>
+             <td>
+              1,000
+             </td>
+             <td>
+              천
+             </td>
+             <td>
+              2,026 = 이천이십육
+             </td>
+             <td>
+              2&times;1,000 + 2&times;10 + 6
+             </td>
+            </tr>
+            <tr>
+             <td>
+              10,000
+             </td>
+             <td>
+              만
+             </td>
+             <td>
+              12,500 = 만 이천오백
+             </td>
+             <td>
+              Korean begins a new large group at 10,000
+             </td>
+            </tr>
+            <tr>
+             <td>
+              100,000,000
+             </td>
+             <td>
+              억
+             </td>
+             <td>
+              100,000,000 = 일억
+             </td>
+             <td>
+              억 begins the next 10,000-based large group
+             </td>
+            </tr>
+            <tr>
+             <td>
+              1,000,000,000,000
+             </td>
+             <td>
+              조
+             </td>
+             <td>
+              1,000,000,000,000 = 일조
+             </td>
+             <td>
+              조 is another 10,000-fold step after 억
+             </td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+         <p>
+          Before
+          <strong>
+           십, 백, 천
+          </strong>
+          , a leading 1 is normally omitted: 10 = 십, 100 = 백, 1,000 = 천. The value 10,000 is normally
+          <strong>
+           만
+          </strong>
+          , but larger group units keep 일 when the group itself is exactly one: 100,000,000 =
+          <strong>
+           일억
+          </strong>
+          , 1,000,000,000,000 =
+          <strong>
+           일조
+          </strong>
+          .
+         </p>
+         <div class="examples">
+          <div class="example">
+           <div class="example-base">
+            47
+           </div>
+           <div class="example-answer">
+            사십칠
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            1,234
+           </div>
+           <div class="example-answer">
+            천이백삼십사
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            56,789
+           </div>
+           <div class="example-answer">
+            오만 육천칠백팔십구
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            123,456,789
+           </div>
+           <div class="example-answer">
+            일억 이천삼백사십오만 육천칠백팔십구
+           </div>
+          </div>
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Common counters and measure words
+          </small>
+          <span>
+           Which system goes with which unit?
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <div class="rule-table-wrap">
+          <table class="rule-table">
+           <thead>
+            <tr>
+             <th>
+              Situation / unit
+             </th>
+             <th>
+              System
+             </th>
+             <th>
+              Example
+             </th>
+             <th>
+              English
+             </th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr>
+             <td>
+              개 general things
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              세 개
+             </td>
+             <td>
+              3 things
+             </td>
+            </tr>
+            <tr>
+             <td>
+              명 people / 분 people (honorific)
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              두 명 / 두 분
+             </td>
+             <td>
+              2 people
+             </td>
+            </tr>
+            <tr>
+             <td>
+              마리 animals
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              네 마리
+             </td>
+             <td>
+              4 animals
+             </td>
+            </tr>
+            <tr>
+             <td>
+              권 books / 장 sheets / 병 bottles / 잔 cups
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              다섯 권 / 여섯 장 / 두 병 / 한 잔
+             </td>
+             <td>
+              5 books / 6 sheets / 2 bottles / 1 cup
+             </td>
+            </tr>
+            <tr>
+             <td>
+              대 vehicles &amp; machines / 벌 clothing / 켤레 pairs / 송이 flowers
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              세 대 / 두 벌 / 네 켤레 / 열 송이
+             </td>
+             <td>
+              3 vehicles / 2 outfits / 4 pairs / 10 flowers
+             </td>
+            </tr>
+            <tr>
+             <td>
+              번 occurrences / 번째 ordinal position
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              세 번 / 두 번째
+             </td>
+             <td>
+              3 times / second
+             </td>
+            </tr>
+            <tr>
+             <td>
+              살 age
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              스무 살
+             </td>
+             <td>
+              20 years old
+             </td>
+            </tr>
+            <tr>
+             <td>
+              시 clock hour / 시간 duration in hours
+             </td>
+             <td>
+              Native
+             </td>
+             <td>
+              세 시 / 두 시간
+             </td>
+             <td>
+              3 o'clock / 2 hours
+             </td>
+            </tr>
+            <tr>
+             <td>
+              분 minutes / 초 seconds
+             </td>
+             <td>
+              Sino
+             </td>
+             <td>
+              이십 분 / 삼십 초
+             </td>
+             <td>
+              20 minutes / 30 seconds
+             </td>
+            </tr>
+            <tr>
+             <td>
+              년 year / 월 month / 일 day
+             </td>
+             <td>
+              Sino
+             </td>
+             <td>
+              이천이십육 년 / 팔월 / 십오일
+             </td>
+             <td>
+              year 2026 / August / the 15th
+             </td>
+            </tr>
+            <tr>
+             <td>
+              원 money / 층 floor / 학년 school grade / 호 room or unit
+             </td>
+             <td>
+              Sino
+             </td>
+             <td>
+              오천 원 / 칠 층 / 삼 학년 / 삼백오 호
+             </td>
+             <td>
+              ₩5,000 / 7th floor / grade 3 / room 305
+             </td>
+            </tr>
+            <tr>
+             <td>
+              개월 months / 주 weeks
+             </td>
+             <td>
+              Sino
+             </td>
+             <td>
+              삼 개월 / 사 주
+             </td>
+             <td>
+              3 months / 4 weeks
+             </td>
+            </tr>
+            <tr>
+             <td>
+              도 temperature / 퍼센트 / metric measurements
+             </td>
+             <td>
+              Sino
+             </td>
+             <td>
+              십팔 도 / 오십 퍼센트 / 삼 킬로미터
+             </td>
+             <td>
+              18&deg; / 50% / 3 km
+             </td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+         <div class="callout">
+          <strong>
+           100 and above:
+          </strong>
+          native Korean numbers normally stop at 99. Large counted quantities therefore use Sino-Korean values, e.g.
+          <strong>
+           백 명
+          </strong>
+          (100 people),
+          <strong>
+           천 개
+          </strong>
+          (1,000 items).
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Time
+          </small>
+          <span>
+           A common mixed system
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <div class="guide-list">
+          <div class="guide-step">
+           <strong>
+            Hours use native Korean
+           </strong>
+           1:00 한 시 &middot; 2:00 두 시 &middot; 3:00 세 시 &middot; 4:00 네 시 &middot; 12:00 열두 시.
+          </div>
+          <div class="guide-step">
+           <strong>
+            Minutes and seconds use Sino-Korean
+           </strong>
+           3:20 = 세 시 이십 분 &middot; 7:45 = 일곱 시 사십오 분.
+          </div>
+          <div class="guide-step">
+           <strong>
+            Hour durations also use native Korean
+           </strong>
+           2 hours = 두 시간, while 20 minutes = 이십 분.
+          </div>
+         </div>
+         <div class="examples">
+          <div class="example">
+           <div class="example-base">
+            8:15
+           </div>
+           <div class="example-answer">
+            여덟 시 십오 분
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            4 hours 30 minutes
+           </div>
+           <div class="example-answer">
+            네 시간 삼십 분
+           </div>
+          </div>
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Dates and special forms
+          </small>
+          <span>
+           Calendar numbers are Sino-Korean
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <p>
+          Years, months, and dates use Sino-Korean numbers. Two month names have standard shortened pronunciations/spellings:
+         </p>
+         <div class="guide-list">
+          <div class="guide-step">
+           <strong>
+            June
+           </strong>
+           6월 is
+           <strong>
+            유월
+           </strong>
+           , not 육월.
+          </div>
+          <div class="guide-step">
+           <strong>
+            October
+           </strong>
+           10월 is
+           <strong>
+            시월
+           </strong>
+           , not 십월.
+          </div>
+          <div class="guide-step">
+           <strong>
+            Month duration
+           </strong>
+           3 months =
+           <strong>
+            삼 개월
+           </strong>
+           ; the native alternative
+           <strong>
+            세 달
+           </strong>
+           is also common, but this exercise uses 개월 when testing Sino-Korean month duration.
+          </div>
+         </div>
+         <div class="examples">
+          <div class="example">
+           <div class="example-base">
+            2026-08-15
+           </div>
+           <div class="example-answer">
+            이천이십육 년 팔월 십오일
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            October
+           </div>
+           <div class="example-answer">
+            시월
+           </div>
+          </div>
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Identifiers
+          </small>
+          <span>
+           Phone numbers and digits
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <p>
+          Phone numbers are read digit by digit with Sino-Korean digits. Zero is commonly
+          <strong>
+           공
+          </strong>
+          in phone numbers.
+         </p>
+         <div class="examples">
+          <div class="example">
+           <div class="example-base">
+            010-2456-7018
+           </div>
+           <div class="example-answer">
+            공일공-이사오육-칠공일팔
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            Room 305
+           </div>
+           <div class="example-answer">
+            삼백오 호
+           </div>
+          </div>
+         </div>
+        </div>
+       </details>
+       <details class="guide-topic">
+        <summary>
+         <span class="guide-topic-summary">
+          <small>
+           Decimals and signs
+          </small>
+          <span>
+           Measurements, decimal points, and temperature
+          </span>
+         </span>
+        </summary>
+        <div class="guide-topic-body">
+         <p>
+          Decimals normally use Sino-Korean numbers with
+          <strong>
+           점
+          </strong>
+          for the decimal point, then read each following digit separately. Negative temperatures can use
+          <strong>
+           영하
+          </strong>
+          ; positive temperatures are often simply stated with 도.
+         </p>
+         <div class="examples">
+          <div class="example">
+           <div class="example-base">
+            3.5 km
+           </div>
+           <div class="example-answer">
+            삼 점 오 킬로미터
+           </div>
+          </div>
+          <div class="example">
+           <div class="example-base">
+            &minus;3&deg;C
+           </div>
+           <div class="example-answer">
+            영하 삼 도
+           </div>
+          </div>
+         </div>
+        </div>
+       </details>
+      </div>
+      <article class="exercise" id="exercise-numbers">
+       <div class="exercise-head">
+        <div class="exercise-head-copy">
+         <span class="exercise-kicker">
+          One big typed exercise
+         </span>
+         <h3>
+          Numbers in Context
+         </h3>
+         <p>
+          Every question gives you a real context. Choose the prompt language, answer language, and whether you want only the number expression or the complete phrase with its counter/unit.
+         </p>
+        </div>
+        <div class="score">
+         Not started
+        </div>
+       </div>
+       <div class="exercise-body">
+        <div class="exercise-menu">
+         <h4>
+          Exercise setup
+         </h4>
+         <p>
+          Questions use Arabic digits so even Korean prompts still test number reading. For Romanization answers: Space = dash, double Space = word space. Romanization follows the strict character-by-character system from the vocabulary exercises.
+         </p>
+         <div class="exercise-menu-grid">
+          <label>
+           Questions
+           <input class="menu-count" max="100" min="1" type="number" value="30"/>
+          </label>
+          <label>
+           Task
+           <select class="menu-task">
+            <option selected="" value="phrase">
+             Translate whole phrase
+            </option>
+            <option value="number">
+             Write number only
+            </option>
+           </select>
+          </label>
+          <label>
+           Question language
+           <select class="menu-q">
+            <option selected="" value="english">
+             English
+            </option>
+            <option value="romanization">
+             Romanization
+            </option>
+            <option value="korean">
+             Korean
+            </option>
+           </select>
+          </label>
+          <label>
+           Answer language
+           <select class="menu-a">
+            <option selected="" value="korean">
+             Korean
+            </option>
+            <option value="romanization">
+             Romanization
+            </option>
+            <option value="english">
+             English
+            </option>
+           </select>
+          </label>
+          <label>
+           Repeat if wrong
+           <select class="menu-repeat">
+            <option selected="" value="yes">
+             Yes &mdash; retry until correct
+            </option>
+            <option value="no">
+             No &mdash; show answer and continue
+            </option>
+           </select>
+          </label>
+          <label>
+           Retry feedback
+           <select class="menu-retry-feedback">
+            <option selected="" value="answer">
+             Show full correct answer
+            </option>
+            <option value="hint">
+             Show a hint
+            </option>
+            <option value="none">
+             Incorrect message only
+            </option>
+           </select>
+          </label>
+         </div>
+         <div class="exercise-menu-actions">
+          <button class="btn primary start" type="button">
+           Start exercise
+          </button>
+         </div>
+        </div>
+        <div class="live hidden">
+         <div class="runtime-bar">
+          <button class="end-early-btn" type="button">
+           End exercise early
+          </button>
+         </div>
+         <div class="status">
+          <span class="count">
+          </span>
+          <span>
+           Enter to check &middot; Enter again for next &middot; Romanization: Space = dash, double Space = space
+          </span>
+         </div>
+         <div aria-label="Exercise progress" aria-valuemax="100" aria-valuemin="0" class="progress" role="progressbar">
+          <div>
+          </div>
+         </div>
+         <div class="prompt-card">
+          <div class="prompt-target">
+          </div>
+          <div class="prompt-system">
+          </div>
+          <div class="prompt-word">
+          </div>
+          <div class="prompt-hint">
+          </div>
+         </div>
+         <div class="answer-row">
+          <label class="sr-only">
+           Your answer
+          </label>
+          <input autocapitalize="off" autocomplete="off" class="answer" spellcheck="false"/>
+          <button class="btn primary check" type="button">
+           Check
+          </button>
+         </div>
+         <div aria-live="polite" class="feedback">
+         </div>
+         <div class="next-row">
+          <button class="btn warning next hidden" type="button">
+           Next
+          </button>
+         </div>
+        </div>
+        <div class="finish">
+         <h4>
+          Exercise complete
+         </h4>
+         <p class="summary">
+         </p>
+         <div class="review">
+         </div>
+         <div class="finish-actions">
+          <button class="btn primary restart-same" type="button">
+           Restart
+          </button>
+          <button class="btn secondary change-setup" type="button">
+           Change setup
+          </button>
+         </div>
+        </div>
+       </div>
+      </article>
+     </div>
+    </details>
+   </section>
+  </main>
+  <!-- Floating utilities -->
+  <div class="utility-controls">
+   <button aria-label="Toggle color theme" aria-pressed="false" class="utility-button" id="themeToggle" type="button">
+    <span aria-hidden="true" id="themeIcon">
+     ☾
+    </span>
+   </button>
+   <a aria-label="Back to top" class="utility-button toc-button" href="#top">
+    &uarr;
+   </a>
+  </div>
+  <!-- Application logic -->
+  <script>
+   "use strict";
+
+// -----------------------------------------------------------------------------
+// App constants and DOM references
+// -----------------------------------------------------------------------------
+
+const root = document.documentElement;
+const STORAGE_KEY = "koreanQuizThemeV2";
+const exercise = document.getElementById("exercise-numbers");
+
+const LANGUAGE_LABELS = {
+  english: "English",
+  romanization: "Romanization",
+  korean: "Korean"
+};
+
+// -----------------------------------------------------------------------------
+// General helpers
+// -----------------------------------------------------------------------------
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[character]
+  );
+}
+
+function randomItem(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function randomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(items) {
+  const result = [...items];
+
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+
+  return result;
+}
+
+function pluralize(number, singular, plural) {
+  return number === 1 ? singular : plural;
+}
+
+function normalizeAnswer(value, language) {
+  let text = String(value ?? "")
+    .normalize("NFC")
+    .toLowerCase()
+    .trim();
+
+  if (language === "korean") {
+    return text.replace(/[\s\-–—.,!?;:'"“”‘’()[\]{}]/g, "");
+  }
+
+  if (language === "romanization") {
+    return text
+      .replace(/[’']/g, "")
+      .replace(/[^a-z0-9]/g, "");
+  }
+
+  return text
+    .replace(/\band\b/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// -----------------------------------------------------------------------------
+// Romanization
+// -----------------------------------------------------------------------------
+
+/*
+  Strict character-by-character transliteration from the user's study system.
+
+  - Syllables are separated by dashes for display.
+  - Korean word spaces remain spaces.
+  - If a consonant has an a/b form, the second form is used in final position.
+  - Compound final consonants are transcribed character-by-character.
+  - Answer checking ignores dashes, spaces, and punctuation.
+*/
+function romanizeKorean(text) {
+  const INITIAL = [
+    "g", "kk", "n", "d", "tt", "r", "m", "b", "pp",
+    "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"
+  ];
+
+  const VOWEL = [
+    "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye",
+    "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue",
+    "ui", "yu", "eu", "eui", "i"
+  ];
+
+  const FINAL = [
+    "", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk",
+    "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s",
+    "ss", "ng", "j", "ch", "k", "t", "p", "h"
+  ];
+
+  return String(text ?? "")
+    .split(" ")
+    .map(word => {
+      const parts = [];
+      let syllableRun = [];
+
+      for (const character of word) {
+        const code = character.charCodeAt(0);
+        const isHangulSyllable = code >= 0xAC00 && code <= 0xD7A3;
+
+        if (isHangulSyllable) {
+          const offset = code - 0xAC00;
+          const finalIndex = offset % 28;
+          const vowelIndex = Math.floor(offset / 28) % 21;
+          const initialIndex = Math.floor(offset / (28 * 21));
+
+          syllableRun.push(
+            INITIAL[initialIndex] + VOWEL[vowelIndex] + FINAL[finalIndex]
+          );
+          continue;
+        }
+
+        if (syllableRun.length) {
+          parts.push(syllableRun.join("-"));
+          syllableRun = [];
+        }
+
+        parts.push(character);
+      }
+
+      if (syllableRun.length) {
+        parts.push(syllableRun.join("-"));
+      }
+
+      return parts.join("");
+    })
+    .join(" ");
+}
+
+// -----------------------------------------------------------------------------
+// English number helpers
+// -----------------------------------------------------------------------------
+
+function englishNumber(number) {
+  if (number === 0) return "zero";
+  if (number < 0) return `minus ${englishNumber(-number)}`;
+
+  const ones = [
+    "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+    "seventeen", "eighteen", "nineteen"
+  ];
+
+  const tens = [
+    "", "", "twenty", "thirty", "forty", "fifty",
+    "sixty", "seventy", "eighty", "ninety"
+  ];
+
+  function underOneThousand(value) {
+    const parts = [];
+
+    if (value >= 100) {
+      parts.push(`${ones[Math.floor(value / 100)]} hundred`);
+      value %= 100;
+    }
+
+    if (value >= 20) {
+      const onesPart = value % 10 ? `-${ones[value % 10]}` : "";
+      parts.push(`${tens[Math.floor(value / 10)]}${onesPart}`);
+    } else if (value > 0) {
+      parts.push(ones[value]);
+    }
+
+    return parts.join(" ");
+  }
+
+  const largeGroups = [
+    [1e12, "trillion"],
+    [1e9, "billion"],
+    [1e6, "million"],
+    [1e3, "thousand"]
+  ];
+
+  const parts = [];
+
+  for (const [value, label] of largeGroups) {
+    if (number < value) continue;
+
+    const group = Math.floor(number / value);
+    parts.push(`${underOneThousand(group)} ${label}`);
+    number %= value;
+  }
+
+  if (number) {
+    parts.push(underOneThousand(number));
+  }
+
+  return parts.join(" ");
+}
+
+function ordinalEnglish(number) {
+  const small = [
+    "", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
+    "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
+    "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
+    "nineteenth", "twentieth"
+  ];
+
+  if (number <= 20) return small[number];
+
+  const exactTens = {
+    20: "twentieth",
+    30: "thirtieth",
+    40: "fortieth",
+    50: "fiftieth",
+    60: "sixtieth",
+    70: "seventieth",
+    80: "eightieth",
+    90: "ninetieth"
+  };
+
+  if (number % 10 === 0) return exactTens[number];
+
+  const cardinalTens = {
+    20: "twenty",
+    30: "thirty",
+    40: "forty",
+    50: "fifty",
+    60: "sixty",
+    70: "seventy",
+    80: "eighty",
+    90: "ninety"
+  };
+
+  const tensValue = Math.floor(number / 10) * 10;
+  return `${cardinalTens[tensValue]}-${small[number % 10]}`;
+}
+
+// -----------------------------------------------------------------------------
+// Korean number helpers
+// -----------------------------------------------------------------------------
+
+const NATIVE_ONES = [
+  "", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉"
+];
+
+const NATIVE_TENS = {
+  10: "열",
+  20: "스물",
+  30: "서른",
+  40: "마흔",
+  50: "쉰",
+  60: "예순",
+  70: "일흔",
+  80: "여든",
+  90: "아흔"
+};
+
+const COUNTER_ONES = {
+  1: "한",
+  2: "두",
+  3: "세",
+  4: "네",
+  5: "다섯",
+  6: "여섯",
+  7: "일곱",
+  8: "여덟",
+  9: "아홉"
+};
+
+function nativeStandalone(number) {
+  if (number < 1 || number > 99) {
+    throw new Error("Native number out of range");
+  }
+
+  const tensValue = Math.floor(number / 10) * 10;
+  const onesValue = number % 10;
+  const tensPart = tensValue ? NATIVE_TENS[tensValue] : "";
+  const onesPart = onesValue ? NATIVE_ONES[onesValue] : "";
+
+  return tensPart + onesPart;
+}
+
+function nativeCounter(number) {
+  if (number < 1 || number > 99) {
+    throw new Error("Native number out of range");
+  }
+
+  const tensValue = Math.floor(number / 10) * 10;
+  const onesValue = number % 10;
+  const tensPart = tensValue ? NATIVE_TENS[tensValue] : "";
+
+  if (number === 20) return "스무";
+  if (!onesValue) return tensPart;
+
+  return tensPart + COUNTER_ONES[onesValue];
+}
+
+function sinoUnder10000(number) {
+  const digits = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+  const units = ["", "십", "백", "천"];
+  let output = "";
+
+  for (let position = 3; position >= 0; position -= 1) {
+    const divisor = 10 ** position;
+    const digit = Math.floor(number / divisor) % 10;
+
+    if (!digit) continue;
+
+    if (position === 0) {
+      output += digits[digit];
+    } else {
+      output += `${digit === 1 ? "" : digits[digit]}${units[position]}`;
+    }
+  }
+
+  return output;
+}
+
+function sino(number) {
+  if (number === 0) return "영";
+  if (number < 0) return `마이너스 ${sino(-number)}`;
+
+  const largeUnits = ["", "만", "억", "조"];
+  const groups = [];
+  let unitIndex = 0;
+
+  while (number > 0) {
+    const groupValue = number % 10000;
+
+    if (groupValue) {
+      let groupText = sinoUnder10000(groupValue);
+
+      if (groupValue === 1 && unitIndex === 1) groupText = "";
+      if (groupValue === 1 && unitIndex >= 2) groupText = "일";
+
+      groups.unshift(groupText + largeUnits[unitIndex]);
+    }
+
+    number = Math.floor(number / 10000);
+    unitIndex += 1;
+  }
+
+  return groups.join(" ");
+}
+
+function decimalKorean(number) {
+  const [whole, decimal] = String(number).split(".");
+
+  if (decimal === undefined) {
+    return sino(Number(whole));
+  }
+
+  const digitNames = {
+    0: "영",
+    1: "일",
+    2: "이",
+    3: "삼",
+    4: "사",
+    5: "오",
+    6: "육",
+    7: "칠",
+    8: "팔",
+    9: "구"
+  };
+
+  const decimalPart = [...decimal]
+    .map(character => digitNames[character])
+    .join(" ");
+
+  return `${sino(Number(whole))} 점 ${decimalPart}`;
+}
+
+function decimalEnglish(number) {
+  const [whole, decimal] = String(number).split(".");
+
+  if (decimal === undefined) {
+    return englishNumber(Number(whole));
+  }
+
+  const digitNames = [
+    "zero", "one", "two", "three", "four",
+    "five", "six", "seven", "eight", "nine"
+  ];
+
+  const decimalPart = [...decimal]
+    .map(character => digitNames[Number(character)])
+    .join(" ");
+
+  return `${englishNumber(Number(whole))} point ${decimalPart}`;
+}
+
+function phoneKorean(phoneNumber) {
+  const digitNames = {
+    0: "공",
+    1: "일",
+    2: "이",
+    3: "삼",
+    4: "사",
+    5: "오",
+    6: "육",
+    7: "칠",
+    8: "팔",
+    9: "구"
+  };
+
+  return [...phoneNumber]
+    .map(character => digitNames[character] ?? character)
+    .join("");
+}
+
+function phoneEnglish(phoneNumber) {
+  const digitNames = [
+    "zero", "one", "two", "three", "four",
+    "five", "six", "seven", "eight", "nine"
+  ];
+
+  return [...phoneNumber]
+    .map(character => (/\d/.test(character) ? digitNames[Number(character)] : character))
+    .join(" ")
+    .replace(/\s*-\s*/g, " - ");
+}
+
+// -----------------------------------------------------------------------------
+// Question data and helpers
+// -----------------------------------------------------------------------------
+
+const nativeCounters = [
+  ["things", "물건", "개", "thing", "things"],
+  ["people", "사람", "명", "person", "people"],
+  ["people (honorific)", "사람", "분", "person", "people"],
+  ["animals", "동물", "마리", "animal", "animals"],
+  ["books", "책", "권", "book", "books"],
+  ["sheets/pages", "종이", "장", "sheet", "sheets"],
+  ["bottles", "병", "병", "bottle", "bottles"],
+  ["cups/glasses", "잔", "잔", "cup", "cups"],
+  ["vehicles/machines", "차량", "대", "vehicle", "vehicles"],
+  ["outfits/sets of clothes", "옷", "벌", "outfit", "outfits"],
+  ["pairs", "짝", "켤레", "pair", "pairs"],
+  ["flowers", "꽃", "송이", "flower", "flowers"]
+];
+
+const QUESTION_TYPES = [
+  "counter",
+  "counter",
+  "age",
+  "hour",
+  "hourDuration",
+  "occurrence",
+  "ordinal",
+  "minute",
+  "second",
+  "year",
+  "month",
+  "day",
+  "money",
+  "floor",
+  "grade",
+  "room",
+  "temperature",
+  "metric",
+  "decimalMetric",
+  "monthsDuration",
+  "weeksDuration",
+  "percent",
+  "phone",
+  "largeCount"
+];
+
+function prepareQuestion(question) {
+  return {
+    numberEnglishAlts: [],
+    numberKoreanAlts: [],
+    phraseEnglishAlts: [],
+    phraseKoreanAlts: [],
+    ...question
+  };
+}
+
+function generateQuestion() {
+  const type = randomItem(QUESTION_TYPES);
+
+  switch (type) {
+    case "counter": {
+      const [, koreanLabel, counter, singular, plural] = randomItem(nativeCounters);
+      const number = randomInteger(1, 30);
+      const koreanNumber = nativeCounter(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Native Korean",
+        context: `Counter · ${counter}`,
+        promptEnglish: `${number} ${pluralize(number, singular, plural)}`,
+        promptKorean: `${koreanLabel} ${number}${counter}`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, singular, plural)}`,
+        phraseKorean: `${koreanNumber} ${counter}`,
+        note: `${counter} normally takes native Korean numbers below 100.`
+      });
+    }
+
+    case "age": {
+      const number = randomInteger(1, 89);
+      const koreanNumber = nativeCounter(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Native Korean",
+        context: "Age · 살",
+        promptEnglish: `${number} years old`,
+        promptKorean: `나이 ${number}살`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} years old`,
+        phraseKorean: `${koreanNumber} 살`,
+        note: "Common age with 살 uses native Korean numbers."
+      });
+    }
+
+    case "hour": {
+      const number = randomInteger(1, 12);
+      const koreanNumber = nativeCounter(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Native Korean",
+        context: "Clock hour · 시",
+        promptEnglish: `${number} o'clock`,
+        promptKorean: `시각 ${number}시`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} o'clock`,
+        phraseKorean: `${koreanNumber} 시`,
+        note: "Clock hours use native Korean; minutes use Sino-Korean."
+      });
+    }
+
+    case "hourDuration": {
+      const number = randomInteger(1, 24);
+      const koreanNumber = nativeCounter(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Native Korean",
+        context: "Duration · 시간",
+        promptEnglish: `${number} ${pluralize(number, "hour", "hours")}`,
+        promptKorean: `기간 ${number}시간`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, "hour", "hours")}`,
+        phraseKorean: `${koreanNumber} 시간`,
+        note: "시간 as an hour duration uses native Korean numbers."
+      });
+    }
+
+    case "occurrence": {
+      const number = randomInteger(1, 30);
+      const koreanNumber = nativeCounter(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Native Korean",
+        context: "Occurrences · 번",
+        promptEnglish: `${number} ${pluralize(number, "time", "times")}`,
+        promptKorean: `횟수 ${number}번`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, "time", "times")}`,
+        phraseKorean: `${koreanNumber} 번`,
+        note: "번 for number of times normally uses native Korean."
+      });
+    }
+
+    case "ordinal": {
+      const number = randomInteger(1, 20);
+      const koreanNumber = number === 1 ? "첫" : nativeCounter(number);
+      const englishOrdinal = ordinalEnglish(number);
+
+      return prepareQuestion({
+        system: "Native Korean",
+        context: "Ordinal · 번째",
+        promptEnglish: `position ${number}`,
+        promptKorean: `순서 ${number}번째`,
+        numberEnglish: englishOrdinal,
+        numberKorean: koreanNumber,
+        phraseEnglish: englishOrdinal,
+        phraseKorean: `${koreanNumber} 번째`,
+        note: "번째 uses native forms; first is commonly 첫 번째."
+      });
+    }
+
+    case "minute":
+    case "second": {
+      const number = randomInteger(1, 59);
+      const isMinute = type === "minute";
+      const unitKorean = isMinute ? "분" : "초";
+      const singular = isMinute ? "minute" : "second";
+      const plural = `${singular}s`;
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: `${isMinute ? "Minutes" : "Seconds"} · ${unitKorean}`,
+        promptEnglish: `${number} ${pluralize(number, singular, plural)}`,
+        promptKorean: `${number}${unitKorean}`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, singular, plural)}`,
+        phraseKorean: `${koreanNumber} ${unitKorean}`,
+        note: `${unitKorean} uses Sino-Korean numbers.`
+      });
+    }
+
+    case "year": {
+      const number = randomInteger(1950, 2035);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Calendar year · 년",
+        promptEnglish: `year ${number}`,
+        promptKorean: `${number}년`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `year ${english}`,
+        phraseEnglishAlts: [english],
+        phraseKorean: `${koreanNumber} 년`,
+        note: "Calendar years are read with Sino-Korean place values."
+      });
+    }
+
+    case "month": {
+      const number = randomInteger(1, 12);
+      const base = sino(number);
+      const spoken = number === 6 ? "유월" : number === 10 ? "시월" : `${base}월`;
+      const english = englishNumber(number);
+      const monthName = new Date(2000, number - 1, 1)
+        .toLocaleString("en-US", { month: "long" })
+        .toLowerCase();
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Calendar month · 월",
+        promptEnglish: `month ${number}`,
+        promptKorean: `${number}월`,
+        numberEnglish: english,
+        numberKorean: base,
+        phraseEnglish: `month ${english}`,
+        phraseEnglishAlts: [monthName],
+        phraseKorean: spoken,
+        note:
+          number === 6
+            ? "Special form: 6월 is 유월."
+            : number === 10
+              ? "Special form: 10월 is 시월."
+              : "Calendar months use Sino-Korean numbers."
+      });
+    }
+
+    case "day": {
+      const number = randomInteger(1, 31);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Calendar date · 일",
+        promptEnglish: `day ${number} of the month`,
+        promptKorean: `날짜 ${number}일`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `the ${ordinalEnglish(number)}`,
+        phraseEnglishAlts: [ordinalEnglish(number), `day ${english}`],
+        phraseKorean: `${koreanNumber}일`,
+        note: "Calendar dates use Sino-Korean numbers + 일."
+      });
+    }
+
+    case "money": {
+      const number = randomInteger(1, 9999) * 100;
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Money · 원",
+        promptEnglish: `₩${number.toLocaleString("en-US")}`,
+        promptKorean: `${number.toLocaleString("en-US")}원`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} won`,
+        phraseKorean: `${koreanNumber} 원`,
+        note: "Money amounts use Sino-Korean numbers."
+      });
+    }
+
+    case "floor": {
+      const number = randomInteger(1, 50);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Floor · 층",
+        promptEnglish: `floor ${number}`,
+        promptKorean: `${number}층`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `floor ${english}`,
+        phraseEnglishAlts: [`${english} floor`],
+        phraseKorean: `${koreanNumber} 층`,
+        note: "Building floors use Sino-Korean numbers + 층."
+      });
+    }
+
+    case "grade": {
+      const number = randomInteger(1, 12);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "School grade · 학년",
+        promptEnglish: `grade ${number}`,
+        promptKorean: `${number}학년`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `grade ${english}`,
+        phraseKorean: `${koreanNumber} 학년`,
+        note: "School grades use Sino-Korean numbers + 학년."
+      });
+    }
+
+    case "room": {
+      const floor = randomInteger(1, 25);
+      const room = randomInteger(1, 20);
+      const number = floor * 100 + room;
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Room / unit · 호",
+        promptEnglish: `room ${number}`,
+        promptKorean: `${number}호`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `room ${english}`,
+        phraseKorean: `${koreanNumber} 호`,
+        note: "Room and unit numbers with 호 are commonly read as Sino-Korean numbers."
+      });
+    }
+
+    case "temperature": {
+      const number = randomInteger(-10, 35);
+      const absolute = Math.abs(number);
+      const koreanNumber = number < 0 ? `영하 ${sino(absolute)}` : sino(number);
+      const english = number < 0 ? `minus ${englishNumber(absolute)}` : englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Temperature · 도",
+        promptEnglish: `${number}°C`,
+        promptKorean: `기온 ${number}도`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} degrees Celsius`,
+        phraseEnglishAlts: [`${english} degrees`],
+        phraseKorean: `${koreanNumber} 도`,
+        note:
+          number < 0
+            ? "Negative temperature commonly uses 영하 + Sino-Korean number + 도."
+            : "Temperature values use Sino-Korean numbers + 도."
+      });
+    }
+
+    case "metric": {
+      const [shortUnit, koreanUnit, singular, plural] = randomItem([
+        ["km", "킬로미터", "kilometer", "kilometers"],
+        ["m", "미터", "meter", "meters"],
+        ["cm", "센티미터", "centimeter", "centimeters"],
+        ["kg", "킬로그램", "kilogram", "kilograms"]
+      ]);
+      const number = randomInteger(1, 250);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: `Measurement · ${koreanUnit}`,
+        promptEnglish: `${number} ${shortUnit}`,
+        promptKorean: `${number}${koreanUnit}`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, singular, plural)}`,
+        phraseKorean: `${koreanNumber} ${koreanUnit}`,
+        note: "Metric measurements are normally read with Sino-Korean numbers."
+      });
+    }
+
+    case "decimalMetric": {
+      const [shortUnit, koreanUnit, englishUnit] = randomItem([
+        ["km", "킬로미터", "kilometers"],
+        ["kg", "킬로그램", "kilograms"]
+      ]);
+      const number = Number(`${randomInteger(1, 20)}.${randomInteger(1, 9)}`);
+      const koreanNumber = decimalKorean(number);
+      const english = decimalEnglish(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: `Decimal measurement · ${koreanUnit}`,
+        promptEnglish: `${number} ${shortUnit}`,
+        promptKorean: `${number}${koreanUnit}`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${englishUnit}`,
+        phraseKorean: `${koreanNumber} ${koreanUnit}`,
+        note: "Use 점 for the decimal point, then read following digits individually."
+      });
+    }
+
+    case "monthsDuration": {
+      const number = randomInteger(1, 24);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Month duration · 개월",
+        promptEnglish: `${number} ${pluralize(number, "month", "months")}`,
+        promptKorean: `기간 ${number}개월`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, "month", "months")}`,
+        phraseKorean: `${koreanNumber} 개월`,
+        note: "개월 uses Sino-Korean numbers. 세 달 is a common native alternative for “three months,” but this question specifically uses 개월."
+      });
+    }
+
+    case "weeksDuration": {
+      const number = randomInteger(1, 12);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Week duration · 주",
+        promptEnglish: `${number} ${pluralize(number, "week", "weeks")}`,
+        promptKorean: `기간 ${number}주`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, "week", "weeks")}`,
+        phraseKorean: `${koreanNumber} 주`,
+        note: "주 for numbered weeks uses Sino-Korean numbers."
+      });
+    }
+
+    case "percent": {
+      const number = randomInteger(1, 100);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: "Percentage · 퍼센트",
+        promptEnglish: `${number}%`,
+        promptKorean: `${number}퍼센트`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} percent`,
+        phraseKorean: `${koreanNumber} 퍼센트`,
+        note: "Percentages use Sino-Korean numbers."
+      });
+    }
+
+    case "phone": {
+      const phoneNumber = `010-${randomInteger(1000, 9999)}-${randomInteger(1000, 9999)}`;
+      const koreanNumber = phoneKorean(phoneNumber);
+      const english = phoneEnglish(phoneNumber);
+
+      return prepareQuestion({
+        system: "Sino-Korean digits",
+        context: "Phone number",
+        promptEnglish: `phone number ${phoneNumber}`,
+        promptKorean: `전화번호 ${phoneNumber}`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `phone number ${english}`,
+        phraseKorean: `전화번호 ${koreanNumber}`,
+        note: "Phone numbers are read digit by digit; 0 is commonly 공."
+      });
+    }
+
+    case "largeCount":
+    default: {
+      const number = randomInteger(100, 999999);
+      const [, counter, singular, plural] = randomItem([
+        ["items", "개", "item", "items"],
+        ["people", "명", "person", "people"]
+      ]);
+      const koreanNumber = sino(number);
+      const english = englishNumber(number);
+
+      return prepareQuestion({
+        system: "Sino-Korean",
+        context: `Large count · ${counter}`,
+        promptEnglish: `${number.toLocaleString("en-US")} ${pluralize(number, singular, plural)}`,
+        promptKorean: `${number.toLocaleString("en-US")}${counter}`,
+        numberEnglish: english,
+        numberKorean: koreanNumber,
+        phraseEnglish: `${english} ${pluralize(number, singular, plural)}`,
+        phraseKorean: `${koreanNumber} ${counter}`,
+        note: "Native Korean numbers normally stop at 99, so large counted quantities use Sino-Korean values."
+      });
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Prompt and answer conversion
+// -----------------------------------------------------------------------------
+
+function answerFor(question, task, language) {
+  const korean = task === "number"
+    ? question.numberKorean
+    : question.phraseKorean;
+
+  if (language === "korean") return korean;
+  if (language === "romanization") return romanizeKorean(korean);
+
+  return task === "number"
+    ? question.numberEnglish
+    : question.phraseEnglish;
+}
+
+function acceptedAnswersFor(question, task, language) {
+  if (language === "romanization") {
+    const koreanAnswers = task === "number"
+      ? [question.numberKorean, ...question.numberKoreanAlts]
+      : [question.phraseKorean, ...question.phraseKoreanAlts];
+
+    return [...new Set(koreanAnswers.map(romanizeKorean))];
+  }
+
+  const baseAnswer = answerFor(question, task, language);
+  let alternatives;
+
+  if (task === "number") {
+    alternatives = language === "korean"
+      ? question.numberKoreanAlts
+      : question.numberEnglishAlts;
+  } else {
+    alternatives = language === "korean"
+      ? question.phraseKoreanAlts
+      : question.phraseEnglishAlts;
+  }
+
+  return [baseAnswer, ...alternatives];
+}
+
+function promptFor(question, language) {
+  if (language === "korean") return question.promptKorean;
+  if (language === "romanization") return romanizeKorean(question.promptKorean);
+  return question.promptEnglish;
+}
+
+function fullAnswerHtml(question, task, prefix = "") {
+  const labelPrefix = prefix ? `${prefix} ` : "";
+
+  return `
+    <div class="answer-display">
+      ${labelPrefix}Korean: ${escapeHtml(answerFor(question, task, "korean"))}<br>
+      ${labelPrefix}Romanization: ${escapeHtml(answerFor(question, task, "romanization"))}<br>
+      ${labelPrefix}English: ${escapeHtml(answerFor(question, task, "english"))}
+    </div>
+  `;
+}
+
+// -----------------------------------------------------------------------------
+// Exercise state
+// -----------------------------------------------------------------------------
+
+const state = {
+  questions: [],
+  index: 0,
+  score: 0,
+  results: [],
+  answered: false,
+  finished: false,
+  attempts: 0,
+  settings: {
+    count: 30,
+    task: "phrase",
+    qLang: "english",
+    aLang: "korean",
+    repeat: true,
+    retryFeedback: "answer"
+  }
+};
+
+function buildQuestions(count) {
+  const questions = [];
+  const seen = new Set();
+  let attempts = 0;
+
+  while (questions.length < count && attempts < count * 80) {
+    const question = generateQuestion();
+    const key = `${question.promptEnglish}|${question.context}`;
+
+    if (!seen.has(key)) {
+      seen.add(key);
+      questions.push(question);
+    }
+
+    attempts += 1;
+  }
+
+  while (questions.length < count) {
+    questions.push(generateQuestion());
+  }
+
+  return shuffle(questions);
+}
+
+function readSettingsFromMenu() {
+  return {
+    count: Math.max(
+      1,
+      Math.min(100, Number(exercise.querySelector(".menu-count").value) || 30)
+    ),
+    task: exercise.querySelector(".menu-task").value,
+    qLang: exercise.querySelector(".menu-q").value,
+    aLang: exercise.querySelector(".menu-a").value,
+    repeat: exercise.querySelector(".menu-repeat").value === "yes",
+    retryFeedback: exercise.querySelector(".menu-retry-feedback").value
+  };
+}
+
+function startExercise(reuseSettings = false) {
+  if (!reuseSettings) {
+    state.settings = readSettingsFromMenu();
+  }
+
+  state.questions = buildQuestions(state.settings.count);
+  state.index = 0;
+  state.score = 0;
+  state.results = [];
+  state.answered = false;
+  state.finished = false;
+  state.attempts = 0;
+
+  exercise.querySelector(".exercise-menu").classList.add("hidden");
+  exercise.querySelector(".finish").style.display = "none";
+  exercise.querySelector(".live").classList.remove("hidden");
+
+  showQuestion();
+}
+
+function showQuestion() {
+  if (state.finished) return;
+
+  const question = state.questions[state.index];
+  const input = exercise.querySelector(".answer");
+  const feedback = exercise.querySelector(".feedback");
+  const nextButton = exercise.querySelector(".next");
+  const progress = (state.index / state.questions.length) * 100;
+
+  state.answered = false;
+  state.attempts = 0;
+
+  exercise.querySelector(".count").textContent =
+    `Question ${state.index + 1} / ${state.questions.length}`;
+
+  exercise.querySelector(".score").textContent = `Score: ${state.score}`;
+  exercise.querySelector(".progress > div").style.width = `${progress}%`;
+  exercise.querySelector(".progress").setAttribute(
+    "aria-valuenow",
+    String(Math.round(progress))
+  );
+
+  // Deliberately do not reveal which Korean number system is required here.
+  exercise.querySelector(".prompt-target").textContent =
+    `${question.context} · ${state.settings.task === "number" ? "Number only" : "Whole phrase"} · answer in ${LANGUAGE_LABELS[state.settings.aLang]}`;
+
+  const systemLabel = exercise.querySelector(".prompt-system");
+  systemLabel.textContent = "";
+  systemLabel.classList.add("hidden");
+
+  exercise.querySelector(".prompt-word").textContent =
+    promptFor(question, state.settings.qLang);
+
+  exercise.querySelector(".prompt-hint").textContent =
+    state.settings.task === "number"
+      ? "Write only the spoken number expression. Do not include the counter or unit."
+      : "Translate the complete expression, including its counter or unit.";
+
+  input.value = "";
+  input.readOnly = false;
+  input.placeholder =
+    state.settings.aLang === "korean"
+      ? "Type the Korean answer"
+      : state.settings.aLang === "romanization"
+        ? "Space = dash · Double space = word space"
+        : "Type the English answer";
+
+  feedback.className = "feedback";
+  feedback.innerHTML = "";
+
+  nextButton.classList.add("hidden");
+  nextButton.textContent =
+    state.index === state.questions.length - 1 ? "Finish" : "Next";
+
+  requestAnimationFrame(() => input.focus({ preventScroll: true }));
+}
+
+function submitAnswer() {
+  if (state.answered || state.finished) return;
+
+  const question = state.questions[state.index];
+  const input = exercise.querySelector(".answer");
+  const userAnswer = input.value;
+  const acceptedAnswers = acceptedAnswersFor(
+    question,
+    state.settings.task,
+    state.settings.aLang
+  );
+
+  const correct = acceptedAnswers.some(
+    answer =>
+      normalizeAnswer(answer, state.settings.aLang) ===
+      normalizeAnswer(userAnswer, state.settings.aLang)
+  );
+
+  state.attempts += 1;
+
+  if (correct) {
+    handleCorrectAnswer(question, input, userAnswer);
+  } else if (state.settings.repeat) {
+    handleRetry(question, input);
+  } else {
+    handleIncorrectAnswer(question, input, userAnswer);
+  }
+
+  exercise.querySelector(".score").textContent = `Score: ${state.score}`;
+}
+
+function handleCorrectAnswer(question, input, userAnswer) {
+  const firstTry = state.attempts === 1;
+
+  if (firstTry) {
+    state.score += 1;
+  }
+
+  state.answered = true;
+  input.readOnly = true;
+
+  state.results.push({
+    question,
+    value: userAnswer,
+    correct: true,
+    firstTry,
+    attempts: state.attempts
+  });
+
+  const feedback = exercise.querySelector(".feedback");
+  feedback.className = "feedback good";
+  feedback.innerHTML = `
+    <strong>Correct.</strong>
+    ${fullAnswerHtml(question, state.settings.task)}
+    <div class="feedback-note">${escapeHtml(question.note)}</div>
+  `;
+
+  exercise.querySelector(".next").classList.remove("hidden");
+}
+
+function handleRetry(question, input) {
+  const feedback = exercise.querySelector(".feedback");
+  feedback.className = "feedback bad";
+
+  let extraFeedback = "";
+
+  if (state.settings.retryFeedback === "answer") {
+    extraFeedback = fullAnswerHtml(question, state.settings.task, "Correct");
+  } else if (state.settings.retryFeedback === "hint") {
+    extraFeedback = `
+      <div class="feedback-note">
+        <strong>Hint:</strong> ${escapeHtml(question.note)}
+      </div>
+    `;
+  }
+
+  feedback.innerHTML = `
+    <strong>Not quite — try the same question again.</strong>
+    ${extraFeedback}
+  `;
+
+  input.value = "";
+  requestAnimationFrame(() => input.focus({ preventScroll: true }));
+}
+
+function handleIncorrectAnswer(question, input, userAnswer) {
+  state.answered = true;
+  input.readOnly = true;
+
+  state.results.push({
+    question,
+    value: userAnswer,
+    correct: false,
+    firstTry: false,
+    attempts: 1
+  });
+
+  const feedback = exercise.querySelector(".feedback");
+  feedback.className = "feedback bad";
+  feedback.innerHTML = `
+    <strong>Not quite.</strong>
+    ${fullAnswerHtml(question, state.settings.task, "Correct")}
+    <div class="feedback-note">${escapeHtml(question.note)}</div>
+  `;
+
+  exercise.querySelector(".next").classList.remove("hidden");
+}
+
+function nextQuestion() {
+  if (!state.answered || state.finished) return;
+
+  if (state.index < state.questions.length - 1) {
+    state.index += 1;
+    showQuestion();
+    return;
+  }
+
+  finishExercise("Exercise complete");
+}
+
+function finishExercise(title) {
+  if (state.finished) return;
+
+  state.finished = true;
+  exercise.querySelector(".live").classList.add("hidden");
+
+  const finishBox = exercise.querySelector(".finish");
+  const answeredCount = state.results.length;
+  const firstTryCorrect = state.results.filter(result => result.firstTry).length;
+  const percentage = answeredCount
+    ? Math.round((firstTryCorrect / answeredCount) * 100)
+    : 0;
+
+  finishBox.style.display = "block";
+  finishBox.querySelector("h4").textContent = title;
+  finishBox.querySelector(".summary").textContent =
+    `First-try score: ${firstTryCorrect} / ${answeredCount} (${percentage}%). ` +
+    `${answeredCount} of ${state.questions.length} questions completed.`;
+
+  const misses = state.results.filter(result => !result.firstTry);
+
+  finishBox.querySelector(".review").innerHTML = misses.length
+    ? misses.map(result => `
+        <div class="review-item">
+          <strong>${escapeHtml(promptFor(result.question, state.settings.qLang))}</strong><br>
+          Your first answer: ${escapeHtml(result.value || "—")}<br>
+          Correct Korean: <strong>${escapeHtml(answerFor(result.question, state.settings.task, "korean"))}</strong><br>
+          Correct Romanization: <strong>${escapeHtml(answerFor(result.question, state.settings.task, "romanization"))}</strong><br>
+          Correct English: <strong>${escapeHtml(answerFor(result.question, state.settings.task, "english"))}</strong><br>
+          <span class="small">${escapeHtml(result.question.note)}</span>
+        </div>
+      `).join("")
+    : '<div class="review-item"><strong>No first-try misses.</strong></div>';
+
+  exercise.querySelector(".score").textContent = `Score: ${state.score}`;
+}
+
+function showSetup() {
+  state.finished = true;
+  exercise.querySelector(".live").classList.add("hidden");
+  exercise.querySelector(".finish").style.display = "none";
+  exercise.querySelector(".exercise-menu").classList.remove("hidden");
+  exercise.querySelector(".score").textContent = "Not started";
+}
+
+// -----------------------------------------------------------------------------
+// Romanization keyboard helper
+// -----------------------------------------------------------------------------
+
+function handleAnswerKeydown(event) {
+  const input = event.currentTarget;
+
+  if (event.key === "Enter") {
+    event.preventDefault();
+
+    if (state.answered) {
+      nextQuestion();
+    } else {
+      submitAnswer();
+    }
+
+    return;
+  }
+
+  if (state.settings.aLang !== "romanization" || event.key !== " ") {
+    return;
+  }
+
+  event.preventDefault();
+
+  const selectionStart = input.selectionStart ?? input.value.length;
+  const selectionEnd = input.selectionEnd ?? selectionStart;
+  const value = input.value;
+
+  // First space inserts a dash. A second space immediately after that dash
+  // replaces the dash with a real word space.
+  if (selectionStart > 0 && value[selectionStart - 1] === "-") {
+    input.value =
+      value.slice(0, selectionStart - 1) +
+      " " +
+      value.slice(selectionEnd);
+    input.setSelectionRange(selectionStart, selectionStart);
+  } else {
+    input.value =
+      value.slice(0, selectionStart) +
+      "-" +
+      value.slice(selectionEnd);
+    input.setSelectionRange(selectionStart + 1, selectionStart + 1);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Retry feedback menu behavior
+// -----------------------------------------------------------------------------
+
+const repeatSelect = exercise.querySelector(".menu-repeat");
+const retryFeedbackSelect = exercise.querySelector(".menu-retry-feedback");
+
+function syncRetryFeedbackMenu() {
+  retryFeedbackSelect.disabled = repeatSelect.value !== "yes";
+  retryFeedbackSelect.title = retryFeedbackSelect.disabled
+    ? "Enable Repeat if wrong to use retry feedback options"
+    : "";
+}
+
+// -----------------------------------------------------------------------------
+// Theme
+// -----------------------------------------------------------------------------
+
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+
+function applyTheme(theme, persist = false) {
+  const nextTheme = theme === "dark" ? "dark" : "light";
+  const dark = nextTheme === "dark";
+
+  root.dataset.theme = nextTheme;
+  root.style.colorScheme = nextTheme;
+
+  themeToggle.setAttribute("aria-pressed", String(dark));
+  themeToggle.setAttribute(
+    "aria-label",
+    dark ? "Switch to light mode" : "Switch to dark mode"
+  );
+  themeIcon.textContent = dark ? "☀" : "☾";
+
+  if (persist) {
+    try {
+      localStorage.setItem(STORAGE_KEY, nextTheme);
+    } catch (_) {}
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Accessibility for collapsible sections
+// -----------------------------------------------------------------------------
+
+function initializeCollapsibleSections() {
+  document
+    .querySelectorAll("details.section, details.guide-topic")
+    .forEach(details => {
+      const summary = details.querySelector(":scope > summary");
+      if (!summary) return;
+
+      const syncExpanded = () => {
+        summary.setAttribute("aria-expanded", String(details.open));
+      };
+
+      syncExpanded();
+      details.addEventListener("toggle", syncExpanded);
+    });
+}
+
+// -----------------------------------------------------------------------------
+// Event listeners and initialization
+// -----------------------------------------------------------------------------
+
+exercise.querySelector(".start").addEventListener("click", () => startExercise());
+exercise.querySelector(".check").addEventListener("click", submitAnswer);
+exercise.querySelector(".next").addEventListener("click", nextQuestion);
+exercise.querySelector(".end-early-btn").addEventListener(
+  "click",
+  () => finishExercise("Exercise ended early")
+);
+exercise.querySelector(".restart-same").addEventListener(
+  "click",
+  () => startExercise(true)
+);
+exercise.querySelector(".change-setup").addEventListener("click", showSetup);
+exercise.querySelector(".answer").addEventListener("keydown", handleAnswerKeydown);
+
+repeatSelect.addEventListener("change", syncRetryFeedbackMenu);
+themeToggle.addEventListener("click", () => {
+  applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+});
+
+syncRetryFeedbackMenu();
+applyTheme(root.dataset.theme);
+initializeCollapsibleSections();
+  </script>
+ </body>
+</html>
