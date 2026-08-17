@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 15 · 공책 한 권에 얼마예요?</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -576,7 +574,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu-grid label {
+.exercise-menu label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +585,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu-grid label>* {
+.exercise-menu label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -995,6 +993,18 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+.exercise-option {
+  width: min(100%, 380px);
+  justify-content: center;
+  align-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+.exercise-option span {
+  width: auto !important;
+  height: auto !important;
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1098,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary and grammar points are based on the supplied lesson worksheet. Where headings were unclear, the grammar point was inferred from the model sentences. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1118,321 +1128,842 @@ tbody tr:last-child td {
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 3",
-        "subtitle": "한국어 책을 읽어요",
-        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "title": "Bab 15",
+        "subtitle": "공책 한 권에 얼마예요?",
+        "description": "Use native Korean numbers and counters, ask unit prices, make requests and suggestions, express wants, and give reasons with -(으)니까.",
         "vocab": [
-            {
-                "korean": "학교",
-                "english": "school",
-                "category": "Places"
-            },
-            {
-                "korean": "도서관",
-                "english": "library",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "커피숍",
-                "english": "coffee shop",
-                "category": "Places"
-            },
-            {
-                "korean": "교실",
-                "english": "classroom",
-                "category": "Places"
-            },
-            {
-                "korean": "집",
-                "english": "home",
-                "category": "Places"
-            },
-            {
-                "korean": "회사",
-                "english": "company",
-                "category": "Places"
-            },
-            {
-                "korean": "기숙사",
-                "english": "dormitory",
-                "category": "Places"
-            },
-            {
-                "korean": "운동하다",
-                "english": "to exercise",
-                "category": "Verbs"
-            },
-            {
-                "korean": "마시다",
-                "english": "to drink",
-                "category": "Verbs"
-            },
-            {
-                "korean": "읽다",
-                "english": "to read",
-                "category": "Verbs"
-            },
-            {
-                "korean": "보다",
-                "english": "to watch / see",
-                "category": "Verbs"
-            },
-            {
-                "korean": "먹다",
-                "english": "to eat",
-                "category": "Verbs"
-            },
-            {
-                "korean": "목욕하다",
-                "english": "to bathe",
-                "category": "Verbs"
-            },
-            {
-                "korean": "닫다",
-                "english": "to close",
-                "category": "Verbs"
-            },
-            {
-                "korean": "앉다",
-                "english": "to sit",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가다",
-                "english": "to go",
-                "category": "Verbs"
-            },
-            {
-                "korean": "오다",
-                "english": "to come",
-                "category": "Verbs"
-            },
-            {
-                "korean": "전화하다",
-                "english": "to call",
-                "category": "Verbs"
-            },
-            {
-                "korean": "공부하다",
-                "english": "to study",
-                "category": "Verbs"
-            },
-            {
-                "korean": "일하다",
-                "english": "to work",
-                "category": "Verbs"
-            },
-            {
-                "korean": "배우다",
-                "english": "to learn",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가르치다",
-                "english": "to teach",
-                "category": "Verbs"
-            },
-            {
-                "korean": "자다",
-                "english": "to sleep",
-                "category": "Verbs"
-            },
-            {
-                "korean": "노래하다",
-                "english": "to sing",
-                "category": "Verbs"
-            },
-            {
-                "korean": "샤워하다",
-                "english": "to shower",
-                "category": "Verbs"
-            },
-            {
-                "korean": "한국어",
-                "english": "Korean language",
-                "category": "Languages"
-            },
-            {
-                "korean": "영어",
-                "english": "English",
-                "category": "Languages"
-            },
-            {
-                "korean": "일본어",
-                "english": "Japanese language",
-                "category": "Languages"
-            },
-            {
-                "korean": "밥",
-                "english": "meal / rice",
-                "category": "Food"
-            },
-            {
-                "korean": "커피",
-                "english": "coffee",
-                "category": "Drinks"
-            },
-            {
-                "korean": "전화",
-                "english": "phone call",
-                "category": "Objects"
-            },
-            {
-                "korean": "책",
-                "english": "book",
-                "category": "Objects"
-            },
-            {
-                "korean": "텔레비전",
-                "english": "television",
-                "category": "Objects"
-            },
-            {
-                "korean": "컴퓨터",
-                "english": "computer",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "물",
-                "english": "water",
-                "category": "Drinks"
-            },
-            {
-                "korean": "사과",
-                "english": "apple",
-                "category": "Food"
-            },
-            {
-                "korean": "오렌지 주스",
-                "english": "orange juice",
-                "category": "Drinks"
-            },
-            {
-                "korean": "라면",
-                "english": "ramyeon",
-                "category": "Food"
-            },
-            {
-                "korean": "김밥",
-                "english": "gimbap",
-                "category": "Food"
-            },
-            {
-                "korean": "햄버거",
-                "english": "hamburger",
-                "category": "Food"
-            },
-            {
-                "korean": "빵",
-                "english": "bread",
-                "category": "Food"
-            }
+                {
+                        "korean": "개",
+                        "english": "counter for general items",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "명",
+                        "english": "counter for people",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "마리",
+                        "english": "counter for animals",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "권",
+                        "english": "counter for books",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "잔",
+                        "english": "counter for cups",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "병",
+                        "english": "counter for bottles",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "장",
+                        "english": "counter for sheets",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "송이",
+                        "english": "counter for flowers",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "켤레",
+                        "english": "counter for pairs",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "그루",
+                        "english": "counter for trees",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "판",
+                        "english": "counter for flat servings / boards",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "벌",
+                        "english": "counter for sets of clothing",
+                        "category": "Counters"
+                },
+                {
+                        "korean": "하나",
+                        "english": "one",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "둘",
+                        "english": "two",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "셋",
+                        "english": "three",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "넷",
+                        "english": "four",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "다섯",
+                        "english": "five",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "여섯",
+                        "english": "six",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "일곱",
+                        "english": "seven",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "여덟",
+                        "english": "eight",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "아홉",
+                        "english": "nine",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "열",
+                        "english": "ten",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "스물",
+                        "english": "twenty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "서른",
+                        "english": "thirty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "마흔",
+                        "english": "forty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "쉰",
+                        "english": "fifty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "예순",
+                        "english": "sixty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "일흔",
+                        "english": "seventy",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "여든",
+                        "english": "eighty",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "아흔",
+                        "english": "ninety",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "백",
+                        "english": "one hundred",
+                        "category": "Native Korean numbers"
+                },
+                {
+                        "korean": "얼마",
+                        "english": "how much",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "원",
+                        "english": "won",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "공책",
+                        "english": "notebook",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "버스",
+                        "english": "bus",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "종이",
+                        "english": "paper",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "사과",
+                        "english": "apple",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "꽃",
+                        "english": "flower",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "커피",
+                        "english": "coffee",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "음료수",
+                        "english": "soft drink",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "생선",
+                        "english": "fish",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "옷",
+                        "english": "clothes",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "컴퓨터",
+                        "english": "computer",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "운동화",
+                        "english": "sneakers",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "오렌지",
+                        "english": "orange",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "한국어 책",
+                        "english": "Korean textbook",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "피자",
+                        "english": "pizza",
+                        "category": "Shopping and prices"
+                },
+                {
+                        "korean": "일어나다",
+                        "english": "to get up",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "오다",
+                        "english": "to come",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "가다",
+                        "english": "to go",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "입다",
+                        "english": "to wear",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "주다",
+                        "english": "to give",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "먹다",
+                        "english": "to eat",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "사다",
+                        "english": "to buy",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "읽다",
+                        "english": "to read",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "마시다",
+                        "english": "to drink",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "앉다",
+                        "english": "to sit",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "자다",
+                        "english": "to sleep",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "도와주다",
+                        "english": "to help",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "공부하다",
+                        "english": "to study",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "쉬다",
+                        "english": "to rest",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "만나다",
+                        "english": "to meet",
+                        "category": "Commands and wishes"
+                },
+                {
+                        "korean": "더럽다",
+                        "english": "to be dirty",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "많다",
+                        "english": "to be many",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "비가 오다",
+                        "english": "to rain",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "바쁘다",
+                        "english": "to be busy",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "길이 막히다",
+                        "english": "traffic to be congested",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "좋아하다",
+                        "english": "to like",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "조용히",
+                        "english": "quietly",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "시험",
+                        "english": "exam",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "뜨겁다",
+                        "english": "to be hot",
+                        "category": "Reasons and conditions"
+                },
+                {
+                        "korean": "조심하다",
+                        "english": "to be careful",
+                        "category": "Reasons and conditions"
+                }
         ],
         "sections": [
-            {
-                "id": "present",
-                "title": "V-아요/어요/해요",
-                "label": "Polite present",
-                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
-                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
-                "notes": "The source teaches the three major patterns separately before combining them with objects.",
-                "examples": [
-                    [
-                        "먹다 → 먹어요",
-                        "to eat → eat(s)"
-                    ],
-                    [
-                        "보다 → 봐요",
-                        "to watch → watch(es)"
-                    ],
-                    [
-                        "공부하다 → 공부해요",
-                        "to study → study/studies"
-                    ]
-                ],
-                "generator": "present"
-            },
-            {
-                "id": "object",
-                "title": "N을/를 + V",
-                "label": "Object particle",
-                "meaning": "Mark the noun directly affected by an action.",
-                "form": "Use 을 after a final consonant and 를 after a vowel.",
-                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
-                "examples": [
-                    [
-                        "밥을 먹어요.",
-                        "I eat a meal."
-                    ],
-                    [
-                        "커피를 마셔요.",
-                        "I drink coffee."
-                    ],
-                    [
-                        "한국어를 공부해요.",
-                        "I study Korean."
-                    ]
-                ],
-                "generator": "object"
-            },
-            {
-                "id": "place-action",
-                "title": "N에서",
-                "label": "Place of action",
-                "meaning": "Mark the place where an action happens.",
-                "form": "Place + 에서 + object + action verb.",
-                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
-                "examples": [
-                    [
-                        "식당에서 밥을 먹어요.",
-                        "I eat at a restaurant."
-                    ],
-                    [
-                        "집에서 텔레비전을 봐요.",
-                        "I watch television at home."
-                    ],
-                    [
-                        "도서관에서 책을 읽어요.",
-                        "I read at the library."
-                    ]
-                ],
-                "generator": "placeAction"
-            },
-            {
-                "id": "also",
-                "title": "N도",
-                "label": "Also / too",
-                "meaning": "Add the meaning “also” or “too” to a noun.",
-                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
-                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
-                "examples": [
-                    [
-                        "린 씨도 중국 사람이에요.",
-                        "Lin is Chinese too."
-                    ],
-                    [
-                        "일본어도 배워요.",
-                        "I learn Japanese too."
-                    ],
-                    [
-                        "신문도 읽어요.",
-                        "I read a newspaper too."
-                    ]
-                ],
-                "generator": "also"
-            }
+                {
+                        "id": "counters",
+                        "title": "Native Korean numbers and counters",
+                        "label": "Counting",
+                        "meaning": "Count people, animals, books, drinks, clothes, and other objects.",
+                        "form": "Number + counter · 하나/둘/셋/넷 become 한/두/세/네 before a counter",
+                        "notes": "스물 commonly becomes 스무 before a counter.",
+                        "examples": [
+                                [
+                                        "공책 한 권이에요.",
+                                        "It is one notebook."
+                                ],
+                                [
+                                        "버스 다섯 대예요.",
+                                        "There are five buses."
+                                ],
+                                [
+                                        "종이 스무 장이에요.",
+                                        "There are twenty sheets of paper."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "공책 한 권이에요.",
+                                        "english": "It is one notebook."
+                                },
+                                {
+                                        "korean": "버스 다섯 대예요.",
+                                        "english": "There are five buses."
+                                },
+                                {
+                                        "korean": "종이 스무 장이에요.",
+                                        "english": "There are twenty sheets of paper."
+                                },
+                                {
+                                        "korean": "사과 두 개예요.",
+                                        "english": "There are two apples."
+                                },
+                                {
+                                        "korean": "꽃 스물다섯 송이예요.",
+                                        "english": "There are twenty-five flowers."
+                                },
+                                {
+                                        "korean": "커피 네 잔이에요.",
+                                        "english": "There are four cups of coffee."
+                                },
+                                {
+                                        "korean": "음료수 여덟 병이에요.",
+                                        "english": "There are eight bottles of soft drink."
+                                },
+                                {
+                                        "korean": "생선 열여섯 마리예요.",
+                                        "english": "There are sixteen fish."
+                                },
+                                {
+                                        "korean": "나무 한 그루예요.",
+                                        "english": "There is one tree."
+                                },
+                                {
+                                        "korean": "운동화 두 켤레예요.",
+                                        "english": "There are two pairs of sneakers."
+                                },
+                                {
+                                        "korean": "피자 세 판이에요.",
+                                        "english": "There are three pizzas."
+                                },
+                                {
+                                        "korean": "옷 네 벌이에요.",
+                                        "english": "There are four sets of clothes."
+                                },
+                                {
+                                        "korean": "학생 열 명이에요.",
+                                        "english": "There are ten students."
+                                },
+                                {
+                                        "korean": "고양이 세 마리예요.",
+                                        "english": "There are three cats."
+                                },
+                                {
+                                        "korean": "책 서른 권이에요.",
+                                        "english": "There are thirty books."
+                                },
+                                {
+                                        "korean": "오렌지 다섯 개예요.",
+                                        "english": "There are five oranges."
+                                }
+                        ]
+                },
+                {
+                        "id": "unit-price",
+                        "title": "N에 얼마예요?",
+                        "label": "Prices",
+                        "meaning": "Ask the price per item or per measured quantity.",
+                        "form": "Quantity + counter + 에 얼마예요?",
+                        "notes": "에 marks the unit or quantity whose price is being asked.",
+                        "examples": [
+                                [
+                                        "커피 한 잔에 얼마예요? 이천오백 원이에요.",
+                                        "How much is one cup of coffee? It is 2,500 won."
+                                ],
+                                [
+                                        "꽃 한 송이에 얼마예요? 이천 원이에요.",
+                                        "How much is one flower? It is 2,000 won."
+                                ],
+                                [
+                                        "옷 한 벌에 얼마예요? 삼만 사천 원이에요.",
+                                        "How much is one set of clothes? It is 34,000 won."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "커피 한 잔에 얼마예요? 이천오백 원이에요.",
+                                        "english": "How much is one cup of coffee? It is 2,500 won."
+                                },
+                                {
+                                        "korean": "꽃 한 송이에 얼마예요? 이천 원이에요.",
+                                        "english": "How much is one flower? It is 2,000 won."
+                                },
+                                {
+                                        "korean": "옷 한 벌에 얼마예요? 삼만 사천 원이에요.",
+                                        "english": "How much is one set of clothes? It is 34,000 won."
+                                },
+                                {
+                                        "korean": "컴퓨터 한 대에 얼마예요? 육십만 원이에요.",
+                                        "english": "How much is one computer? It is 600,000 won."
+                                },
+                                {
+                                        "korean": "운동화 한 켤레에 얼마예요? 오만 오천 원이에요.",
+                                        "english": "How much is one pair of sneakers? It is 55,000 won."
+                                },
+                                {
+                                        "korean": "생선 두 마리에 얼마예요? 삼천오백 원이에요.",
+                                        "english": "How much are two fish? They are 3,500 won."
+                                },
+                                {
+                                        "korean": "오렌지 다섯 개에 얼마예요? 천오백 원이에요.",
+                                        "english": "How much are five oranges? They are 1,500 won."
+                                },
+                                {
+                                        "korean": "음료수 한 병에 얼마예요? 육백오십 원이에요.",
+                                        "english": "How much is one bottle of soft drink? It is 650 won."
+                                },
+                                {
+                                        "korean": "한국어 책 한 권에 얼마예요? 천칠백 원이에요.",
+                                        "english": "How much is one Korean textbook? It is 1,700 won."
+                                },
+                                {
+                                        "korean": "피자 한 판에 얼마예요? 만오천 원이에요.",
+                                        "english": "How much is one pizza? It is 15,000 won."
+                                },
+                                {
+                                        "korean": "사과 세 개에 얼마예요? 삼천 원이에요.",
+                                        "english": "How much are three apples? They are 3,000 won."
+                                },
+                                {
+                                        "korean": "공책 두 권에 얼마예요? 사천 원이에요.",
+                                        "english": "How much are two notebooks? They are 4,000 won."
+                                }
+                        ]
+                },
+                {
+                        "id": "commands",
+                        "title": "V-(으)세요",
+                        "label": "Request or command",
+                        "meaning": "Make a polite request or instruction.",
+                        "form": "Stem + 으세요 after a consonant · 세요 after a vowel/ㄹ",
+                        "notes": "Special honorific forms include 먹다 → 드세요 and 자다 → 주무세요.",
+                        "examples": [
+                                [
+                                        "빨리 일어나세요.",
+                                        "Please get up quickly."
+                                ],
+                                [
+                                        "내일 아침 8시까지 학교에 오세요.",
+                                        "Please come to school by 8 a.m. tomorrow."
+                                ],
+                                [
+                                        "비가 와요. 빨리 집에 가세요.",
+                                        "It is raining. Please go home quickly."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "빨리 일어나세요.",
+                                        "english": "Please get up quickly."
+                                },
+                                {
+                                        "korean": "내일 아침 8시까지 학교에 오세요.",
+                                        "english": "Please come to school by 8 a.m. tomorrow."
+                                },
+                                {
+                                        "korean": "비가 와요. 빨리 집에 가세요.",
+                                        "english": "It is raining. Please go home quickly."
+                                },
+                                {
+                                        "korean": "날씨가 추워요. 옷을 많이 입으세요.",
+                                        "english": "The weather is cold. Please wear a lot of clothes."
+                                },
+                                {
+                                        "korean": "여기 녹차 한 잔 주세요.",
+                                        "english": "Please give me one cup of green tea."
+                                },
+                                {
+                                        "korean": "배가 아파요? 그럼 이 약을 드세요.",
+                                        "english": "Does your stomach hurt? Then please take this medicine."
+                                },
+                                {
+                                        "korean": "이 옷이 예뻐요. 이 옷을 사세요.",
+                                        "english": "These clothes are pretty. Please buy them."
+                                },
+                                {
+                                        "korean": "일이 많아요. 좀 도와주세요.",
+                                        "english": "There is a lot of work. Please help me."
+                                },
+                                {
+                                        "korean": "이 책이 어려워요? 그럼 저 책을 읽으세요.",
+                                        "english": "Is this book difficult? Then please read that book."
+                                },
+                                {
+                                        "korean": "떡볶이가 매워요? 그럼 물을 마시세요.",
+                                        "english": "Is the tteokbokki spicy? Then please drink water."
+                                },
+                                {
+                                        "korean": "수업을 시작할 거예요. 모두 자리에 앉으세요.",
+                                        "english": "Class will begin. Everyone, please sit down."
+                                },
+                                {
+                                        "korean": "아버지, 어머니, 안녕히 주무세요.",
+                                        "english": "Father and Mother, sleep well."
+                                },
+                                {
+                                        "korean": "시장 과일이 싸요. 시장에서 과일을 사세요.",
+                                        "english": "The fruit at the market is inexpensive. Please buy fruit there."
+                                },
+                                {
+                                        "korean": "다음 주에 시험이 있어요. 열심히 공부하세요.",
+                                        "english": "There is an exam next week. Please study hard."
+                                },
+                                {
+                                        "korean": "지금 선생님이 안 계세요. 내일 오세요.",
+                                        "english": "The teacher is not here now. Please come tomorrow."
+                                }
+                        ]
+                },
+                {
+                        "id": "lets",
+                        "title": "V-(으)ㅂ시다",
+                        "label": "Suggestion",
+                        "meaning": "Suggest doing something together.",
+                        "form": "Stem + 읍시다 after a consonant · ㅂ시다 after a vowel",
+                        "notes": "The worksheet label is inconsistent, but its sentence pattern supports the standard -(으)ㅂ시다 form.",
+                        "examples": [
+                                [
+                                        "같이 학교에 갑시다.",
+                                        "Let’s go to school together."
+                                ],
+                                [
+                                        "물을 마십시다.",
+                                        "Let’s drink water."
+                                ],
+                                [
+                                        "시장에 가서 과일을 삽시다.",
+                                        "Let’s go to the market and buy fruit."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "같이 학교에 갑시다.",
+                                        "english": "Let’s go to school together."
+                                },
+                                {
+                                        "korean": "물을 마십시다.",
+                                        "english": "Let’s drink water."
+                                },
+                                {
+                                        "korean": "시장에 가서 과일을 삽시다.",
+                                        "english": "Let’s go to the market and buy fruit."
+                                },
+                                {
+                                        "korean": "오늘은 집에서 쉽시다.",
+                                        "english": "Let’s rest at home today."
+                                },
+                                {
+                                        "korean": "다음 주 시험을 위해 공부합시다.",
+                                        "english": "Let’s study for next week’s exam."
+                                },
+                                {
+                                        "korean": "공원에서 자전거를 탑시다.",
+                                        "english": "Let’s ride bicycles in the park."
+                                },
+                                {
+                                        "korean": "오늘은 영화관에 갑시다.",
+                                        "english": "Let’s go to the movie theater today."
+                                },
+                                {
+                                        "korean": "김밥을 먹읍시다.",
+                                        "english": "Let’s eat gimbap."
+                                },
+                                {
+                                        "korean": "길이 막히니까 지하철을 탑시다.",
+                                        "english": "The traffic is congested, so let’s take the subway."
+                                },
+                                {
+                                        "korean": "비가 오니까 농구는 다음에 합시다.",
+                                        "english": "It is raining, so let’s play basketball another time."
+                                },
+                                {
+                                        "korean": "제니퍼 씨가 장미꽃을 좋아하니까 장미꽃을 삽시다.",
+                                        "english": "Jennifer likes roses, so let’s buy roses."
+                                },
+                                {
+                                        "korean": "날씨가 좋으니까 산책합시다.",
+                                        "english": "The weather is good, so let’s take a walk."
+                                }
+                        ]
+                },
+                {
+                        "id": "want",
+                        "title": "V-고 싶다",
+                        "label": "Desire",
+                        "meaning": "Say what the speaker wants to do.",
+                        "form": "Verb stem + 고 싶어요",
+                        "notes": "Negation is -고 싶지 않아요.",
+                        "examples": [
+                                [
+                                        "집에서 쉬고 싶어요.",
+                                        "I want to rest at home."
+                                ],
+                                [
+                                        "골프를 치고 싶어요.",
+                                        "I want to play golf."
+                                ],
+                                [
+                                        "햄버거를 먹고 싶지 않아요.",
+                                        "I do not want to eat a hamburger."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "집에서 쉬고 싶어요.",
+                                        "english": "I want to rest at home."
+                                },
+                                {
+                                        "korean": "골프를 치고 싶어요.",
+                                        "english": "I want to play golf."
+                                },
+                                {
+                                        "korean": "햄버거를 먹고 싶지 않아요.",
+                                        "english": "I do not want to eat a hamburger."
+                                },
+                                {
+                                        "korean": "노트북을 사고 싶어요.",
+                                        "english": "I want to buy a laptop."
+                                },
+                                {
+                                        "korean": "한국에서 태권도를 배우고 싶어요.",
+                                        "english": "I want to learn taekwondo in Korea."
+                                },
+                                {
+                                        "korean": "친구를 만나고 싶어요.",
+                                        "english": "I want to meet a friend."
+                                },
+                                {
+                                        "korean": "제주도에 가고 싶어요.",
+                                        "english": "I want to go to Jeju Island."
+                                },
+                                {
+                                        "korean": "한국 음식을 먹고 싶어요.",
+                                        "english": "I want to eat Korean food."
+                                },
+                                {
+                                        "korean": "오늘은 일찍 자고 싶어요.",
+                                        "english": "I want to sleep early today."
+                                },
+                                {
+                                        "korean": "새 운동화를 사고 싶어요.",
+                                        "english": "I want to buy new sneakers."
+                                },
+                                {
+                                        "korean": "주말에 영화를 보고 싶어요.",
+                                        "english": "I want to watch a movie on the weekend."
+                                },
+                                {
+                                        "korean": "커피를 마시고 싶지 않아요.",
+                                        "english": "I do not want to drink coffee."
+                                }
+                        ]
+                },
+                {
+                        "id": "because-nikka",
+                        "title": "S-(으)니까 S",
+                        "label": "Reason and consequence",
+                        "meaning": "Give a reason before a request, command, or suggestion.",
+                        "form": "Stem + 으니까 after a consonant · 니까 after a vowel/ㄹ",
+                        "notes": "Unlike -아서/어서, -(으)니까 works naturally before commands and suggestions.",
+                        "examples": [
+                                [
+                                        "날씨가 추우니까 옷을 많이 입으세요.",
+                                        "The weather is cold, so please wear a lot of clothes."
+                                ],
+                                [
+                                        "방이 더러우니까 청소하세요.",
+                                        "The room is dirty, so please clean it."
+                                ],
+                                [
+                                        "토요일에는 시내에 사람이 많으니까 월요일에 가세요.",
+                                        "There are many people downtown on Saturday, so please go on Monday."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "날씨가 추우니까 옷을 많이 입으세요.",
+                                        "english": "The weather is cold, so please wear a lot of clothes."
+                                },
+                                {
+                                        "korean": "방이 더러우니까 청소하세요.",
+                                        "english": "The room is dirty, so please clean it."
+                                },
+                                {
+                                        "korean": "토요일에는 시내에 사람이 많으니까 월요일에 가세요.",
+                                        "english": "There are many people downtown on Saturday, so please go on Monday."
+                                },
+                                {
+                                        "korean": "지금 밖에 비가 많이 오니까 농구는 다음에 합시다.",
+                                        "english": "It is raining heavily outside now, so let’s play basketball another time."
+                                },
+                                {
+                                        "korean": "오늘은 바쁘니까 내일 오세요.",
+                                        "english": "I am busy today, so please come tomorrow."
+                                },
+                                {
+                                        "korean": "지금은 길이 막히니까 지하철을 타고 갑시다.",
+                                        "english": "The traffic is congested now, so let’s take the subway."
+                                },
+                                {
+                                        "korean": "제니퍼 씨는 장미꽃을 좋아하니까 장미꽃을 삽시다.",
+                                        "english": "Jennifer likes roses, so let’s buy roses."
+                                },
+                                {
+                                        "korean": "아기가 자니까 조용히 하세요.",
+                                        "english": "The baby is sleeping, so please be quiet."
+                                },
+                                {
+                                        "korean": "내일 시험이 있으니까 9시까지 학교에 오세요.",
+                                        "english": "There is an exam tomorrow, so please come to school by nine."
+                                },
+                                {
+                                        "korean": "물이 뜨거우니까 조심하세요.",
+                                        "english": "The water is hot, so please be careful."
+                                },
+                                {
+                                        "korean": "밥을 먹었으니까 커피를 마실까요?",
+                                        "english": "We ate, so shall we drink coffee?"
+                                },
+                                {
+                                        "korean": "그 영화를 봤으니까 다른 영화를 봅시다.",
+                                        "english": "We watched that movie, so let’s watch a different one."
+                                },
+                                {
+                                        "korean": "어제 농구를 했으니까 오늘은 자전거를 탑시다.",
+                                        "english": "We played basketball yesterday, so let’s ride bicycles today."
+                                },
+                                {
+                                        "korean": "떡볶이는 점심에 먹었으니까 저녁에는 김밥을 먹어요.",
+                                        "english": "We ate tteokbokki for lunch, so let’s eat gimbap for dinner."
+                                }
+                        ]
+                }
         ]
-    };
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2320,6 +2851,11 @@ tbody tr:last-child td {
             "e": "spring"
         }
     ];
+    function bankQuestion(items) {
+        const item = pick(items);
+        if (Array.isArray(item)) return q(item[0], item[1], item[2] || []);
+        return q(item.korean, item.english, item.alternatives || []);
+    }
     function greetingQuestion() {
         return pick([
             q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
@@ -2565,7 +3101,7 @@ tbody tr:last-child td {
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
-        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Practice sentences that follow ${s.title}.`, Math.min(25, s.questions?.length || 25))}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
@@ -2644,7 +3180,7 @@ tbody tr:last-child td {
         const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
         state.generator = isVocabulary
             ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            : () => section.questions ? bankQuestion(section.questions) : generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");

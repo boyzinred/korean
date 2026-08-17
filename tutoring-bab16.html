@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 16 · 부모님이 일본에서 오세요</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -576,7 +574,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu-grid label {
+.exercise-menu label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +585,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu-grid label>* {
+.exercise-menu label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -995,6 +993,18 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+.exercise-option {
+  width: min(100%, 380px);
+  justify-content: center;
+  align-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+.exercise-option span {
+  width: auto !important;
+  height: auto !important;
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1098,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary and grammar points are based on the supplied lesson worksheet. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1118,321 +1128,709 @@ tbody tr:last-child td {
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 3",
-        "subtitle": "한국어 책을 읽어요",
-        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "title": "Bab 16",
+        "subtitle": "부모님이 일본에서 오세요",
+        "description": "Talk about transportation, duration and quantity, movement for a purpose, places of origin, routes, and means of travel.",
         "vocab": [
-            {
-                "korean": "학교",
-                "english": "school",
-                "category": "Places"
-            },
-            {
-                "korean": "도서관",
-                "english": "library",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "커피숍",
-                "english": "coffee shop",
-                "category": "Places"
-            },
-            {
-                "korean": "교실",
-                "english": "classroom",
-                "category": "Places"
-            },
-            {
-                "korean": "집",
-                "english": "home",
-                "category": "Places"
-            },
-            {
-                "korean": "회사",
-                "english": "company",
-                "category": "Places"
-            },
-            {
-                "korean": "기숙사",
-                "english": "dormitory",
-                "category": "Places"
-            },
-            {
-                "korean": "운동하다",
-                "english": "to exercise",
-                "category": "Verbs"
-            },
-            {
-                "korean": "마시다",
-                "english": "to drink",
-                "category": "Verbs"
-            },
-            {
-                "korean": "읽다",
-                "english": "to read",
-                "category": "Verbs"
-            },
-            {
-                "korean": "보다",
-                "english": "to watch / see",
-                "category": "Verbs"
-            },
-            {
-                "korean": "먹다",
-                "english": "to eat",
-                "category": "Verbs"
-            },
-            {
-                "korean": "목욕하다",
-                "english": "to bathe",
-                "category": "Verbs"
-            },
-            {
-                "korean": "닫다",
-                "english": "to close",
-                "category": "Verbs"
-            },
-            {
-                "korean": "앉다",
-                "english": "to sit",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가다",
-                "english": "to go",
-                "category": "Verbs"
-            },
-            {
-                "korean": "오다",
-                "english": "to come",
-                "category": "Verbs"
-            },
-            {
-                "korean": "전화하다",
-                "english": "to call",
-                "category": "Verbs"
-            },
-            {
-                "korean": "공부하다",
-                "english": "to study",
-                "category": "Verbs"
-            },
-            {
-                "korean": "일하다",
-                "english": "to work",
-                "category": "Verbs"
-            },
-            {
-                "korean": "배우다",
-                "english": "to learn",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가르치다",
-                "english": "to teach",
-                "category": "Verbs"
-            },
-            {
-                "korean": "자다",
-                "english": "to sleep",
-                "category": "Verbs"
-            },
-            {
-                "korean": "노래하다",
-                "english": "to sing",
-                "category": "Verbs"
-            },
-            {
-                "korean": "샤워하다",
-                "english": "to shower",
-                "category": "Verbs"
-            },
-            {
-                "korean": "한국어",
-                "english": "Korean language",
-                "category": "Languages"
-            },
-            {
-                "korean": "영어",
-                "english": "English",
-                "category": "Languages"
-            },
-            {
-                "korean": "일본어",
-                "english": "Japanese language",
-                "category": "Languages"
-            },
-            {
-                "korean": "밥",
-                "english": "meal / rice",
-                "category": "Food"
-            },
-            {
-                "korean": "커피",
-                "english": "coffee",
-                "category": "Drinks"
-            },
-            {
-                "korean": "전화",
-                "english": "phone call",
-                "category": "Objects"
-            },
-            {
-                "korean": "책",
-                "english": "book",
-                "category": "Objects"
-            },
-            {
-                "korean": "텔레비전",
-                "english": "television",
-                "category": "Objects"
-            },
-            {
-                "korean": "컴퓨터",
-                "english": "computer",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "물",
-                "english": "water",
-                "category": "Drinks"
-            },
-            {
-                "korean": "사과",
-                "english": "apple",
-                "category": "Food"
-            },
-            {
-                "korean": "오렌지 주스",
-                "english": "orange juice",
-                "category": "Drinks"
-            },
-            {
-                "korean": "라면",
-                "english": "ramyeon",
-                "category": "Food"
-            },
-            {
-                "korean": "김밥",
-                "english": "gimbap",
-                "category": "Food"
-            },
-            {
-                "korean": "햄버거",
-                "english": "hamburger",
-                "category": "Food"
-            },
-            {
-                "korean": "빵",
-                "english": "bread",
-                "category": "Food"
-            }
+                {
+                        "korean": "택시",
+                        "english": "taxi",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "비행기",
+                        "english": "airplane",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "KTX",
+                        "english": "KTX high-speed train",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "지하철",
+                        "english": "subway",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "배",
+                        "english": "ship / boat",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "버스",
+                        "english": "bus",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "기차",
+                        "english": "train",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "자전거",
+                        "english": "bicycle",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "걸어서",
+                        "english": "on foot",
+                        "category": "Transportation"
+                },
+                {
+                        "korean": "공항",
+                        "english": "airport",
+                        "category": "Transportation places"
+                },
+                {
+                        "korean": "정류장",
+                        "english": "bus stop",
+                        "category": "Transportation places"
+                },
+                {
+                        "korean": "역",
+                        "english": "station",
+                        "category": "Transportation places"
+                },
+                {
+                        "korean": "여객선 터미널",
+                        "english": "passenger ferry terminal",
+                        "category": "Transportation places"
+                },
+                {
+                        "korean": "시내",
+                        "english": "downtown",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "일본",
+                        "english": "Japan",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "서울",
+                        "english": "Seoul",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "영화관",
+                        "english": "movie theater",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "제주도",
+                        "english": "Jeju Island",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "학교",
+                        "english": "school",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "도서관",
+                        "english": "library",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "기숙사",
+                        "english": "dormitory",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "한국",
+                        "english": "Korea",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "베트남",
+                        "english": "Vietnam",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "집",
+                        "english": "home",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "시장",
+                        "english": "market",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "부산",
+                        "english": "Busan",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "인도네시아",
+                        "english": "Indonesia",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "호주",
+                        "english": "Australia",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "캐나다",
+                        "english": "Canada",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "미국",
+                        "english": "United States",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "대구",
+                        "english": "Daegu",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "편의점",
+                        "english": "convenience store",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "우체국",
+                        "english": "post office",
+                        "category": "Places and countries"
+                },
+                {
+                        "korean": "얼마나",
+                        "english": "how much / how long",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "시간",
+                        "english": "hour / time",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "분",
+                        "english": "minute",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "쯤",
+                        "english": "about / approximately",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "걸리다",
+                        "english": "to take time",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "잔",
+                        "english": "counter for cups",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "판",
+                        "english": "counter for flat servings",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "개",
+                        "english": "counter for general items",
+                        "category": "Distance and quantity"
+                },
+                {
+                        "korean": "타다",
+                        "english": "to ride",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "오다",
+                        "english": "to come",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "가다",
+                        "english": "to go",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "만나다",
+                        "english": "to meet",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "공부하다",
+                        "english": "to study",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "사다",
+                        "english": "to buy",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "놀다",
+                        "english": "to play / spend time",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "여행하다",
+                        "english": "to travel",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "말",
+                        "english": "horse",
+                        "category": "Travel and purpose"
+                },
+                {
+                        "korean": "생일 파티",
+                        "english": "birthday party",
+                        "category": "Travel and purpose"
+                }
         ],
         "sections": [
-            {
-                "id": "present",
-                "title": "V-아요/어요/해요",
-                "label": "Polite present",
-                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
-                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
-                "notes": "The source teaches the three major patterns separately before combining them with objects.",
-                "examples": [
-                    [
-                        "먹다 → 먹어요",
-                        "to eat → eat(s)"
-                    ],
-                    [
-                        "보다 → 봐요",
-                        "to watch → watch(es)"
-                    ],
-                    [
-                        "공부하다 → 공부해요",
-                        "to study → study/studies"
-                    ]
-                ],
-                "generator": "present"
-            },
-            {
-                "id": "object",
-                "title": "N을/를 + V",
-                "label": "Object particle",
-                "meaning": "Mark the noun directly affected by an action.",
-                "form": "Use 을 after a final consonant and 를 after a vowel.",
-                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
-                "examples": [
-                    [
-                        "밥을 먹어요.",
-                        "I eat a meal."
-                    ],
-                    [
-                        "커피를 마셔요.",
-                        "I drink coffee."
-                    ],
-                    [
-                        "한국어를 공부해요.",
-                        "I study Korean."
-                    ]
-                ],
-                "generator": "object"
-            },
-            {
-                "id": "place-action",
-                "title": "N에서",
-                "label": "Place of action",
-                "meaning": "Mark the place where an action happens.",
-                "form": "Place + 에서 + object + action verb.",
-                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
-                "examples": [
-                    [
-                        "식당에서 밥을 먹어요.",
-                        "I eat at a restaurant."
-                    ],
-                    [
-                        "집에서 텔레비전을 봐요.",
-                        "I watch television at home."
-                    ],
-                    [
-                        "도서관에서 책을 읽어요.",
-                        "I read at the library."
-                    ]
-                ],
-                "generator": "placeAction"
-            },
-            {
-                "id": "also",
-                "title": "N도",
-                "label": "Also / too",
-                "meaning": "Add the meaning “also” or “too” to a noun.",
-                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
-                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
-                "examples": [
-                    [
-                        "린 씨도 중국 사람이에요.",
-                        "Lin is Chinese too."
-                    ],
-                    [
-                        "일본어도 배워요.",
-                        "I learn Japanese too."
-                    ],
-                    [
-                        "신문도 읽어요.",
-                        "I read a newspaper too."
-                    ]
-                ],
-                "generator": "also"
-            }
+                {
+                        "id": "transportation",
+                        "title": "Transportation and boarding places",
+                        "label": "Travel basics",
+                        "meaning": "Say what transportation you take and where you board it.",
+                        "form": "Place에서 + transportation을/를 타다 · destination에 + transportation을/를 타고 가다",
+                        "notes": "에서 marks the place where an action occurs; 타고 가다 means “go by riding.”",
+                        "examples": [
+                                [
+                                        "시내에 택시를 타고 가요.",
+                                        "I go downtown by taxi."
+                                ],
+                                [
+                                        "일본에 비행기를 타고 가요.",
+                                        "I go to Japan by airplane."
+                                ],
+                                [
+                                        "서울에 KTX를 타고 가요.",
+                                        "I go to Seoul by KTX."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "시내에 택시를 타고 가요.",
+                                        "english": "I go downtown by taxi."
+                                },
+                                {
+                                        "korean": "일본에 비행기를 타고 가요.",
+                                        "english": "I go to Japan by airplane."
+                                },
+                                {
+                                        "korean": "서울에 KTX를 타고 가요.",
+                                        "english": "I go to Seoul by KTX."
+                                },
+                                {
+                                        "korean": "영화관에 지하철을 타고 가요.",
+                                        "english": "I go to the movie theater by subway."
+                                },
+                                {
+                                        "korean": "제주도에 배를 타고 가요.",
+                                        "english": "I go to Jeju Island by ship."
+                                },
+                                {
+                                        "korean": "공항에서 비행기를 타요.",
+                                        "english": "I take an airplane at the airport."
+                                },
+                                {
+                                        "korean": "정류장에서 버스를 타요.",
+                                        "english": "I take a bus at the bus stop."
+                                },
+                                {
+                                        "korean": "역에서 기차를 타요.",
+                                        "english": "I take a train at the station."
+                                },
+                                {
+                                        "korean": "역에서 지하철을 타요.",
+                                        "english": "I take the subway at the station."
+                                },
+                                {
+                                        "korean": "여객선 터미널에서 배를 타요.",
+                                        "english": "I take a ship at the passenger ferry terminal."
+                                },
+                                {
+                                        "korean": "학교에 버스를 타고 가요.",
+                                        "english": "I go to school by bus."
+                                },
+                                {
+                                        "korean": "시장에 자전거를 타고 가요.",
+                                        "english": "I go to the market by bicycle."
+                                },
+                                {
+                                        "korean": "편의점에 걸어서 가요.",
+                                        "english": "I walk to the convenience store."
+                                },
+                                {
+                                        "korean": "부산에 기차를 타고 가요.",
+                                        "english": "I go to Busan by train."
+                                }
+                        ]
+                },
+                {
+                        "id": "quantity-duration",
+                        "title": "얼마나 and quantity expressions",
+                        "label": "Amount and duration",
+                        "meaning": "Ask or state how much, how many, or how long.",
+                        "form": "얼마나 + verb? · Number + counter · Number + 시간/분",
+                        "notes": "Use native or Sino-Korean numbers according to the counter and context.",
+                        "examples": [
+                                [
+                                        "학교에서 한국어를 네 시간 공부해요.",
+                                        "I study Korean at school for four hours."
+                                ],
+                                [
+                                        "오늘 농구를 두 시간 할 거예요.",
+                                        "I will play basketball for two hours today."
+                                ],
+                                [
+                                        "피자를 한 판 먹을 수 있어요.",
+                                        "I can eat one whole pizza."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "학교에서 한국어를 네 시간 공부해요.",
+                                        "english": "I study Korean at school for four hours."
+                                },
+                                {
+                                        "korean": "오늘 농구를 두 시간 할 거예요.",
+                                        "english": "I will play basketball for two hours today."
+                                },
+                                {
+                                        "korean": "피자를 한 판 먹을 수 있어요.",
+                                        "english": "I can eat one whole pizza."
+                                },
+                                {
+                                        "korean": "과일을 다섯 개 삽시다.",
+                                        "english": "Let’s buy five pieces of fruit."
+                                },
+                                {
+                                        "korean": "어제 맥주를 두 잔 마셨어요.",
+                                        "english": "I drank two glasses of beer yesterday."
+                                },
+                                {
+                                        "korean": "버스로 삼십 분쯤 걸려요.",
+                                        "english": "It takes about thirty minutes by bus."
+                                },
+                                {
+                                        "korean": "기차로 두 시간쯤 걸려요.",
+                                        "english": "It takes about two hours by train."
+                                },
+                                {
+                                        "korean": "비행기로 열한 시간쯤 걸려요.",
+                                        "english": "It takes about eleven hours by airplane."
+                                },
+                                {
+                                        "korean": "지하철로 이십 분쯤 걸려요.",
+                                        "english": "It takes about twenty minutes by subway."
+                                },
+                                {
+                                        "korean": "자전거로 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes by bicycle."
+                                },
+                                {
+                                        "korean": "걸어서 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes on foot."
+                                },
+                                {
+                                        "korean": "한국어를 하루에 세 시간 공부해요.",
+                                        "english": "I study Korean for three hours a day."
+                                }
+                        ]
+                },
+                {
+                        "id": "movement-purpose",
+                        "title": "V-(으)러 가다/오다",
+                        "label": "Purpose of movement",
+                        "meaning": "State the purpose of going or coming somewhere.",
+                        "form": "Verb stem + 으러 after a consonant · 러 after a vowel/ㄹ + 가다/오다",
+                        "notes": "This form is used with movement verbs such as 가다 and 오다.",
+                        "examples": [
+                                [
+                                        "친구를 만나러 시내에 가요.",
+                                        "I go downtown to meet a friend."
+                                ],
+                                [
+                                        "한국어를 공부하러 한국에 왔어요.",
+                                        "I came to Korea to study Korean."
+                                ],
+                                [
+                                        "과일을 사러 시장에 가요.",
+                                        "I go to the market to buy fruit."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "친구를 만나러 시내에 가요.",
+                                        "english": "I go downtown to meet a friend."
+                                },
+                                {
+                                        "korean": "한국어를 공부하러 한국에 왔어요.",
+                                        "english": "I came to Korea to study Korean."
+                                },
+                                {
+                                        "korean": "과일을 사러 시장에 가요.",
+                                        "english": "I go to the market to buy fruit."
+                                },
+                                {
+                                        "korean": "책을 읽으러 도서관에 가요.",
+                                        "english": "I go to the library to read a book."
+                                },
+                                {
+                                        "korean": "영화를 보러 영화관에 가요.",
+                                        "english": "I go to the movie theater to watch a movie."
+                                },
+                                {
+                                        "korean": "부모님을 만나러 부산에 가요.",
+                                        "english": "I go to Busan to meet my parents."
+                                },
+                                {
+                                        "korean": "친구의 생일 파티에 가려고 시내에 가요.",
+                                        "english": "I go downtown to attend a friend’s birthday party."
+                                },
+                                {
+                                        "korean": "말을 타러 제주도에 가요.",
+                                        "english": "I go to Jeju Island to ride a horse."
+                                },
+                                {
+                                        "korean": "한국 음식을 먹으러 식당에 가요.",
+                                        "english": "I go to a restaurant to eat Korean food."
+                                },
+                                {
+                                        "korean": "친구와 놀러 공원에 가요.",
+                                        "english": "I go to the park to spend time with a friend."
+                                },
+                                {
+                                        "korean": "여행하러 호주에 가요.",
+                                        "english": "I go to Australia to travel."
+                                },
+                                {
+                                        "korean": "선물을 사러 백화점에 가요.",
+                                        "english": "I go to the department store to buy a present."
+                                }
+                        ]
+                },
+                {
+                        "id": "origin-eseo",
+                        "title": "N에서 오다",
+                        "label": "Origin",
+                        "meaning": "Say where a person or thing comes from.",
+                        "form": "Place + 에서 + 오다",
+                        "notes": "Here 에서 marks the point of origin rather than the location of an action.",
+                        "examples": [
+                                [
+                                        "저는 호주에서 왔어요.",
+                                        "I came from Australia."
+                                ],
+                                [
+                                        "캐나다에서 왔어요.",
+                                        "I came from Canada."
+                                ],
+                                [
+                                        "서울에서 왔어요.",
+                                        "I came from Seoul."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "저는 호주에서 왔어요.",
+                                        "english": "I came from Australia."
+                                },
+                                {
+                                        "korean": "캐나다에서 왔어요.",
+                                        "english": "I came from Canada."
+                                },
+                                {
+                                        "korean": "서울에서 왔어요.",
+                                        "english": "I came from Seoul."
+                                },
+                                {
+                                        "korean": "미국에서 왔어요.",
+                                        "english": "I came from the United States."
+                                },
+                                {
+                                        "korean": "인도네시아에서 왔어요.",
+                                        "english": "I came from Indonesia."
+                                },
+                                {
+                                        "korean": "부모님이 일본에서 오세요.",
+                                        "english": "My parents are coming from Japan."
+                                },
+                                {
+                                        "korean": "친구가 부산에서 왔어요.",
+                                        "english": "My friend came from Busan."
+                                },
+                                {
+                                        "korean": "선생님은 한국에서 오셨어요.",
+                                        "english": "The teacher came from Korea."
+                                },
+                                {
+                                        "korean": "동생이 대구에서 왔어요.",
+                                        "english": "My younger sibling came from Daegu."
+                                },
+                                {
+                                        "korean": "저는 베트남에서 왔어요.",
+                                        "english": "I came from Vietnam."
+                                },
+                                {
+                                        "korean": "아사코 씨는 일본에서 왔어요.",
+                                        "english": "Asako came from Japan."
+                                },
+                                {
+                                        "korean": "팀 씨는 미국에서 왔어요.",
+                                        "english": "Tim came from the United States."
+                                }
+                        ]
+                },
+                {
+                        "id": "route-from-to",
+                        "title": "N에서 N까지",
+                        "label": "Route and distance",
+                        "meaning": "Describe a route from one place to another and how long it takes.",
+                        "form": "Starting place에서 + destination까지 + 얼마나 걸려요?",
+                        "notes": "쯤 makes the stated duration approximate.",
+                        "examples": [
+                                [
+                                        "집에서 학교까지 삼십 분쯤 걸려요.",
+                                        "It takes about thirty minutes from home to school."
+                                ],
+                                [
+                                        "여기에서 도서관까지 십오 분쯤 걸려요.",
+                                        "It takes about fifteen minutes from here to the library."
+                                ],
+                                [
+                                        "기숙사에서 학교까지 십 분쯤 걸려요.",
+                                        "It takes about ten minutes from the dormitory to school."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "집에서 학교까지 삼십 분쯤 걸려요.",
+                                        "english": "It takes about thirty minutes from home to school."
+                                },
+                                {
+                                        "korean": "여기에서 도서관까지 십오 분쯤 걸려요.",
+                                        "english": "It takes about fifteen minutes from here to the library."
+                                },
+                                {
+                                        "korean": "기숙사에서 학교까지 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes from the dormitory to school."
+                                },
+                                {
+                                        "korean": "한국에서 베트남까지 네 시간쯤 걸려요.",
+                                        "english": "It takes about four hours from Korea to Vietnam."
+                                },
+                                {
+                                        "korean": "집에서 시장까지 삼십 분쯤 걸려요.",
+                                        "english": "It takes about thirty minutes from home to the market."
+                                },
+                                {
+                                        "korean": "서울에서 부산까지 다섯 시간쯤 걸려요.",
+                                        "english": "It takes about five hours from Seoul to Busan."
+                                },
+                                {
+                                        "korean": "학교에서 시내까지 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes from school to downtown."
+                                },
+                                {
+                                        "korean": "인도네시아에서 한국까지 일곱 시간쯤 걸려요.",
+                                        "english": "It takes about seven hours from Indonesia to Korea."
+                                },
+                                {
+                                        "korean": "학교에서 공항까지 삼십 분쯤 걸려요.",
+                                        "english": "It takes about thirty minutes from school to the airport."
+                                },
+                                {
+                                        "korean": "기숙사에서 우체국까지 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes from the dormitory to the post office."
+                                },
+                                {
+                                        "korean": "여기에서 편의점까지 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes from here to the convenience store."
+                                },
+                                {
+                                        "korean": "대구에서 부산까지 두 시간쯤 걸려요.",
+                                        "english": "It takes about two hours from Daegu to Busan."
+                                }
+                        ]
+                },
+                {
+                        "id": "means-euro",
+                        "title": "N(으)로",
+                        "label": "Means of transportation",
+                        "meaning": "Mark the vehicle or method used to travel.",
+                        "form": "Transportation + 으로 after a consonant · 로 after a vowel/ㄹ",
+                        "notes": "걸어서 is the common expression for “on foot.”",
+                        "examples": [
+                                [
+                                        "학교에서 집까지 버스로 삼십 분쯤 걸려요.",
+                                        "It takes about thirty minutes by bus from school to home."
+                                ],
+                                [
+                                        "대구에서 부산까지 기차로 두 시간쯤 걸려요.",
+                                        "It takes about two hours by train from Daegu to Busan."
+                                ],
+                                [
+                                        "한국에서 호주까지 비행기로 열한 시간쯤 걸려요.",
+                                        "It takes about eleven hours by airplane from Korea to Australia."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "학교에서 집까지 버스로 삼십 분쯤 걸려요.",
+                                        "english": "It takes about thirty minutes by bus from school to home."
+                                },
+                                {
+                                        "korean": "대구에서 부산까지 기차로 두 시간쯤 걸려요.",
+                                        "english": "It takes about two hours by train from Daegu to Busan."
+                                },
+                                {
+                                        "korean": "한국에서 호주까지 비행기로 열한 시간쯤 걸려요.",
+                                        "english": "It takes about eleven hours by airplane from Korea to Australia."
+                                },
+                                {
+                                        "korean": "여기에서 시내까지 지하철로 이십 분쯤 걸려요.",
+                                        "english": "It takes about twenty minutes by subway from here to downtown."
+                                },
+                                {
+                                        "korean": "집에서 시장까지 버스로 십오 분쯤 걸려요.",
+                                        "english": "It takes about fifteen minutes by bus from home to the market."
+                                },
+                                {
+                                        "korean": "학교에서 공항까지 택시로 삼십 분쯤 걸려요.",
+                                        "english": "It takes about thirty minutes by taxi from school to the airport."
+                                },
+                                {
+                                        "korean": "기숙사에서 우체국까지 자전거로 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes by bicycle from the dormitory to the post office."
+                                },
+                                {
+                                        "korean": "여기에서 편의점까지 걸어서 십 분쯤 걸려요.",
+                                        "english": "It takes about ten minutes on foot from here to the convenience store."
+                                },
+                                {
+                                        "korean": "인도네시아에서 한국까지 비행기로 일곱 시간쯤 걸려요.",
+                                        "english": "It takes about seven hours by airplane from Indonesia to Korea."
+                                },
+                                {
+                                        "korean": "서울에서 부산까지 KTX로 세 시간쯤 걸려요.",
+                                        "english": "It takes about three hours by KTX from Seoul to Busan."
+                                },
+                                {
+                                        "korean": "정류장에서 학교까지 버스로 이십 분쯤 걸려요.",
+                                        "english": "It takes about twenty minutes by bus from the bus stop to school."
+                                },
+                                {
+                                        "korean": "역에서 시장까지 지하철로 십오 분쯤 걸려요.",
+                                        "english": "It takes about fifteen minutes by subway from the station to the market."
+                                }
+                        ]
+                }
         ]
-    };
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2320,6 +2718,11 @@ tbody tr:last-child td {
             "e": "spring"
         }
     ];
+    function bankQuestion(items) {
+        const item = pick(items);
+        if (Array.isArray(item)) return q(item[0], item[1], item[2] || []);
+        return q(item.korean, item.english, item.alternatives || []);
+    }
     function greetingQuestion() {
         return pick([
             q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
@@ -2565,7 +2968,7 @@ tbody tr:last-child td {
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
-        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Practice sentences that follow ${s.title}.`, Math.min(25, s.questions?.length || 25))}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
@@ -2644,7 +3047,7 @@ tbody tr:last-child td {
         const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
         state.generator = isVocabulary
             ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            : () => section.questions ? bankQuestion(section.questions) : generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");

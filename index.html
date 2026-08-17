@@ -743,21 +743,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
 
     <div class="page-directory" id="directory">
       <div id="sections"></div>
-
-      <details class="edit-help block" id="edit">
-        <summary>How to Edit This Index Page</summary>
-        <div class="section-content edit-body">
-          <p>Find <strong>const PAGES = [...]</strong> near the bottom of this file. Edit the title, relative file path, description, group, and tag values.</p>
-          <pre><code>{
-  title: "TOPIK I Vocabulary Quiz",
-  href: "tutoring-topik-1-vocab.html",
-  description: "Full vocabulary quiz hub with all sections.",
-  group: "Quizzes",
-  tag: "Vocabulary"
-}</code></pre>
-          <p>Use the same group name to keep related pages together. Relative links work well on GitHub Pages.</p>
-        </div>
-      </details>
     </div>
   </main>
 
@@ -781,12 +766,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
     const PAGES = [
       { title: "TOPIK I Vocabulary", href: "tutoring-topik-i-vocab.html", group: "TOPIK I", tag: "Vocabulary" },
       { title: "TOPIK I Grammar", href: "tutoring-topik-i-grammar.html", group: "TOPIK I", tag: "Grammar" },
-      { title: "TOPIK II Level 3 Vocabulary", href: "tutoring-topik-ii-level-3-vocab.html", group: "TOPIK II Level 3", tag: "Vocabulary" },
-      { title: "TOPIK II Level 3 Grammar", href: "tutoring-topik-ii-level-3-grammar.html", group: "TOPIK II Level 3", tag: "Grammar" },
-      { title: "TOPIK II Level 4 Vocabulary", href: "tutoring-topik-ii-level-4-vocab.html", group: "TOPIK II Level 4", tag: "Vocabulary" },
-      { title: "TOPIK II Level 4 Grammar", href: "tutoring-topik-ii-level-4-grammar.html", group: "TOPIK II Level 4", tag: "Grammar" },
-      { title: "TOPIK II Level 5 Vocabulary", href: "tutoring-topik-ii-level-5-vocab.html", group: "TOPIK II Level 5", tag: "Vocabulary" },
-      { title: "TOPIK II Level 5 Grammar", href: "tutoring-topik-ii-level-5-grammar.html", group: "TOPIK II Level 5", tag: "Grammar" },
+      { title: "TOPIK II Level 3 Vocabulary", href: "tutoring-topik-ii-level-3-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
+      { title: "TOPIK II Level 3 Grammar", href: "tutoring-topik-ii-level-3-grammar.html", group: "TOPIK II", tag: "Grammar" },
+      { title: "TOPIK II Level 4 Vocabulary", href: "tutoring-topik-ii-level-4-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
+      { title: "TOPIK II Level 4 Grammar", href: "tutoring-topik-ii-level-4-grammar.html", group: "TOPIK II", tag: "Grammar" },
+      { title: "TOPIK II Level 5 Vocabulary", href: "tutoring-topik-ii-level-5-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
+      { title: "TOPIK II Level 5 Grammar", href: "tutoring-topik-ii-level-5-grammar.html", group: "TOPIK II", tag: "Grammar" },
 
       { title: "Bab 1: 만나서 반가워요", href: "tutoring-bab1.html", group: "Lessons", tag: "Lesson" },
       { title: "Bab 2: 이건 뭐예요?", href: "tutoring-bab2.html", group: "Lessons", tag: "Lesson" },
@@ -797,9 +782,19 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       { title: "Bab 7: 매점이 어디에 있어요?", href: "tutoring-bab7.html", group: "Lessons", tag: "Lesson" },
       { title: "Bab 8: 생일이 언제예요?", href: "tutoring-bab8.html", group: "Lessons", tag: "Lesson" },
       { title: "Bab 9: 태권도 수업은 몇 시에 시작해요?", href: "tutoring-bab9.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 10: 동생은 등산을 좋아하지 않습니다", href: "tutoring-bab10.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 11: 우리 가족은 모두 다섯 명입니다", href: "tutoring-bab11.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 12: 외국어를 할 수 있어요?", href: "tutoring-bab12.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 13: 잠깐 쉴까요", href: "tutoring-bab13.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 14: 생일이 언제예요?", href: "tutoring-bab14.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 15: 공책 한 권에 얼마예요?", href: "tutoring-bab15.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 16: 부모님이 일본에서 오세요", href: "tutoring-bab16.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 17: 버스를 타고 가려고 합니다", href: "tutoring-bab17.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 18: 커피를 마시지 마세요", href: "tutoring-bab18.html", group: "Lessons", tag: "Lesson" },
+      { title: "Bab 19: 시간이 있으면 같이 가요", href: "tutoring-bab19.html", group: "Lessons", tag: "Lesson" },
 
-      { title: "Romanization Practice", href: "romanization-practice.html", group: "Helper exercises", tag: "Romanization" },
       { title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "Helper exercises", tag: "TOPIK Practice Test" },
+      { title: "Romanization Practice", href: "romanization-practice.html", group: "Helper exercises", tag: "Romanization" },
       { title: "Conjugation Practice", href: "conjugation-practice.html", group: "Helper exercises", tag: "Conjugation" },
       { title: "Numbers Practice", href: "numbers-practice.html", group: "Helper exercises", tag: "Numbers" }
     ];

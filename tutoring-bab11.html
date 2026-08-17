@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 11 · 우리 가족은 모두 다섯 명입니다</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -576,7 +574,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu-grid label {
+.exercise-menu label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +585,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu-grid label>* {
+.exercise-menu label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -995,6 +993,18 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+.exercise-option {
+  width: min(100%, 380px);
+  justify-content: center;
+  align-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+.exercise-option span {
+  width: auto !important;
+  height: auto !important;
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1098,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary and grammar points are based on the supplied lesson worksheet. Where headings were unclear, the grammar point was inferred from the model sentences. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1118,321 +1128,810 @@ tbody tr:last-child td {
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 3",
-        "subtitle": "한국어 책을 읽어요",
-        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "title": "Bab 11",
+        "subtitle": "우리 가족은 모두 다섯 명입니다",
+        "description": "Talk respectfully about family members using honorific nouns, particles, copulas, verbs, and question forms.",
         "vocab": [
-            {
-                "korean": "학교",
-                "english": "school",
-                "category": "Places"
-            },
-            {
-                "korean": "도서관",
-                "english": "library",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "커피숍",
-                "english": "coffee shop",
-                "category": "Places"
-            },
-            {
-                "korean": "교실",
-                "english": "classroom",
-                "category": "Places"
-            },
-            {
-                "korean": "집",
-                "english": "home",
-                "category": "Places"
-            },
-            {
-                "korean": "회사",
-                "english": "company",
-                "category": "Places"
-            },
-            {
-                "korean": "기숙사",
-                "english": "dormitory",
-                "category": "Places"
-            },
-            {
-                "korean": "운동하다",
-                "english": "to exercise",
-                "category": "Verbs"
-            },
-            {
-                "korean": "마시다",
-                "english": "to drink",
-                "category": "Verbs"
-            },
-            {
-                "korean": "읽다",
-                "english": "to read",
-                "category": "Verbs"
-            },
-            {
-                "korean": "보다",
-                "english": "to watch / see",
-                "category": "Verbs"
-            },
-            {
-                "korean": "먹다",
-                "english": "to eat",
-                "category": "Verbs"
-            },
-            {
-                "korean": "목욕하다",
-                "english": "to bathe",
-                "category": "Verbs"
-            },
-            {
-                "korean": "닫다",
-                "english": "to close",
-                "category": "Verbs"
-            },
-            {
-                "korean": "앉다",
-                "english": "to sit",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가다",
-                "english": "to go",
-                "category": "Verbs"
-            },
-            {
-                "korean": "오다",
-                "english": "to come",
-                "category": "Verbs"
-            },
-            {
-                "korean": "전화하다",
-                "english": "to call",
-                "category": "Verbs"
-            },
-            {
-                "korean": "공부하다",
-                "english": "to study",
-                "category": "Verbs"
-            },
-            {
-                "korean": "일하다",
-                "english": "to work",
-                "category": "Verbs"
-            },
-            {
-                "korean": "배우다",
-                "english": "to learn",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가르치다",
-                "english": "to teach",
-                "category": "Verbs"
-            },
-            {
-                "korean": "자다",
-                "english": "to sleep",
-                "category": "Verbs"
-            },
-            {
-                "korean": "노래하다",
-                "english": "to sing",
-                "category": "Verbs"
-            },
-            {
-                "korean": "샤워하다",
-                "english": "to shower",
-                "category": "Verbs"
-            },
-            {
-                "korean": "한국어",
-                "english": "Korean language",
-                "category": "Languages"
-            },
-            {
-                "korean": "영어",
-                "english": "English",
-                "category": "Languages"
-            },
-            {
-                "korean": "일본어",
-                "english": "Japanese language",
-                "category": "Languages"
-            },
-            {
-                "korean": "밥",
-                "english": "meal / rice",
-                "category": "Food"
-            },
-            {
-                "korean": "커피",
-                "english": "coffee",
-                "category": "Drinks"
-            },
-            {
-                "korean": "전화",
-                "english": "phone call",
-                "category": "Objects"
-            },
-            {
-                "korean": "책",
-                "english": "book",
-                "category": "Objects"
-            },
-            {
-                "korean": "텔레비전",
-                "english": "television",
-                "category": "Objects"
-            },
-            {
-                "korean": "컴퓨터",
-                "english": "computer",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "물",
-                "english": "water",
-                "category": "Drinks"
-            },
-            {
-                "korean": "사과",
-                "english": "apple",
-                "category": "Food"
-            },
-            {
-                "korean": "오렌지 주스",
-                "english": "orange juice",
-                "category": "Drinks"
-            },
-            {
-                "korean": "라면",
-                "english": "ramyeon",
-                "category": "Food"
-            },
-            {
-                "korean": "김밥",
-                "english": "gimbap",
-                "category": "Food"
-            },
-            {
-                "korean": "햄버거",
-                "english": "hamburger",
-                "category": "Food"
-            },
-            {
-                "korean": "빵",
-                "english": "bread",
-                "category": "Food"
-            }
+                {
+                        "korean": "가족",
+                        "english": "family",
+                        "category": "Family"
+                },
+                {
+                        "korean": "부모님",
+                        "english": "parents",
+                        "category": "Family"
+                },
+                {
+                        "korean": "아버지",
+                        "english": "father",
+                        "category": "Family"
+                },
+                {
+                        "korean": "어머니",
+                        "english": "mother",
+                        "category": "Family"
+                },
+                {
+                        "korean": "할아버지",
+                        "english": "grandfather",
+                        "category": "Family"
+                },
+                {
+                        "korean": "할머니",
+                        "english": "grandmother",
+                        "category": "Family"
+                },
+                {
+                        "korean": "형",
+                        "english": "older brother (male speaker)",
+                        "category": "Family"
+                },
+                {
+                        "korean": "누나",
+                        "english": "older sister (male speaker)",
+                        "category": "Family"
+                },
+                {
+                        "korean": "오빠",
+                        "english": "older brother (female speaker)",
+                        "category": "Family"
+                },
+                {
+                        "korean": "언니",
+                        "english": "older sister (female speaker)",
+                        "category": "Family"
+                },
+                {
+                        "korean": "남동생",
+                        "english": "younger brother",
+                        "category": "Family"
+                },
+                {
+                        "korean": "여동생",
+                        "english": "younger sister",
+                        "category": "Family"
+                },
+                {
+                        "korean": "삼촌",
+                        "english": "paternal uncle",
+                        "category": "Family"
+                },
+                {
+                        "korean": "고모",
+                        "english": "paternal aunt",
+                        "category": "Family"
+                },
+                {
+                        "korean": "외삼촌",
+                        "english": "maternal uncle",
+                        "category": "Family"
+                },
+                {
+                        "korean": "이모",
+                        "english": "maternal aunt",
+                        "category": "Family"
+                },
+                {
+                        "korean": "생일",
+                        "english": "birthday",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "생신",
+                        "english": "honorific birthday",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "나이",
+                        "english": "age",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "연세",
+                        "english": "honorific age",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "밥",
+                        "english": "meal / rice",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "진지",
+                        "english": "honorific meal",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "이름",
+                        "english": "name",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "성함",
+                        "english": "honorific name",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "집",
+                        "english": "house",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "댁",
+                        "english": "honorific home",
+                        "category": "Honorific nouns"
+                },
+                {
+                        "korean": "있다",
+                        "english": "to be / exist",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "계시다",
+                        "english": "honorific to be / exist",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "자다",
+                        "english": "to sleep",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "주무시다",
+                        "english": "honorific to sleep",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "먹다",
+                        "english": "to eat",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "마시다",
+                        "english": "to drink",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "드시다",
+                        "english": "honorific to eat / drink",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "주다",
+                        "english": "to give",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "드리다",
+                        "english": "to give honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "가시다",
+                        "english": "to go honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "오시다",
+                        "english": "to come honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "읽으시다",
+                        "english": "to read honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "일어나시다",
+                        "english": "to get up honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "쉬시다",
+                        "english": "to rest honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "청소하시다",
+                        "english": "to clean honorifically",
+                        "category": "Honorific verbs"
+                },
+                {
+                        "korean": "회사원",
+                        "english": "office worker",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "요리사",
+                        "english": "cook",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "선생님",
+                        "english": "teacher",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "경찰",
+                        "english": "police officer",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "공무원",
+                        "english": "civil servant",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "의사",
+                        "english": "doctor",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "간호사",
+                        "english": "nurse",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "미용사",
+                        "english": "hairdresser",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "약사",
+                        "english": "pharmacist",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "가수",
+                        "english": "singer",
+                        "category": "Jobs"
+                },
+                {
+                        "korean": "친구",
+                        "english": "friend",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "교수님",
+                        "english": "professor",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "꽃",
+                        "english": "flower",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "케이크",
+                        "english": "cake",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "커피",
+                        "english": "coffee",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "치마",
+                        "english": "skirt",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "책",
+                        "english": "book",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "신문",
+                        "english": "newspaper",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "돈",
+                        "english": "money",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "운동화",
+                        "english": "sneakers",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "딸기",
+                        "english": "strawberry",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "선물",
+                        "english": "gift",
+                        "category": "People and gifts"
+                },
+                {
+                        "korean": "누구",
+                        "english": "who",
+                        "category": "Question words"
+                },
+                {
+                        "korean": "누가",
+                        "english": "who (subject)",
+                        "category": "Question words"
+                },
+                {
+                        "korean": "누구를",
+                        "english": "whom",
+                        "category": "Question words"
+                },
+                {
+                        "korean": "누구하고",
+                        "english": "with whom",
+                        "category": "Question words"
+                },
+                {
+                        "korean": "이분",
+                        "english": "this person (honorific)",
+                        "category": "Question words"
+                }
         ],
         "sections": [
-            {
-                "id": "present",
-                "title": "V-아요/어요/해요",
-                "label": "Polite present",
-                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
-                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
-                "notes": "The source teaches the three major patterns separately before combining them with objects.",
-                "examples": [
-                    [
-                        "먹다 → 먹어요",
-                        "to eat → eat(s)"
-                    ],
-                    [
-                        "보다 → 봐요",
-                        "to watch → watch(es)"
-                    ],
-                    [
-                        "공부하다 → 공부해요",
-                        "to study → study/studies"
-                    ]
-                ],
-                "generator": "present"
-            },
-            {
-                "id": "object",
-                "title": "N을/를 + V",
-                "label": "Object particle",
-                "meaning": "Mark the noun directly affected by an action.",
-                "form": "Use 을 after a final consonant and 를 after a vowel.",
-                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
-                "examples": [
-                    [
-                        "밥을 먹어요.",
-                        "I eat a meal."
-                    ],
-                    [
-                        "커피를 마셔요.",
-                        "I drink coffee."
-                    ],
-                    [
-                        "한국어를 공부해요.",
-                        "I study Korean."
-                    ]
-                ],
-                "generator": "object"
-            },
-            {
-                "id": "place-action",
-                "title": "N에서",
-                "label": "Place of action",
-                "meaning": "Mark the place where an action happens.",
-                "form": "Place + 에서 + object + action verb.",
-                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
-                "examples": [
-                    [
-                        "식당에서 밥을 먹어요.",
-                        "I eat at a restaurant."
-                    ],
-                    [
-                        "집에서 텔레비전을 봐요.",
-                        "I watch television at home."
-                    ],
-                    [
-                        "도서관에서 책을 읽어요.",
-                        "I read at the library."
-                    ]
-                ],
-                "generator": "placeAction"
-            },
-            {
-                "id": "also",
-                "title": "N도",
-                "label": "Also / too",
-                "meaning": "Add the meaning “also” or “too” to a noun.",
-                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
-                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
-                "examples": [
-                    [
-                        "린 씨도 중국 사람이에요.",
-                        "Lin is Chinese too."
-                    ],
-                    [
-                        "일본어도 배워요.",
-                        "I learn Japanese too."
-                    ],
-                    [
-                        "신문도 읽어요.",
-                        "I read a newspaper too."
-                    ]
-                ],
-                "generator": "also"
-            }
+                {
+                        "id": "honorific-nouns",
+                        "title": "Honorific nouns",
+                        "label": "Respectful vocabulary",
+                        "meaning": "Replace ordinary family-related nouns with honorific forms.",
+                        "form": "생일 → 생신 · 나이 → 연세 · 이름 → 성함 · 밥 → 진지",
+                        "notes": "Use these forms when referring to a respected person.",
+                        "examples": [
+                                [
+                                        "할아버지 생신은 언제예요?",
+                                        "When is Grandfather’s birthday?"
+                                ],
+                                [
+                                        "할머니 연세가 어떻게 되세요?",
+                                        "How old is Grandmother?"
+                                ],
+                                [
+                                        "선생님 성함이 어떻게 되세요?",
+                                        "What is the teacher’s name?"
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "할아버지 생신은 언제예요?",
+                                        "english": "When is Grandfather’s birthday?"
+                                },
+                                {
+                                        "korean": "할머니 연세가 어떻게 되세요?",
+                                        "english": "How old is Grandmother?"
+                                },
+                                {
+                                        "korean": "선생님 성함이 어떻게 되세요?",
+                                        "english": "What is the teacher’s name?"
+                                },
+                                {
+                                        "korean": "아버지는 진지를 드셨어요.",
+                                        "english": "Father ate his meal."
+                                },
+                                {
+                                        "korean": "부모님은 지금 댁에 계세요.",
+                                        "english": "My parents are at home now."
+                                },
+                                {
+                                        "korean": "할아버지는 아침을 드세요.",
+                                        "english": "Grandfather eats breakfast."
+                                },
+                                {
+                                        "korean": "할머니는 지금 주무세요.",
+                                        "english": "Grandmother is sleeping now."
+                                },
+                                {
+                                        "korean": "이분 성함은 김민수예요.",
+                                        "english": "This person’s name is Kim Minsu."
+                                },
+                                {
+                                        "korean": "할머니 생신에 꽃을 드렸어요.",
+                                        "english": "I gave flowers for Grandmother’s birthday."
+                                },
+                                {
+                                        "korean": "교수님 연세를 몰라요.",
+                                        "english": "I do not know the professor’s age."
+                                },
+                                {
+                                        "korean": "어머니께 진지를 준비했어요.",
+                                        "english": "I prepared a meal for Mother."
+                                },
+                                {
+                                        "korean": "선생님 댁은 서울에 있어요.",
+                                        "english": "The teacher’s home is in Seoul."
+                                }
+                        ]
+                },
+                {
+                        "id": "recipient-particles",
+                        "title": "N에게 and N께",
+                        "label": "Recipient particles",
+                        "meaning": "Mark the person who receives an action or object.",
+                        "form": "N에게 (neutral) · N께 (honorific)",
+                        "notes": "Use 께 for a respected recipient; 드리다 is the honorific form of giving.",
+                        "examples": [
+                                [
+                                        "나는 친구에게 전화해요.",
+                                        "I call my friend."
+                                ],
+                                [
+                                        "동생은 할아버지께 꽃을 드렸어요.",
+                                        "My younger sibling gave flowers to Grandfather."
+                                ],
+                                [
+                                        "할머니는 상우에게 케이크를 주세요.",
+                                        "Grandmother gives Sangwoo a cake."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "나는 친구에게 전화해요.",
+                                        "english": "I call my friend."
+                                },
+                                {
+                                        "korean": "동생은 할아버지께 꽃을 드렸어요.",
+                                        "english": "My younger sibling gave flowers to Grandfather."
+                                },
+                                {
+                                        "korean": "할머니는 상우에게 케이크를 주세요.",
+                                        "english": "Grandmother gives Sangwoo a cake."
+                                },
+                                {
+                                        "korean": "친구는 선생님께 커피를 드렸어요.",
+                                        "english": "My friend gave coffee to the teacher."
+                                },
+                                {
+                                        "korean": "나는 아사코에게 한국어를 가르쳐요.",
+                                        "english": "I teach Korean to Asako."
+                                },
+                                {
+                                        "korean": "동생은 나에게 콜라를 줘요.",
+                                        "english": "My younger sibling gives me cola."
+                                },
+                                {
+                                        "korean": "나는 동생에게 피자를 줘요.",
+                                        "english": "I give pizza to my younger sibling."
+                                },
+                                {
+                                        "korean": "제니퍼는 어머니께 치마를 드려요.",
+                                        "english": "Jennifer gives a skirt to her mother."
+                                },
+                                {
+                                        "korean": "어머니는 제니퍼에게 커피를 주세요.",
+                                        "english": "Mother gives Jennifer coffee."
+                                },
+                                {
+                                        "korean": "교수님은 상우에게 책을 주세요.",
+                                        "english": "The professor gives Sangwoo a book."
+                                },
+                                {
+                                        "korean": "상우는 교수님께 꽃을 드려요.",
+                                        "english": "Sangwoo gives flowers to the professor."
+                                },
+                                {
+                                        "korean": "나는 아버지께 신문을 드려요.",
+                                        "english": "I give Father a newspaper."
+                                },
+                                {
+                                        "korean": "아버지는 나에게 돈을 주세요.",
+                                        "english": "Father gives me money."
+                                },
+                                {
+                                        "korean": "티누는 아사코에게 운동화를 줘요.",
+                                        "english": "Tinu gives Asako sneakers."
+                                },
+                                {
+                                        "korean": "아사코는 티누에게 딸기를 줘요.",
+                                        "english": "Asako gives Tinu strawberries."
+                                }
+                        ]
+                },
+                {
+                        "id": "honorific-copula",
+                        "title": "N(이)시- and N(이)세요",
+                        "label": "Honorific copula",
+                        "meaning": "Identify a respected person’s role or identity.",
+                        "form": "N + 이시- after a consonant · N + 시- after a vowel",
+                        "notes": "-이세요/-세요 is the common polite form; -이십니다/-십니다 is formal.",
+                        "examples": [
+                                [
+                                        "아버지는 회사원이십니다.",
+                                        "Father is an office worker."
+                                ],
+                                [
+                                        "어머니는 선생님이십니다.",
+                                        "Mother is a teacher."
+                                ],
+                                [
+                                        "아버지는 공무원이십니다.",
+                                        "Father is a civil servant."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "아버지는 회사원이십니다.",
+                                        "english": "Father is an office worker."
+                                },
+                                {
+                                        "korean": "어머니는 선생님이십니다.",
+                                        "english": "Mother is a teacher."
+                                },
+                                {
+                                        "korean": "아버지는 공무원이십니다.",
+                                        "english": "Father is a civil servant."
+                                },
+                                {
+                                        "korean": "할아버지는 요리사십니다.",
+                                        "english": "Grandfather is a cook."
+                                },
+                                {
+                                        "korean": "할머니는 미용사십니다.",
+                                        "english": "Grandmother is a hairdresser."
+                                },
+                                {
+                                        "korean": "어머니는 의사세요.",
+                                        "english": "Mother is a doctor."
+                                },
+                                {
+                                        "korean": "할아버지는 약사세요.",
+                                        "english": "Grandfather is a pharmacist."
+                                },
+                                {
+                                        "korean": "삼촌은 영어 선생님이세요.",
+                                        "english": "My uncle is an English teacher."
+                                },
+                                {
+                                        "korean": "이모는 가수세요.",
+                                        "english": "My aunt is a singer."
+                                },
+                                {
+                                        "korean": "이분은 저의 선생님이십니다.",
+                                        "english": "This person is my teacher."
+                                },
+                                {
+                                        "korean": "할머니는 간호사세요.",
+                                        "english": "Grandmother is a nurse."
+                                },
+                                {
+                                        "korean": "고모는 회사원이세요.",
+                                        "english": "My aunt is an office worker."
+                                }
+                        ]
+                },
+                {
+                        "id": "honorific-verbs",
+                        "title": "V-(으)시-",
+                        "label": "Subject honorific",
+                        "meaning": "Show respect to the subject of a verb.",
+                        "form": "Verb stem + 으시- after a consonant · 시- after a vowel",
+                        "notes": "Past honorific is -(으)셨어요 or -(으)셨습니다.",
+                        "examples": [
+                                [
+                                        "아버지는 텔레비전을 보십니다.",
+                                        "Father watches television."
+                                ],
+                                [
+                                        "할아버지는 이를 닦으십니다.",
+                                        "Grandfather brushes his teeth."
+                                ],
+                                [
+                                        "할머니는 요리를 하십니다.",
+                                        "Grandmother cooks."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "아버지는 텔레비전을 보십니다.",
+                                        "english": "Father watches television."
+                                },
+                                {
+                                        "korean": "할아버지는 이를 닦으십니다.",
+                                        "english": "Grandfather brushes his teeth."
+                                },
+                                {
+                                        "korean": "할머니는 요리를 하십니다.",
+                                        "english": "Grandmother cooks."
+                                },
+                                {
+                                        "korean": "선생님은 한국어를 가르치십니다.",
+                                        "english": "The teacher teaches Korean."
+                                },
+                                {
+                                        "korean": "어머니는 빵을 드십니다.",
+                                        "english": "Mother eats bread."
+                                },
+                                {
+                                        "korean": "아버지는 지금 주무십니다.",
+                                        "english": "Father is sleeping now."
+                                },
+                                {
+                                        "korean": "선생님은 주말에 쇼핑하셨습니다.",
+                                        "english": "The teacher went shopping on the weekend."
+                                },
+                                {
+                                        "korean": "할아버지는 어제 등산하셨습니다.",
+                                        "english": "Grandfather went hiking yesterday."
+                                },
+                                {
+                                        "korean": "부모님은 주말에 배드민턴을 치셨습니다.",
+                                        "english": "My parents played badminton on the weekend."
+                                },
+                                {
+                                        "korean": "할아버지는 오늘 오전 7시에 일어나셨어요.",
+                                        "english": "Grandfather got up at 7 a.m. today."
+                                },
+                                {
+                                        "korean": "어머니는 어제 일본에 가셨어요.",
+                                        "english": "Mother went to Japan yesterday."
+                                },
+                                {
+                                        "korean": "부모님은 공원에서 산책하셨어요.",
+                                        "english": "My parents took a walk in the park."
+                                },
+                                {
+                                        "korean": "선생님은 지금 교실에서 노래하세요.",
+                                        "english": "The teacher is singing in the classroom."
+                                },
+                                {
+                                        "korean": "고모는 지금 방에 가세요.",
+                                        "english": "My aunt is going to the room."
+                                },
+                                {
+                                        "korean": "아버지는 매일 신문을 읽으세요.",
+                                        "english": "Father reads the newspaper every day."
+                                }
+                        ]
+                },
+                {
+                        "id": "special-honorifics",
+                        "title": "계시다, 주무시다, 드시다",
+                        "label": "Special honorific verbs",
+                        "meaning": "Use special lexical honorific verbs for being, sleeping, eating, and drinking.",
+                        "form": "있다 → 계시다 · 자다 → 주무시다 · 먹다/마시다 → 드시다",
+                        "notes": "These are not formed by simply adding -(으)시-.",
+                        "examples": [
+                                [
+                                        "선생님은 지금 사무실에 계세요.",
+                                        "The teacher is in the office now."
+                                ],
+                                [
+                                        "할아버지는 공원에 가십니다.",
+                                        "Grandfather goes to the park."
+                                ],
+                                [
+                                        "어머니는 시장에서 포도를 사셨어요.",
+                                        "Mother bought grapes at the market."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "선생님은 지금 사무실에 계세요.",
+                                        "english": "The teacher is in the office now."
+                                },
+                                {
+                                        "korean": "할아버지는 공원에 가십니다.",
+                                        "english": "Grandfather goes to the park."
+                                },
+                                {
+                                        "korean": "어머니는 시장에서 포도를 사셨어요.",
+                                        "english": "Mother bought grapes at the market."
+                                },
+                                {
+                                        "korean": "선생님은 불고기를 드셨어요.",
+                                        "english": "The teacher ate bulgogi."
+                                },
+                                {
+                                        "korean": "아버지는 영화를 보지 않으셨어요.",
+                                        "english": "Father did not watch a movie."
+                                },
+                                {
+                                        "korean": "어머니는 꽃을 아주 좋아하세요.",
+                                        "english": "Mother likes flowers very much."
+                                },
+                                {
+                                        "korean": "선생님은 어제 9시에 주무셨어요.",
+                                        "english": "The teacher went to sleep at nine yesterday."
+                                },
+                                {
+                                        "korean": "김 선생님은 영어를 가르치세요.",
+                                        "english": "Teacher Kim teaches English."
+                                },
+                                {
+                                        "korean": "할머니는 아침을 드세요.",
+                                        "english": "Grandmother eats breakfast."
+                                },
+                                {
+                                        "korean": "부모님은 지금 집에 안 계세요.",
+                                        "english": "My parents are not at home now."
+                                },
+                                {
+                                        "korean": "할아버지는 점심을 드셨습니다.",
+                                        "english": "Grandfather ate lunch."
+                                },
+                                {
+                                        "korean": "어머니는 어제 청소하셨습니다.",
+                                        "english": "Mother cleaned yesterday."
+                                }
+                        ]
+                },
+                {
+                        "id": "who-forms",
+                        "title": "누구 forms",
+                        "label": "Question words",
+                        "meaning": "Ask who, whom, whose, or with whom.",
+                        "form": "누구 · 누가 · 누구를 · 누구의/누구 · 누구하고",
+                        "notes": "누가 is the subject form of 누구.",
+                        "examples": [
+                                [
+                                        "이 사람은 누구예요? 내 친구예요.",
+                                        "Who is this person? This is my friend."
+                                ],
+                                [
+                                        "이건 누구 모자예요? 제 모자예요.",
+                                        "Whose hat is this? It is my hat."
+                                ],
+                                [
+                                        "누가 왔어요? 팀 씨가 왔어요.",
+                                        "Who came? Tim came."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "이 사람은 누구예요? 내 친구예요.",
+                                        "english": "Who is this person? This is my friend."
+                                },
+                                {
+                                        "korean": "이건 누구 모자예요? 제 모자예요.",
+                                        "english": "Whose hat is this? It is my hat."
+                                },
+                                {
+                                        "korean": "누가 왔어요? 팀 씨가 왔어요.",
+                                        "english": "Who came? Tim came."
+                                },
+                                {
+                                        "korean": "상우 씨는 누구를 좋아해요? 왕단 씨를 좋아해요.",
+                                        "english": "Whom does Sangwoo like? He likes Wangdan."
+                                },
+                                {
+                                        "korean": "이분은 누구십니까? 저의 선생님이십니다.",
+                                        "english": "Who is this person? This person is my teacher."
+                                },
+                                {
+                                        "korean": "누구하고 서울에 갔어요? 어머니하고 갔어요.",
+                                        "english": "With whom did you go to Seoul? I went with my mother."
+                                },
+                                {
+                                        "korean": "누구에게 선물을 줬어요? 동생에게 줬어요.",
+                                        "english": "To whom did you give a gift? I gave it to my younger sibling."
+                                },
+                                {
+                                        "korean": "누가 한국어를 가르치세요? 김 선생님이 가르치세요.",
+                                        "english": "Who teaches Korean? Teacher Kim teaches it."
+                                },
+                                {
+                                        "korean": "저분은 누구세요? 우리 할머니세요.",
+                                        "english": "Who is that person? She is my grandmother."
+                                },
+                                {
+                                        "korean": "누구를 만났어요? 교수님을 만났어요.",
+                                        "english": "Whom did you meet? I met the professor."
+                                },
+                                {
+                                        "korean": "누구하고 점심을 먹었어요? 친구하고 먹었어요.",
+                                        "english": "With whom did you eat lunch? I ate with a friend."
+                                },
+                                {
+                                        "korean": "누구 책이에요? 선생님 책이에요.",
+                                        "english": "Whose book is it? It is the teacher’s book."
+                                }
+                        ]
+                }
         ]
-    };
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2320,6 +2819,11 @@ tbody tr:last-child td {
             "e": "spring"
         }
     ];
+    function bankQuestion(items) {
+        const item = pick(items);
+        if (Array.isArray(item)) return q(item[0], item[1], item[2] || []);
+        return q(item.korean, item.english, item.alternatives || []);
+    }
     function greetingQuestion() {
         return pick([
             q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
@@ -2565,7 +3069,7 @@ tbody tr:last-child td {
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
-        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Practice sentences that follow ${s.title}.`, Math.min(25, s.questions?.length || 25))}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
@@ -2644,7 +3148,7 @@ tbody tr:last-child td {
         const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
         state.generator = isVocabulary
             ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            : () => section.questions ? bankQuestion(section.questions) : generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");

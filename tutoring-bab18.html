@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 18 · 커피를 마시지 마세요</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -576,7 +574,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu-grid label {
+.exercise-menu label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +585,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu-grid label>* {
+.exercise-menu label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -995,6 +993,18 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+.exercise-option {
+  width: min(100%, 380px);
+  justify-content: center;
+  align-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+.exercise-option span {
+  width: auto !important;
+  height: auto !important;
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1098,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary and grammar points are based on the supplied lesson worksheet. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1118,321 +1128,568 @@ tbody tr:last-child td {
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 3",
-        "subtitle": "한국어 책을 읽어요",
-        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "title": "Bab 18",
+        "subtitle": "커피를 마시지 마세요",
+        "description": "Talk about day-length expressions, make prohibitions, state obligations, and contrast topics with 은/는.",
         "vocab": [
-            {
-                "korean": "학교",
-                "english": "school",
-                "category": "Places"
-            },
-            {
-                "korean": "도서관",
-                "english": "library",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "커피숍",
-                "english": "coffee shop",
-                "category": "Places"
-            },
-            {
-                "korean": "교실",
-                "english": "classroom",
-                "category": "Places"
-            },
-            {
-                "korean": "집",
-                "english": "home",
-                "category": "Places"
-            },
-            {
-                "korean": "회사",
-                "english": "company",
-                "category": "Places"
-            },
-            {
-                "korean": "기숙사",
-                "english": "dormitory",
-                "category": "Places"
-            },
-            {
-                "korean": "운동하다",
-                "english": "to exercise",
-                "category": "Verbs"
-            },
-            {
-                "korean": "마시다",
-                "english": "to drink",
-                "category": "Verbs"
-            },
-            {
-                "korean": "읽다",
-                "english": "to read",
-                "category": "Verbs"
-            },
-            {
-                "korean": "보다",
-                "english": "to watch / see",
-                "category": "Verbs"
-            },
-            {
-                "korean": "먹다",
-                "english": "to eat",
-                "category": "Verbs"
-            },
-            {
-                "korean": "목욕하다",
-                "english": "to bathe",
-                "category": "Verbs"
-            },
-            {
-                "korean": "닫다",
-                "english": "to close",
-                "category": "Verbs"
-            },
-            {
-                "korean": "앉다",
-                "english": "to sit",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가다",
-                "english": "to go",
-                "category": "Verbs"
-            },
-            {
-                "korean": "오다",
-                "english": "to come",
-                "category": "Verbs"
-            },
-            {
-                "korean": "전화하다",
-                "english": "to call",
-                "category": "Verbs"
-            },
-            {
-                "korean": "공부하다",
-                "english": "to study",
-                "category": "Verbs"
-            },
-            {
-                "korean": "일하다",
-                "english": "to work",
-                "category": "Verbs"
-            },
-            {
-                "korean": "배우다",
-                "english": "to learn",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가르치다",
-                "english": "to teach",
-                "category": "Verbs"
-            },
-            {
-                "korean": "자다",
-                "english": "to sleep",
-                "category": "Verbs"
-            },
-            {
-                "korean": "노래하다",
-                "english": "to sing",
-                "category": "Verbs"
-            },
-            {
-                "korean": "샤워하다",
-                "english": "to shower",
-                "category": "Verbs"
-            },
-            {
-                "korean": "한국어",
-                "english": "Korean language",
-                "category": "Languages"
-            },
-            {
-                "korean": "영어",
-                "english": "English",
-                "category": "Languages"
-            },
-            {
-                "korean": "일본어",
-                "english": "Japanese language",
-                "category": "Languages"
-            },
-            {
-                "korean": "밥",
-                "english": "meal / rice",
-                "category": "Food"
-            },
-            {
-                "korean": "커피",
-                "english": "coffee",
-                "category": "Drinks"
-            },
-            {
-                "korean": "전화",
-                "english": "phone call",
-                "category": "Objects"
-            },
-            {
-                "korean": "책",
-                "english": "book",
-                "category": "Objects"
-            },
-            {
-                "korean": "텔레비전",
-                "english": "television",
-                "category": "Objects"
-            },
-            {
-                "korean": "컴퓨터",
-                "english": "computer",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "물",
-                "english": "water",
-                "category": "Drinks"
-            },
-            {
-                "korean": "사과",
-                "english": "apple",
-                "category": "Food"
-            },
-            {
-                "korean": "오렌지 주스",
-                "english": "orange juice",
-                "category": "Drinks"
-            },
-            {
-                "korean": "라면",
-                "english": "ramyeon",
-                "category": "Food"
-            },
-            {
-                "korean": "김밥",
-                "english": "gimbap",
-                "category": "Food"
-            },
-            {
-                "korean": "햄버거",
-                "english": "hamburger",
-                "category": "Food"
-            },
-            {
-                "korean": "빵",
-                "english": "bread",
-                "category": "Food"
-            }
+                {
+                        "korean": "하루",
+                        "english": "one day",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "이틀",
+                        "english": "two days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "사흘",
+                        "english": "three days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "나흘",
+                        "english": "four days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "닷새",
+                        "english": "five days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "엿새",
+                        "english": "six days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "이레",
+                        "english": "seven days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "여드레",
+                        "english": "eight days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "아흐레",
+                        "english": "nine days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "열흘",
+                        "english": "ten days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "보름",
+                        "english": "fifteen days",
+                        "category": "Days and duration"
+                },
+                {
+                        "korean": "식사",
+                        "english": "meal",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "생활",
+                        "english": "life / living",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "새벽",
+                        "english": "dawn / early morning",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "약",
+                        "english": "medicine",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "감기",
+                        "english": "cold",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "목",
+                        "english": "throat / neck",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "기침",
+                        "english": "cough",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "열",
+                        "english": "fever",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "병원",
+                        "english": "hospital",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "치과",
+                        "english": "dentist / dental clinic",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "안과",
+                        "english": "eye clinic",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "정형외과",
+                        "english": "orthopedic clinic",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "피부과",
+                        "english": "dermatology clinic",
+                        "category": "Health and daily life"
+                },
+                {
+                        "korean": "쓰레기",
+                        "english": "trash",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "버리다",
+                        "english": "to throw away",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "자전거",
+                        "english": "bicycle",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "수영하다",
+                        "english": "to swim",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "주차하다",
+                        "english": "to park",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "좌회전하다",
+                        "english": "to turn left",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "술",
+                        "english": "alcohol",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "밖",
+                        "english": "outside",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "다이어트",
+                        "english": "diet",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "외식하다",
+                        "english": "to eat out",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "복잡하다",
+                        "english": "to be crowded / congested",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "출발하다",
+                        "english": "to depart",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "혼자",
+                        "english": "alone",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "다니다",
+                        "english": "to go around / attend regularly",
+                        "category": "Prohibitions and safety"
+                },
+                {
+                        "korean": "시험",
+                        "english": "exam",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "준비하다",
+                        "english": "to prepare",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "등산화",
+                        "english": "hiking boots",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "공항",
+                        "english": "airport",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "손님",
+                        "english": "guest",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "교통",
+                        "english": "traffic",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "지하철",
+                        "english": "subway",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "청소하다",
+                        "english": "to clean",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "만들다",
+                        "english": "to make",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "사다",
+                        "english": "to buy",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "자다",
+                        "english": "to sleep",
+                        "category": "Obligations and preparation"
+                },
+                {
+                        "korean": "만나다",
+                        "english": "to meet",
+                        "category": "Obligations and preparation"
+                }
         ],
         "sections": [
-            {
-                "id": "present",
-                "title": "V-아요/어요/해요",
-                "label": "Polite present",
-                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
-                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
-                "notes": "The source teaches the three major patterns separately before combining them with objects.",
-                "examples": [
-                    [
-                        "먹다 → 먹어요",
-                        "to eat → eat(s)"
-                    ],
-                    [
-                        "보다 → 봐요",
-                        "to watch → watch(es)"
-                    ],
-                    [
-                        "공부하다 → 공부해요",
-                        "to study → study/studies"
-                    ]
-                ],
-                "generator": "present"
-            },
-            {
-                "id": "object",
-                "title": "N을/를 + V",
-                "label": "Object particle",
-                "meaning": "Mark the noun directly affected by an action.",
-                "form": "Use 을 after a final consonant and 를 after a vowel.",
-                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
-                "examples": [
-                    [
-                        "밥을 먹어요.",
-                        "I eat a meal."
-                    ],
-                    [
-                        "커피를 마셔요.",
-                        "I drink coffee."
-                    ],
-                    [
-                        "한국어를 공부해요.",
-                        "I study Korean."
-                    ]
-                ],
-                "generator": "object"
-            },
-            {
-                "id": "place-action",
-                "title": "N에서",
-                "label": "Place of action",
-                "meaning": "Mark the place where an action happens.",
-                "form": "Place + 에서 + object + action verb.",
-                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
-                "examples": [
-                    [
-                        "식당에서 밥을 먹어요.",
-                        "I eat at a restaurant."
-                    ],
-                    [
-                        "집에서 텔레비전을 봐요.",
-                        "I watch television at home."
-                    ],
-                    [
-                        "도서관에서 책을 읽어요.",
-                        "I read at the library."
-                    ]
-                ],
-                "generator": "placeAction"
-            },
-            {
-                "id": "also",
-                "title": "N도",
-                "label": "Also / too",
-                "meaning": "Add the meaning “also” or “too” to a noun.",
-                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
-                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
-                "examples": [
-                    [
-                        "린 씨도 중국 사람이에요.",
-                        "Lin is Chinese too."
-                    ],
-                    [
-                        "일본어도 배워요.",
-                        "I learn Japanese too."
-                    ],
-                    [
-                        "신문도 읽어요.",
-                        "I read a newspaper too."
-                    ]
-                ],
-                "generator": "also"
-            }
+                {
+                        "id": "day-duration",
+                        "title": "Native day-duration words",
+                        "label": "Duration",
+                        "meaning": "Use special Korean words for periods of one to fifteen days.",
+                        "form": "하루 · 이틀 · 사흘 · 나흘 · 닷새 … 열흘 · 보름",
+                        "notes": "These words describe elapsed duration; calendar dates normally use 일.",
+                        "examples": [
+                                [
+                                        "한국어를 하루에 네 시간 공부해요.",
+                                        "I study Korean for four hours a day."
+                                ],
+                                [
+                                        "이틀 동안 집에서 쉬었어요.",
+                                        "I rested at home for two days."
+                                ],
+                                [
+                                        "사흘 동안 감기에 걸렸어요.",
+                                        "I had a cold for three days."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "한국어를 하루에 네 시간 공부해요.",
+                                        "english": "I study Korean for four hours a day."
+                                },
+                                {
+                                        "korean": "이틀 동안 집에서 쉬었어요.",
+                                        "english": "I rested at home for two days."
+                                },
+                                {
+                                        "korean": "사흘 동안 감기에 걸렸어요.",
+                                        "english": "I had a cold for three days."
+                                },
+                                {
+                                        "korean": "나흘 동안 여행했어요.",
+                                        "english": "I traveled for four days."
+                                },
+                                {
+                                        "korean": "닷새 동안 병원에 있었어요.",
+                                        "english": "I was in the hospital for five days."
+                                },
+                                {
+                                        "korean": "엿새 동안 운동하지 않았어요.",
+                                        "english": "I did not exercise for six days."
+                                },
+                                {
+                                        "korean": "이레 동안 약을 먹었어요.",
+                                        "english": "I took medicine for seven days."
+                                },
+                                {
+                                        "korean": "여드레 동안 기숙사에서 생활했어요.",
+                                        "english": "I lived in the dormitory for eight days."
+                                },
+                                {
+                                        "korean": "아흐레 동안 매일 새벽에 일어났어요.",
+                                        "english": "I woke up at dawn every day for nine days."
+                                },
+                                {
+                                        "korean": "열흘 동안 술을 마시지 않았어요.",
+                                        "english": "I did not drink alcohol for ten days."
+                                },
+                                {
+                                        "korean": "보름 동안 한국어를 공부했어요.",
+                                        "english": "I studied Korean for fifteen days."
+                                },
+                                {
+                                        "korean": "하루에 세 번 식사해요.",
+                                        "english": "I eat three meals a day."
+                                }
+                        ]
+                },
+                {
+                        "id": "prohibition",
+                        "title": "V-지 마세요 / V-지 마십시오",
+                        "label": "Prohibition",
+                        "meaning": "Tell someone politely not to do an action.",
+                        "form": "Verb stem + 지 마세요 · more formal: 지 마십시오",
+                        "notes": "마세요 is common polite speech; 마십시오 is more formal and often used in notices.",
+                        "examples": [
+                                [
+                                        "똑바로 가지 마세요.",
+                                        "Please do not go straight."
+                                ],
+                                [
+                                        "쓰레기를 버리지 마세요.",
+                                        "Please do not throw away trash."
+                                ],
+                                [
+                                        "자전거를 타지 마세요.",
+                                        "Please do not ride a bicycle."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "똑바로 가지 마세요.",
+                                        "english": "Please do not go straight."
+                                },
+                                {
+                                        "korean": "쓰레기를 버리지 마세요.",
+                                        "english": "Please do not throw away trash."
+                                },
+                                {
+                                        "korean": "자전거를 타지 마세요.",
+                                        "english": "Please do not ride a bicycle."
+                                },
+                                {
+                                        "korean": "수영하지 마세요.",
+                                        "english": "Please do not swim."
+                                },
+                                {
+                                        "korean": "주차하지 마세요.",
+                                        "english": "Please do not park."
+                                },
+                                {
+                                        "korean": "좌회전하지 마세요.",
+                                        "english": "Please do not turn left."
+                                },
+                                {
+                                        "korean": "술을 마시지 마십시오.",
+                                        "english": "Please do not drink alcohol."
+                                },
+                                {
+                                        "korean": "날씨가 안 좋으니까 밖에 나가지 마세요.",
+                                        "english": "The weather is bad, so please do not go outside."
+                                },
+                                {
+                                        "korean": "배가 아프니까 밥을 많이 먹지 마십시오.",
+                                        "english": "Your stomach hurts, so please do not eat a lot."
+                                },
+                                {
+                                        "korean": "찬물을 마시지 마십시오.",
+                                        "english": "Please do not drink cold water."
+                                },
+                                {
+                                        "korean": "다이어트를 하니까 많이 먹지 마십시오.",
+                                        "english": "You are dieting, so please do not eat a lot."
+                                },
+                                {
+                                        "korean": "외식하지 마십시오.",
+                                        "english": "Please do not eat out."
+                                },
+                                {
+                                        "korean": "밤에는 위험하니까 혼자 다니지 마십시오.",
+                                        "english": "It is dangerous at night, so please do not go around alone."
+                                },
+                                {
+                                        "korean": "감기에 걸렸으니까 아이스크림을 먹지 마세요.",
+                                        "english": "You have a cold, so please do not eat ice cream."
+                                }
+                        ]
+                },
+                {
+                        "id": "obligation",
+                        "title": "V-아야/어야 하다",
+                        "label": "Obligation",
+                        "meaning": "State that an action is necessary or must be done.",
+                        "form": "Verb stem + 아야/어야 해요",
+                        "notes": "하다 becomes 해야 해요. In speech, 해요 is more common than 합니다.",
+                        "examples": [
+                                [
+                                        "내일 시험이 있어서 공부를 해야 해요.",
+                                        "There is an exam tomorrow, so I have to study."
+                                ],
+                                [
+                                        "아침 식사를 못 해서 빵과 우유를 사야 해요.",
+                                        "I missed breakfast, so I have to buy bread and milk."
+                                ],
+                                [
+                                        "요즘 일이 많아서 오늘은 일찍 자야 해요.",
+                                        "I have a lot of work these days, so I have to sleep early today."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "내일 시험이 있어서 공부를 해야 해요.",
+                                        "english": "There is an exam tomorrow, so I have to study."
+                                },
+                                {
+                                        "korean": "아침 식사를 못 해서 빵과 우유를 사야 해요.",
+                                        "english": "I missed breakfast, so I have to buy bread and milk."
+                                },
+                                {
+                                        "korean": "요즘 일이 많아서 오늘은 일찍 자야 해요.",
+                                        "english": "I have a lot of work these days, so I have to sleep early today."
+                                },
+                                {
+                                        "korean": "이번 주말에 산에 갈 거라서 등산화를 준비해야 해요.",
+                                        "english": "I will go to the mountain this weekend, so I have to prepare hiking boots."
+                                },
+                                {
+                                        "korean": "감기에 걸려서 열이 많이 나니까 병원에 가야 해요.",
+                                        "english": "I have a cold and a high fever, so I have to go to the hospital."
+                                },
+                                {
+                                        "korean": "내일 기숙사에서 생일 파티가 있어서 방을 청소해야 해요.",
+                                        "english": "There is a birthday party in the dormitory tomorrow, so I have to clean the room."
+                                },
+                                {
+                                        "korean": "이번 주에 부모님이 오셔서 공항에 가야 해요.",
+                                        "english": "My parents are coming this week, so I have to go to the airport."
+                                },
+                                {
+                                        "korean": "내일 우리 집에 손님이 와서 청소하고 음식을 만들어야 해요.",
+                                        "english": "A guest is coming tomorrow, so I have to clean and make food."
+                                },
+                                {
+                                        "korean": "다음 달에 동생이 독일로 유학을 가서 오늘 만나야 해요.",
+                                        "english": "My younger sibling will study abroad in Germany next month, so I have to meet them today."
+                                },
+                                {
+                                        "korean": "지금 교통이 복잡해서 지하철을 타야 해요.",
+                                        "english": "Traffic is congested now, so I have to take the subway."
+                                },
+                                {
+                                        "korean": "이 약은 하루에 두 번 먹어야 해요.",
+                                        "english": "I have to take this medicine twice a day."
+                                },
+                                {
+                                        "korean": "열이 나면 병원에 가야 해요.",
+                                        "english": "If you have a fever, you have to go to the hospital."
+                                },
+                                {
+                                        "korean": "목이 아프면 말을 많이 하지 말아야 해요.",
+                                        "english": "If your throat hurts, you should not talk a lot."
+                                },
+                                {
+                                        "korean": "시험 전에 열심히 공부해야 해요.",
+                                        "english": "I have to study hard before the exam."
+                                }
+                        ]
+                },
+                {
+                        "id": "topic-contrast",
+                        "title": "N은/는 …지만",
+                        "label": "Topic contrast",
+                        "meaning": "Contrast what can or cannot be done with two different topics.",
+                        "form": "N은/는 + clause + 지만 + N은/는 + clause",
+                        "notes": "은/는 highlights the contrast between the two nouns.",
+                        "examples": [
+                                [
+                                        "영어는 할 수 있지만 일본어는 못해요.",
+                                        "I can speak English, but I cannot speak Japanese."
+                                ],
+                                [
+                                        "오토바이는 탈 수 있지만 자동차는 못 타요.",
+                                        "I can ride a motorcycle, but I cannot drive a car."
+                                ],
+                                [
+                                        "포도는 먹을 수 있지만 바나나는 못 먹어요.",
+                                        "I can eat grapes, but I cannot eat bananas."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "영어는 할 수 있지만 일본어는 못해요.",
+                                        "english": "I can speak English, but I cannot speak Japanese."
+                                },
+                                {
+                                        "korean": "오토바이는 탈 수 있지만 자동차는 못 타요.",
+                                        "english": "I can ride a motorcycle, but I cannot drive a car."
+                                },
+                                {
+                                        "korean": "포도는 먹을 수 있지만 바나나는 못 먹어요.",
+                                        "english": "I can eat grapes, but I cannot eat bananas."
+                                },
+                                {
+                                        "korean": "바다에는 갈 수 있지만 산에는 못 가요.",
+                                        "english": "I can go to the sea, but I cannot go to the mountains."
+                                },
+                                {
+                                        "korean": "빨래는 할 수 있지만 요리는 못해요.",
+                                        "english": "I can do laundry, but I cannot cook."
+                                },
+                                {
+                                        "korean": "만화책은 읽을 수 있지만 컴퓨터 게임은 못해요.",
+                                        "english": "I can read comic books, but I cannot play computer games."
+                                },
+                                {
+                                        "korean": "자전거는 탈 수 있지만 수영은 못해요.",
+                                        "english": "I can ride a bicycle, but I cannot swim."
+                                },
+                                {
+                                        "korean": "아침에는 운동하지만 새벽에는 운동하지 않아요.",
+                                        "english": "I exercise in the morning, but not at dawn."
+                                },
+                                {
+                                        "korean": "치과에는 갈 수 있지만 오늘 안과에는 못 가요.",
+                                        "english": "I can go to the dentist, but I cannot go to the eye clinic today."
+                                },
+                                {
+                                        "korean": "약은 먹지만 술은 마시지 않아요.",
+                                        "english": "I take medicine, but I do not drink alcohol."
+                                },
+                                {
+                                        "korean": "지하철은 타지만 버스는 타지 않아요.",
+                                        "english": "I take the subway, but I do not take the bus."
+                                },
+                                {
+                                        "korean": "청소는 해야 하지만 외식은 하지 않아도 돼요.",
+                                        "english": "I have to clean, but I do not have to eat out."
+                                }
+                        ]
+                }
         ]
-    };
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2320,6 +2577,11 @@ tbody tr:last-child td {
             "e": "spring"
         }
     ];
+    function bankQuestion(items) {
+        const item = pick(items);
+        if (Array.isArray(item)) return q(item[0], item[1], item[2] || []);
+        return q(item.korean, item.english, item.alternatives || []);
+    }
     function greetingQuestion() {
         return pick([
             q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
@@ -2565,7 +2827,7 @@ tbody tr:last-child td {
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
-        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Practice sentences that follow ${s.title}.`, Math.min(25, s.questions?.length || 25))}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
@@ -2644,7 +2906,7 @@ tbody tr:last-child td {
         const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
         state.generator = isVocabulary
             ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            : () => section.questions ? bankQuestion(section.questions) : generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");

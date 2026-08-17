@@ -576,7 +576,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu label {
+.exercise-menu-grid label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +587,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu label>* {
+.exercise-menu-grid label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -851,7 +851,151 @@ tbody tr:last-child td {
     transform: none !important;
   }
 }
-  </style>
+  
+
+/* Grouped vocabulary sections, familiarity ratings, and category quiz setup */
+.vocab-category-stack {
+  display: grid;
+  gap: 14px;
+}
+.vocab-category {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.vocab-category > summary {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.vocab-category > summary::-webkit-details-marker { display: none; }
+.vocab-category > summary::after {
+  content: '−';
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+}
+.vocab-category:not([open]) > summary::after { content: '+'; }
+.vocab-category-count {
+  display: block;
+  margin-top: 2px;
+  color: var(--subtle);
+  font-size: .76rem;
+  font-weight: 700;
+}
+.vocab-category .table-wrap {
+  border: 0;
+  border-radius: 0;
+}
+.vocab-category table { min-width: 760px; }
+.familiarity-cell { min-width: 176px; }
+.familiarity-stars {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.3rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
+.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
+.familiarity-label {
+  display: block;
+  margin-top: 5px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+.exercise-option,
+.master-section-option {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+.exercise-option input,
+.master-section-option input {
+  width: 20px !important;
+  min-height: 20px !important;
+  height: 20px !important;
+  flex: 0 0 20px;
+  margin: 0;
+  padding: 0;
+}
+.master-section-picker {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.master-section-picker legend {
+  padding: 0 8px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.master-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.master-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.master-section-actions .btn {
+  min-height: 40px;
+  width: auto;
+}
+.menu-error {
+  margin-top: 8px !important;
+  color: var(--accent);
+  font-weight: 800;
+}
+@media (max-width:680px) {
+  .master-section-grid { grid-template-columns: 1fr; }
+  .master-section-actions .btn { width: 100%; }
+}
+
+</style>
  </head>
  <body id="top">
   <!-- Page header -->
@@ -942,28 +1086,7 @@ tbody tr:last-child td {
        Blur Korean
       </button>
      </div>
-     <div class="table-wrap">
-      <table>
-       <thead>
-        <tr>
-         <th>
-          English
-         </th>
-         <th>
-          Romanization
-         </th>
-         <th>
-          Korean
-         </th>
-         <th>
-          Category
-         </th>
-        </tr>
-       </thead>
-       <tbody id="vocabBody">
-       </tbody>
-      </table>
-     </div>
+     <div id="vocabCategorySections"></div>
      <p class="source-note">
       Workbook-style material questions have been removed. Every exercise below is translation practice.
      </p>
@@ -1317,6 +1440,7 @@ tbody tr:last-child td {
     // -------------------------------------------------------------------------
     const root = document.documentElement;
     const STORAGE_KEY = "koreanQuizThemeV2";
+    const FAMILIARITY_KEY = `koreanBabFamiliarity:${LESSON.title}`;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const pick = a => a[Math.floor(Math.random() * a.length)];
     const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
@@ -2387,7 +2511,28 @@ tbody tr:last-child td {
     // Exercise templates and runtime state
     // -------------------------------------------------------------------------
     const STATES = new Map();
-    function exerciseTemplate(key, title, description, defaultCount = 20) { return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>Choose typed or multiple choice, the number of questions, and both languages.</p><div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`; }
+    function exerciseTemplate(key, title, description, defaultCount = 20) {
+        const isVocabulary = key === "vocabulary";
+        const categories = [...new Set(LESSON.vocab.map(v => v.category || "Other"))];
+        const categoryPicker = isVocabulary ? `<fieldset class="master-section-picker vocab-category-picker">
+          <legend>Categories included in vocabulary quiz</legend>
+          <div class="master-section-grid">
+            ${categories.map(category => {
+              const count = LESSON.vocab.filter(v => (v.category || "Other") === category).length;
+              return `<label class="master-section-option"><input type="checkbox" value="${esc(category)}" checked><span>${esc(category)} <span class="vocab-category-count">${count} words</span></span></label>`;
+            }).join("")}
+          </div>
+          <div class="master-section-actions">
+            <button class="btn secondary select-all-categories" type="button">Select all</button>
+            <button class="btn secondary clear-all-categories" type="button">Clear all</button>
+          </div>
+          <p class="menu-error hidden category-error">Choose at least one category.</p>
+        </fieldset>` : "";
+        const setupText = isVocabulary
+          ? "Choose the vocabulary categories, quiz mode, question count, and both languages."
+          : "Choose typed or multiple choice, the number of questions, both languages, and whether wrong answers should repeat.";
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${categoryPicker}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn primary start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+    }
     // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring
     // -------------------------------------------------------------------------
@@ -2408,25 +2553,100 @@ tbody tr:last-child td {
         document.getElementById("heroSubtitle").textContent = LESSON.subtitle;
         document.getElementById("heroDesc").textContent = LESSON.description;
         document.getElementById("tocGrid").innerHTML = `<a class="toc-link" href="#vocabulary">Vocabulary</a>` + LESSON.sections.map(s => `<a class="toc-link" href="#${esc(s.id)}">${esc(s.title)}</a>`).join("");
-        const body = document.getElementById("vocabBody");
-        body.innerHTML = LESSON.vocab.map(v => { const r = romanizeKorean(v.korean); return `<tr data-search="${esc(`${v.english} ${r} ${v.korean} ${v.category}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td>${esc(v.category || "")}</td></tr>`; }).join("");
+
+        const grouped = new Map();
+        LESSON.vocab.forEach((v, index) => {
+            const category = v.category || "Other";
+            if (!grouped.has(category)) grouped.set(category, []);
+            grouped.get(category).push({ ...v, index });
+        });
+        document.getElementById("vocabCategorySections").innerHTML = `<div class="vocab-category-stack">${[...grouped.entries()].map(([category, items]) => `<details class="vocab-category" data-category="${esc(category)}" open><summary><span>${esc(category)}<span class="vocab-category-count">${items.length} words</span></span></summary><div class="table-wrap"><table><thead><tr><th>English</th><th>Romanization</th><th>Korean</th><th>Familiarity</th></tr></thead><tbody>${items.map(v => {
+            const r = romanizeKorean(v.korean);
+            const wordKey = `${LESSON.title}:${v.index}:${v.korean}`;
+            return `<tr data-search="${esc(`${v.english} ${r} ${v.korean} ${category}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td class="familiarity-cell"><div class="familiarity-stars" data-word-key="${esc(wordKey)}" data-level="0" role="group" aria-label="Familiarity rating for ${esc(v.korean)}"><button class="familiarity-star" type="button" data-level="1" aria-label="Mark 1 star: learning" aria-pressed="false">★</button><button class="familiarity-star" type="button" data-level="2" aria-label="Mark 2 stars: developing" aria-pressed="false">★</button><button class="familiarity-star" type="button" data-level="3" aria-label="Mark 3 stars: familiar" aria-pressed="false">★</button></div><span class="familiarity-label">Not rated</span></td></tr>`;
+        }).join("")}</tbody></table></div></details>`).join("")}</div>`;
+
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
         document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
         document.querySelectorAll("details").forEach(d => { const s = d.querySelector(":scope>summary"), sync = () => s?.setAttribute("aria-expanded", String(d.open)); sync(); d.addEventListener("toggle", sync); });
+
         const search = document.getElementById("vocabSearch");
-        search.addEventListener("input", () => { const term = search.value.trim().toLowerCase(); document.querySelectorAll("#vocabBody tr").forEach(row => row.hidden = !!term && !row.dataset.search.includes(term)); });
-        document.querySelectorAll("[data-blur-field]").forEach(btn => btn.addEventListener("click", () => { const field = btn.dataset.blurField, on = btn.getAttribute("aria-pressed") !== "true"; btn.setAttribute("aria-pressed", String(on)); document.querySelectorAll(`#vocabBody [data-vocab-field="${field}"]`).forEach(cell => cell.classList.toggle("is-blurred", on)); }));
+        search.addEventListener("input", () => {
+            const term = search.value.trim().toLowerCase();
+            document.querySelectorAll("#vocabCategorySections .vocab-category").forEach(section => {
+                let visible = 0;
+                section.querySelectorAll("tbody tr").forEach(row => {
+                    const match = !term || row.dataset.search.includes(term);
+                    row.hidden = !match;
+                    if (match) visible++;
+                });
+                section.hidden = Boolean(term) && visible === 0;
+                if (term && visible) section.open = true;
+            });
+        });
+
+        document.querySelectorAll("[data-blur-field]").forEach(btn => btn.addEventListener("click", () => {
+            const field = btn.dataset.blurField, on = btn.getAttribute("aria-pressed") !== "true";
+            btn.setAttribute("aria-pressed", String(on));
+            document.querySelectorAll(`#vocabCategorySections [data-vocab-field="${field}"]`).forEach(cell => cell.classList.toggle("is-blurred", on));
+        }));
+
+        let familiarity = {};
+        try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
+        const paintRating = (group, level) => {
+            const safeLevel = Math.max(0, Math.min(3, Number(level) || 0));
+            group.dataset.level = String(safeLevel);
+            group.querySelectorAll(".familiarity-star").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safeLevel)));
+            const label = group.parentElement.querySelector(".familiarity-label");
+            if (label) label.textContent = ["Not rated", "Learning", "Developing", "Familiar"][safeLevel];
+        };
+        document.querySelectorAll(".familiarity-stars").forEach(group => {
+            const key = group.dataset.wordKey;
+            paintRating(group, familiarity[key] || 0);
+            group.addEventListener("click", event => {
+                const button = event.target.closest(".familiarity-star");
+                if (!button) return;
+                const chosen = Number(button.dataset.level) || 0;
+                const nextLevel = Number(group.dataset.level) === chosen ? 0 : chosen;
+                if (nextLevel) familiarity[key] = nextLevel; else delete familiarity[key];
+                try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) { }
+                paintRating(group, nextLevel);
+            });
+        });
+
         document.querySelectorAll("[data-theme-toggle]").forEach(btn => btn.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
         document.querySelectorAll(".exercise").forEach(initExercise);
+
+        const vocabExercise = document.getElementById("ex-vocabulary");
+        if (vocabExercise) {
+            const inputs = [...vocabExercise.querySelectorAll(".master-section-option input")];
+            const countInput = vocabExercise.querySelector(".menu-count");
+            const error = vocabExercise.querySelector(".category-error");
+            const syncCategories = () => {
+                const selected = new Set(inputs.filter(input => input.checked).map(input => input.value));
+                const total = LESSON.vocab.filter(v => selected.has(v.category || "Other")).length;
+                countInput.max = String(Math.max(1, Math.min(100, total * 2)));
+                if (Number(countInput.value) > Number(countInput.max)) countInput.value = countInput.max;
+                if (Number(countInput.value) < 1) countInput.value = String(Math.min(20, Math.max(1, total)));
+                error?.classList.toggle("hidden", total > 0);
+            };
+            inputs.forEach(input => input.addEventListener("change", syncCategories));
+            vocabExercise.querySelector(".select-all-categories")?.addEventListener("click", () => { inputs.forEach(input => { input.checked = true; }); syncCategories(); });
+            vocabExercise.querySelector(".clear-all-categories")?.addEventListener("click", () => { inputs.forEach(input => { input.checked = false; }); syncCategories(); });
+            syncCategories();
+        }
     }
     function initExercise(el) {
         const key = el.id.replace(/^ex-/, "");
         const section = LESSON.sections.find(s => s.id === key);
-        const generator = key === "vocabulary" ? () => { const v = pick(LESSON.vocab); return q(v.korean, v.english); } : () => generate(section.generator);
-        const state = { generator, questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null };
+        const isVocabulary = key === "vocabulary";
+        const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
+        state.generator = isVocabulary
+            ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
+            : () => generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
@@ -2434,14 +2654,66 @@ tbody tr:last-child td {
         el.querySelector(".restart-same").onclick = () => start(el, state, true);
         el.querySelector(".change-setup").onclick = () => showSetup(el, state);
     }
-    function start(el, state, reuse = false) { const settings = reuse && state.settings ? state.settings : { mode: el.querySelector(".menu-mode").value, count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)), qLang: el.querySelector(".menu-q").value, aLang: el.querySelector(".menu-a").value }; state.settings = settings; state.questions = buildSet(state.generator, settings.count); state.i = 0; state.score = 0; state.results = []; state.done = false; state.finished = false; el.querySelector(".exercise-menu").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".live").classList.remove("hidden"); showQuestion(el, state); }
+    function start(el, state, reuse = false) {
+        let settings;
+        if (reuse && state.settings) {
+            settings = state.settings;
+        } else {
+            const selectedCategories = state.isVocabulary
+                ? [...el.querySelectorAll(".master-section-option input:checked")].map(input => input.value)
+                : [];
+            if (state.isVocabulary && !selectedCategories.length) {
+                el.querySelector(".category-error")?.classList.remove("hidden");
+                return;
+            }
+            settings = {
+                mode: el.querySelector(".menu-mode").value,
+                count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)),
+                qLang: el.querySelector(".menu-q").value,
+                aLang: el.querySelector(".menu-a").value,
+                repeatWrong: Boolean(el.querySelector(".menu-repeat-wrong")?.checked),
+                categories: selectedCategories
+            };
+        }
+        state.settings = settings;
+        if (state.isVocabulary) {
+            const selected = new Set(settings.categories);
+            state.vocabPool = LESSON.vocab.filter(v => selected.has(v.category || "Other"));
+            if (!state.vocabPool.length) {
+                el.querySelector(".category-error")?.classList.remove("hidden");
+                return;
+            }
+            const max = Math.max(1, Math.min(100, state.vocabPool.length * 2));
+            settings.count = Math.max(1, Math.min(max, settings.count));
+            el.querySelector(".menu-count").max = String(max);
+            el.querySelector(".menu-count").value = String(settings.count);
+            el.querySelector(".category-error")?.classList.add("hidden");
+        }
+        state.questions = buildSet(state.generator, settings.count);
+        state.i = 0;
+        state.score = 0;
+        state.results = [];
+        state.done = false;
+        state.finished = false;
+        state.currentAttempts = [];
+        state.currentHadWrong = false;
+        state.retryCurrent = false;
+        el.querySelector(".exercise-menu").classList.add("hidden");
+        el.querySelector(".finish").style.display = "none";
+        el.querySelector(".live").classList.remove("hidden");
+        showQuestion(el, state);
+    }
     function showSetup(el, state) { state.finished = true; el.querySelector(".live").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".exercise-menu").classList.remove("hidden"); el.querySelector(".score").textContent = "Not started"; }
-    function showQuestion(el, state) {
-        if (state.finished)
-            return;
+    function showQuestion(el, state, isRetry = false) {
+        if (state.finished) return;
         const question = state.questions[state.i], S = state.settings;
         state.done = false;
-        el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.questions.length}`;
+        if (!isRetry) {
+            state.currentAttempts = [];
+            state.currentHadWrong = false;
+            state.retryCurrent = false;
+        }
+        el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.questions.length}${isRetry ? " · retry" : ""}`;
         el.querySelector(".mode-label").textContent = S.mode === "typed" ? "Typed" : "Multiple choice";
         el.querySelector(".score").textContent = `Score: ${state.score}`;
         const pct = state.i / state.questions.length * 100;
@@ -2458,42 +2730,42 @@ tbody tr:last-child td {
             zone.innerHTML = `<div class="answer-row"><label class="sr-only">Your answer</label><input class="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${S.aLang === "romanization" ? "Space = dash · Double space = word space" : "Type your answer"}"><button class="btn primary check" type="button">Check</button></div>`;
             const input = zone.querySelector("input"), submit = () => submitTyped(el, state, input.value);
             zone.querySelector(".check").onclick = submit;
-            input.addEventListener("keydown", ev => { if (ev.key === "Enter") {
-                ev.preventDefault();
-                if (state.done)
-                    next(el, state);
-                else
-                    submit();
-                return;
-            } if (S.aLang === "romanization" && ev.key === " ") {
-                ev.preventDefault();
-                const a = input.selectionStart ?? input.value.length, b = input.selectionEnd ?? a, v = input.value;
-                if (a > 0 && v[a - 1] === "-") {
-                    input.value = v.slice(0, a - 1) + " " + v.slice(b);
-                    input.setSelectionRange(a, a);
+            input.addEventListener("keydown", ev => {
+                if (ev.key === "Enter") {
+                    ev.preventDefault();
+                    if (state.done) next(el, state); else submit();
+                    return;
                 }
-                else {
-                    input.value = v.slice(0, a) + "-" + v.slice(b);
-                    input.setSelectionRange(a + 1, a + 1);
+                if (S.aLang === "romanization" && ev.key === " ") {
+                    ev.preventDefault();
+                    const a = input.selectionStart ?? input.value.length, b = input.selectionEnd ?? a, v = input.value;
+                    if (a > 0 && v[a - 1] === "-") {
+                        input.value = v.slice(0, a - 1) + " " + v.slice(b);
+                        input.setSelectionRange(a, a);
+                    } else {
+                        input.value = v.slice(0, a) + "-" + v.slice(b);
+                        input.setSelectionRange(a + 1, a + 1);
+                    }
                 }
-            } });
+            });
             requestAnimationFrame(() => input.focus({ preventScroll: true }));
-        }
-        else {
+        } else {
             const correct = question[S.aLang];
             let options = [correct], tries = 0;
             while (options.length < 4 && tries < 50) {
                 tries++;
                 const other = state.generator()[S.aLang];
-                if (!options.some(x => normalize(x, S.aLang) === normalize(other, S.aLang)))
-                    options.push(other);
+                if (!options.some(x => normalize(x, S.aLang) === normalize(other, S.aLang))) options.push(other);
             }
             options = shuffle(options);
             zone.innerHTML = `<div class="choices">${options.map(o => `<button class="choice" data-value="${esc(o)}" type="button">${esc(o)}</button>`).join("")}</div>`;
-            zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => { if (state.done)
-                return; const value = btn.dataset.value, ok = isCorrect(question, value, S.aLang); zone.querySelectorAll(".choice").forEach(b => { b.disabled = true; if (isCorrect(question, b.dataset.value, S.aLang))
-                b.classList.add("correct"); }); if (!ok)
-                btn.classList.add("wrong"); complete(el, state, value, ok); });
+            zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => {
+                if (state.done) return;
+                const value = btn.dataset.value, ok = isCorrect(question, value, S.aLang);
+                zone.querySelectorAll(".choice").forEach(b => { b.disabled = true; if (isCorrect(question, b.dataset.value, S.aLang)) b.classList.add("correct"); });
+                if (!ok) btn.classList.add("wrong");
+                complete(el, state, value, ok);
+            });
         }
     }
     function submitTyped(el, state, value) { if (state.done)
@@ -2501,18 +2773,71 @@ tbody tr:last-child td {
         input.readOnly = true;
         requestAnimationFrame(() => input.focus({ preventScroll: true }));
     } }
-    function complete(el, state, value, ok) { if (state.done || state.finished)
-        return; state.done = true; if (ok)
-        state.score++; const question = state.questions[state.i]; state.results.push({ question, value, ok }); el.querySelector(".score").textContent = `Score: ${state.score}`; const f = el.querySelector(".feedback"); f.className = `feedback ${ok ? "good" : "bad"}`; f.innerHTML = `${ok ? "Correct." : "Not quite."}<br>${pretty(question)}`; const nextBtn = el.querySelector(".next"); nextBtn.textContent = state.i === state.questions.length - 1 ? "Finish" : "Next"; nextBtn.classList.remove("hidden"); }
-    function next(el, state) { if (!state.done)
-        return; if (state.i < state.questions.length - 1) {
-        state.i++;
-        showQuestion(el, state);
+    function complete(el, state, value, ok) {
+        if (state.done || state.finished) return;
+        state.done = true;
+        state.currentAttempts = state.currentAttempts || [];
+        state.currentAttempts.push({ value, ok });
+        const question = state.questions[state.i];
+        const f = el.querySelector(".feedback");
+
+        if (ok) {
+            if (!state.currentHadWrong) state.score++;
+            state.results.push({ question, value, ok: !state.currentHadWrong, masteredAfterRetry: state.currentHadWrong, attempts: [...state.currentAttempts] });
+            state.retryCurrent = false;
+            f.className = "feedback good";
+            f.innerHTML = `${state.currentHadWrong ? "Correct on retry." : "Correct."}<br>${pretty(question)}`;
+        } else {
+            state.currentHadWrong = true;
+            f.className = "feedback bad";
+            f.innerHTML = `Not quite.<br>${pretty(question)}`;
+            if (state.settings.repeatWrong) {
+                state.retryCurrent = true;
+            } else {
+                state.results.push({ question, value, ok: false, masteredAfterRetry: false, attempts: [...state.currentAttempts] });
+                state.retryCurrent = false;
+            }
+        }
+
+        el.querySelector(".score").textContent = `Score: ${state.score}`;
+        const nextBtn = el.querySelector(".next");
+        nextBtn.textContent = state.retryCurrent ? "Retry question" : (state.i === state.questions.length - 1 ? "Finish" : "Next");
+        nextBtn.classList.remove("hidden");
     }
-    else
-        finish(el, state, "Exercise complete"); }
-    function finish(el, state, title) { if (state.finished)
-        return; state.finished = true; el.querySelector(".live").classList.add("hidden"); const fin = el.querySelector(".finish"); fin.style.display = "block"; fin.querySelector("h4").textContent = title; const answered = state.results.length, pct = answered ? Math.round(state.score / answered * 100) : 0; fin.querySelector(".summary").innerHTML = answered ? `Score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.` : "No questions were answered."; fin.querySelector(".review").innerHTML = state.results.map((r, i) => `<div class="review-item"><strong>${i + 1}. ${r.ok ? "Correct" : "Review"}</strong>Your answer: ${esc(r.value || "(blank)")}<br>${pretty(r.question)}</div>`).join(""); fin.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+    function next(el, state) {
+        if (!state.done) return;
+        if (state.retryCurrent) {
+            showQuestion(el, state, true);
+            return;
+        }
+        if (state.i < state.questions.length - 1) {
+            state.i++;
+            showQuestion(el, state);
+        } else {
+            finish(el, state, "Exercise complete");
+        }
+    }
+    function finish(el, state, title) {
+        if (state.finished) return;
+        if (state.retryCurrent && state.currentAttempts?.length) {
+            const last = state.currentAttempts[state.currentAttempts.length - 1];
+            state.results.push({ question: state.questions[state.i], value: last.value, ok: false, masteredAfterRetry: false, attempts: [...state.currentAttempts] });
+            state.retryCurrent = false;
+        }
+        state.finished = true;
+        el.querySelector(".live").classList.add("hidden");
+        const fin = el.querySelector(".finish");
+        fin.style.display = "block";
+        fin.querySelector("h4").textContent = title;
+        const answered = state.results.length, pct = answered ? Math.round(state.score / answered * 100) : 0;
+        fin.querySelector(".summary").innerHTML = answered ? `First-try score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.` : "No questions were answered.";
+        fin.querySelector(".review").innerHTML = state.results.map((r, i) => {
+            const attempts = (r.attempts || [{ value: r.value, ok: r.ok }]).map((a, index) => `${index + 1}: ${a.value || "(blank)"}${a.ok ? " ✓" : " ✗"}`).join(" · ");
+            const status = r.masteredAfterRetry ? "Mastered on retry" : (r.ok ? "Correct" : "Review");
+            return `<div class="review-item"><strong>${i + 1}. ${status}</strong>Your attempts: ${esc(attempts)}<br>${pretty(r.question)}</div>`;
+        }).join("");
+        fin.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
     render();
 })();
   </script>

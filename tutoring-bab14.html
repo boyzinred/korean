@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 14 · 잠깐 쉴까요?</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -576,7 +574,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu-grid label {
+.exercise-menu label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +585,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu-grid label>* {
+.exercise-menu label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -995,6 +993,18 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+.exercise-option {
+  width: min(100%, 380px);
+  justify-content: center;
+  align-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+.exercise-option span {
+  width: auto !important;
+  height: auto !important;
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1098,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary and grammar points are based on the supplied lesson worksheet. Where headings were unclear, the grammar point was inferred from the model sentences. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1118,321 +1128,571 @@ tbody tr:last-child td {
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 3",
-        "subtitle": "한국어 책을 읽어요",
-        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "title": "Bab 14",
+        "subtitle": "잠깐 쉴까요?",
+        "description": "Make suggestions, accept plans politely, and combine multiple activities with 도 and -고.",
         "vocab": [
-            {
-                "korean": "학교",
-                "english": "school",
-                "category": "Places"
-            },
-            {
-                "korean": "도서관",
-                "english": "library",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "커피숍",
-                "english": "coffee shop",
-                "category": "Places"
-            },
-            {
-                "korean": "교실",
-                "english": "classroom",
-                "category": "Places"
-            },
-            {
-                "korean": "집",
-                "english": "home",
-                "category": "Places"
-            },
-            {
-                "korean": "회사",
-                "english": "company",
-                "category": "Places"
-            },
-            {
-                "korean": "기숙사",
-                "english": "dormitory",
-                "category": "Places"
-            },
-            {
-                "korean": "운동하다",
-                "english": "to exercise",
-                "category": "Verbs"
-            },
-            {
-                "korean": "마시다",
-                "english": "to drink",
-                "category": "Verbs"
-            },
-            {
-                "korean": "읽다",
-                "english": "to read",
-                "category": "Verbs"
-            },
-            {
-                "korean": "보다",
-                "english": "to watch / see",
-                "category": "Verbs"
-            },
-            {
-                "korean": "먹다",
-                "english": "to eat",
-                "category": "Verbs"
-            },
-            {
-                "korean": "목욕하다",
-                "english": "to bathe",
-                "category": "Verbs"
-            },
-            {
-                "korean": "닫다",
-                "english": "to close",
-                "category": "Verbs"
-            },
-            {
-                "korean": "앉다",
-                "english": "to sit",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가다",
-                "english": "to go",
-                "category": "Verbs"
-            },
-            {
-                "korean": "오다",
-                "english": "to come",
-                "category": "Verbs"
-            },
-            {
-                "korean": "전화하다",
-                "english": "to call",
-                "category": "Verbs"
-            },
-            {
-                "korean": "공부하다",
-                "english": "to study",
-                "category": "Verbs"
-            },
-            {
-                "korean": "일하다",
-                "english": "to work",
-                "category": "Verbs"
-            },
-            {
-                "korean": "배우다",
-                "english": "to learn",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가르치다",
-                "english": "to teach",
-                "category": "Verbs"
-            },
-            {
-                "korean": "자다",
-                "english": "to sleep",
-                "category": "Verbs"
-            },
-            {
-                "korean": "노래하다",
-                "english": "to sing",
-                "category": "Verbs"
-            },
-            {
-                "korean": "샤워하다",
-                "english": "to shower",
-                "category": "Verbs"
-            },
-            {
-                "korean": "한국어",
-                "english": "Korean language",
-                "category": "Languages"
-            },
-            {
-                "korean": "영어",
-                "english": "English",
-                "category": "Languages"
-            },
-            {
-                "korean": "일본어",
-                "english": "Japanese language",
-                "category": "Languages"
-            },
-            {
-                "korean": "밥",
-                "english": "meal / rice",
-                "category": "Food"
-            },
-            {
-                "korean": "커피",
-                "english": "coffee",
-                "category": "Drinks"
-            },
-            {
-                "korean": "전화",
-                "english": "phone call",
-                "category": "Objects"
-            },
-            {
-                "korean": "책",
-                "english": "book",
-                "category": "Objects"
-            },
-            {
-                "korean": "텔레비전",
-                "english": "television",
-                "category": "Objects"
-            },
-            {
-                "korean": "컴퓨터",
-                "english": "computer",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "물",
-                "english": "water",
-                "category": "Drinks"
-            },
-            {
-                "korean": "사과",
-                "english": "apple",
-                "category": "Food"
-            },
-            {
-                "korean": "오렌지 주스",
-                "english": "orange juice",
-                "category": "Drinks"
-            },
-            {
-                "korean": "라면",
-                "english": "ramyeon",
-                "category": "Food"
-            },
-            {
-                "korean": "김밥",
-                "english": "gimbap",
-                "category": "Food"
-            },
-            {
-                "korean": "햄버거",
-                "english": "hamburger",
-                "category": "Food"
-            },
-            {
-                "korean": "빵",
-                "english": "bread",
-                "category": "Food"
-            }
+                {
+                        "korean": "우리",
+                        "english": "we / our",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "같이",
+                        "english": "together",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "무엇",
+                        "english": "what",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "뭐",
+                        "english": "what",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "좋아요",
+                        "english": "sounds good",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "잠깐",
+                        "english": "for a moment",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "쉬다",
+                        "english": "to rest",
+                        "category": "Suggestion words"
+                },
+                {
+                        "korean": "영화를 보다",
+                        "english": "to watch a movie",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "숙제하다",
+                        "english": "to do homework",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "등산 가다",
+                        "english": "to go hiking",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "맥주를 마시다",
+                        "english": "to drink beer",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "생일 파티를 하다",
+                        "english": "to have a birthday party",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "점심을 먹다",
+                        "english": "to eat lunch",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "사진을 찍다",
+                        "english": "to take a photo",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "산책하다",
+                        "english": "to take a walk",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "노래하다",
+                        "english": "to sing",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "테니스를 치다",
+                        "english": "to play tennis",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "한국 요리를 만들다",
+                        "english": "to make Korean food",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "차를 마시다",
+                        "english": "to drink tea",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "텔레비전을 보다",
+                        "english": "to watch television",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "태권도를 배우다",
+                        "english": "to learn taekwondo",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "쇼핑하다",
+                        "english": "to shop",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "구경하다",
+                        "english": "to look around",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "여행하다",
+                        "english": "to travel",
+                        "category": "Activities"
+                },
+                {
+                        "korean": "도서관",
+                        "english": "library",
+                        "category": "Places"
+                },
+                {
+                        "korean": "기숙사",
+                        "english": "dormitory",
+                        "category": "Places"
+                },
+                {
+                        "korean": "공원",
+                        "english": "park",
+                        "category": "Places"
+                },
+                {
+                        "korean": "식당",
+                        "english": "restaurant",
+                        "category": "Places"
+                },
+                {
+                        "korean": "편의점",
+                        "english": "convenience store",
+                        "category": "Places"
+                },
+                {
+                        "korean": "제주도",
+                        "english": "Jeju Island",
+                        "category": "Places"
+                },
+                {
+                        "korean": "한라산",
+                        "english": "Hallasan",
+                        "category": "Places"
+                },
+                {
+                        "korean": "놀이공원",
+                        "english": "amusement park",
+                        "category": "Places"
+                },
+                {
+                        "korean": "문구점",
+                        "english": "stationery store",
+                        "category": "Places"
+                },
+                {
+                        "korean": "매점",
+                        "english": "snack shop",
+                        "category": "Places"
+                },
+                {
+                        "korean": "시내",
+                        "english": "downtown",
+                        "category": "Places"
+                },
+                {
+                        "korean": "우유",
+                        "english": "milk",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "과일",
+                        "english": "fruit",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "커피",
+                        "english": "coffee",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "라면",
+                        "english": "ramyeon",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "김밥",
+                        "english": "gimbap",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "불고기",
+                        "english": "bulgogi",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "냉면",
+                        "english": "cold noodles",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "선물",
+                        "english": "gift",
+                        "category": "Food and things"
+                },
+                {
+                        "korean": "오늘",
+                        "english": "today",
+                        "category": "Time"
+                },
+                {
+                        "korean": "내일",
+                        "english": "tomorrow",
+                        "category": "Time"
+                },
+                {
+                        "korean": "주말",
+                        "english": "weekend",
+                        "category": "Time"
+                },
+                {
+                        "korean": "오후",
+                        "english": "afternoon",
+                        "category": "Time"
+                },
+                {
+                        "korean": "방학",
+                        "english": "vacation",
+                        "category": "Time"
+                },
+                {
+                        "korean": "점심",
+                        "english": "lunch",
+                        "category": "Time"
+                }
         ],
         "sections": [
-            {
-                "id": "present",
-                "title": "V-아요/어요/해요",
-                "label": "Polite present",
-                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
-                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
-                "notes": "The source teaches the three major patterns separately before combining them with objects.",
-                "examples": [
-                    [
-                        "먹다 → 먹어요",
-                        "to eat → eat(s)"
-                    ],
-                    [
-                        "보다 → 봐요",
-                        "to watch → watch(es)"
-                    ],
-                    [
-                        "공부하다 → 공부해요",
-                        "to study → study/studies"
-                    ]
-                ],
-                "generator": "present"
-            },
-            {
-                "id": "object",
-                "title": "N을/를 + V",
-                "label": "Object particle",
-                "meaning": "Mark the noun directly affected by an action.",
-                "form": "Use 을 after a final consonant and 를 after a vowel.",
-                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
-                "examples": [
-                    [
-                        "밥을 먹어요.",
-                        "I eat a meal."
-                    ],
-                    [
-                        "커피를 마셔요.",
-                        "I drink coffee."
-                    ],
-                    [
-                        "한국어를 공부해요.",
-                        "I study Korean."
-                    ]
-                ],
-                "generator": "object"
-            },
-            {
-                "id": "place-action",
-                "title": "N에서",
-                "label": "Place of action",
-                "meaning": "Mark the place where an action happens.",
-                "form": "Place + 에서 + object + action verb.",
-                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
-                "examples": [
-                    [
-                        "식당에서 밥을 먹어요.",
-                        "I eat at a restaurant."
-                    ],
-                    [
-                        "집에서 텔레비전을 봐요.",
-                        "I watch television at home."
-                    ],
-                    [
-                        "도서관에서 책을 읽어요.",
-                        "I read at the library."
-                    ]
-                ],
-                "generator": "placeAction"
-            },
-            {
-                "id": "also",
-                "title": "N도",
-                "label": "Also / too",
-                "meaning": "Add the meaning “also” or “too” to a noun.",
-                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
-                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
-                "examples": [
-                    [
-                        "린 씨도 중국 사람이에요.",
-                        "Lin is Chinese too."
-                    ],
-                    [
-                        "일본어도 배워요.",
-                        "I learn Japanese too."
-                    ],
-                    [
-                        "신문도 읽어요.",
-                        "I read a newspaper too."
-                    ]
-                ],
-                "generator": "also"
-            }
+                {
+                        "id": "shall-we",
+                        "title": "V-(으)ㄹ까요?",
+                        "label": "Suggestion",
+                        "meaning": "Ask whether the speaker and listener should do something together.",
+                        "form": "Stem + 을까요 after a consonant · ㄹ까요 after a vowel/ㄹ",
+                        "notes": "In this lesson the form is used mainly for shared suggestions.",
+                        "examples": [
+                                [
+                                        "우리 같이 영화 볼까요?",
+                                        "Shall we watch a movie together?"
+                                ],
+                                [
+                                        "우리 같이 도서관에서 숙제할까요?",
+                                        "Shall we do homework together at the library?"
+                                ],
+                                [
+                                        "우리 같이 등산 갈까요?",
+                                        "Shall we go hiking together?"
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "우리 같이 영화 볼까요?",
+                                        "english": "Shall we watch a movie together?"
+                                },
+                                {
+                                        "korean": "우리 같이 도서관에서 숙제할까요?",
+                                        "english": "Shall we do homework together at the library?"
+                                },
+                                {
+                                        "korean": "우리 같이 등산 갈까요?",
+                                        "english": "Shall we go hiking together?"
+                                },
+                                {
+                                        "korean": "우리 같이 맥주를 마실까요?",
+                                        "english": "Shall we drink beer together?"
+                                },
+                                {
+                                        "korean": "우리 같이 기숙사에서 생일 파티를 할까요?",
+                                        "english": "Shall we have a birthday party together in the dormitory?"
+                                },
+                                {
+                                        "korean": "우리 같이 점심을 먹을까요?",
+                                        "english": "Shall we eat lunch together?"
+                                },
+                                {
+                                        "korean": "우리 같이 공원에서 사진을 찍을까요?",
+                                        "english": "Shall we take photos together in the park?"
+                                },
+                                {
+                                        "korean": "우리 같이 산책할까요?",
+                                        "english": "Shall we take a walk together?"
+                                },
+                                {
+                                        "korean": "주말에 같이 테니스를 칠까요?",
+                                        "english": "Shall we play tennis together on the weekend?"
+                                },
+                                {
+                                        "korean": "저 식당에 갈까요?",
+                                        "english": "Shall we go to that restaurant?"
+                                },
+                                {
+                                        "korean": "오늘 오후에 한국 요리를 만들까요?",
+                                        "english": "Shall we make Korean food this afternoon?"
+                                },
+                                {
+                                        "korean": "점심을 먹고 텔레비전을 볼까요?",
+                                        "english": "Shall we watch television after lunch?"
+                                },
+                                {
+                                        "korean": "방학에 제주도에 갈까요?",
+                                        "english": "Shall we go to Jeju Island during vacation?"
+                                },
+                                {
+                                        "korean": "편의점에서 우유를 살까요?",
+                                        "english": "Shall we buy milk at the convenience store?"
+                                },
+                                {
+                                        "korean": "한라산에도 갈까요?",
+                                        "english": "Shall we also go to Hallasan?"
+                                }
+                        ]
+                },
+                {
+                        "id": "lets-formal",
+                        "title": "V-(으)ㅂ시다",
+                        "label": "Formal suggestion",
+                        "meaning": "Suggest an action with “let’s.”",
+                        "form": "Stem + 읍시다 after a consonant · ㅂ시다 after a vowel",
+                        "notes": "This form is polite and somewhat formal.",
+                        "examples": [
+                                [
+                                        "같이 공부합시다.",
+                                        "Let’s study together."
+                                ],
+                                [
+                                        "같이 점심을 먹읍시다.",
+                                        "Let’s eat lunch together."
+                                ],
+                                [
+                                        "공원에서 사진을 찍읍시다.",
+                                        "Let’s take photos in the park."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "같이 공부합시다.",
+                                        "english": "Let’s study together."
+                                },
+                                {
+                                        "korean": "같이 점심을 먹읍시다.",
+                                        "english": "Let’s eat lunch together."
+                                },
+                                {
+                                        "korean": "공원에서 사진을 찍읍시다.",
+                                        "english": "Let’s take photos in the park."
+                                },
+                                {
+                                        "korean": "같이 산책합시다.",
+                                        "english": "Let’s take a walk together."
+                                },
+                                {
+                                        "korean": "같이 커피를 마십시다.",
+                                        "english": "Let’s drink coffee together."
+                                },
+                                {
+                                        "korean": "같이 차를 마십시다.",
+                                        "english": "Let’s drink tea together."
+                                },
+                                {
+                                        "korean": "텔레비전을 봅시다.",
+                                        "english": "Let’s watch television."
+                                },
+                                {
+                                        "korean": "놀이공원에 갑시다.",
+                                        "english": "Let’s go to the amusement park."
+                                },
+                                {
+                                        "korean": "태권도를 배웁시다.",
+                                        "english": "Let’s learn taekwondo."
+                                },
+                                {
+                                        "korean": "과일도 삽시다.",
+                                        "english": "Let’s also buy fruit."
+                                },
+                                {
+                                        "korean": "맛있는 음식도 먹읍시다.",
+                                        "english": "Let’s also eat delicious food."
+                                },
+                                {
+                                        "korean": "불고기를 먹읍시다.",
+                                        "english": "Let’s eat bulgogi."
+                                },
+                                {
+                                        "korean": "냉면도 먹읍시다.",
+                                        "english": "Let’s also eat cold noodles."
+                                },
+                                {
+                                        "korean": "주말에 여행합시다.",
+                                        "english": "Let’s travel on the weekend."
+                                },
+                                {
+                                        "korean": "시내에서 쇼핑합시다.",
+                                        "english": "Let’s shop downtown."
+                                }
+                        ]
+                },
+                {
+                        "id": "lets-polite",
+                        "title": "V-아요/어요 as a response",
+                        "label": "Polite agreement",
+                        "meaning": "Accept a suggestion using the ordinary polite present form.",
+                        "form": "네, 같이 + V-아요/어요",
+                        "notes": "Context gives the present form the meaning “yes, let’s.”",
+                        "examples": [
+                                [
+                                        "네, 같이 노래해요.",
+                                        "Yes, let’s sing together."
+                                ],
+                                [
+                                        "네, 같이 테니스를 쳐요.",
+                                        "Yes, let’s play tennis together."
+                                ],
+                                [
+                                        "네, 저 식당에 가요.",
+                                        "Yes, let’s go to that restaurant."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "네, 같이 노래해요.",
+                                        "english": "Yes, let’s sing together."
+                                },
+                                {
+                                        "korean": "네, 같이 테니스를 쳐요.",
+                                        "english": "Yes, let’s play tennis together."
+                                },
+                                {
+                                        "korean": "네, 저 식당에 가요.",
+                                        "english": "Yes, let’s go to that restaurant."
+                                },
+                                {
+                                        "korean": "네, 한국 요리를 만들어요.",
+                                        "english": "Yes, let’s make Korean food."
+                                },
+                                {
+                                        "korean": "네, 점심을 먹어요.",
+                                        "english": "Yes, let’s eat lunch."
+                                },
+                                {
+                                        "korean": "네, 산책해요.",
+                                        "english": "Yes, let’s take a walk."
+                                },
+                                {
+                                        "korean": "네, 커피를 마셔요.",
+                                        "english": "Yes, let’s drink coffee."
+                                },
+                                {
+                                        "korean": "네, 공원에서 사진을 찍어요.",
+                                        "english": "Yes, let’s take photos in the park."
+                                },
+                                {
+                                        "korean": "네, 도서관에서 숙제해요.",
+                                        "english": "Yes, let’s do homework at the library."
+                                },
+                                {
+                                        "korean": "네, 제주도에 가요.",
+                                        "english": "Yes, let’s go to Jeju Island."
+                                },
+                                {
+                                        "korean": "네, 영화를 봐요.",
+                                        "english": "Yes, let’s watch a movie."
+                                },
+                                {
+                                        "korean": "네, 같이 쇼핑해요.",
+                                        "english": "Yes, let’s shop together."
+                                }
+                        ]
+                },
+                {
+                        "id": "also-and",
+                        "title": "N도 A/V-고 N도 A/V",
+                        "label": "Multiple items",
+                        "meaning": "Say that two items or activities are both included.",
+                        "form": "N도 + predicate-고 + N도 + predicate",
+                        "notes": "도 means “also,” while -고 connects the two clauses.",
+                        "examples": [
+                                [
+                                        "라면도 먹고 김밥도 먹었어요.",
+                                        "I ate ramyeon and also ate gimbap."
+                                ],
+                                [
+                                        "우유도 사고 과일도 사요.",
+                                        "I buy milk and also buy fruit."
+                                ],
+                                [
+                                        "지난 주말에 쇼핑도 하고 영화를 봤어요.",
+                                        "Last weekend I shopped and also watched a movie."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "라면도 먹고 김밥도 먹었어요.",
+                                        "english": "I ate ramyeon and also ate gimbap."
+                                },
+                                {
+                                        "korean": "우유도 사고 과일도 사요.",
+                                        "english": "I buy milk and also buy fruit."
+                                },
+                                {
+                                        "korean": "지난 주말에 쇼핑도 하고 영화를 봤어요.",
+                                        "english": "Last weekend I shopped and also watched a movie."
+                                },
+                                {
+                                        "korean": "사람들이 공원에서 그림도 그리고 사진도 찍어요.",
+                                        "english": "People draw pictures and also take photos in the park."
+                                },
+                                {
+                                        "korean": "오늘 오후에 숙제도 하고 텔레비전도 봐요.",
+                                        "english": "This afternoon I do homework and also watch television."
+                                },
+                                {
+                                        "korean": "방학에 제주도도 여행하고 한라산에도 가요.",
+                                        "english": "During vacation I travel to Jeju Island and also go to Hallasan."
+                                },
+                                {
+                                        "korean": "어머니께 꽃도 드리고 선물도 드렸어요.",
+                                        "english": "I gave Mother flowers and also gave her a gift."
+                                },
+                                {
+                                        "korean": "불고기도 먹고 냉면도 먹어요.",
+                                        "english": "We eat bulgogi and also eat cold noodles."
+                                },
+                                {
+                                        "korean": "매점에서 커피도 사고 김밥도 사요.",
+                                        "english": "We buy coffee and also buy gimbap at the snack shop."
+                                },
+                                {
+                                        "korean": "주말에 등산도 가고 산책도 해요.",
+                                        "english": "On the weekend we go hiking and also take a walk."
+                                },
+                                {
+                                        "korean": "시내에서 쇼핑도 하고 사진도 찍어요.",
+                                        "english": "Downtown we shop and also take photos."
+                                },
+                                {
+                                        "korean": "문구점에서 공책도 사고 볼펜도 사요.",
+                                        "english": "At the stationery store we buy a notebook and also a pen."
+                                }
+                        ]
+                }
         ]
-    };
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2320,6 +2580,11 @@ tbody tr:last-child td {
             "e": "spring"
         }
     ];
+    function bankQuestion(items) {
+        const item = pick(items);
+        if (Array.isArray(item)) return q(item[0], item[1], item[2] || []);
+        return q(item.korean, item.english, item.alternatives || []);
+    }
     function greetingQuestion() {
         return pick([
             q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
@@ -2565,7 +2830,7 @@ tbody tr:last-child td {
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
-        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Practice sentences that follow ${s.title}.`, Math.min(25, s.questions?.length || 25))}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
@@ -2644,7 +2909,7 @@ tbody tr:last-child td {
         const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
         state.generator = isVocabulary
             ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            : () => section.questions ? bankQuestion(section.questions) : generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");

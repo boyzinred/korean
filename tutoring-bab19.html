@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 19 · 시간이 있으면 같이 가요</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -576,7 +574,7 @@ tbody tr:last-child td {
   gap: 14px;
 }
 
-.exercise-menu-grid label {
+.exercise-menu label {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 56px;
@@ -587,7 +585,7 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 
-.exercise-menu-grid label>* {
+.exercise-menu label>* {
   width: 100%;
   height: 56px;
   min-width: 0;
@@ -995,6 +993,18 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+.exercise-option {
+  width: min(100%, 380px);
+  justify-content: center;
+  align-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+.exercise-option span {
+  width: auto !important;
+  height: auto !important;
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1098,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary and grammar points are based on the supplied lesson worksheet. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1118,321 +1128,533 @@ tbody tr:last-child td {
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 3",
-        "subtitle": "한국어 책을 읽어요",
-        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "title": "Bab 19",
+        "subtitle": "시간이 있으면 같이 가요",
+        "description": "Use conversational connectors, express conditions with -(으)면, and make probable predictions with 아마 and -(으)ㄹ 거예요.",
         "vocab": [
-            {
-                "korean": "학교",
-                "english": "school",
-                "category": "Places"
-            },
-            {
-                "korean": "도서관",
-                "english": "library",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "커피숍",
-                "english": "coffee shop",
-                "category": "Places"
-            },
-            {
-                "korean": "교실",
-                "english": "classroom",
-                "category": "Places"
-            },
-            {
-                "korean": "집",
-                "english": "home",
-                "category": "Places"
-            },
-            {
-                "korean": "회사",
-                "english": "company",
-                "category": "Places"
-            },
-            {
-                "korean": "기숙사",
-                "english": "dormitory",
-                "category": "Places"
-            },
-            {
-                "korean": "운동하다",
-                "english": "to exercise",
-                "category": "Verbs"
-            },
-            {
-                "korean": "마시다",
-                "english": "to drink",
-                "category": "Verbs"
-            },
-            {
-                "korean": "읽다",
-                "english": "to read",
-                "category": "Verbs"
-            },
-            {
-                "korean": "보다",
-                "english": "to watch / see",
-                "category": "Verbs"
-            },
-            {
-                "korean": "먹다",
-                "english": "to eat",
-                "category": "Verbs"
-            },
-            {
-                "korean": "목욕하다",
-                "english": "to bathe",
-                "category": "Verbs"
-            },
-            {
-                "korean": "닫다",
-                "english": "to close",
-                "category": "Verbs"
-            },
-            {
-                "korean": "앉다",
-                "english": "to sit",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가다",
-                "english": "to go",
-                "category": "Verbs"
-            },
-            {
-                "korean": "오다",
-                "english": "to come",
-                "category": "Verbs"
-            },
-            {
-                "korean": "전화하다",
-                "english": "to call",
-                "category": "Verbs"
-            },
-            {
-                "korean": "공부하다",
-                "english": "to study",
-                "category": "Verbs"
-            },
-            {
-                "korean": "일하다",
-                "english": "to work",
-                "category": "Verbs"
-            },
-            {
-                "korean": "배우다",
-                "english": "to learn",
-                "category": "Verbs"
-            },
-            {
-                "korean": "가르치다",
-                "english": "to teach",
-                "category": "Verbs"
-            },
-            {
-                "korean": "자다",
-                "english": "to sleep",
-                "category": "Verbs"
-            },
-            {
-                "korean": "노래하다",
-                "english": "to sing",
-                "category": "Verbs"
-            },
-            {
-                "korean": "샤워하다",
-                "english": "to shower",
-                "category": "Verbs"
-            },
-            {
-                "korean": "한국어",
-                "english": "Korean language",
-                "category": "Languages"
-            },
-            {
-                "korean": "영어",
-                "english": "English",
-                "category": "Languages"
-            },
-            {
-                "korean": "일본어",
-                "english": "Japanese language",
-                "category": "Languages"
-            },
-            {
-                "korean": "밥",
-                "english": "meal / rice",
-                "category": "Food"
-            },
-            {
-                "korean": "커피",
-                "english": "coffee",
-                "category": "Drinks"
-            },
-            {
-                "korean": "전화",
-                "english": "phone call",
-                "category": "Objects"
-            },
-            {
-                "korean": "책",
-                "english": "book",
-                "category": "Objects"
-            },
-            {
-                "korean": "텔레비전",
-                "english": "television",
-                "category": "Objects"
-            },
-            {
-                "korean": "컴퓨터",
-                "english": "computer",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "물",
-                "english": "water",
-                "category": "Drinks"
-            },
-            {
-                "korean": "사과",
-                "english": "apple",
-                "category": "Food"
-            },
-            {
-                "korean": "오렌지 주스",
-                "english": "orange juice",
-                "category": "Drinks"
-            },
-            {
-                "korean": "라면",
-                "english": "ramyeon",
-                "category": "Food"
-            },
-            {
-                "korean": "김밥",
-                "english": "gimbap",
-                "category": "Food"
-            },
-            {
-                "korean": "햄버거",
-                "english": "hamburger",
-                "category": "Food"
-            },
-            {
-                "korean": "빵",
-                "english": "bread",
-                "category": "Food"
-            }
+                {
+                        "korean": "혼자",
+                        "english": "alone",
+                        "category": "Adverbs and question words"
+                },
+                {
+                        "korean": "아마",
+                        "english": "probably",
+                        "category": "Adverbs and question words"
+                },
+                {
+                        "korean": "다시",
+                        "english": "again",
+                        "category": "Adverbs and question words"
+                },
+                {
+                        "korean": "어느",
+                        "english": "which",
+                        "category": "Adverbs and question words"
+                },
+                {
+                        "korean": "얼마나",
+                        "english": "how long / how much",
+                        "category": "Adverbs and question words"
+                },
+                {
+                        "korean": "쯤",
+                        "english": "about",
+                        "category": "Adverbs and question words"
+                },
+                {
+                        "korean": "그러면",
+                        "english": "then / in that case",
+                        "category": "Connectors"
+                },
+                {
+                        "korean": "그런데",
+                        "english": "but / by the way",
+                        "category": "Connectors"
+                },
+                {
+                        "korean": "피곤하다",
+                        "english": "to be tired",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "심심하다",
+                        "english": "to be bored",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "어렵다",
+                        "english": "to be difficult",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "덥다",
+                        "english": "to be hot",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "아프다",
+                        "english": "to hurt / be sick",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "맛있다",
+                        "english": "to be delicious",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "시끄럽다",
+                        "english": "to be noisy",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "무섭다",
+                        "english": "to be scary",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "재미있다",
+                        "english": "to be fun / interesting",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "맑다",
+                        "english": "to be clear",
+                        "category": "Conditions and feelings"
+                },
+                {
+                        "korean": "안과",
+                        "english": "eye clinic",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "치과",
+                        "english": "dental clinic",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "체육관",
+                        "english": "gymnasium",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "도서관",
+                        "english": "library",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "백화점",
+                        "english": "department store",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "기숙사",
+                        "english": "dormitory",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "시내",
+                        "english": "downtown",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "여행하다",
+                        "english": "to travel",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "샤워하다",
+                        "english": "to shower",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "만화책",
+                        "english": "comic book",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "피아노",
+                        "english": "piano",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "수업하다",
+                        "english": "to teach / have class",
+                        "category": "Places and activities"
+                },
+                {
+                        "korean": "주말",
+                        "english": "weekend",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "방학",
+                        "english": "vacation",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "시험",
+                        "english": "exam",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "끝나다",
+                        "english": "to end",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "걸리다",
+                        "english": "to take time",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "중급반",
+                        "english": "intermediate class",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "오전반",
+                        "english": "morning class",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "오후반",
+                        "english": "afternoon class",
+                        "category": "Time and events"
+                },
+                {
+                        "korean": "주말반",
+                        "english": "weekend class",
+                        "category": "Time and events"
+                }
         ],
         "sections": [
-            {
-                "id": "present",
-                "title": "V-아요/어요/해요",
-                "label": "Polite present",
-                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
-                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
-                "notes": "The source teaches the three major patterns separately before combining them with objects.",
-                "examples": [
-                    [
-                        "먹다 → 먹어요",
-                        "to eat → eat(s)"
-                    ],
-                    [
-                        "보다 → 봐요",
-                        "to watch → watch(es)"
-                    ],
-                    [
-                        "공부하다 → 공부해요",
-                        "to study → study/studies"
-                    ]
-                ],
-                "generator": "present"
-            },
-            {
-                "id": "object",
-                "title": "N을/를 + V",
-                "label": "Object particle",
-                "meaning": "Mark the noun directly affected by an action.",
-                "form": "Use 을 after a final consonant and 를 after a vowel.",
-                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
-                "examples": [
-                    [
-                        "밥을 먹어요.",
-                        "I eat a meal."
-                    ],
-                    [
-                        "커피를 마셔요.",
-                        "I drink coffee."
-                    ],
-                    [
-                        "한국어를 공부해요.",
-                        "I study Korean."
-                    ]
-                ],
-                "generator": "object"
-            },
-            {
-                "id": "place-action",
-                "title": "N에서",
-                "label": "Place of action",
-                "meaning": "Mark the place where an action happens.",
-                "form": "Place + 에서 + object + action verb.",
-                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
-                "examples": [
-                    [
-                        "식당에서 밥을 먹어요.",
-                        "I eat at a restaurant."
-                    ],
-                    [
-                        "집에서 텔레비전을 봐요.",
-                        "I watch television at home."
-                    ],
-                    [
-                        "도서관에서 책을 읽어요.",
-                        "I read at the library."
-                    ]
-                ],
-                "generator": "placeAction"
-            },
-            {
-                "id": "also",
-                "title": "N도",
-                "label": "Also / too",
-                "meaning": "Add the meaning “also” or “too” to a noun.",
-                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
-                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
-                "examples": [
-                    [
-                        "린 씨도 중국 사람이에요.",
-                        "Lin is Chinese too."
-                    ],
-                    [
-                        "일본어도 배워요.",
-                        "I learn Japanese too."
-                    ],
-                    [
-                        "신문도 읽어요.",
-                        "I read a newspaper too."
-                    ]
-                ],
-                "generator": "also"
-            }
+                {
+                        "id": "connectors",
+                        "title": "그러면 and 그런데",
+                        "label": "Conversation connectors",
+                        "meaning": "Connect turns with “then/in that case” or “but/by the way.”",
+                        "form": "그러면 = then / in that case · 그런데 = but / by the way",
+                        "notes": "그러면 presents a result or next step; 그런데 changes direction or introduces contrast.",
+                        "examples": [
+                                [
+                                        "요즘 일이 많아서 피곤해요. 그러면 오늘은 집에서 좀 쉬세요.",
+                                        "I am tired because I have a lot of work these days. Then rest at home today."
+                                ],
+                                [
+                                        "만나서 반가워요. 그런데 나이가 어떻게 되세요?",
+                                        "Nice to meet you. By the way, how old are you?"
+                                ],
+                                [
+                                        "머리가 참 예뻐요. 그런데 그 머리는 어디에서 했어요?",
+                                        "Your hair is very pretty. By the way, where did you have it done?"
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "요즘 일이 많아서 피곤해요. 그러면 오늘은 집에서 좀 쉬세요.",
+                                        "english": "I am tired because I have a lot of work these days. Then rest at home today."
+                                },
+                                {
+                                        "korean": "만나서 반가워요. 그런데 나이가 어떻게 되세요?",
+                                        "english": "Nice to meet you. By the way, how old are you?"
+                                },
+                                {
+                                        "korean": "머리가 참 예뻐요. 그런데 그 머리는 어디에서 했어요?",
+                                        "english": "Your hair is very pretty. By the way, where did you have it done?"
+                                },
+                                {
+                                        "korean": "이쪽으로 가세요. 그러면 은행이 있어요.",
+                                        "english": "Go this way. Then there is a bank."
+                                },
+                                {
+                                        "korean": "주말에 등산했어요. 그런데 혼자 등산해서 심심했어요.",
+                                        "english": "I went hiking on the weekend. But I was bored because I hiked alone."
+                                },
+                                {
+                                        "korean": "어제 수업이 없었어요. 그런데 학교에 왔어요.",
+                                        "english": "There was no class yesterday. But I came to school."
+                                },
+                                {
+                                        "korean": "배가 아파요. 그러면 이 약을 드세요.",
+                                        "english": "Your stomach hurts. Then take this medicine."
+                                },
+                                {
+                                        "korean": "시간이 없어요. 그러면 택시를 타세요.",
+                                        "english": "You do not have time. Then take a taxi."
+                                },
+                                {
+                                        "korean": "날씨가 좋아요. 그런데 바람이 많이 불어요.",
+                                        "english": "The weather is good, but it is very windy."
+                                },
+                                {
+                                        "korean": "이 책은 재미있어요. 그런데 조금 어려워요.",
+                                        "english": "This book is interesting, but a little difficult."
+                                },
+                                {
+                                        "korean": "시험이 끝났어요. 그러면 같이 여행할까요?",
+                                        "english": "The exam is over. Then shall we travel together?"
+                                },
+                                {
+                                        "korean": "기숙사 생활은 재미있어요. 그런데 가끔 시끄러워요.",
+                                        "english": "Dormitory life is fun, but it is sometimes noisy."
+                                }
+                        ]
+                },
+                {
+                        "id": "conditional",
+                        "title": "S-(으)면 S",
+                        "label": "Condition",
+                        "meaning": "Express “if” or “when” conditions.",
+                        "form": "Stem + 으면 after a consonant · 면 after a vowel/ㄹ",
+                        "notes": "Use the same form for hypothetical conditions and regularly occurring “when” situations.",
+                        "examples": [
+                                [
+                                        "눈이 아프면 안과에 가세요.",
+                                        "If your eyes hurt, go to an eye clinic."
+                                ],
+                                [
+                                        "돈이 있으면 여행을 하고 싶어요.",
+                                        "If I have money, I want to travel."
+                                ],
+                                [
+                                        "피곤하면 쉬세요.",
+                                        "If you are tired, rest."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "눈이 아프면 안과에 가세요.",
+                                        "english": "If your eyes hurt, go to an eye clinic."
+                                },
+                                {
+                                        "korean": "돈이 있으면 여행을 하고 싶어요.",
+                                        "english": "If I have money, I want to travel."
+                                },
+                                {
+                                        "korean": "피곤하면 쉬세요.",
+                                        "english": "If you are tired, rest."
+                                },
+                                {
+                                        "korean": "숙제가 어려우면 친구와 함께 하세요.",
+                                        "english": "If the homework is difficult, do it with a friend."
+                                },
+                                {
+                                        "korean": "더우면 샤워하세요.",
+                                        "english": "If it is hot, take a shower."
+                                },
+                                {
+                                        "korean": "시간이 있으면 우리 같이 시내에 구경을 갈까요?",
+                                        "english": "If you have time, shall we go sightseeing downtown together?"
+                                },
+                                {
+                                        "korean": "학교에 가면 선생님이 계세요.",
+                                        "english": "If you go to school, the teacher is there."
+                                },
+                                {
+                                        "korean": "이가 아프면 치과에 가야 해요.",
+                                        "english": "If your tooth hurts, you have to go to the dentist."
+                                },
+                                {
+                                        "korean": "여기로 가시면 체육관이 있어요.",
+                                        "english": "If you go this way, there is a gymnasium."
+                                },
+                                {
+                                        "korean": "기분이 좋으면 노래를 해요.",
+                                        "english": "When I feel good, I sing."
+                                },
+                                {
+                                        "korean": "주말에 심심하면 만화책을 읽어요.",
+                                        "english": "If I am bored on the weekend, I read comic books."
+                                },
+                                {
+                                        "korean": "친구를 만나면 밥을 먹고 영화를 봐요.",
+                                        "english": "When I meet a friend, we eat and watch a movie."
+                                },
+                                {
+                                        "korean": "날씨가 더우면 수영해요.",
+                                        "english": "When the weather is hot, I swim."
+                                },
+                                {
+                                        "korean": "고향에서 친구가 오면 부산에 갈 거예요.",
+                                        "english": "If a friend comes from my hometown, I will go to Busan."
+                                },
+                                {
+                                        "korean": "시간이 있으면 피아노를 배우고 싶어요.",
+                                        "english": "If I have time, I want to learn piano."
+                                },
+                                {
+                                        "korean": "문법이 어려우면 선생님께 물어보세요.",
+                                        "english": "If the grammar is difficult, ask the teacher."
+                                },
+                                {
+                                        "korean": "밖이 시끄러우면 도서관에 가서 공부하세요.",
+                                        "english": "If it is noisy outside, go to the library and study."
+                                },
+                                {
+                                        "korean": "시험이 끝나면 시간이 있어요.",
+                                        "english": "When the exam ends, I have time."
+                                },
+                                {
+                                        "korean": "혼자 있으면 부모님을 만나고 싶어요.",
+                                        "english": "When I am alone, I want to see my parents."
+                                }
+                        ]
+                },
+                {
+                        "id": "prediction",
+                        "title": "A/V-(으)ㄹ 거예요",
+                        "label": "Prediction and supposition",
+                        "meaning": "Make a prediction or assumption about a present or future situation.",
+                        "form": "Stem + 을 거예요 after a consonant · ㄹ 거예요 after a vowel/ㄹ",
+                        "notes": "With 아마, this form often means “probably.” This differs from the planned-future use practiced earlier.",
+                        "examples": [
+                                [
+                                        "지금 왕단 씨는 아마 집에서 숙제를 할 거예요.",
+                                        "Wangdan is probably doing homework at home now."
+                                ],
+                                [
+                                        "학교에서 시내까지 이십 분쯤 걸릴 거예요.",
+                                        "It will probably take about twenty minutes from school to downtown."
+                                ],
+                                [
+                                        "이번 시험은 아마 어려울 거예요.",
+                                        "This exam will probably be difficult."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "지금 왕단 씨는 아마 집에서 숙제를 할 거예요.",
+                                        "english": "Wangdan is probably doing homework at home now."
+                                },
+                                {
+                                        "korean": "학교에서 시내까지 이십 분쯤 걸릴 거예요.",
+                                        "english": "It will probably take about twenty minutes from school to downtown."
+                                },
+                                {
+                                        "korean": "이번 시험은 아마 어려울 거예요.",
+                                        "english": "This exam will probably be difficult."
+                                },
+                                {
+                                        "korean": "주말에는 백화점에 사람들이 많을 거예요.",
+                                        "english": "There will probably be many people at the department store on the weekend."
+                                },
+                                {
+                                        "korean": "편지를 쓰면 부모님이 좋아하실 거예요.",
+                                        "english": "If you write a letter, your parents will probably like it."
+                                },
+                                {
+                                        "korean": "친구와 같이 기숙사에서 살면 재미있을 거예요.",
+                                        "english": "If you live in the dormitory with a friend, it will probably be fun."
+                                },
+                                {
+                                        "korean": "날씨가 흐리고 바람이 부니까 아마 비가 올 거예요.",
+                                        "english": "It is cloudy and windy, so it will probably rain."
+                                },
+                                {
+                                        "korean": "선생님이 사무실에 안 계시니까 아마 교실에서 수업하고 계실 거예요.",
+                                        "english": "The teacher is not in the office, so they are probably teaching in the classroom."
+                                },
+                                {
+                                        "korean": "어머니가 매일 제 방을 청소하시니까 아마 피곤하실 거예요.",
+                                        "english": "My mother cleans my room every day, so she is probably tired."
+                                },
+                                {
+                                        "korean": "여자 친구에게 가방을 선물하면 아마 좋아할 거예요.",
+                                        "english": "If I give my girlfriend a bag, she will probably like it."
+                                },
+                                {
+                                        "korean": "내일 날씨는 아마 맑을 거예요.",
+                                        "english": "The weather will probably be clear tomorrow."
+                                },
+                                {
+                                        "korean": "동생은 지금 집에서 아마 숙제할 거예요.",
+                                        "english": "My younger sibling is probably doing homework at home now."
+                                },
+                                {
+                                        "korean": "그 영화는 아마 무섭지 않을 거예요.",
+                                        "english": "That movie probably will not be scary."
+                                },
+                                {
+                                        "korean": "대구에서 제주도까지 비행기로 아마 사십오 분쯤 걸릴 거예요.",
+                                        "english": "It will probably take about forty-five minutes by plane from Daegu to Jeju Island."
+                                }
+                        ]
+                },
+                {
+                        "id": "class-dialogue",
+                        "title": "Conditional review in a class dialogue",
+                        "label": "Practical review",
+                        "meaning": "Apply conditions, time expressions, and class vocabulary in a registration context.",
+                        "form": "Condition + result · Time부터 time까지 · Class에서 공부하다",
+                        "notes": "This section follows the final dialogue in the worksheet and combines the lesson’s main patterns.",
+                        "examples": [
+                                [
+                                        "프랑스어를 배우고 싶어서 왔어요.",
+                                        "I came because I want to learn French."
+                                ],
+                                [
+                                        "프랑스어를 처음 배워요?",
+                                        "Are you learning French for the first time?"
+                                ],
+                                [
+                                        "중급반에서 공부하고 싶어요.",
+                                        "I want to study in the intermediate class."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "프랑스어를 배우고 싶어서 왔어요.",
+                                        "english": "I came because I want to learn French."
+                                },
+                                {
+                                        "korean": "프랑스어를 처음 배워요?",
+                                        "english": "Are you learning French for the first time?"
+                                },
+                                {
+                                        "korean": "중급반에서 공부하고 싶어요.",
+                                        "english": "I want to study in the intermediate class."
+                                },
+                                {
+                                        "korean": "중급반 수업은 오전반과 오후반이 있어요.",
+                                        "english": "The intermediate course has morning and afternoon classes."
+                                },
+                                {
+                                        "korean": "주말반도 있어요?",
+                                        "english": "Is there also a weekend class?"
+                                },
+                                {
+                                        "korean": "토요일 오전 9시부터 1시까지 수업이 있어요.",
+                                        "english": "There is class from 9 a.m. to 1 p.m. on Saturday."
+                                },
+                                {
+                                        "korean": "어느 반에서 공부하고 싶어요?",
+                                        "english": "Which class do you want to study in?"
+                                },
+                                {
+                                        "korean": "시간이 있으면 주말반에서 공부하고 싶어요.",
+                                        "english": "If I have time, I want to study in the weekend class."
+                                },
+                                {
+                                        "korean": "오전반이 어려우면 오후반에 등록하세요.",
+                                        "english": "If the morning class is difficult, register for the afternoon class."
+                                },
+                                {
+                                        "korean": "중급반에 자리가 있으면 등록할 거예요.",
+                                        "english": "If there is space in the intermediate class, I will register."
+                                },
+                                {
+                                        "korean": "처음 배우면 초급반에서 공부하세요.",
+                                        "english": "If you are learning for the first time, study in the beginner class."
+                                },
+                                {
+                                        "korean": "수업이 끝나면 집에 갈 거예요.",
+                                        "english": "When class ends, I will go home."
+                                }
+                        ]
+                }
         ]
-    };
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2320,6 +2542,11 @@ tbody tr:last-child td {
             "e": "spring"
         }
     ];
+    function bankQuestion(items) {
+        const item = pick(items);
+        if (Array.isArray(item)) return q(item[0], item[1], item[2] || []);
+        return q(item.korean, item.english, item.alternatives || []);
+    }
     function greetingQuestion() {
         return pick([
             q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
@@ -2565,7 +2792,7 @@ tbody tr:last-child td {
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
-        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Generate many combinations that follow ${s.title}.`, 25)}</div></div></details>`).join("");
+        document.getElementById("grammarSections").innerHTML = LESSON.sections.map((s, i) => `<details class="section" id="${esc(s.id)}"${i === 0 ? " open" : ""}><summary><span>${esc(s.title)}</span></summary><div class="section-body"><div class="section-intro"><article class="info-card"><span class="rule-label">${esc(s.label)}</span><h3>Meaning and form</h3><p><strong>Meaning:</strong> ${esc(s.meaning)}</p><p><strong>Form:</strong> ${esc(s.form)}</p><p><strong>Note:</strong> ${esc(s.notes)}</p></article><article class="info-card"><span class="rule-label">Examples</span><h3>Model sentences</h3><div class="example-list">${s.examples.map(([k, e]) => `<div class="example"><strong>${esc(e)}</strong><br><span class="roman">${esc(romanizeKorean(k))}</span><br>${esc(k)}</div>`).join("")}</div></article></div><div class="exercise-stack">${exerciseTemplate(s.id, "Translation Practice", `Practice sentences that follow ${s.title}.`, Math.min(25, s.questions?.length || 25))}</div></div></details>`).join("");
         initInteractions();
     }
     function initInteractions() {
@@ -2644,7 +2871,7 @@ tbody tr:last-child td {
         const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
         state.generator = isVocabulary
             ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            : () => section.questions ? bankQuestion(section.questions) : generate(section.generator);
         STATES.set(key, state);
         el.querySelector(".start").onclick = () => start(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
