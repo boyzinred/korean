@@ -1057,8 +1057,8 @@ html[data-theme=light] .personalized-word .roman {
 .vocab-selection-summary span { color:var(--accent); }
 .menu-error { margin:8px 0 0 !important; color:var(--accent); font-weight:800; }
 .question-preview { display:grid; gap:14px; padding:18px; background:var(--surface-muted); border:2px solid var(--primary); border-radius:var(--radius-lg); }
-.question-preview h5,.personalized-vocab h5 { margin:0; font-size:1.08rem; }
-.question-preview p,.personalized-vocab p { margin:0; }
+.question-preview h5,.vocab-assistant h5,.personalized-vocab h5 { margin:0; font-size:1.08rem; }
+.question-preview p,.vocab-assistant p,.personalized-vocab p { margin:0; }
 .preview-summary { display:flex; flex-wrap:wrap; gap:8px; font-size:.86rem; font-weight:800; }
 .preview-summary span { padding:6px 9px; background:var(--surface); border-radius:999px; }
 .preview-word-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
@@ -1068,17 +1068,18 @@ html[data-theme=light] .personalized-word .roman {
 .preview-actions { display:flex; flex-wrap:wrap; gap:8px; }
 .prompt-hint-legend { display:none; margin:-10px 0 16px; font-size:.82rem; font-weight:800; opacity:.76; }
 .prompt-hint-legend.is-visible { display:block; }
-.vocab-token { position:relative; display:inline-block; border-bottom:4px solid var(--accent); border-radius:2px; cursor:help; line-height:1.08; outline:none; }
+.vocab-token { position:relative; display:inline-block; border-bottom:4px solid var(--accent); border-radius:2px; cursor:pointer; line-height:1.08; outline:none; }
 .vocab-token::after { content:''; position:absolute; left:0; right:0; bottom:-5px; height:7px; }
 .vocab-token:focus-visible { outline:3px solid var(--primary); outline-offset:4px; }
-.vocab-popover { --arrow-left:50%; position:fixed; left:0; top:0; bottom:auto; z-index:2147483647; isolation:isolate; width:min(340px,calc(100vw - 24px)); max-height:min(70vh,520px); overflow:auto; display:none; padding:12px; color:var(--surface-text); background:var(--surface); border:2px solid var(--primary); border-radius:var(--radius-lg); box-shadow:0 18px 54px rgba(15,23,42,.38); font-size:.88rem; font-weight:600; line-height:1.42; text-align:left; white-space:normal; transform:none; }
-.vocab-popover::after { content:''; position:absolute; left:var(--arrow-left); bottom:-9px; width:14px; height:14px; background:var(--surface); border-right:2px solid var(--primary); border-bottom:2px solid var(--primary); transform:translateX(-50%) rotate(45deg); }
-.vocab-popover.is-below::after { top:-9px; bottom:auto; border:0; border-left:2px solid var(--primary); border-top:2px solid var(--primary); }
-.vocab-token:hover > .vocab-popover,.vocab-token:focus-within > .vocab-popover,.vocab-token.is-pinned > .vocab-popover { display:grid; }
+.vocab-popover { --arrow-left:50%; position:fixed; left:0; top:0; bottom:auto; z-index:1000; isolation:isolate; width:min(340px,calc(100vw - 24px)); max-height:min(70vh,520px); overflow:visible; display:none; padding:12px; color:var(--surface-text); background:var(--surface); border:2px solid var(--primary); border-radius:var(--radius-lg); box-shadow:0 18px 54px rgba(15,23,42,.38); font-size:.88rem; font-weight:600; line-height:1.42; text-align:left; white-space:normal; transform:none; }
+.vocab-popover::after { content:''; position:absolute; left:var(--arrow-left); bottom:-8px; width:14px; height:14px; background:var(--surface); border-right:2px solid var(--primary); border-bottom:2px solid var(--primary); transform:translateX(-50%) rotate(45deg); z-index:2; }
+.vocab-token.is-pinned > .vocab-popover { display:grid; }
 .vocab-popover-heading { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
 .vocab-popover-heading strong { font-size:.82rem; }
 .vocab-popover-heading small { opacity:.68; }
-.hint-levels { position:relative; z-index:1; display:grid; gap:7px; }
+.popover-close-btn { background:transparent; border:none; color:var(--surface-text); font-size:1.25rem; font-weight:800; line-height:1; cursor:pointer; padding:2px 6px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; transition:var(--transition); }
+.popover-close-btn:hover { color:var(--accent); background:var(--surface-muted); }
+.hint-levels { position:relative; z-index:1; display:grid; gap:7px; max-height:min(50vh,380px); overflow-y:auto; }
 .hint-step { width:100%; min-height:42px; padding:9px 10px; color:var(--surface-text); background:var(--surface-muted); border:1px solid transparent; border-radius:var(--radius-md); text-align:left; font-weight:800; }
 .hint-step:hover,.hint-step:focus-visible { border-color:var(--primary); background:var(--surface); }
 .hint-step.is-open { color:#192B5D; background:var(--primary); border-color:var(--primary); }
@@ -1098,7 +1099,6 @@ html[data-theme=light] .personalized-word .roman {
 .personalized-word small { margin-top:3px; opacity:.76; }
 .frequency-line { font-size:.85rem; font-weight:800; }
 .score-breakdown { line-height:1.35; text-align:center; }
-.exercise,.exercise-body,.live,.prompt { isolation:auto; }
 @media (max-width:680px) { .vocab-scope-grid,.vocab-leaf-grid,.preview-word-list,.personalized-word { grid-template-columns:1fr; } .vocab-tree-actions .btn,.preview-actions .btn { width:100%; } .assistant-heading { display:grid; } .assistant-heading small { text-align:left; } }
 
 </style>
@@ -1694,6 +1694,7 @@ html[data-theme=light] .personalized-word .roman {
     const root = document.documentElement;
     const STORAGE_KEY = "koreanQuizThemeV2";
     const FAMILIARITY_KEY = `koreanBabFamiliarity:${LESSON.title}`;
+    let highestZIndex = 1000;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     let ACTIVE_VOCAB_KOREAN = null;
     const pick = a => { const source = Array.from(a || []); let pool = source; if (ACTIVE_VOCAB_KOREAN && source.length && source.every(item => item && typeof item === "object" && ("k" in item || "korean" in item))) { const filtered = source.filter(item => ACTIVE_VOCAB_KOREAN.has(item.k ?? item.korean)); if (filtered.length) pool = filtered; } return pool[Math.floor(Math.random() * pool.length)]; };
@@ -2169,7 +2170,7 @@ html[data-theme=light] .personalized-word .roman {
             "base": "보다",
             "p": "봐요",
             "f": "봅니다",
-            "fq": "봅니까",
+            "fq": "봅습니까",
             "c": "보고",
             "e": "watch"
         },
@@ -2885,7 +2886,7 @@ html[data-theme=light] .personalized-word .roman {
         '하다':['해','했'],'오다':['와','왔'],'가다':['가','갔'],'보다':['봐','봤'],'주다':['줘','줬'],
         '쓰다':['써','썼'],'듣다':['들어','들었'],'걷다':['걸어','걸었'],'묻다':['물어','물었'],
         '돕다':['도와','도왔'],'춥다':['추워','추웠'],'어렵다':['어려워','어려웠'],'맵다':['매워','매웠'],
-        '가깝다':['가까워','가까웠'],'예쁘다':['예뻐','예뻤'],'아프다':['아파','아팠'],'바쁘다':['바빠','바빴'],
+        '가깝다':['가까워','가까웠'],'예쁘다':['예뻐','예뻤'],'아프다':['아파','아팠'],'바쁘다':['바빠','바뻤'],
         '좋다':['좋아','좋았'],'부르다':['불러','불렀'],'모르다':['몰라','몰랐'],'그리다':['그려','그렸'],
         '가르치다':['가르쳐','가르쳤'],'마시다':['마셔','마셨'],'드시다':['드셔','드셨'],'계시다':['계셔','계셨'],
         '주무시다':['주무셔','주무셨'],'타다':['타','탔'],'사다':['사','샀'],'만나다':['만나','만났'],
@@ -2906,7 +2907,7 @@ html[data-theme=light] .personalized-word .roman {
       if(!token.startsWith(korean))return false;
       const tail=token.slice(korean.length);
       const particles=/^(?:은|는|이|가|을|를|의|에|에서|에게|께|하고|와|과|도|만|부터|까지|으로|로|보다|처럼|마다|쯤|이나|나|께서|한테|한테서|에는|에서는|에게는|께는|에도|에서도|에게도|께도|한테도|한테서도|으로도|로도|이라고|라고|이에요|예요|입니다|입니까|이세요|세요|이십니다|십니다|이었다|였다|이었어요|였어요)?$/;
-      const actionNoun=/^(?:하|해|했|합|할|한|하는|하면|해서|하니|하니까|하려|하러|하지|하시|하세요|하십시오|하겠습니다|하겠어요|하나요|할까요|합니까|합니다|합시다|해요|했어요|했습니다).*/;
+      const actionNoun=/^(?:하|해|했|합|할|한|하는|하면|해서|하니|하니까|하려|하러|하지|하시|하세요|하십시오|하겠습니다|하겠어요|하나요|할까요|합니까|합니다|합봅시다|해요|했어요|했습니다).*/;
       return particles.test(tail)||actionNoun.test(tail);
     }
     function predicateTokenMatch(token,korean){
@@ -2914,7 +2915,7 @@ html[data-theme=light] .personalized-word .roman {
       if(korean==='나다'&&pronounForms.has(token))return false;
       const stem=korean.endsWith('다')?korean.slice(0,-1):korean;
       const particleOnly=/^(?:은|는|이|가|을|를|의|에|에서|에게|께|하고|와|과|도|만|부터|까지|으로|로|보다|처럼|마다|쯤|이나|나|께서|한테|한테서)$/;
-      const ending=/^(?:요|어요|아요|여요|워요|와요|해요|습니다|ㅂ니다|습니까|세요|셔요|셨어요|셨습니다|고|고요|고\s*있어요|고\s*계세요|고\s*있습니다|고\s*계십니다|서|아서|어서|여서|워서|와서|해서|니까|으니까|면|으면|려고|으려고|러|으러|지|지마세요|지마십시오|지\s*마세요|지\s*마십시오|는|은|ㄴ|을|ㄹ|게|기|자|ㅂ시다|읍시다|십시오|으십시오|겠어요|겠습니다|겠습니까|실거예요|을거예요|ㄹ거예요|실겁니다|을겁니다|ㄹ겁니다|실\s*거예요|을\s*거예요|ㄹ\s*거예요|실\s*겁니다|을\s*겁니다|ㄹ\s*겁니다|었어요|았어요|였어요|웠어요|왔어요|했어요|었습니다|았습니다|였습니다|웠습니다|왔습니다|했습니다|었고|았고|였고|웠고|왔고|했고|었으면|았으면|였으면|웠으면|왔으면|했으면|어야|아야|여야|워야|와야|해야|어도|아도|여도|워도|와도|해도|어|아|여|워|와|해).*$/;
+      const ending=/^(?:요|어요|아요|여요|워요|와요|해요|습니다|ㅂ니다|습니까|세요|셔요|셨어요|셨습니다|고|고요|고\s*있어요|고\s*계세요|고\s*있습니다|고\s*계십니다|서|아서|어서|여서|워서|와서|해서|니까|으니까|면|으면|려고|으려고|러|으러|지|지마세요|지마십시오|지\s*마세요|지\s*마십시오|는|은|ㄴ|을|ㄹ|게|기|자|ㅂ시다|읍시다|하십시오|으하십시오|겠어요|겠습니다|겠습니까|실거예요|을거예요|ㄹ거예요|실겁니다|을겁니다|ㄹ겁니다|실\s*거예요|을\s*거예요|ㄹ\s*거예요|실\s*겁니다|을\s*겁니다|ㄹ\s*겁니다|었어요|았어요|였어요|웠어요|왔어요|했어요|었습니다|았습니다|였습니다|웠습니다|왔습니다|했습니다|었고|았고|였고|웠고|왔고|했고|었으면|았으면|였으면|웠으면|왔으면|했으면|어야|아야|여야|워야|와야|해야|어도|아도|여도|워도|와도|해도|어|아|여|워|와|해).*$/;
       return predicateVariants(korean).some(prefix=>{
         if(!token.startsWith(prefix))return false;
         const tail=token.slice(prefix.length);
@@ -2963,15 +2964,115 @@ html[data-theme=light] .personalized-word .roman {
     function scoreText(state){ return `Independent: ${state.independentScore}<br>Assisted: ${state.assistedScore}`; }
     function registerHint(state,use,level){ state.currentAssisted=true; const k=wordUseKey(use); if(!state.currentLookupLevels.has(k))state.currentLookupLevels.set(k,new Set()); state.currentLookupLevels.get(k).add(level); }
     function registerReveal(state){ state.currentAssisted=true; state.currentAnswerRevealed=true; }
-    function placeFixedPopover(token){ const pop=token.querySelector('.vocab-popover'); if(!pop)return; requestAnimationFrame(()=>{ const tr=token.getBoundingClientRect(), pr=pop.getBoundingClientRect(), margin=12,gap=12; let left=tr.left+tr.width/2-pr.width/2; left=Math.max(margin,Math.min(left,window.innerWidth-pr.width-margin)); let top=tr.top-pr.height-gap, below=false; if(top<margin){top=tr.bottom+gap;below=true;} top=Math.max(margin,Math.min(top,window.innerHeight-pr.height-margin)); pop.style.left=`${Math.round(left)}px`;pop.style.top=`${Math.round(top)}px`;pop.style.setProperty('--arrow-left',`${Math.max(16,Math.min(pr.width-16,tr.left+tr.width/2-left))}px`);pop.classList.toggle('is-below',below); }); }
-    function renderPromptWithHints(el,state,question){ const prompt=el.querySelector('.prompt'),lang=state.settings.qLang,text=String(question[lang]||''),uses=question.vocabUses||[],matches=promptMatches(question,lang); let cursor=0,html=''; matches.forEach(m=>{html+=esc(text.slice(cursor,m.start)); const opened=state.currentLookupLevels.get(wordUseKey(m.use))||new Set(); html+=`<span class="vocab-token" tabindex="0" data-use-index="${m.useIndex}"><span class="vocab-surface">${esc(text.slice(m.start,m.end))}</span><span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><small>${opened.size?'Revealed hints count as assistance':'Nothing revealed yet'}</small></span><span class="hint-levels">${['Vocabulary','Grammar rule','Form & particle help'].map((label,i)=>{const level=i+1,isOpen=opened.has(level);return `<button class="hint-step${isOpen?' is-open':''}" type="button" data-use-index="${m.useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen?' is-open':''}">${isOpen?hintText(m.use,level,question):''}</span>`;}).join('')}</span></span></span>`; cursor=m.end;}); html+=esc(text.slice(cursor));prompt.innerHTML=html;el.querySelector('.prompt-hint-legend').classList.toggle('is-visible',matches.length>0);
-      prompt.querySelectorAll('.vocab-token').forEach(token=>{ const place=()=>placeFixedPopover(token); token.addEventListener('mouseenter',place);token.addEventListener('focusin',place);token.addEventListener('click',ev=>{if(ev.target.closest('.hint-step'))return;ev.stopPropagation();token.classList.toggle('is-pinned');place();});token.querySelector('.vocab-popover')?.addEventListener('click',ev=>ev.stopPropagation()); });
-      prompt.querySelectorAll('.hint-step').forEach(btn=>btn.addEventListener('click',()=>{ const use=uses[Number(btn.dataset.useIndex)],level=Number(btn.dataset.hintLevel);if(!use)return;registerHint(state,use,level);btn.classList.add('is-open');btn.setAttribute('aria-expanded','true');const content=btn.nextElementSibling;if(content?.classList.contains('hint-content')){content.innerHTML=hintText(use,level,question);content.classList.add('is-open');}const note=btn.closest('.vocab-popover')?.querySelector('.vocab-popover-heading small');if(note)note.textContent='Revealed hints count as assistance';const token=btn.closest('.vocab-token');token?.classList.add('is-pinned');if(token)placeFixedPopover(token);el.querySelector('.assistant-status').innerHTML='<span class="assistance-used">Assistance used</span>';el.querySelector('.score').innerHTML=scoreText(state);}));
-      prompt.onclick=ev=>{if(!ev.target.closest('.vocab-token'))prompt.querySelectorAll('.vocab-token.is-pinned').forEach(t=>t.classList.remove('is-pinned'));}; }
+    function hintPopover(use, useIndex, state) {
+        const key = wordUseKey(use);
+        const opened = state.currentLookupLevels.get(key) || new Set();
+        const levels = ["Vocabulary", "Grammar rule", "Form & particle help"];
+        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><div style="display:flex;align-items:center;gap:8px;"><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small><button class="popover-close-btn" type="button" aria-label="Close popover">&times;</button></div></span><span class="hint-levels">${levels.map((label, index) => {
+            const level = index + 1, isOpen = opened.has(level);
+            return `<button class="hint-step${isOpen ? " is-open" : ""}" type="button" data-use-index="${useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen ? " is-open" : ""}" data-hint-content="${level}">${isOpen ? hintText(use, level, state.questions[state.i]) : ""}</span>`;
+        }).join("")}</span></span>`;
+    }
+    function renderPromptWithHints(el,state,question){
+      const prompt=el.querySelector('.prompt'),lang=state.settings.qLang,text=String(question[lang]||''),uses=question.vocabUses||[],matches=promptMatches(question,lang);
+      let cursor=0,html='';
+      matches.forEach(m=>{
+        html+=esc(text.slice(cursor,m.start));
+        html+=`<span class="vocab-token" tabindex="0" data-use-index="${m.useIndex}"><span class="vocab-surface">${esc(text.slice(m.start,m.end))}</span>${hintPopover(m.use,m.useIndex,state)}</span>`;
+        cursor=m.end;
+      });
+      html+=esc(text.slice(cursor));
+      prompt.innerHTML=html;
+      el.querySelector('.prompt-hint-legend').classList.toggle('is-visible',matches.length>0);
+
+      prompt.querySelectorAll('.vocab-token').forEach(token=>{
+        const popover = token.querySelector('.vocab-popover');
+        const positionPopover = () => {
+          if (!popover) return;
+          requestAnimationFrame(() => {
+            const tokenRect = token.getBoundingClientRect();
+            const popRect = popover.getBoundingClientRect();
+            const margin = 12, gap = 10;
+            let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+            left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+            let top = tokenRect.top - popRect.height - gap;
+            if (top < margin) top = margin;
+            popover.style.left = `${Math.round(left)}px`;
+            popover.style.top = `${Math.round(top)}px`;
+            popover.style.setProperty('--arrow-left', `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+          });
+        };
+
+        const bringToFront = () => {
+          if (popover) {
+            highestZIndex++;
+            popover.style.zIndex = String(highestZIndex);
+          }
+        };
+
+        const closeBtn = token.querySelector('.popover-close-btn');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', event => {
+            event.stopPropagation();
+            event.preventDefault();
+            token.classList.remove('is-pinned');
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
+          });
+        }
+
+        if (popover) {
+          popover.addEventListener('click', event => {
+            event.stopPropagation();
+            bringToFront();
+          });
+        }
+
+        token.addEventListener('click', event => {
+          if (event.target.closest('.hint-step')) return;
+          event.stopPropagation();
+
+          const isPinned = token.classList.contains('is-pinned');
+
+          if (isPinned) {
+            token.classList.remove('is-pinned');
+          } else {
+            token.classList.add('is-pinned');
+            bringToFront();
+            positionPopover();
+          }
+        });
+      });
+
+      prompt.querySelectorAll('.hint-step').forEach(btn=>btn.addEventListener('click',()=>{
+        const use=uses[Number(btn.dataset.useIndex)],level=Number(btn.dataset.hintLevel);
+        if(!use)return;
+        registerHint(state,use,level);
+        btn.classList.add('is-open');
+        btn.setAttribute('aria-expanded','true');
+        const content=btn.nextElementSibling;
+        if(content?.classList.contains('hint-content')){
+          content.innerHTML=hintText(use,level,question);
+          content.classList.add('is-open');
+        }
+        const note=btn.closest('.vocab-popover')?.querySelector('.vocab-popover-heading small');
+        if(note)note.textContent='Revealed hints count as assistance';
+        const token=btn.closest('.vocab-token');
+        token?.classList.add('is-pinned');
+        const popover = token?.querySelector('.vocab-popover');
+        if (popover) {
+          highestZIndex++;
+          popover.style.zIndex = String(highestZIndex);
+        }
+        el.querySelector('.assistant-status').innerHTML='<span class="assistance-used">Assistance used</span>';
+        el.querySelector('.score').innerHTML=scoreText(state);
+      }));
+    }
     function personalizedStats(state){ const map=new Map(); state.results.forEach(r=>{(r.question.vocabUses||[]).forEach(use=>{const k=wordUseKey(use);if(!map.has(k))map.set(k,{use,lookupQuestions:0,views:0,levels:new Set(),reveals:0,errors:0});const s=map.get(k),levels=r.lookupLevels?.[k]||[];if(levels.length)s.lookupQuestions++;s.views+=levels.length;levels.forEach(x=>s.levels.add(x));if(r.answerRevealed)s.reveals++;if(r.hadError)s.errors++;});}); return [...map.values()].filter(s=>s.views||s.reveals||s.errors).sort((a,b)=>(b.errors+b.views+b.reveals)-(a.errors+a.views+a.reveals)); }
     function exerciseTemplate(key, title, description, defaultCount = 20) {
         const setupText = key === "vocabulary" ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages." : "Choose the shared vocabulary allowed in the stored/generated questions, then configure the quiz.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms detected in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a missed question.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms detected in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Click a term, then select a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a missed question.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
         // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring    // -------------------------------------------------------------------------
@@ -3075,6 +3176,29 @@ html[data-theme=light] .personalized-word .roman {
             vocabExercise.querySelector(".vocab-clear-all")?.addEventListener("click", () => requestAnimationFrame(syncVocabularyCount));
             syncVocabularyCount();
         }
+
+        const updateActivePopovers = () => {
+            document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+                const popover = token.querySelector(".vocab-popover");
+                if (!popover || getComputedStyle(popover).display === "none") return;
+                const tokenRect = token.getBoundingClientRect();
+                const popRect = popover.getBoundingClientRect();
+                const margin = 12, gap = 10;
+                if (tokenRect.bottom < 0 || tokenRect.top > window.innerHeight) {
+                    token.classList.remove("is-pinned");
+                    return;
+                }
+                let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                let top = tokenRect.top - popRect.height - gap;
+                if (top < margin) top = margin;
+                popover.style.left = `${Math.round(left)}px`;
+                popover.style.top = `${Math.round(top)}px`;
+                popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+            });
+        };
+        window.addEventListener("scroll", updateActivePopovers, { capture: true, passive: true });
+        window.addEventListener("resize", updateActivePopovers, { passive: true });
     }
     function initExercise(el) {
         const key=el.id.replace(/^ex-/,""),section=LESSON.sections.find(s=>s.id===key),isVocabulary=key==="vocabulary";

@@ -1188,7 +1188,7 @@ html[data-theme=light] .personalized-word .roman {
   display: inline-block;
   border-bottom: 4px solid var(--accent);
   border-radius: 2px;
-  cursor: help;
+  cursor: pointer;
   line-height: 1.08;
   outline: none;
 }
@@ -1210,11 +1210,11 @@ html[data-theme=light] .personalized-word .roman {
   left: 0;
   top: 0;
   bottom: auto;
-  z-index: 2147483647;
+  z-index: 1000;
   isolation: isolate;
   width: min(340px,calc(100vw - 24px));
   max-height: min(70vh,520px);
-  overflow: auto;
+  overflow: visible;
   display: none;
   padding: 12px;
   color: var(--surface-text);
@@ -1233,23 +1233,15 @@ html[data-theme=light] .personalized-word .roman {
   content: '';
   position: absolute;
   left: var(--arrow-left);
-  bottom: -9px;
+  bottom: -8px;
   width: 14px;
   height: 14px;
   background: var(--surface);
   border-right: 2px solid var(--primary);
   border-bottom: 2px solid var(--primary);
   transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
 }
-.vocab-popover.is-below::after {
-  top: -9px;
-  bottom: auto;
-  border: 0;
-  border-left: 2px solid var(--primary);
-  border-top: 2px solid var(--primary);
-}
-.vocab-token:hover > .vocab-popover,
-.vocab-token:focus-within > .vocab-popover,
 .vocab-token.is-pinned > .vocab-popover { display: grid; }
 .vocab-popover-heading {
   position: relative;
@@ -1262,7 +1254,33 @@ html[data-theme=light] .personalized-word .roman {
 }
 .vocab-popover-heading strong { font-size: .82rem; }
 .vocab-popover-heading small { opacity: .68; }
-.hint-levels { position: relative; z-index: 1; display: grid; gap: 7px; }
+.popover-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--surface-text);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.popover-close-btn:hover {
+  color: var(--accent);
+  background: var(--surface-muted);
+}
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
 .hint-step {
   width: 100%;
   min-height: 42px;
@@ -1506,72 +1524,6 @@ html[data-theme=light] .personalized-word .roman {
                                         "동생은 운동을 좋아하지 않아요.",
                                         "My younger sibling does not like exercise."
                                 ]
-                        ],
-                        "questions": [
-                                {
-                                        "korean": "저는 바다가 좋아요.",
-                                        "english": "I like the sea."
-                                },
-                                {
-                                        "korean": "나는 한국 영화를 좋아해요.",
-                                        "english": "I like Korean movies."
-                                },
-                                {
-                                        "korean": "동생은 운동을 좋아하지 않아요.",
-                                        "english": "My younger sibling does not like exercise."
-                                },
-                                {
-                                        "korean": "저는 우리 선생님이 좋아요.",
-                                        "english": "I like our teacher."
-                                },
-                                {
-                                        "korean": "저는 맥주를 좋아해요. 와인도 좋아해요.",
-                                        "english": "I like beer. I also like wine."
-                                },
-                                {
-                                        "korean": "무슨 꽃을 좋아해요? 장미를 좋아해요.",
-                                        "english": "What kind of flower do you like? I like roses."
-                                },
-                                {
-                                        "korean": "무엇을 좋아해요? 케이팝을 좋아해요.",
-                                        "english": "What do you like? I like K-pop."
-                                },
-                                {
-                                        "korean": "저는 등산을 좋아하지만 수영은 싫어해요.",
-                                        "english": "I like hiking, but I dislike swimming."
-                                },
-                                {
-                                        "korean": "아사코 씨는 김치를 좋아해요.",
-                                        "english": "Asako likes kimchi."
-                                },
-                                {
-                                        "korean": "팀 씨는 매운 음식을 싫어해요.",
-                                        "english": "Tim dislikes spicy food."
-                                },
-                                {
-                                        "korean": "제 친구는 사진 찍기를 좋아해요.",
-                                        "english": "My friend likes taking photos."
-                                },
-                                {
-                                        "korean": "저는 비가 오는 날씨가 싫어요.",
-                                        "english": "I dislike rainy weather."
-                                },
-                                {
-                                        "korean": "어머니는 노래를 좋아하세요.",
-                                        "english": "My mother likes songs."
-                                },
-                                {
-                                        "korean": "학생들은 한국어 공부를 좋아해요.",
-                                        "english": "The students like studying Korean."
-                                },
-                                {
-                                        "korean": "저는 무거운 가방이 싫어요.",
-                                        "english": "I dislike heavy bags."
-                                },
-                                {
-                                        "korean": "동생은 재미있는 영화를 좋아해요.",
-                                        "english": "My younger sibling likes interesting movies."
-                                }
                         ]
                 },
                 {
@@ -1594,72 +1546,6 @@ html[data-theme=light] .personalized-word .roman {
                                         "주말에 청소를 하고 빨래를 해요.",
                                         "I clean and do laundry on the weekend."
                                 ]
-                        ],
-                        "questions": [
-                                {
-                                        "korean": "노래를 하고 춤을 춰요.",
-                                        "english": "I sing and dance."
-                                },
-                                {
-                                        "korean": "도서관에서 숙제를 하고 책을 읽어요.",
-                                        "english": "I do homework and read a book at the library."
-                                },
-                                {
-                                        "korean": "주말에 청소를 하고 빨래를 해요.",
-                                        "english": "I clean and do laundry on the weekend."
-                                },
-                                {
-                                        "korean": "김치가 맵고 맛있어요.",
-                                        "english": "Kimchi is spicy and delicious."
-                                },
-                                {
-                                        "korean": "학교 식당의 음식은 싸고 맛있어요.",
-                                        "english": "The school cafeteria food is inexpensive and delicious."
-                                },
-                                {
-                                        "korean": "아침에 밥을 먹고 커피를 마셔요.",
-                                        "english": "I eat breakfast and drink coffee in the morning."
-                                },
-                                {
-                                        "korean": "공원에서 운동하고 사진을 찍어요.",
-                                        "english": "I exercise and take photos in the park."
-                                },
-                                {
-                                        "korean": "친구를 만나고 영화를 봐요.",
-                                        "english": "I meet a friend and watch a movie."
-                                },
-                                {
-                                        "korean": "태권도를 배우고 매일 연습해요.",
-                                        "english": "I learn taekwondo and practice every day."
-                                },
-                                {
-                                        "korean": "여름에는 바다에 가고 수영을 해요.",
-                                        "english": "In summer, I go to the sea and swim."
-                                },
-                                {
-                                        "korean": "기숙사에서 쉬고 음악을 들어요.",
-                                        "english": "I rest and listen to music in the dormitory."
-                                },
-                                {
-                                        "korean": "포도는 달고 맛있어요.",
-                                        "english": "Grapes are sweet and delicious."
-                                },
-                                {
-                                        "korean": "가방이 크고 무거워요.",
-                                        "english": "The bag is big and heavy."
-                                },
-                                {
-                                        "korean": "오늘 날씨가 맑고 따뜻해요.",
-                                        "english": "Today the weather is clear and warm."
-                                },
-                                {
-                                        "korean": "저는 한국어를 공부하고 아르바이트를 해요.",
-                                        "english": "I study Korean and work part-time."
-                                },
-                                {
-                                        "korean": "동생은 운동하고 일찍 자요.",
-                                        "english": "My younger sibling exercises and sleeps early."
-                                }
                         ]
                 },
                 {
@@ -1682,72 +1568,6 @@ html[data-theme=light] .personalized-word .roman {
                                         "그 식당 음식은 맛있지만 비싸요.",
                                         "That restaurant food is delicious, but expensive."
                                 ]
-                        ],
-                        "questions": [
-                                {
-                                        "korean": "여름이지만 안 더워요.",
-                                        "english": "It is summer, but it is not hot."
-                                },
-                                {
-                                        "korean": "김치가 맵지만 좋아해요.",
-                                        "english": "Kimchi is spicy, but I like it."
-                                },
-                                {
-                                        "korean": "그 식당 음식은 맛있지만 비싸요.",
-                                        "english": "That restaurant food is delicious, but expensive."
-                                },
-                                {
-                                        "korean": "연필은 없지만 볼펜은 있어요.",
-                                        "english": "There is no pencil, but there is a ballpoint pen."
-                                },
-                                {
-                                        "korean": "사과는 없지만 포도는 있어요.",
-                                        "english": "There are no apples, but there are grapes."
-                                },
-                                {
-                                        "korean": "오늘은 태권도 수업이 있지만 내일은 없어요.",
-                                        "english": "There is taekwondo class today, but not tomorrow."
-                                },
-                                {
-                                        "korean": "서울은 날씨가 맑지만 대구는 흐려요.",
-                                        "english": "The weather is clear in Seoul, but cloudy in Daegu."
-                                },
-                                {
-                                        "korean": "동생은 운동을 좋아하지만 저는 싫어해요.",
-                                        "english": "My younger sibling likes exercise, but I dislike it."
-                                },
-                                {
-                                        "korean": "한국 사람들은 생일에 미역국을 먹지만 중국 사람들은 국수를 먹어요.",
-                                        "english": "Koreans eat seaweed soup on birthdays, but Chinese people eat noodles."
-                                },
-                                {
-                                        "korean": "기숙사에 컴퓨터실이 있지만 휴게실은 없어요.",
-                                        "english": "The dormitory has a computer room, but it does not have a lounge."
-                                },
-                                {
-                                        "korean": "가방은 예쁘지만 무거워요.",
-                                        "english": "The bag is pretty, but heavy."
-                                },
-                                {
-                                        "korean": "저는 피곤하지만 숙제를 해요.",
-                                        "english": "I am tired, but I do my homework."
-                                },
-                                {
-                                        "korean": "친구는 커피를 좋아하지만 저는 차를 좋아해요.",
-                                        "english": "My friend likes coffee, but I like tea."
-                                },
-                                {
-                                        "korean": "이 영화는 길지만 재미있어요.",
-                                        "english": "This movie is long, but interesting."
-                                },
-                                {
-                                        "korean": "오늘은 바쁘지만 내일은 시간이 있어요.",
-                                        "english": "I am busy today, but I have time tomorrow."
-                                },
-                                {
-                                        "korean": "비가 오지만 공원에 가요.",
-                                        "english": "It is raining, but I go to the park."
-                                }
                         ]
                 },
                 {
@@ -1770,72 +1590,6 @@ html[data-theme=light] .personalized-word .roman {
                                         "책을 읽지 않아요. 노래를 해요.",
                                         "I do not read a book. I sing."
                                 ]
-                        ],
-                        "questions": [
-                                {
-                                        "korean": "공부를 하지 않아요. 잠을 자요.",
-                                        "english": "I do not study. I sleep."
-                                },
-                                {
-                                        "korean": "그림을 그리지 않아요. 사진을 찍어요.",
-                                        "english": "I do not draw. I take photos."
-                                },
-                                {
-                                        "korean": "책을 읽지 않아요. 노래를 해요.",
-                                        "english": "I do not read a book. I sing."
-                                },
-                                {
-                                        "korean": "저 옷은 싸지 않아요. 비싸요.",
-                                        "english": "Those clothes are not inexpensive. They are expensive."
-                                },
-                                {
-                                        "korean": "청소를 하지 않아요. 빨래를 해요.",
-                                        "english": "I do not clean. I do laundry."
-                                },
-                                {
-                                        "korean": "일본어를 배우지 않아요. 한국어를 배워요.",
-                                        "english": "I do not learn Japanese. I learn Korean."
-                                },
-                                {
-                                        "korean": "가방이 가볍지 않아요. 무거워요.",
-                                        "english": "The bag is not light. It is heavy."
-                                },
-                                {
-                                        "korean": "저는 운동을 좋아하지 않아요.",
-                                        "english": "I do not like exercise."
-                                },
-                                {
-                                        "korean": "동생은 아침을 먹지 않아요.",
-                                        "english": "My younger sibling does not eat breakfast."
-                                },
-                                {
-                                        "korean": "주말에는 학교에 가지 않아요.",
-                                        "english": "I do not go to school on the weekend."
-                                },
-                                {
-                                        "korean": "저는 맥주를 마시지 않아요.",
-                                        "english": "I do not drink beer."
-                                },
-                                {
-                                        "korean": "친구는 기숙사에서 살지 않아요.",
-                                        "english": "My friend does not live in the dormitory."
-                                },
-                                {
-                                        "korean": "오늘은 날씨가 춥지 않아요.",
-                                        "english": "The weather is not cold today."
-                                },
-                                {
-                                        "korean": "이 책은 어렵지 않아요.",
-                                        "english": "This book is not difficult."
-                                },
-                                {
-                                        "korean": "어머니는 한국 드라마를 보지 않아요.",
-                                        "english": "My mother does not watch Korean dramas."
-                                },
-                                {
-                                        "korean": "아사코 씨는 늦게 자지 않아요.",
-                                        "english": "Asako does not sleep late."
-                                }
                         ]
                 },
                 {
@@ -1858,80 +1612,6 @@ html[data-theme=light] .personalized-word .roman {
                                         "학교 식당의 음식은 싸고 맛있었어요.",
                                         "The school cafeteria food was inexpensive and delicious."
                                 ]
-                        ],
-                        "questions": [
-                                {
-                                        "korean": "주말에 영화관에 갔어요.",
-                                        "english": "I went to the movie theater on the weekend."
-                                },
-                                {
-                                        "korean": "공원에서 사진을 찍었어요.",
-                                        "english": "I took photos in the park."
-                                },
-                                {
-                                        "korean": "학교 식당의 음식은 싸고 맛있었어요.",
-                                        "english": "The school cafeteria food was inexpensive and delicious."
-                                },
-                                {
-                                        "korean": "소영 씨는 운동을 좋아하지 않았어요.",
-                                        "english": "Soyeong did not like exercise."
-                                },
-                                {
-                                        "korean": "팀 씨는 주말에 백화점에서 아르바이트했어요.",
-                                        "english": "Tim worked part-time at a department store on the weekend."
-                                },
-                                {
-                                        "korean": "아침에 밥을 먹었어요.",
-                                        "english": "I ate breakfast in the morning."
-                                },
-                                {
-                                        "korean": "집에서 쉬었어요.",
-                                        "english": "I rested at home."
-                                },
-                                {
-                                        "korean": "운동장에서 농구했어요.",
-                                        "english": "I played basketball on the sports field."
-                                },
-                                {
-                                        "korean": "어제 비가 오고 추웠어요.",
-                                        "english": "Yesterday it rained and was cold."
-                                },
-                                {
-                                        "korean": "주말에 빨래했어요.",
-                                        "english": "I did laundry on the weekend."
-                                },
-                                {
-                                        "korean": "어제 11시에 잤어요.",
-                                        "english": "I slept at eleven yesterday."
-                                },
-                                {
-                                        "korean": "생일 파티에서 노래했어요.",
-                                        "english": "I sang at the birthday party."
-                                },
-                                {
-                                        "korean": "친구하고 김치를 먹었어요.",
-                                        "english": "I ate kimchi with a friend."
-                                },
-                                {
-                                        "korean": "지난주에 등산했어요.",
-                                        "english": "I went hiking last week."
-                                },
-                                {
-                                        "korean": "어제 한국 영화를 봤어요.",
-                                        "english": "I watched a Korean movie yesterday."
-                                },
-                                {
-                                        "korean": "작년에는 수영을 배우지 않았어요.",
-                                        "english": "Last year I did not learn swimming."
-                                },
-                                {
-                                        "korean": "아침에 커피를 마시지 않았어요.",
-                                        "english": "I did not drink coffee in the morning."
-                                },
-                                {
-                                        "korean": "어제 날씨가 맑았어요.",
-                                        "english": "The weather was clear yesterday."
-                                }
                         ]
                 }
         ]
@@ -1942,6 +1622,7 @@ html[data-theme=light] .personalized-word .roman {
     const root = document.documentElement;
     const STORAGE_KEY = "koreanQuizThemeV2";
     const FAMILIARITY_KEY = `koreanBabFamiliarity:${LESSON.title}`;
+    let highestZIndex = 1000;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const pick = a => a[Math.floor(Math.random() * a.length)];
     const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
@@ -2187,7 +1868,7 @@ html[data-theme=light] .personalized-word .roman {
             case "shortNegation": { a=selectedEntry(verbs);const vf=presentPolite(a.korean);uses=[fixedUse("안","Place 안 immediately before the conjugated verb for short negation.","안 does not change.","안","not"),verbUse(a,vf,"The verb is conjugated normally after 안.")];let korean=`안 ${vf}`,english=`I do not ${predicateEnglish(a)}`;if(isLikelyTransitive(a)&&nouns.length){b=selectedEntry(nouns);const of=object(b.korean);korean=`${of} 안 ${vf}`;english+=` ${nounEnglish(b)}`;uses.unshift(particleUse(b,of,hasBatchim(b.korean)?"을":"를","This noun is the direct object."));}return q(`${korean}.`,`${english}.`,[],uses,"Put 안 before the conjugated verb."); }
             case "andThen": { const first=actionPhrase(pool),second=actionPhrase(pool);uses=[...(first?.uses||[]),fixedUse("그리고","그리고 joins two separate sentences in sequence.","Place 그리고 at the start of the second sentence.","그리고","and then"),...(second?.uses||[])];return q(`${first.korean}. 그리고 ${second.korean}.`,`I ${first.english}. And then I ${second.english}.`,[],uses,"Finish the first sentence, then begin the next with 그리고."); }
             case "adjective":
-            case "subjectAdjective": { a=selectedEntry(nouns);b=selectedEntry(adjectives);const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the subject being described."),verbUse(b,af,"Conjugate the adjective with -아요/-어요/-해요.")];return q(`${nf} ${af}.`,`${kind==="adjective"?"It":"The "+nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Use N이/가 followed by a polite descriptive adjective."); }
+            case "subjectAdjective": { a=selectedEntry(nouns);b=selectedEntry(adjectives);const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the subject being described."),verbUse(b,af,"Conjugate the adjective with -아요/-어로/-해요.")];return q(`${nf} ${af}.`,`${kind==="adjective"?"It":"The "+nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Use N이/가 followed by a polite descriptive adjective."); }
             case "whatKind": { const kindNouns=nouns.filter(entry=>!isPlace(entry)&&!isPerson(entry)&&!isPosition(entry)&&!entryHasAnyLabel(entry,["time-calendar","numbers-counters"]));a=selectedEntry(kindNouns)||selectedEntry(nouns);b=selectedEntry(adjectives,entry=>!["있다","없다"].includes(entry.korean))||selectedEntry(adjectives);const of=object(a.korean),mod=adjectiveAdnominal(b.korean);uses=[fixedUse("무슨","무슨 asks what kind or category.","Place 무슨 directly before the noun.","무슨","what kind of"),particleUse(a,of,hasBatchim(a.korean)?"을":"를","The category noun is the object of 좋아하다."),wordUse(b,mod,"Use the adjective's noun-modifying form before the noun.",`${b.korean} becomes ${mod} before a noun.`),fixedUse("좋아하다","좋아하다 takes an object marked with 을/를.","좋아하다 becomes 좋아해요.","좋아해요","to like")];return q(`무슨 ${of} 좋아해요? ${mod} ${of} 좋아해요.`,`What kind of ${nounEnglish(a)} do you like? I like ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Use 무슨 + noun for the question and an adjective modifier in the answer."); }
             case "bieup": { a=selectedEntry(nouns);b=selectedEntry(adjectives,entry=>BIEUP_IRREGULAR.has(entry.korean));const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the described subject."),verbUse(b,af,"For a ㅂ-irregular adjective, ㅂ changes before the vowel-initial polite ending.",`${b.korean} becomes ${af}.`)];return q(`${nf} ${af}.`,`The ${nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Apply the ㅂ-irregular change, then add the polite ending."); }
             case "weather": { a=selectedEntry(pool,isSeason)||literalUse("오늘","today","noun");b=weatherEntry(pool)||selectedEntry(adjectives);const af=presentPolite(b.korean);uses=[];if(a.id)uses.push(wordUse(a,a.korean,"This word sets the season or time context.",`Use ${a.korean} before 날씨.`));else uses.push(a);uses.push(fixedUse("날씨","날씨 is marked with 가 in the question.","날씨 + 가 = 날씨가.","날씨가","weather"),fixedUse("어떻다","어때요 asks how something is.","어떻다 becomes 어때요.","어때요","how is it"),verbUse(b,af,"Conjugate the weather adjective in polite present tense."));return q(`${a.korean} 날씨가 어때요? ${af}.`,`How is the weather in ${nounEnglish(a)}? It is ${predicateEnglish(b)}.`,[],uses,"Ask with 날씨가 어때요? and answer with a descriptive adjective."); }
@@ -2293,7 +1974,7 @@ html[data-theme=light] .personalized-word .roman {
         const setupText = key === "vocabulary"
           ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages."
           : "Choose the shared vocabulary allowed in generated sentences, then configure the quiz.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Click a term, then select a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
     // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring
@@ -2384,6 +2065,29 @@ html[data-theme=light] .personalized-word .roman {
             initExercise(el);
             initVocabPicker(el);
         });
+
+        const updateActivePopovers = () => {
+            document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+                const popover = token.querySelector(".vocab-popover");
+                if (!popover || getComputedStyle(popover).display === "none") return;
+                const tokenRect = token.getBoundingClientRect();
+                const popRect = popover.getBoundingClientRect();
+                const margin = 12, gap = 10;
+                if (tokenRect.bottom < 0 || tokenRect.top > window.innerHeight) {
+                    token.classList.remove("is-pinned");
+                    return;
+                }
+                let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                let top = tokenRect.top - popRect.height - gap;
+                if (top < margin) top = margin;
+                popover.style.left = `${Math.round(left)}px`;
+                popover.style.top = `${Math.round(top)}px`;
+                popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+            });
+        };
+        window.addEventListener("scroll", updateActivePopovers, { capture: true, passive: true });
+        window.addEventListener("resize", updateActivePopovers, { passive: true });
     }
     function vocabPoolFromSelection(el, key, savedSettings = null) {
         const scope = savedSettings?.vocabScope || el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
@@ -2657,8 +2361,6 @@ html[data-theme=light] .personalized-word .roman {
         addVariant(english.replace(/^be\s+/i, ""));
         addVariant(english.replace(/^(?:a|an|the)\s+/i, ""));
 
-        // Apply article removal again after infinitive/copular cleanup so entries
-        // such as “to be a student” can match the visible word “student.”
         [...variants].forEach(value => {
             addVariant(value.replace(/^(?:a|an|the)\s+/i, ""));
             addVariant(value.replace(/^be\s+/i, ""));
@@ -2705,7 +2407,7 @@ html[data-theme=light] .personalized-word .roman {
         const key = wordUseKey(use);
         const opened = state.currentLookupLevels.get(key) || new Set();
         const levels = ["Vocabulary", "Grammar rule", "Form & particle help"];
-        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small></span><span class="hint-levels">${levels.map((label, index) => {
+        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><div style="display:flex;align-items:center;gap:8px;"><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small><button class="popover-close-btn" type="button" aria-label="Close popover">&times;</button></div></span><span class="hint-levels">${levels.map((label, index) => {
             const level = index + 1, isOpen = opened.has(level);
             return `<button class="hint-step${isOpen ? " is-open" : ""}" type="button" data-use-index="${useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen ? " is-open" : ""}" data-hint-content="${level}">${isOpen ? hintText(use, level, state.questions[state.i]) : ""}</span>`;
         }).join("")}</span></span>`;
@@ -2725,34 +2427,63 @@ html[data-theme=light] .personalized-word .roman {
         const legend = el.querySelector(".prompt-hint-legend");
         legend.classList.toggle("is-visible", matches.length > 0);
         prompt.querySelectorAll(".vocab-token").forEach(token => {
+            const popover = token.querySelector(".vocab-popover");
             const positionPopover = () => {
-                const popover = token.querySelector(".vocab-popover");
                 if (!popover) return;
                 requestAnimationFrame(() => {
                     const tokenRect = token.getBoundingClientRect();
                     const popRect = popover.getBoundingClientRect();
-                    const margin = 12, gap = 12;
+                    const margin = 12, gap = 10;
                     let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
                     left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
                     let top = tokenRect.top - popRect.height - gap;
-                    let below = false;
-                    if (top < margin) { top = tokenRect.bottom + gap; below = true; }
-                    top = Math.max(margin, Math.min(top, window.innerHeight - popRect.height - margin));
+                    if (top < margin) top = margin;
                     popover.style.left = `${Math.round(left)}px`;
                     popover.style.top = `${Math.round(top)}px`;
                     popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
-                    popover.classList.toggle("is-below", below);
                 });
             };
-            token.addEventListener("mouseenter", positionPopover);
-            token.addEventListener("focusin", positionPopover);
+
+            const bringToFront = () => {
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
+            };
+
+            const closeBtn = token.querySelector(".popover-close-btn");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", event => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    token.classList.remove("is-pinned");
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                });
+            }
+
+            if (popover) {
+                popover.addEventListener("click", event => {
+                    event.stopPropagation();
+                    bringToFront();
+                });
+            }
+
             token.addEventListener("click", event => {
                 if (event.target.closest(".hint-step")) return;
                 event.stopPropagation();
-                token.classList.toggle("is-pinned");
-                positionPopover();
+
+                const isPinned = token.classList.contains("is-pinned");
+
+                if (isPinned) {
+                    token.classList.remove("is-pinned");
+                } else {
+                    token.classList.add("is-pinned");
+                    bringToFront();
+                    positionPopover();
+                }
             });
-            token.querySelector(".vocab-popover")?.addEventListener("click", event => event.stopPropagation());
         });
         prompt.querySelectorAll(".hint-step").forEach(button => {
             button.addEventListener("click", () => {
@@ -2769,15 +2500,17 @@ html[data-theme=light] .personalized-word .roman {
                 }
                 const headingNote = button.closest(".vocab-popover")?.querySelector(".vocab-popover-heading small");
                 if (headingNote) headingNote.textContent = "Revealed hints count as assistance";
-                button.closest(".vocab-token")?.classList.add("is-pinned");
-                positionPopover();
+                const token = button.closest(".vocab-token");
+                token?.classList.add("is-pinned");
+                const popover = token?.querySelector(".vocab-popover");
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
                 el.querySelector(".assistant-status").innerHTML = `<span class="assistance-used">Assistance used</span>`;
                 el.querySelector(".score").innerHTML = scoreText(state);
             });
         });
-        prompt.onclick = event => {
-            if (!event.target.closest(".vocab-token")) prompt.querySelectorAll(".vocab-token.is-pinned").forEach(token => token.classList.remove("is-pinned"));
-        };
     }
     function renderAssistant(el, state, question) {
         renderPromptWithHints(el, state, question);

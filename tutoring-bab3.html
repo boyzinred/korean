@@ -1188,7 +1188,7 @@ html[data-theme=light] .personalized-word .roman {
   display: inline-block;
   border-bottom: 4px solid var(--accent);
   border-radius: 2px;
-  cursor: help;
+  cursor: pointer;
   line-height: 1.08;
   outline: none;
 }
@@ -1210,11 +1210,11 @@ html[data-theme=light] .personalized-word .roman {
   left: 0;
   top: 0;
   bottom: auto;
-  z-index: 2147483647;
+  z-index: 1000;
   isolation: isolate;
   width: min(340px,calc(100vw - 24px));
   max-height: min(70vh,520px);
-  overflow: auto;
+  overflow: visible;
   display: none;
   padding: 12px;
   color: var(--surface-text);
@@ -1233,23 +1233,15 @@ html[data-theme=light] .personalized-word .roman {
   content: '';
   position: absolute;
   left: var(--arrow-left);
-  bottom: -9px;
+  bottom: -8px;
   width: 14px;
   height: 14px;
   background: var(--surface);
   border-right: 2px solid var(--primary);
   border-bottom: 2px solid var(--primary);
   transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
 }
-.vocab-popover.is-below::after {
-  top: -9px;
-  bottom: auto;
-  border: 0;
-  border-left: 2px solid var(--primary);
-  border-top: 2px solid var(--primary);
-}
-.vocab-token:hover > .vocab-popover,
-.vocab-token:focus-within > .vocab-popover,
 .vocab-token.is-pinned > .vocab-popover { display: grid; }
 .vocab-popover-heading {
   position: relative;
@@ -1262,7 +1254,33 @@ html[data-theme=light] .personalized-word .roman {
 }
 .vocab-popover-heading strong { font-size: .82rem; }
 .vocab-popover-heading small { opacity: .68; }
-.hint-levels { position: relative; z-index: 1; display: grid; gap: 7px; }
+.popover-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--surface-text);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.popover-close-btn:hover {
+  color: var(--accent);
+  background: var(--surface-muted);
+}
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
 .hint-step {
   width: 100%;
   min-height: 42px;
@@ -1586,6 +1604,7 @@ html[data-theme=light] .personalized-word .roman {
     const root = document.documentElement;
     const STORAGE_KEY = "koreanQuizThemeV2";
     const FAMILIARITY_KEY = `koreanBabFamiliarity:${LESSON.title}`;
+    let highestZIndex = 1000;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const pick = a => a[Math.floor(Math.random() * a.length)];
     const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
@@ -2028,6 +2047,29 @@ html[data-theme=light] .personalized-word .roman {
             initExercise(el);
             initVocabPicker(el);
         });
+
+        const updateActivePopovers = () => {
+            document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+                const popover = token.querySelector(".vocab-popover");
+                if (!popover || getComputedStyle(popover).display === "none") return;
+                const tokenRect = token.getBoundingClientRect();
+                const popRect = popover.getBoundingClientRect();
+                const margin = 12, gap = 10;
+                if (tokenRect.bottom < 0 || tokenRect.top > window.innerHeight) {
+                    token.classList.remove("is-pinned");
+                    return;
+                }
+                let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                let top = tokenRect.top - popRect.height - gap;
+                if (top < margin) top = margin;
+                popover.style.left = `${Math.round(left)}px`;
+                popover.style.top = `${Math.round(top)}px`;
+                popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+            });
+        };
+        window.addEventListener("scroll", updateActivePopovers, { capture: true, passive: true });
+        window.addEventListener("resize", updateActivePopovers, { passive: true });
     }
     function vocabPoolFromSelection(el, key, savedSettings = null) {
         const scope = savedSettings?.vocabScope || el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
@@ -2349,7 +2391,7 @@ html[data-theme=light] .personalized-word .roman {
         const key = wordUseKey(use);
         const opened = state.currentLookupLevels.get(key) || new Set();
         const levels = ["Vocabulary", "Grammar rule", "Form & particle help"];
-        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small></span><span class="hint-levels">${levels.map((label, index) => {
+        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><div style="display:flex;align-items:center;gap:8px;"><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small><button class="popover-close-btn" type="button" aria-label="Close popover">&times;</button></div></span><span class="hint-levels">${levels.map((label, index) => {
             const level = index + 1, isOpen = opened.has(level);
             return `<button class="hint-step${isOpen ? " is-open" : ""}" type="button" data-use-index="${useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen ? " is-open" : ""}" data-hint-content="${level}">${isOpen ? hintText(use, level, state.questions[state.i]) : ""}</span>`;
         }).join("")}</span></span>`;
@@ -2369,34 +2411,66 @@ html[data-theme=light] .personalized-word .roman {
         const legend = el.querySelector(".prompt-hint-legend");
         legend.classList.toggle("is-visible", matches.length > 0);
         prompt.querySelectorAll(".vocab-token").forEach(token => {
+            const popover = token.querySelector(".vocab-popover");
             const positionPopover = () => {
-                const popover = token.querySelector(".vocab-popover");
                 if (!popover) return;
                 requestAnimationFrame(() => {
                     const tokenRect = token.getBoundingClientRect();
                     const popRect = popover.getBoundingClientRect();
-                    const margin = 12, gap = 12;
+                    const margin = 12, gap = 10;
                     let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
                     left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
                     let top = tokenRect.top - popRect.height - gap;
-                    let below = false;
-                    if (top < margin) { top = tokenRect.bottom + gap; below = true; }
-                    top = Math.max(margin, Math.min(top, window.innerHeight - popRect.height - margin));
+                    if (top < margin) top = margin;
                     popover.style.left = `${Math.round(left)}px`;
                     popover.style.top = `${Math.round(top)}px`;
                     popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
-                    popover.classList.toggle("is-below", below);
                 });
             };
-            token.addEventListener("mouseenter", positionPopover);
-            token.addEventListener("focusin", positionPopover);
+
+            const bringToFront = () => {
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
+            };
+
+            // Handle X close button specifically
+            const closeBtn = token.querySelector(".popover-close-btn");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", event => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    token.classList.remove("is-pinned");
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                });
+            }
+
+            // Handle clicks inside the popover to bring it to front
+            if (popover) {
+                popover.addEventListener("click", event => {
+                    event.stopPropagation();
+                    bringToFront();
+                });
+            }
+
+            // Handle word token click toggle
             token.addEventListener("click", event => {
                 if (event.target.closest(".hint-step")) return;
                 event.stopPropagation();
-                token.classList.toggle("is-pinned");
-                positionPopover();
+
+                const isPinned = token.classList.contains("is-pinned");
+
+                if (isPinned) {
+                    token.classList.remove("is-pinned");
+                } else {
+                    token.classList.add("is-pinned");
+                    bringToFront();
+                    positionPopover();
+                }
             });
-            token.querySelector(".vocab-popover")?.addEventListener("click", event => event.stopPropagation());
         });
         prompt.querySelectorAll(".hint-step").forEach(button => {
             button.addEventListener("click", () => {
@@ -2413,15 +2487,17 @@ html[data-theme=light] .personalized-word .roman {
                 }
                 const headingNote = button.closest(".vocab-popover")?.querySelector(".vocab-popover-heading small");
                 if (headingNote) headingNote.textContent = "Revealed hints count as assistance";
-                button.closest(".vocab-token")?.classList.add("is-pinned");
-                positionPopover();
+                const token = button.closest(".vocab-token");
+                token?.classList.add("is-pinned");
+                const popover = token?.querySelector(".vocab-popover");
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
                 el.querySelector(".assistant-status").innerHTML = `<span class="assistance-used">Assistance used</span>`;
                 el.querySelector(".score").innerHTML = scoreText(state);
             });
         });
-        prompt.onclick = event => {
-            if (!event.target.closest(".vocab-token")) prompt.querySelectorAll(".vocab-token.is-pinned").forEach(token => token.classList.remove("is-pinned"));
-        };
     }
     function renderAssistant(el, state, question) {
         renderPromptWithHints(el, state, question);

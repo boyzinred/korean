@@ -1188,7 +1188,7 @@ html[data-theme=light] .personalized-word .roman {
   display: inline-block;
   border-bottom: 4px solid var(--accent);
   border-radius: 2px;
-  cursor: help;
+  cursor: pointer;
   line-height: 1.08;
   outline: none;
 }
@@ -1210,11 +1210,11 @@ html[data-theme=light] .personalized-word .roman {
   left: 0;
   top: 0;
   bottom: auto;
-  z-index: 2147483647;
+  z-index: 1000;
   isolation: isolate;
   width: min(340px,calc(100vw - 24px));
   max-height: min(70vh,520px);
-  overflow: auto;
+  overflow: visible;
   display: none;
   padding: 12px;
   color: var(--surface-text);
@@ -1233,23 +1233,15 @@ html[data-theme=light] .personalized-word .roman {
   content: '';
   position: absolute;
   left: var(--arrow-left);
-  bottom: -9px;
+  bottom: -8px;
   width: 14px;
   height: 14px;
   background: var(--surface);
   border-right: 2px solid var(--primary);
   border-bottom: 2px solid var(--primary);
   transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
 }
-.vocab-popover.is-below::after {
-  top: -9px;
-  bottom: auto;
-  border: 0;
-  border-left: 2px solid var(--primary);
-  border-top: 2px solid var(--primary);
-}
-.vocab-token:hover > .vocab-popover,
-.vocab-token:focus-within > .vocab-popover,
 .vocab-token.is-pinned > .vocab-popover { display: grid; }
 .vocab-popover-heading {
   position: relative;
@@ -1262,7 +1254,33 @@ html[data-theme=light] .personalized-word .roman {
 }
 .vocab-popover-heading strong { font-size: .82rem; }
 .vocab-popover-heading small { opacity: .68; }
-.hint-levels { position: relative; z-index: 1; display: grid; gap: 7px; }
+.popover-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--surface-text);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.popover-close-btn:hover {
+  color: var(--accent);
+  background: var(--surface-muted);
+}
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
 .hint-step {
   width: 100%;
   min-height: 42px;
@@ -1563,6 +1581,7 @@ html[data-theme=light] .personalized-word .roman {
     const root = document.documentElement;
     const STORAGE_KEY = "koreanQuizThemeV2";
     const FAMILIARITY_KEY = `koreanBabFamiliarity:${LESSON.title}`;
+    let highestZIndex = 1000;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const pick = a => a[Math.floor(Math.random() * a.length)];
     const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) {
@@ -1826,7 +1845,7 @@ html[data-theme=light] .personalized-word .roman {
             case "b8DateE": { const useDate=Math.random()<.6,m=pick(MONTHS),d=1+Math.floor(Math.random()*28),weekday=pick(WEEKDAYS),act=actionPhrase(pool);const time=useDate?datePhrase(m,d):weekday.k,timeE=`${time}에`;uses=[literalUse(time,useDate?`${m.e} ${d}`:weekday.e,"time expression","에 marks when the action happens.",`Attach 에: ${timeE}.`,timeE),...(act?.uses||[])];return q(`${timeE} ${act.korean}.`,`On ${useDate?`${m.e} ${d}`:weekday.e}, I ${act.english}.`,[],uses,"Attach 에 to the date or weekday, then state the action."); }
             case "b8Together": { const people=pool.filter(isPerson);a=selectedEntry(people)||selectedEntry(pool,ownerLike);b=differentEntry(people,a)||differentEntry(pool,a,ownerLike)||a;const act=actionPhrase(pool),together=Math.random()<.5?"같이":"함께",partner=Math.random()<.5?`${b.korean}하고`:andFormal(b.korean),at=topic(a.korean);uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the main person."),wordUse(b,partner,"하고 or 와/과 joins the partner.",`Use ${partner}.`),fixedUse(together,"같이 and 함께 mean together.",`${together} does not change.`,together,"together"),...(act?.uses||[])];return q(`${at} ${partner} ${together} ${act.korean}.`,`${nounEnglish(a)} and ${nounEnglish(b)} ${act.english} together.`,[],uses,"Join the partner with 하고/와/과, then add 같이 or 함께."); }
             case "b9Clock": { const h=1+Math.floor(Math.random()*12),min=pick([0,5,10,15,20,25,30,35,40,45,50,55]),period=Math.random()<.35?pick(["오전","오후"]):"",clock=clockPhrase(h,min,period);uses=[literalUse(clock,englishClock(h,min,period),"time expression","Native-Korean numbers count hours; Sino-Korean numbers count minutes.",`The generated clock form is ${clock}.`),fixedUse("이다","Attach 이에요 after the complete time expression.","The time expression takes 이에요.","이에요","to be")];return q(`${clock}이에요.`,`It is ${englishClock(h,min,period)}.`,[],uses,"Use native-Korean hours and Sino-Korean minutes."); }
-            case "b9TimeE": { const h=1+Math.floor(Math.random()*12),min=pick([0,10,20,30,40,50]),clock=clockPhrase(h,min),act=actionPhrase(pool);uses=[fixedUse("몇","몇 시 asks what time.","Use 몇 시에 before an action question.","몇 시에","what time"),...(act?.uses||[]),literalUse(`${clock}에`,englishClock(h,min),"time expression","에 marks the time of the action.",`Attach 에: ${clock}에.`)];return q(`몇 시에 ${act.korean}? ${clock}에 ${act.korean}.`,`What time do you ${act.english}? I ${act.english} at ${englishClock(h,min)}.`,[],uses,"Ask 몇 시에 and answer with Time + 에."); }
+            case "b9TimeE": { const h=1+Math.floor(Math.random()*12),min=pick([0,10,20,30,40,50]),clock=clockPhrase(h,min),act=actionPhrase(pool);uses=[fixedUse("몇","몇 시부터 asks from what time.","Use 몇 시부터.","몇 시부터","from what time"),...(act?.uses||[]),literalUse(`${clock}에`,englishClock(h,min),"time expression","에 marks the time of the action.",`Attach 에: ${clock}에.`)];return q(`몇 시에 ${act.korean}? ${clock}에 ${act.korean}.`,`What time do you ${act.english}? I ${act.english} at ${englishClock(h,min)}.`,[],uses,"Ask 몇 시에 and answer with Time + 에."); }
             case "b9Go": { const first=actionPhrase(pool,true),second=actionPhrase(pool,false);uses=[...(first?.uses||[]),...(second?.uses||[])];return q(`${first.korean} ${second.korean}.`,`I ${first.english} and ${second.english}.`,[],uses,"Attach -고 to the first action; conjugate the second action normally."); }
             case "b9FromTo": { const mode=Math.floor(Math.random()*4),act=selectedEntry(verbs)||sharedEntry("공부하다");let start,end,engStart,engEnd;if(mode===0){const sh=1+Math.floor(Math.random()*8),eh=sh+1+Math.floor(Math.random()*(12-sh));start=clockPhrase(sh);end=clockPhrase(eh);engStart=englishClock(sh);engEnd=englishClock(eh);}else if(mode===1){const si=Math.floor(Math.random()*5),ei=si+1+Math.floor(Math.random()*(6-si));start=WEEKDAYS[si].k;end=WEEKDAYS[ei].k;engStart=WEEKDAYS[si].e;engEnd=WEEKDAYS[ei].e;}else if(mode===2){const m=pick(MONTHS),sd=1+Math.floor(Math.random()*14),ed=sd+1+Math.floor(Math.random()*(28-sd));start=`${m.k} ${compactSino(sd)}일`;end=`${m.k} ${compactSino(ed)}일`;engStart=`${m.e} ${sd}`;engEnd=`${m.e} ${ed}`;}else{const sy=2000+Math.floor(Math.random()*20),ey=sy+1+Math.floor(Math.random()*6);start=`${compactSino(sy)}년`;end=`${compactSino(ey)}년`;engStart=String(sy);engEnd=String(ey);}const vf=presentPolite(act.korean);uses=[literalUse(`${start}부터`,engStart,"range start","부터 marks the beginning of a range.",`Attach 부터: ${start}부터.`),literalUse(`${end}까지`,engEnd,"range end","까지 marks the end of a range.",`Attach 까지: ${end}까지.`),verbUse(act,vf,"Conjugate the action in polite present tense.")];return q(`${start}부터 ${end}까지 ${vf}.`,`I ${predicateEnglish(act)} from ${engStart} to ${engEnd}.`,[],uses,"Use N부터 for the start and N까지 for the end."); }
             case "b9RangeQ": { const mode=Math.floor(Math.random()*3);if(mode===0){const h=1+Math.floor(Math.random()*12),clock=clockPhrase(h);uses=[fixedUse("몇","몇 시부터 asks from what time.","Use 몇 시부터.","몇 시부터","from what time"),literalUse(`${clock}부터`,englishClock(h),"range start","부터 marks the starting time.",`Attach 부터: ${clock}부터.`),fixedUse("수업","수업을 해요 means have class.","수업 + 을 + 해요.","수업을 해요","class")];return q(`몇 시부터 수업을 해요? ${clock}부터 수업을 해요.`,`From what time do you have class? I have class from ${englishClock(h)}.`,[],uses,"Ask with 몇 시부터 and answer with Time + 부터.");}if(mode===1){const wd=pick(WEEKDAYS);uses=[fixedUse("언제","언제까지 asks until when.","Attach 까지 to 언제 in the question.","언제까지","until when"),literalUse(`${wd.k}까지`,wd.e,"range end","까지 marks the ending day.",`Attach 까지: ${wd.k}까지.`),fixedUse("시험","시험이 있어요 means there is an exam.","시험 + 이 + 있어요.","시험이 있어요","exam")];return q(`언제까지 시험이 있어요? ${wd.k}까지 시험이 있어요.`,`Until when is there an exam? There is an exam until ${wd.e}.`,[],uses,"Ask 언제까지 and answer with day + 까지.");}const sh=10+Math.floor(Math.random()*2),sm=pick([0,30]),eh=Math.min(12,sh+1),start=clockPhrase(sh,sm),end=clockPhrase(eh,sm);uses=[fixedUse("몇","몇 시부터 몇 시까지 asks the full time range.","Use the complete range question.","몇 시부터 몇 시까지","from what time to what time"),literalUse(`${start}부터`,englishClock(sh,sm),"range start","부터 marks the starting time.",`Use ${start}부터.`),literalUse(`${end}까지`,englishClock(eh,sm),"range end","까지 marks the ending time.",`Use ${end}까지.`),fixedUse("점심시간","점심시간이에요 identifies the lunch period.","Attach 이에요.","점심시간이에요","lunch time")];return q(`몇 시부터 몇 시까지 점심시간이에요? ${start}부터 ${end}까지 점심시간이에요.`,`From what time to what time is lunch? Lunch is from ${englishClock(sh,sm)} to ${englishClock(eh,sm)}.`,[],uses,"Use 부터 and 까지 to define both ends of the range."); }
@@ -1914,7 +1933,7 @@ html[data-theme=light] .personalized-word .roman {
         const setupText = key === "vocabulary"
           ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages."
           : "Choose the shared vocabulary allowed in generated sentences, then configure the quiz.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Click a term to toggle its hint popover, then select a hint level.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
     // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring
@@ -2005,6 +2024,29 @@ html[data-theme=light] .personalized-word .roman {
             initExercise(el);
             initVocabPicker(el);
         });
+
+        const updateActivePopovers = () => {
+            document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+                const popover = token.querySelector(".vocab-popover");
+                if (!popover || getComputedStyle(popover).display === "none") return;
+                const tokenRect = token.getBoundingClientRect();
+                const popRect = popover.getBoundingClientRect();
+                const margin = 12, gap = 10;
+                if (tokenRect.bottom < 0 || tokenRect.top > window.innerHeight) {
+                    token.classList.remove("is-pinned");
+                    return;
+                }
+                let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                let top = tokenRect.top - popRect.height - gap;
+                if (top < margin) top = margin;
+                popover.style.left = `${Math.round(left)}px`;
+                popover.style.top = `${Math.round(top)}px`;
+                popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+            });
+        };
+        window.addEventListener("scroll", updateActivePopovers, { capture: true, passive: true });
+        window.addEventListener("resize", updateActivePopovers, { passive: true });
     }
     function vocabPoolFromSelection(el, key, savedSettings = null) {
         const scope = savedSettings?.vocabScope || el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
@@ -2326,7 +2368,7 @@ html[data-theme=light] .personalized-word .roman {
         const key = wordUseKey(use);
         const opened = state.currentLookupLevels.get(key) || new Set();
         const levels = ["Vocabulary", "Grammar rule", "Form & particle help"];
-        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small></span><span class="hint-levels">${levels.map((label, index) => {
+        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><div style="display:flex;align-items:center;gap:8px;"><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small><button class="popover-close-btn" type="button" aria-label="Close popover">&times;</button></div></span><span class="hint-levels">${levels.map((label, index) => {
             const level = index + 1, isOpen = opened.has(level);
             return `<button class="hint-step${isOpen ? " is-open" : ""}" type="button" data-use-index="${useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen ? " is-open" : ""}" data-hint-content="${level}">${isOpen ? hintText(use, level, state.questions[state.i]) : ""}</span>`;
         }).join("")}</span></span>`;
@@ -2346,34 +2388,66 @@ html[data-theme=light] .personalized-word .roman {
         const legend = el.querySelector(".prompt-hint-legend");
         legend.classList.toggle("is-visible", matches.length > 0);
         prompt.querySelectorAll(".vocab-token").forEach(token => {
+            const popover = token.querySelector(".vocab-popover");
             const positionPopover = () => {
-                const popover = token.querySelector(".vocab-popover");
                 if (!popover) return;
                 requestAnimationFrame(() => {
                     const tokenRect = token.getBoundingClientRect();
                     const popRect = popover.getBoundingClientRect();
-                    const margin = 12, gap = 12;
+                    const margin = 12, gap = 10;
                     let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
                     left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
                     let top = tokenRect.top - popRect.height - gap;
-                    let below = false;
-                    if (top < margin) { top = tokenRect.bottom + gap; below = true; }
-                    top = Math.max(margin, Math.min(top, window.innerHeight - popRect.height - margin));
+                    if (top < margin) top = margin;
                     popover.style.left = `${Math.round(left)}px`;
                     popover.style.top = `${Math.round(top)}px`;
                     popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
-                    popover.classList.toggle("is-below", below);
                 });
             };
-            token.addEventListener("mouseenter", positionPopover);
-            token.addEventListener("focusin", positionPopover);
+
+            const bringToFront = () => {
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
+            };
+
+            // Handle X close button specifically
+            const closeBtn = token.querySelector(".popover-close-btn");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", event => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    token.classList.remove("is-pinned");
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                });
+            }
+
+            // Handle clicks inside the popover to bring it to front
+            if (popover) {
+                popover.addEventListener("click", event => {
+                    event.stopPropagation();
+                    bringToFront();
+                });
+            }
+
+            // Handle word token click toggle
             token.addEventListener("click", event => {
                 if (event.target.closest(".hint-step")) return;
                 event.stopPropagation();
-                token.classList.toggle("is-pinned");
-                positionPopover();
+
+                const isPinned = token.classList.contains("is-pinned");
+
+                if (isPinned) {
+                    token.classList.remove("is-pinned");
+                } else {
+                    token.classList.add("is-pinned");
+                    bringToFront();
+                    positionPopover();
+                }
             });
-            token.querySelector(".vocab-popover")?.addEventListener("click", event => event.stopPropagation());
         });
         prompt.querySelectorAll(".hint-step").forEach(button => {
             button.addEventListener("click", () => {
@@ -2390,15 +2464,17 @@ html[data-theme=light] .personalized-word .roman {
                 }
                 const headingNote = button.closest(".vocab-popover")?.querySelector(".vocab-popover-heading small");
                 if (headingNote) headingNote.textContent = "Revealed hints count as assistance";
-                button.closest(".vocab-token")?.classList.add("is-pinned");
-                positionPopover();
+                const token = button.closest(".vocab-token");
+                token?.classList.add("is-pinned");
+                const popover = token?.querySelector(".vocab-popover");
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
                 el.querySelector(".assistant-status").innerHTML = `<span class="assistance-used">Assistance used</span>`;
                 el.querySelector(".score").innerHTML = scoreText(state);
             });
         });
-        prompt.onclick = event => {
-            if (!event.target.closest(".vocab-token")) prompt.querySelectorAll(".vocab-token.is-pinned").forEach(token => token.classList.remove("is-pinned"));
-        };
     }
     function renderAssistant(el, state, question) {
         renderPromptWithHints(el, state, question);

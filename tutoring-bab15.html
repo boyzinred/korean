@@ -1057,8 +1057,8 @@ html[data-theme=light] .personalized-word .roman {
 .vocab-selection-summary span { color:var(--accent); }
 .menu-error { margin:8px 0 0 !important; color:var(--accent); font-weight:800; }
 .question-preview { display:grid; gap:14px; padding:18px; background:var(--surface-muted); border:2px solid var(--primary); border-radius:var(--radius-lg); }
-.question-preview h5,.personalized-vocab h5 { margin:0; font-size:1.08rem; }
-.question-preview p,.personalized-vocab p { margin:0; }
+.question-preview h5,.vocab-assistant h5,.personalized-vocab h5 { margin:0; font-size:1.08rem; }
+.question-preview p,.vocab-assistant p,.personalized-vocab p { margin:0; }
 .preview-summary { display:flex; flex-wrap:wrap; gap:8px; font-size:.86rem; font-weight:800; }
 .preview-summary span { padding:6px 9px; background:var(--surface); border-radius:999px; }
 .preview-word-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
@@ -1068,17 +1068,18 @@ html[data-theme=light] .personalized-word .roman {
 .preview-actions { display:flex; flex-wrap:wrap; gap:8px; }
 .prompt-hint-legend { display:none; margin:-10px 0 16px; font-size:.82rem; font-weight:800; opacity:.76; }
 .prompt-hint-legend.is-visible { display:block; }
-.vocab-token { position:relative; display:inline-block; border-bottom:4px solid var(--accent); border-radius:2px; cursor:help; line-height:1.08; outline:none; }
+.vocab-token { position:relative; display:inline-block; border-bottom:4px solid var(--accent); border-radius:2px; cursor:pointer; line-height:1.08; outline:none; }
 .vocab-token::after { content:''; position:absolute; left:0; right:0; bottom:-5px; height:7px; }
 .vocab-token:focus-visible { outline:3px solid var(--primary); outline-offset:4px; }
-.vocab-popover { --arrow-left:50%; position:fixed; left:0; top:0; bottom:auto; z-index:2147483647; isolation:isolate; width:min(340px,calc(100vw - 24px)); max-height:min(70vh,520px); overflow:auto; display:none; padding:12px; color:var(--surface-text); background:var(--surface); border:2px solid var(--primary); border-radius:var(--radius-lg); box-shadow:0 18px 54px rgba(15,23,42,.38); font-size:.88rem; font-weight:600; line-height:1.42; text-align:left; white-space:normal; transform:none; }
-.vocab-popover::after { content:''; position:absolute; left:var(--arrow-left); bottom:-9px; width:14px; height:14px; background:var(--surface); border-right:2px solid var(--primary); border-bottom:2px solid var(--primary); transform:translateX(-50%) rotate(45deg); }
-.vocab-popover.is-below::after { top:-9px; bottom:auto; border:0; border-left:2px solid var(--primary); border-top:2px solid var(--primary); }
-.vocab-token:hover > .vocab-popover,.vocab-token:focus-within > .vocab-popover,.vocab-token.is-pinned > .vocab-popover { display:grid; }
+.vocab-popover { --arrow-left:50%; position:fixed; left:0; top:0; bottom:auto; z-index:1000; isolation:isolate; width:min(340px,calc(100vw - 24px)); max-height:min(70vh,520px); overflow:visible; display:none; padding:12px; color:var(--surface-text); background:var(--surface); border:2px solid var(--primary); border-radius:var(--radius-lg); box-shadow:0 18px 54px rgba(15,23,42,.38); font-size:.88rem; font-weight:600; line-height:1.42; text-align:left; white-space:normal; transform:none; }
+.vocab-popover::after { content:''; position:absolute; left:var(--arrow-left); bottom:-8px; width:14px; height:14px; background:var(--surface); border-right:2px solid var(--primary); border-bottom:2px solid var(--primary); transform:translateX(-50%) rotate(45deg); z-index:2; }
+.vocab-token.is-pinned > .vocab-popover { display:grid; }
 .vocab-popover-heading { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
 .vocab-popover-heading strong { font-size:.82rem; }
 .vocab-popover-heading small { opacity:.68; }
-.hint-levels { position:relative; z-index:1; display:grid; gap:7px; }
+.popover-close-btn { background:transparent; border:none; color:var(--surface-text); font-size:1.25rem; font-weight:800; line-height:1; cursor:pointer; padding:2px 6px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; transition:var(--transition); }
+.popover-close-btn:hover { color:var(--accent); background:var(--surface-muted); }
+.hint-levels { position:relative; z-index:1; display:grid; gap:7px; max-height:min(50vh,380px); overflow-y:auto; }
 .hint-step { width:100%; min-height:42px; padding:9px 10px; color:var(--surface-text); background:var(--surface-muted); border:1px solid transparent; border-radius:var(--radius-md); text-align:left; font-weight:800; }
 .hint-step:hover,.hint-step:focus-visible { border-color:var(--primary); background:var(--surface); }
 .hint-step.is-open { color:#192B5D; background:var(--primary); border-color:var(--primary); }
@@ -1706,6 +1707,7 @@ html[data-theme=light] .personalized-word .roman {
     const root = document.documentElement;
     const STORAGE_KEY = "koreanQuizThemeV2";
     const FAMILIARITY_KEY = `koreanBabFamiliarity:${LESSON.title}`;
+    let highestZIndex = 1000;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     let ACTIVE_VOCAB_KOREAN = null;
     const pick = a => { const source = Array.from(a || []); let pool = source; if (ACTIVE_VOCAB_KOREAN && source.length && source.every(item => item && typeof item === "object" && ("k" in item || "korean" in item))) { const filtered = source.filter(item => ACTIVE_VOCAB_KOREAN.has(item.k ?? item.korean)); if (filtered.length) pool = filtered; } return pool[Math.floor(Math.random() * pool.length)]; };
@@ -2975,11 +2977,118 @@ html[data-theme=light] .personalized-word .roman {
     function scoreText(state){ return `Independent: ${state.independentScore}<br>Assisted: ${state.assistedScore}`; }
     function registerHint(state,use,level){ state.currentAssisted=true; const k=wordUseKey(use); if(!state.currentLookupLevels.has(k))state.currentLookupLevels.set(k,new Set()); state.currentLookupLevels.get(k).add(level); }
     function registerReveal(state){ state.currentAssisted=true; state.currentAnswerRevealed=true; }
-    function placeFixedPopover(token){ const pop=token.querySelector('.vocab-popover'); if(!pop)return; requestAnimationFrame(()=>{ const tr=token.getBoundingClientRect(), pr=pop.getBoundingClientRect(), margin=12,gap=12; let left=tr.left+tr.width/2-pr.width/2; left=Math.max(margin,Math.min(left,window.innerWidth-pr.width-margin)); let top=tr.top-pr.height-gap, below=false; if(top<margin){top=tr.bottom+gap;below=true;} top=Math.max(margin,Math.min(top,window.innerHeight-pr.height-margin)); pop.style.left=`${Math.round(left)}px`;pop.style.top=`${Math.round(top)}px`;pop.style.setProperty('--arrow-left',`${Math.max(16,Math.min(pr.width-16,tr.left+tr.width/2-left))}px`);pop.classList.toggle('is-below',below); }); }
-    function renderPromptWithHints(el,state,question){ const prompt=el.querySelector('.prompt'),lang=state.settings.qLang,text=String(question[lang]||''),uses=question.vocabUses||[],matches=promptMatches(question,lang); let cursor=0,html=''; matches.forEach(m=>{html+=esc(text.slice(cursor,m.start)); const opened=state.currentLookupLevels.get(wordUseKey(m.use))||new Set(); html+=`<span class="vocab-token" tabindex="0" data-use-index="${m.useIndex}"><span class="vocab-surface">${esc(text.slice(m.start,m.end))}</span><span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><small>${opened.size?'Revealed hints count as assistance':'Nothing revealed yet'}</small></span><span class="hint-levels">${['Vocabulary','Grammar rule','Form & particle help'].map((label,i)=>{const level=i+1,isOpen=opened.has(level);return `<button class="hint-step${isOpen?' is-open':''}" type="button" data-use-index="${m.useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen?' is-open':''}">${isOpen?hintText(m.use,level,question):''}</span>`;}).join('')}</span></span></span>`; cursor=m.end;}); html+=esc(text.slice(cursor));prompt.innerHTML=html;el.querySelector('.prompt-hint-legend').classList.toggle('is-visible',matches.length>0);
-      prompt.querySelectorAll('.vocab-token').forEach(token=>{ const place=()=>placeFixedPopover(token); token.addEventListener('mouseenter',place);token.addEventListener('focusin',place);token.addEventListener('click',ev=>{if(ev.target.closest('.hint-step'))return;ev.stopPropagation();token.classList.toggle('is-pinned');place();});token.querySelector('.vocab-popover')?.addEventListener('click',ev=>ev.stopPropagation()); });
-      prompt.querySelectorAll('.hint-step').forEach(btn=>btn.addEventListener('click',()=>{ const use=uses[Number(btn.dataset.useIndex)],level=Number(btn.dataset.hintLevel);if(!use)return;registerHint(state,use,level);btn.classList.add('is-open');btn.setAttribute('aria-expanded','true');const content=btn.nextElementSibling;if(content?.classList.contains('hint-content')){content.innerHTML=hintText(use,level,question);content.classList.add('is-open');}const note=btn.closest('.vocab-popover')?.querySelector('.vocab-popover-heading small');if(note)note.textContent='Revealed hints count as assistance';const token=btn.closest('.vocab-token');token?.classList.add('is-pinned');if(token)placeFixedPopover(token);el.querySelector('.assistant-status').innerHTML='<span class="assistance-used">Assistance used</span>';el.querySelector('.score').innerHTML=scoreText(state);}));
-      prompt.onclick=ev=>{if(!ev.target.closest('.vocab-token'))prompt.querySelectorAll('.vocab-token.is-pinned').forEach(t=>t.classList.remove('is-pinned'));}; }
+    function hintPopover(use, useIndex, state) {
+        const key = wordUseKey(use);
+        const opened = state.currentLookupLevels.get(key) || new Set();
+        const levels = ["Vocabulary", "Grammar rule", "Form & particle help"];
+        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><div style="display:flex;align-items:center;gap:8px;"><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small><button class="popover-close-btn" type="button" aria-label="Close popover">&times;</button></div></span><span class="hint-levels">${levels.map((label, index) => {
+            const level = index + 1, isOpen = opened.has(level);
+            return `<button class="hint-step${isOpen ? " is-open" : ""}" type="button" data-use-index="${useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen ? " is-open" : ""}" data-hint-content="${level}">${isOpen ? hintText(use, level, state.questions[state.i]) : ""}</span>`;
+        }).join("")}</span></span>`;
+    }
+    function renderPromptWithHints(el, state, question) {
+        const prompt = el.querySelector(".prompt"), lang = state.settings.qLang;
+        const text = String(question[lang] || ""), uses = question.vocabUses || [];
+        const matches = promptMatches(question, lang);
+        let cursor = 0, html = "";
+        matches.forEach(match => {
+            html += esc(text.slice(cursor, match.start));
+            html += `<span class="vocab-token" tabindex="0" data-use-index="${match.useIndex}"><span class="vocab-surface">${esc(text.slice(match.start, match.end))}</span>${hintPopover(match.use, match.useIndex, state)}</span>`;
+            cursor = match.end;
+        });
+        html += esc(text.slice(cursor));
+        prompt.innerHTML = html;
+        const legend = el.querySelector(".prompt-hint-legend");
+        legend.classList.toggle("is-visible", matches.length > 0);
+        prompt.querySelectorAll(".vocab-token").forEach(token => {
+            const popover = token.querySelector(".vocab-popover");
+            const positionPopover = () => {
+                if (!popover) return;
+                requestAnimationFrame(() => {
+                    const tokenRect = token.getBoundingClientRect();
+                    const popRect = popover.getBoundingClientRect();
+                    const margin = 12, gap = 10;
+                    let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                    left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                    let top = tokenRect.top - popRect.height - gap;
+                    if (top < margin) top = margin;
+                    popover.style.left = `${Math.round(left)}px`;
+                    popover.style.top = `${Math.round(top)}px`;
+                    popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+                });
+            };
+
+            const bringToFront = () => {
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
+            };
+
+            // Handle X close button specifically
+            const closeBtn = token.querySelector(".popover-close-btn");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", event => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    token.classList.remove("is-pinned");
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                });
+            }
+
+            // Handle clicks inside the popover to bring it to front
+            if (popover) {
+                popover.addEventListener("click", event => {
+                    event.stopPropagation();
+                    bringToFront();
+                });
+            }
+
+            // Handle word token click toggle
+            token.addEventListener("click", event => {
+                if (event.target.closest(".hint-step")) return;
+                event.stopPropagation();
+
+                const isPinned = token.classList.contains("is-pinned");
+
+                if (isPinned) {
+                    token.classList.remove("is-pinned");
+                } else {
+                    token.classList.add("is-pinned");
+                    bringToFront();
+                    positionPopover();
+                }
+            });
+        });
+        prompt.querySelectorAll(".hint-step").forEach(button => {
+            button.addEventListener("click", () => {
+                const use = uses[Number(button.dataset.useIndex)];
+                const level = Number(button.dataset.hintLevel);
+                if (!use) return;
+                registerHint(state, use, level);
+                button.classList.add("is-open");
+                button.setAttribute("aria-expanded", "true");
+                const content = button.nextElementSibling;
+                if (content?.classList.contains("hint-content")) {
+                    content.innerHTML = hintText(use, level, question);
+                    content.classList.add("is-open");
+                }
+                const headingNote = button.closest(".vocab-popover")?.querySelector(".vocab-popover-heading small");
+                if (headingNote) headingNote.textContent = "Revealed hints count as assistance";
+                const token = button.closest(".vocab-token");
+                token?.classList.add("is-pinned");
+                const popover = token?.querySelector(".vocab-popover");
+                if (popover) {
+                    highestZIndex++;
+                    popover.style.zIndex = String(highestZIndex);
+                }
+                el.querySelector(".assistant-status").innerHTML = `<span class="assistance-used">Assistance used</span>`;
+                el.querySelector(".score").innerHTML = scoreText(state);
+            });
+        });
+    }
     function personalizedStats(state){ const map=new Map(); state.results.forEach(r=>{(r.question.vocabUses||[]).forEach(use=>{const k=wordUseKey(use);if(!map.has(k))map.set(k,{use,lookupQuestions:0,views:0,levels:new Set(),reveals:0,errors:0});const s=map.get(k),levels=r.lookupLevels?.[k]||[];if(levels.length)s.lookupQuestions++;s.views+=levels.length;levels.forEach(x=>s.levels.add(x));if(r.answerRevealed)s.reveals++;if(r.hadError)s.errors++;});}); return [...map.values()].filter(s=>s.views||s.reveals||s.errors).sort((a,b)=>(b.errors+b.views+b.reveals)-(a.errors+a.views+a.reveals)); }
     function exerciseTemplate(key, title, description, defaultCount = 20) {
         const setupText = key === "vocabulary" ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages." : "Choose the shared vocabulary allowed in the stored/generated questions, then configure the quiz.";
@@ -3072,6 +3181,29 @@ html[data-theme=light] .personalized-word .roman {
 
         document.querySelectorAll("[data-theme-toggle]").forEach(btn => btn.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
         document.querySelectorAll(".exercise").forEach(initExercise);
+
+        const updateActivePopovers = () => {
+            document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+                const popover = token.querySelector(".vocab-popover");
+                if (!popover || getComputedStyle(popover).display === "none") return;
+                const tokenRect = token.getBoundingClientRect();
+                const popRect = popover.getBoundingClientRect();
+                const margin = 12, gap = 10;
+                if (tokenRect.bottom < 0 || tokenRect.top > window.innerHeight) {
+                    token.classList.remove("is-pinned");
+                    return;
+                }
+                let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                let top = tokenRect.top - popRect.height - gap;
+                if (top < margin) top = margin;
+                popover.style.left = `${Math.round(left)}px`;
+                popover.style.top = `${Math.round(top)}px`;
+                popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+            });
+        };
+        window.addEventListener("scroll", updateActivePopovers, { capture: true, passive: true });
+        window.addEventListener("resize", updateActivePopovers, { passive: true });
 
         const vocabExercise = document.getElementById("ex-vocabulary");
         if (vocabExercise) {
