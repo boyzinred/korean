@@ -11,9 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>
-   Korean lesson
-  </title>
+  <title>Bab 7 · 매점이 어디에 있어요?</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -995,6 +993,350 @@ tbody tr:last-child td {
   .master-section-actions .btn { width: 100%; }
 }
 
+
+/* Shared-vocabulary exercise selector */
+.vocab-picker {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-picker > legend {
+  padding: 0 8px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.vocab-scope-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 10px;
+}
+.vocab-scope-option {
+  min-height: 74px;
+  display: flex !important;
+  grid-template-rows: none !important;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .9rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+.vocab-scope-option:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--surface);
+}
+.vocab-scope-option input,
+.vocab-leaf-option input,
+.vocab-parent-option input {
+  width: 20px !important;
+  min-height: 20px !important;
+  height: 20px !important;
+  flex: 0 0 20px;
+  margin: 1px 0 0;
+  padding: 0;
+}
+.vocab-scope-option small,
+.vocab-leaf-option small {
+  display: block;
+  margin-top: 2px;
+  opacity: .72;
+  font-weight: 700;
+}
+.vocab-tree {
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-tree > summary,
+.vocab-type-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 15px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.vocab-tree > summary { background: var(--inverse); color: var(--inverse-text); }
+.vocab-tree > summary::-webkit-details-marker,
+.vocab-type-group > summary::-webkit-details-marker { display: none; }
+.vocab-tree > summary::after,
+.vocab-type-group > summary::after { content: '+'; }
+.vocab-tree[open] > summary::after,
+.vocab-type-group[open] > summary::after { content: '−'; }
+.vocab-tree-body { padding: 14px; }
+.vocab-tree-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.vocab-tree-actions .btn { min-height: 40px; width: auto; }
+.vocab-type-list { display: grid; gap: 9px; }
+.vocab-type-group {
+  overflow: hidden;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.vocab-type-group > summary { min-height: 52px; }
+.vocab-type-body { padding: 0 12px 12px; }
+.vocab-parent-option,
+.vocab-leaf-option {
+  display: flex !important;
+  grid-template-rows: none !important;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 11px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  font-size: .86rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+.vocab-parent-option { margin-bottom: 7px; font-weight: 800 !important; }
+.vocab-leaf-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.vocab-selection-summary { margin: 12px 0 0 !important; font-size: .88rem; font-weight: 800; }
+.vocab-selection-summary span { color: var(--accent); }
+@media (max-width:680px) {
+  .vocab-scope-grid,
+  .vocab-leaf-grid { grid-template-columns: 1fr; }
+  .vocab-tree-actions .btn { width: 100%; }
+}
+
+
+/* Layered vocabulary assistant */
+.question-preview {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: var(--surface-muted);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+}
+.question-preview h5,
+.vocab-assistant h5,
+.personalized-vocab h5 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+.question-preview p,
+.vocab-assistant p,
+.personalized-vocab p { margin: 0; }
+.preview-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+.preview-summary span {
+  padding: 6px 9px;
+  background: var(--surface);
+  border-radius: 999px;
+}
+.preview-word-list {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+}
+.preview-word {
+  padding: 11px 12px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+.preview-word strong { display: block; }
+.preview-word small { display: block; margin-top: 3px; opacity: .78; }
+.preview-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.prompt-hint-legend {
+  display: none;
+  margin: -10px 0 16px;
+  font-size: .82rem;
+  font-weight: 800;
+  opacity: .76;
+}
+.prompt-hint-legend.is-visible { display: block; }
+.vocab-token {
+  position: relative;
+  display: inline-block;
+  border-bottom: 4px solid var(--accent);
+  border-radius: 2px;
+  cursor: help;
+  line-height: 1.08;
+  outline: none;
+}
+.vocab-token::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 7px;
+}
+.vocab-token:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 4px;
+}
+.vocab-popover {
+  --arrow-left: 50%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: auto;
+  z-index: 2147483647;
+  isolation: isolate;
+  width: min(340px,calc(100vw - 24px));
+  max-height: min(70vh,520px);
+  overflow: auto;
+  display: none;
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 54px rgba(15,23,42,.38);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.42;
+  text-align: left;
+  white-space: normal;
+  transform: none;
+}
+.vocab-popover::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left);
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  transform: translateX(-50%) rotate(45deg);
+}
+.vocab-popover.is-below::after {
+  top: -9px;
+  bottom: auto;
+  border: 0;
+  border-left: 2px solid var(--primary);
+  border-top: 2px solid var(--primary);
+}
+.vocab-token:hover > .vocab-popover,
+.vocab-token:focus-within > .vocab-popover,
+.vocab-token.is-pinned > .vocab-popover { display: grid; }
+.vocab-popover-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.vocab-popover-heading strong { font-size: .82rem; }
+.vocab-popover-heading small { opacity: .68; }
+.hint-levels { position: relative; z-index: 1; display: grid; gap: 7px; }
+.hint-step {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-weight: 800;
+}
+.hint-step:hover,
+.hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
+.hint-step.is-open {
+  color: #192B5D;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.hint-content {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: 7px;
+  padding: 10px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.42;
+}
+.hint-content.is-open { display: block; }
+.vocab-assistant {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.assistant-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.assistant-heading small { opacity: .72; text-align: right; }
+.assistant-status { margin: 0; font-size: .84rem; font-weight: 800; }
+.assistant-answer-row { display: grid; gap: 8px; }
+.revealed-answer {
+  padding: 12px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-radius: var(--radius-md);
+}
+.assistance-used {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.personalized-vocab {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-lg);
+}
+.personalized-vocab-list { display: grid; gap: 8px; }
+.personalized-word {
+  display: grid;
+  grid-template-columns: minmax(160px,1fr) minmax(210px,1.4fr);
+  gap: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+.personalized-word strong,
+.personalized-word small { display: block; }
+.personalized-word small { margin-top: 3px; opacity: .76; }
+.frequency-line { font-size: .85rem; font-weight: 800; }
+.score-breakdown { line-height: 1.35; text-align: center; }
+
+@media (max-width:680px) {
+  .preview-word-list,
+  .personalized-word { grid-template-columns: 1fr; }
+  .preview-actions .btn { width: 100%; }
+  .assistant-heading { display: grid; }
+  .assistant-heading small { text-align: left; }
+}
+
 </style>
  </head>
  <body id="top">
@@ -1088,7 +1430,7 @@ tbody tr:last-child td {
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Workbook-style material questions have been removed. Every exercise below is translation practice.
+      Vocabulary is loaded from ./shared-vocab/shared-vocab.js. Every exercise below is generated translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1111,6 +1453,7 @@ tbody tr:last-child td {
     ↑
    </a>
   </div>
+  <script src="./shared-vocab/shared-vocab.js?v=1.0.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1121,273 +1464,7 @@ tbody tr:last-child td {
         "title": "Bab 7",
         "subtitle": "매점이 어디에 있어요?",
         "description": "Read Sino-Korean numbers, describe location and existence, join nouns, mark contrastive locations with 에는, and express possession with 의.",
-        "vocab": [
-            {
-                "korean": "일",
-                "english": "one",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "이",
-                "english": "two",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "삼",
-                "english": "three",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "사",
-                "english": "four",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "오",
-                "english": "five",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "육",
-                "english": "six",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "칠",
-                "english": "seven",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "팔",
-                "english": "eight",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "구",
-                "english": "nine",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "십",
-                "english": "ten",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "백",
-                "english": "hundred",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "천",
-                "english": "thousand",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "만",
-                "english": "ten thousand",
-                "category": "Sino-Korean numbers"
-            },
-            {
-                "korean": "위",
-                "english": "on / above",
-                "category": "Positions"
-            },
-            {
-                "korean": "아래",
-                "english": "under / below",
-                "category": "Positions"
-            },
-            {
-                "korean": "앞",
-                "english": "in front of",
-                "category": "Positions"
-            },
-            {
-                "korean": "뒤",
-                "english": "behind",
-                "category": "Positions"
-            },
-            {
-                "korean": "옆",
-                "english": "beside",
-                "category": "Positions"
-            },
-            {
-                "korean": "안",
-                "english": "inside",
-                "category": "Positions"
-            },
-            {
-                "korean": "밖",
-                "english": "outside",
-                "category": "Positions"
-            },
-            {
-                "korean": "매점",
-                "english": "snack bar",
-                "category": "Places"
-            },
-            {
-                "korean": "주차장",
-                "english": "parking lot",
-                "category": "Places"
-            },
-            {
-                "korean": "우체국",
-                "english": "post office",
-                "category": "Places"
-            },
-            {
-                "korean": "은행",
-                "english": "bank",
-                "category": "Places"
-            },
-            {
-                "korean": "식당",
-                "english": "restaurant",
-                "category": "Places"
-            },
-            {
-                "korean": "편의점",
-                "english": "convenience store",
-                "category": "Places"
-            },
-            {
-                "korean": "세탁소",
-                "english": "laundromat",
-                "category": "Places"
-            },
-            {
-                "korean": "약국",
-                "english": "pharmacy",
-                "category": "Places"
-            },
-            {
-                "korean": "서점",
-                "english": "bookstore",
-                "category": "Places"
-            },
-            {
-                "korean": "슈퍼마켓",
-                "english": "supermarket",
-                "category": "Places"
-            },
-            {
-                "korean": "산",
-                "english": "mountain",
-                "category": "Nature"
-            },
-            {
-                "korean": "배",
-                "english": "boat",
-                "category": "Transport"
-            },
-            {
-                "korean": "집",
-                "english": "house",
-                "category": "Places"
-            },
-            {
-                "korean": "책상",
-                "english": "desk",
-                "category": "Furniture"
-            },
-            {
-                "korean": "의자",
-                "english": "chair",
-                "category": "Furniture"
-            },
-            {
-                "korean": "옷장",
-                "english": "wardrobe",
-                "category": "Furniture"
-            },
-            {
-                "korean": "침대",
-                "english": "bed",
-                "category": "Furniture"
-            },
-            {
-                "korean": "냉장고",
-                "english": "refrigerator",
-                "category": "Furniture"
-            },
-            {
-                "korean": "필통",
-                "english": "pencil case",
-                "category": "Objects"
-            },
-            {
-                "korean": "볼펜",
-                "english": "ballpoint pen",
-                "category": "Objects"
-            },
-            {
-                "korean": "전화기",
-                "english": "telephone",
-                "category": "Objects"
-            },
-            {
-                "korean": "거울",
-                "english": "mirror",
-                "category": "Objects"
-            },
-            {
-                "korean": "화장대",
-                "english": "dressing table",
-                "category": "Furniture"
-            },
-            {
-                "korean": "치마",
-                "english": "skirt",
-                "category": "Clothes"
-            },
-            {
-                "korean": "운동화",
-                "english": "sneakers",
-                "category": "Clothes"
-            },
-            {
-                "korean": "선풍기",
-                "english": "fan",
-                "category": "Objects"
-            },
-            {
-                "korean": "베개",
-                "english": "pillow",
-                "category": "Objects"
-            },
-            {
-                "korean": "신문",
-                "english": "newspaper",
-                "category": "Objects"
-            },
-            {
-                "korean": "와/과",
-                "english": "and (written/neutral)",
-                "category": "Particles"
-            },
-            {
-                "korean": "하고",
-                "english": "and / with",
-                "category": "Particles"
-            },
-            {
-                "korean": "에는",
-                "english": "in / at, as for",
-                "category": "Particles"
-            },
-            {
-                "korean": "의",
-                "english": "of / possessive",
-                "category": "Particles"
-            },
-            {
-                "korean": "제",
-                "english": "my (humble)",
-                "category": "Possessives"
-            }
-        ],
+        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab07")),
         "sections": [
             {
                 "id": "numbers",
@@ -1518,1044 +1595,300 @@ tbody tr:last-child td {
         const j = Math.floor(Math.random() * (i + 1));
         [b[i], b[j]] = [b[j], b[i]];
     } return b; };
-    // Literal transliteration requested by the learner. No pronunciation assimilation is applied.
-    function romanizeKorean(text) {
-        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
-        const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
-        const JONG = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
-        let out = "", previousHangul = false;
-        for (const ch of String(text ?? "")) {
-            const code = ch.charCodeAt(0);
-            if (code >= 0xAC00 && code <= 0xD7A3) {
-                const offset = code - 0xAC00, jong = offset % 28, jung = Math.floor(offset / 28) % 21, cho = Math.floor(offset / (28 * 21));
-                if (previousHangul)
-                    out += "-";
-                out += CHO[cho] + JUNG[jung] + JONG[jong];
-                previousHangul = true;
-            }
-            else {
-                out += ch;
-                previousHangul = false;
-            }
-        }
-        return out;
-    }
+    const romanizeKorean = KoreanVocab.romanize;
     function hasBatchim(text) { const chars = [...String(text)].filter(ch => { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; }); return !!chars.length && ((chars.at(-1).charCodeAt(0) - 0xAC00) % 28 !== 0); }
     const topic = n => n + (hasBatchim(n) ? "은" : "는"), subject = n => n + (hasBatchim(n) ? "이" : "가"), object = n => n + (hasBatchim(n) ? "을" : "를"), andFormal = n => n + (hasBatchim(n) ? "과" : "와"), copula = n => n + (hasBatchim(n) ? "이에요" : "예요"), negativeN = n => n + (hasBatchim(n) ? "이" : "가");
     const article = e => /^[aeiou]/i.test(e) ? `an ${e}` : `a ${e}`;
-    const q = (korean, english, alternatives = []) => ({ korean, english, romanization: romanizeKorean(korean), alternatives: alternatives.map(k => ({ korean: k, romanization: romanizeKorean(k) })) });
-    // -------------------------------------------------------------------------
-    // Word pools used to generate translation questions
-    // -------------------------------------------------------------------------
-    const NAMES = [
-        {
-            "k": "팀",
-            "e": "Tim"
-        },
-        {
-            "k": "상우",
-            "e": "Sang-woo"
-        },
-        {
-            "k": "아사코",
-            "e": "Asako"
-        },
-        {
-            "k": "왕단",
-            "e": "Wangdan"
-        },
-        {
-            "k": "투이",
-            "e": "Thuy"
-        },
-        {
-            "k": "티누",
-            "e": "Tinu"
-        },
-        {
-            "k": "소영",
-            "e": "So-young"
-        },
-        {
-            "k": "제니퍼",
-            "e": "Jennifer"
-        },
-        {
-            "k": "민수",
-            "e": "Minsu"
-        },
-        {
-            "k": "수진",
-            "e": "Sujin"
-        }
-    ];
-    const JOBS = [
-        {
-            "k": "학생",
-            "e": "student"
-        },
-        {
-            "k": "선생님",
-            "e": "teacher"
-        },
-        {
-            "k": "회사원",
-            "e": "office worker"
-        },
-        {
-            "k": "요리사",
-            "e": "cook"
-        },
-        {
-            "k": "경찰",
-            "e": "police officer"
-        },
-        {
-            "k": "간호사",
-            "e": "nurse"
-        },
-        {
-            "k": "의사",
-            "e": "doctor"
-        },
-        {
-            "k": "가수",
-            "e": "singer"
-        },
-        {
-            "k": "연구원",
-            "e": "researcher"
-        },
-        {
-            "k": "직원",
-            "e": "employee"
-        }
-    ];
-    const COUNTRIES = [
-        {
-            "k": "한국",
-            "e": "Korean"
-        },
-        {
-            "k": "일본",
-            "e": "Japanese"
-        },
-        {
-            "k": "중국",
-            "e": "Chinese"
-        },
-        {
-            "k": "베트남",
-            "e": "Vietnamese"
-        },
-        {
-            "k": "영국",
-            "e": "British"
-        },
-        {
-            "k": "미국",
-            "e": "American"
-        },
-        {
-            "k": "호주",
-            "e": "Australian"
-        },
-        {
-            "k": "독일",
-            "e": "German"
-        },
-        {
-            "k": "캐나다",
-            "e": "Canadian"
-        },
-        {
-            "k": "러시아",
-            "e": "Russian"
-        }
-    ];
-    const NOUNS = [
-        {
-            "k": "책",
-            "e": "book"
-        },
-        {
-            "k": "연필",
-            "e": "pencil"
-        },
-        {
-            "k": "가방",
-            "e": "bag"
-        },
-        {
-            "k": "책상",
-            "e": "desk"
-        },
-        {
-            "k": "컴퓨터",
-            "e": "computer"
-        },
-        {
-            "k": "사과",
-            "e": "apple"
-        },
-        {
-            "k": "커피",
-            "e": "coffee"
-        },
-        {
-            "k": "계획",
-            "e": "plan"
-        },
-        {
-            "k": "경험",
-            "e": "experience"
-        },
-        {
-            "k": "문화",
-            "e": "culture"
-        },
-        {
-            "k": "사회",
-            "e": "society"
-        },
-        {
-            "k": "경제",
-            "e": "economy"
-        },
-        {
-            "k": "환경",
-            "e": "environment"
-        },
-        {
-            "k": "건강",
-            "e": "health"
-        },
-        {
-            "k": "습관",
-            "e": "habit"
-        },
-        {
-            "k": "목적",
-            "e": "purpose"
-        },
-        {
-            "k": "기회",
-            "e": "opportunity"
-        },
-        {
-            "k": "방법",
-            "e": "method"
-        },
-        {
-            "k": "결과",
-            "e": "result"
-        },
-        {
-            "k": "이유",
-            "e": "reason"
-        },
-        {
-            "k": "문제",
-            "e": "problem"
-        },
-        {
-            "k": "해결",
-            "e": "solution"
-        },
-        {
-            "k": "관계",
-            "e": "relationship"
-        },
-        {
-            "k": "책임",
-            "e": "responsibility"
-        },
-        {
-            "k": "약속",
-            "e": "appointment"
-        },
-        {
-            "k": "준비",
-            "e": "preparation"
-        },
-        {
-            "k": "발표",
-            "e": "presentation"
-        },
-        {
-            "k": "과제",
-            "e": "assignment"
-        },
-        {
-            "k": "수업",
-            "e": "class"
-        },
-        {
-            "k": "연구",
-            "e": "research"
-        },
-        {
-            "k": "정보",
-            "e": "information"
-        },
-        {
-            "k": "의견",
-            "e": "opinion"
-        },
-        {
-            "k": "변화",
-            "e": "change"
-        },
-        {
-            "k": "선택",
-            "e": "choice"
-        }
-    ];
-    const OBJECTS = [
-        {
-            "k": "책",
-            "e": "book"
-        },
-        {
-            "k": "신문",
-            "e": "newspaper"
-        },
-        {
-            "k": "사과",
-            "e": "apple"
-        },
-        {
-            "k": "커피",
-            "e": "coffee"
-        },
-        {
-            "k": "물",
-            "e": "water"
-        },
-        {
-            "k": "영화",
-            "e": "movie"
-        },
-        {
-            "k": "음악",
-            "e": "music"
-        },
-        {
-            "k": "계획",
-            "e": "plan"
-        },
-        {
-            "k": "문제",
-            "e": "problem"
-        },
-        {
-            "k": "과제",
-            "e": "assignment"
-        },
-        {
-            "k": "정보",
-            "e": "information"
-        },
-        {
-            "k": "환경",
-            "e": "environment"
-        },
-        {
-            "k": "문화",
-            "e": "culture"
-        },
-        {
-            "k": "경험",
-            "e": "experience"
-        }
-    ];
-    const PLACES = [
-        {
-            "k": "학교",
-            "e": "school"
-        },
-        {
-            "k": "도서관",
-            "e": "library"
-        },
-        {
-            "k": "식당",
-            "e": "restaurant"
-        },
-        {
-            "k": "커피숍",
-            "e": "coffee shop"
-        },
-        {
-            "k": "교실",
-            "e": "classroom"
-        },
-        {
-            "k": "집",
-            "e": "home"
-        },
-        {
-            "k": "회사",
-            "e": "company"
-        },
-        {
-            "k": "공원",
-            "e": "park"
-        },
-        {
-            "k": "시장",
-            "e": "market"
-        },
-        {
-            "k": "은행",
-            "e": "bank"
-        },
-        {
-            "k": "우체국",
-            "e": "post office"
-        },
-        {
-            "k": "영화관",
-            "e": "movie theater"
-        },
-        {
-            "k": "연구실",
-            "e": "research room"
-        },
-        {
-            "k": "회의실",
-            "e": "meeting room"
-        }
-    ];
-    const POSITIONS = [
-        {
-            "k": "위",
-            "e": "on top of"
-        },
-        {
-            "k": "아래",
-            "e": "under"
-        },
-        {
-            "k": "앞",
-            "e": "in front of"
-        },
-        {
-            "k": "뒤",
-            "e": "behind"
-        },
-        {
-            "k": "옆",
-            "e": "next to"
-        },
-        {
-            "k": "안",
-            "e": "inside"
-        },
-        {
-            "k": "밖",
-            "e": "outside"
-        }
-    ];
-    const TRANS = [
-        {
-            "base": "읽다",
-            "p": "읽어요",
-            "f": "읽습니다",
-            "fq": "읽습니까",
-            "c": "읽고",
-            "e": "read"
-        },
-        {
-            "base": "먹다",
-            "p": "먹어요",
-            "f": "먹습니다",
-            "fq": "먹습니까",
-            "c": "먹고",
-            "e": "eat"
-        },
-        {
-            "base": "마시다",
-            "p": "마셔요",
-            "f": "마십니다",
-            "fq": "마십니까",
-            "c": "마시고",
-            "e": "drink"
-        },
-        {
-            "base": "보다",
-            "p": "봐요",
-            "f": "봅니다",
-            "fq": "봅니까",
-            "c": "보고",
-            "e": "watch"
-        },
-        {
-            "base": "공부하다",
-            "p": "공부해요",
-            "f": "공부합니다",
-            "fq": "공부합니까",
-            "c": "공부하고",
-            "e": "study"
-        },
-        {
-            "base": "좋아하다",
-            "p": "좋아해요",
-            "f": "좋아합니다",
-            "fq": "좋아합니까",
-            "c": "좋아하고",
-            "e": "like"
-        },
-        {
-            "base": "사다",
-            "p": "사요",
-            "f": "삽니다",
-            "fq": "삽니까",
-            "c": "사고",
-            "e": "buy"
-        },
-        {
-            "base": "만들다",
-            "p": "만들어요",
-            "f": "만듭니다",
-            "fq": "만듭니까",
-            "c": "만들고",
-            "e": "make"
-        },
-        {
-            "base": "설명하다",
-            "p": "설명해요",
-            "f": "설명합니다",
-            "fq": "설명합니까",
-            "c": "설명하고",
-            "e": "explain"
-        },
-        {
-            "base": "준비하다",
-            "p": "준비해요",
-            "f": "준비합니다",
-            "fq": "준비합니까",
-            "c": "준비하고",
-            "e": "prepare"
-        }
-    ];
-    const INTRANS = [
-        {
-            "base": "가다",
-            "p": "가요",
-            "f": "갑니다",
-            "fq": "갑니까",
-            "c": "가고",
-            "e": "go"
-        },
-        {
-            "base": "오다",
-            "p": "와요",
-            "f": "옵니다",
-            "fq": "옵니까",
-            "c": "오고",
-            "e": "come"
-        },
-        {
-            "base": "자다",
-            "p": "자요",
-            "f": "잡니다",
-            "fq": "잡니까",
-            "c": "자고",
-            "e": "sleep"
-        },
-        {
-            "base": "일하다",
-            "p": "일해요",
-            "f": "일합니다",
-            "fq": "일합니까",
-            "c": "일하고",
-            "e": "work"
-        },
-        {
-            "base": "운동하다",
-            "p": "운동해요",
-            "f": "운동합니다",
-            "fq": "운동합니까",
-            "c": "운동하고",
-            "e": "exercise"
-        },
-        {
-            "base": "청소하다",
-            "p": "청소해요",
-            "f": "청소합니다",
-            "fq": "청소합니까",
-            "c": "청소하고",
-            "e": "clean"
-        },
-        {
-            "base": "수영하다",
-            "p": "수영해요",
-            "f": "수영합니다",
-            "fq": "수영합니까",
-            "c": "수영하고",
-            "e": "swim"
-        },
-        {
-            "base": "쇼핑하다",
-            "p": "쇼핑해요",
-            "f": "쇼핑합니다",
-            "fq": "쇼핑합니까",
-            "c": "쇼핑하고",
-            "e": "shop"
-        }
-    ];
-    const ADJS = [
-        {
-            "base": "맛있다",
-            "p": "맛있어요",
-            "f": "맛있습니다",
-            "c": "맛있고",
-            "e": "delicious"
-        },
-        {
-            "base": "맛없다",
-            "p": "맛없어요",
-            "f": "맛없습니다",
-            "c": "맛없고",
-            "e": "not delicious"
-        },
-        {
-            "base": "많다",
-            "p": "많아요",
-            "f": "많습니다",
-            "c": "많고",
-            "e": "numerous"
-        },
-        {
-            "base": "적다",
-            "p": "적어요",
-            "f": "적습니다",
-            "c": "적고",
-            "e": "few"
-        },
-        {
-            "base": "비싸다",
-            "p": "비싸요",
-            "f": "비쌉니다",
-            "c": "비싸고",
-            "e": "expensive"
-        },
-        {
-            "base": "싸다",
-            "p": "싸요",
-            "f": "쌉니다",
-            "c": "싸고",
-            "e": "cheap"
-        },
-        {
-            "base": "크다",
-            "p": "커요",
-            "f": "큽니다",
-            "c": "크고",
-            "e": "big"
-        },
-        {
-            "base": "작다",
-            "p": "작아요",
-            "f": "작습니다",
-            "c": "작고",
-            "e": "small"
-        },
-        {
-            "base": "넓다",
-            "p": "넓어요",
-            "f": "넓습니다",
-            "c": "넓고",
-            "e": "spacious"
-        },
-        {
-            "base": "좁다",
-            "p": "좁아요",
-            "f": "좁습니다",
-            "c": "좁고",
-            "e": "narrow"
-        },
-        {
-            "base": "길다",
-            "p": "길어요",
-            "f": "깁니다",
-            "c": "길고",
-            "e": "long"
-        },
-        {
-            "base": "짧다",
-            "p": "짧아요",
-            "f": "짧습니다",
-            "c": "짧고",
-            "e": "short"
-        },
-        {
-            "base": "좋다",
-            "p": "좋아요",
-            "f": "좋습니다",
-            "c": "좋고",
-            "e": "good"
-        },
-        {
-            "base": "재미있다",
-            "p": "재미있어요",
-            "f": "재미있습니다",
-            "c": "재미있고",
-            "e": "interesting"
-        },
-        {
-            "base": "어렵다",
-            "p": "어려워요",
-            "f": "어렵습니다",
-            "c": "어렵고",
-            "e": "difficult"
-        },
-        {
-            "base": "쉽다",
-            "p": "쉬워요",
-            "f": "쉽습니다",
-            "c": "쉽고",
-            "e": "easy"
-        },
-        {
-            "base": "깨끗하다",
-            "p": "깨끗해요",
-            "f": "깨끗합니다",
-            "c": "깨끗하고",
-            "e": "clean"
-        },
-        {
-            "base": "조용하다",
-            "p": "조용해요",
-            "f": "조용합니다",
-            "c": "조용하고",
-            "e": "quiet"
-        }
-    ];
-    const BIEUP = [
-        {
-            "p": "추워요",
-            "e": "cold"
-        },
-        {
-            "p": "더워요",
-            "e": "hot"
-        },
-        {
-            "p": "쉬워요",
-            "e": "easy"
-        },
-        {
-            "p": "어려워요",
-            "e": "difficult"
-        },
-        {
-            "p": "무거워요",
-            "e": "heavy"
-        },
-        {
-            "p": "가벼워요",
-            "e": "light"
-        },
-        {
-            "p": "귀여워요",
-            "e": "cute"
-        },
-        {
-            "p": "매워요",
-            "e": "spicy"
-        },
-        {
-            "p": "고마워요",
-            "e": "thankful"
-        },
-        {
-            "p": "아름다워요",
-            "e": "beautiful"
-        }
-    ];
-    const SEASONS = [
-        {
-            "k": "봄",
-            "e": "spring"
-        },
-        {
-            "k": "여름",
-            "e": "summer"
-        },
-        {
-            "k": "가을",
-            "e": "autumn"
-        },
-        {
-            "k": "겨울",
-            "e": "winter"
-        }
-    ];
-    const WEATHER = [
-        {
-            "p": "따뜻해요",
-            "c": "따뜻하고",
-            "e": "warm"
-        },
-        {
-            "p": "더워요",
-            "c": "덥고",
-            "e": "hot"
-        },
-        {
-            "p": "시원해요",
-            "c": "시원하고",
-            "e": "cool"
-        },
-        {
-            "p": "추워요",
-            "c": "춥고",
-            "e": "cold"
-        },
-        {
-            "p": "맑아요",
-            "c": "맑고",
-            "e": "clear"
-        },
-        {
-            "p": "흐려요",
-            "c": "흐리고",
-            "e": "cloudy"
-        }
-    ];
-    const KINDS = [
-        {
-            "k": "계절",
-            "e": "season"
-        },
-        {
-            "k": "음식",
-            "e": "food"
-        },
-        {
-            "k": "영화",
-            "e": "movie"
-        },
-        {
-            "k": "책",
-            "e": "book"
-        },
-        {
-            "k": "운동",
-            "e": "exercise"
-        },
-        {
-            "k": "음악",
-            "e": "music"
-        },
-        {
-            "k": "계획",
-            "e": "plan"
-        },
-        {
-            "k": "문화",
-            "e": "culture"
-        }
-    ];
-    const MODIFIERS = [
-        {
-            "k": "한국",
-            "e": "Korean"
-        },
-        {
-            "k": "새로운",
-            "e": "new"
-        },
-        {
-            "k": "재미있는",
-            "e": "interesting"
-        },
-        {
-            "k": "건강한",
-            "e": "healthy"
-        },
-        {
-            "k": "조용한",
-            "e": "quiet"
-        },
-        {
-            "k": "중요한",
-            "e": "important"
-        },
-        {
-            "k": "어려운",
-            "e": "difficult"
-        },
-        {
-            "k": "봄",
-            "e": "spring"
-        }
-    ];
-    function greetingQuestion() {
-        return pick([
-            q("안녕하세요. 만나서 반가워요.", "Hello. Nice to meet you."), q("고맙습니다. 뭘요.", "Thank you. Not at all."), q("죄송합니다. 괜찮아요.", "I am sorry. It is okay."), q("안녕히 가세요.", "Goodbye. (The other person is leaving.)"), q("안녕히 계세요.", "Goodbye. (You are leaving and the other person is staying.)"), q("안녕하세요. 고맙습니다.", "Hello. Thank you."), q("만나서 반가워요. 안녕히 가세요.", "Nice to meet you. Goodbye. (The other person is leaving.)")
-        ]);
+    function dedupeUses(uses = []) {
+        const merged = new Map();
+        uses.filter(Boolean).forEach(use => {
+            const key = use.id || `literal:${use.korean}`;
+            if (!merged.has(key)) merged.set(key, { ...use, id: key, forms: [], grammar: [], formHelp: [] });
+            const item = merged.get(key);
+            for (const form of use.forms || []) if (form && !item.forms.includes(form)) item.forms.push(form);
+            for (const note of use.grammar || []) if (note && !item.grammar.includes(note)) item.grammar.push(note);
+            for (const note of use.formHelp || []) if (note && !item.formHelp.includes(note)) item.formHelp.push(note);
+        });
+        return [...merged.values()];
+    }
+    function q(korean, english, alternatives = [], vocabUses = [], grammarRule = "") {
+        return {
+            korean,
+            english,
+            romanization: romanizeKorean(korean),
+            alternatives: alternatives.map(k => ({ korean: k, romanization: romanizeKorean(k) })),
+            vocabUses: dedupeUses(vocabUses),
+            grammarRule
+        };
     }
     // -------------------------------------------------------------------------
-    // Grammar-aware question generation
+    // Shared vocabulary selection and universal Bab 1–10 grammar generation
     // -------------------------------------------------------------------------
-    function generate(kind) {
-        let a, b, c, n, name, job, country, obj, place, verb, verb2, adj, position, owner, season, weather, kindN, mod;
-        switch (kind) {
-            case "greetings": return greetingQuestion();
-            case "copula":
-                n = pick([...NOUNS, ...JOBS]);
-                return q(copula(n.k), `It is ${article(n.e)}.`);
-            case "topic":
-                n = pick(NOUNS);
-                job = pick(JOBS);
-                return q(`${topic(n.k)} ${copula(job.k)}.`, `As for the ${n.e}, it is ${article(job.e)}.`);
-            case "yesno":
-                a = pick([...NOUNS, ...JOBS]);
-                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
-                if (Math.random() < .5)
-                    return q(`${copula(a.k)}? 네, ${copula(a.k)}.`, `Is it ${article(a.e)}? Yes, it is ${article(a.e)}.`);
-                return q(`${copula(a.k)}? 아니요, ${copula(b.k)}.`, `Is it ${article(a.e)}? No, it is ${article(b.e)}.`);
-            case "profile":
-                name = pick(NAMES);
-                country = pick(COUNTRIES);
-                job = pick(JOBS);
-                return q(`${name.k} 씨예요. ${name.k} 씨는 ${country.k} 사람이에요. ${name.k} 씨는 ${copula(job.k)}.`, `This is ${name.e}. ${name.e} is ${country.e}. ${name.e} is ${article(job.e)}.`);
-            case "demonstratives":
-                n = pick([...NOUNS, ...JOBS]);
-                a = pick([{ k: "이건", e: "This" }, { k: "그건", e: "That near you" }, { k: "저건", e: "That over there" }]);
-                return q(`${a.k} ${copula(n.k)}.`, `${a.e} is ${article(n.e)}.`);
-            case "negativeCopula":
-                a = pick([...NOUNS, ...JOBS]);
-                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
-                return q(`${a.k}${hasBatchim(a.k) ? "이" : "가"} 아니에요. ${copula(b.k)}.`, `It is not ${article(a.e)}. It is ${article(b.e)}.`);
-            case "negativeProfile":
-                name = pick(NAMES);
-                country = pick(COUNTRIES);
-                job = pick(JOBS);
-                a = pick(JOBS.filter(x => x.k !== job.k));
-                return q(`${name.k} 씨는 ${negativeN(a.k)} 아니에요. ${name.k} 씨는 ${copula(job.k)}.`, `${name.e} is not ${article(a.e)}. ${name.e} is ${article(job.e)}.`);
-            case "present":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
-            case "object":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                return q(`${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e}.`);
-            case "placeAction":
-                place = pick(PLACES);
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                return q(`${place.k}에서 ${object(obj.k)} ${verb.p}.`, `I ${verb.e} the ${obj.e} at the ${place.e}.`);
-            case "also":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                return q(`${obj.k}도 ${verb.p}.`, `I also ${verb.e} the ${obj.e}.`);
-            case "destination":
-                place = pick(PLACES);
-                if (Math.random() < .5)
-                    return q(`${place.k}에 가요.`, `I go to the ${place.e}.`);
-                return q(`${place.k}에 와요.`, `I come to the ${place.e}.`);
-            case "shortNegation":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                return q(`${object(obj.k)} 안 ${verb.p}.`, `I do not ${verb.e} the ${obj.e}.`);
-            case "andThen":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                place = pick(PLACES);
-                verb2 = pick(INTRANS);
-                return q(`${object(obj.k)} ${verb.p}. 그리고 ${place.k}에서 ${verb2.p}.`, `I ${verb.e} the ${obj.e}. And then I ${verb2.e} at the ${place.e}.`);
+    const BAB_ID = "bab07";
+    const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID);
+    const SHARED_RELEVANT_VOCAB = KoreanVocab.DATA.filter(entry => entry.lessons?.length);
+    const POS_LABELS = Object.freeze({
+        "noun": "Common nouns", "proper noun": "Proper nouns", "pronoun": "Pronouns",
+        "dependent noun": "Dependent nouns", "noun/adverb": "Nouns / adverbs",
+        "noun/numeral": "Nouns / numerals", "noun phrase": "Noun phrases",
+        "expression": "Expressions", "phrase": "Phrases", "interjection": "Interjections",
+        "adverb": "Adverbs", "verb": "Verbs", "adjective": "Adjectives",
+        "determiner": "Determiners", "determiner/pronoun": "Determiners / pronouns",
+        "conjunction": "Conjunctions", "numeral": "Numerals"
+    });
+    const CONFIG_BY_KIND = Object.freeze({
+        vocabulary: { parts: null, labels: null, description: "Any shared word type" },
+        demonstratives: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Nouns identified with 이건, 그건, or 저건" },
+        negativeCopula: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Nouns used with 이/가 아니에요" },
+        negativeProfile: { parts: ["noun","proper noun"], labels: ["people-occupations","countries-languages"], description: "Occupations and countries used in profile corrections" },
+        present: { parts: ["verb"], labels: null, description: "Verbs conjugated in polite present tense" },
+        object: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Objects and action verbs" },
+        placeAction: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Places, objects, and action verbs" },
+        also: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Nouns marked by 도 and action verbs" },
+        destination: { parts: ["noun","proper noun","noun phrase"], labels: ["places-buildings","travel-movement","transport-directions","countries-languages"], description: "Destinations used with 에 가다/오다" },
+        shortNegation: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Action verbs and optional objects" },
+        andThen: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Words used in two clauses joined by 그리고" },
+        adjective: { parts: ["noun","proper noun","noun phrase","adjective"], labels: null, description: "Nouns and descriptive adjectives" },
+        subjectAdjective: { parts: ["noun","proper noun","noun phrase","adjective"], labels: null, description: "Nouns marked with 이/가 and descriptive adjectives" },
+        whatKind: { parts: ["noun","proper noun","noun phrase","adjective"], labels: null, description: "Category nouns and descriptive modifiers" },
+        bieup: { parts: ["noun","proper noun","noun phrase","adjective"], labels: null, description: "Nouns and ㅂ-irregular adjectives" },
+        weather: { parts: ["noun","adjective"], labels: ["weather-seasons","time-calendar","animals-nature","descriptions-qualities"], description: "Seasons, weather nouns, and weather adjectives" },
+        formal: { parts: ["noun","proper noun","noun phrase","verb","adjective"], labels: null, description: "Predicates and any nouns required by them" },
+        clauseLink: { parts: ["noun","proper noun","noun phrase","verb","adjective"], labels: null, description: "Two predicates joined with -고" },
+        formalCopula: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Nouns used in formal identity statements" },
+        numbers: { parts: ["numeral","noun/numeral","noun"], labels: ["numbers-counters","time-calendar","shopping-money"], description: "Sino-Korean numbers and counters" },
+        location: { parts: ["noun","proper noun","noun phrase","adverb","noun/adverb"], labels: null, description: "Objects, reference places, and position words" },
+        nounAnd: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Nouns joined with 와/과 or 하고" },
+        locationTopic: { parts: ["noun","proper noun","noun phrase","adverb","noun/adverb"], labels: null, description: "Places, objects, and position words used with 에는" },
+        possessive: { parts: ["noun","proper noun","pronoun","noun phrase"], labels: null, description: "Owners and possessed nouns" },
+        b8Date: { parts: ["noun","numeral","noun/numeral"], labels: ["time-calendar","numbers-counters"], description: "Calendar vocabulary and generated dates" },
+        b8Wh: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Events, places, and objects used with 뭐, 언제, or 어디" },
+        b8Myeot: { parts: ["noun","proper noun","noun phrase","numeral","noun/numeral"], labels: null, description: "Events, places, dates, floors, and counters" },
+        b8DateE: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Dates or weekdays followed by an action" },
+        b8Together: { parts: ["noun","proper noun","pronoun","verb"], labels: null, description: "People and actions used with 같이 or 함께" },
+        b9Clock: { parts: ["noun","numeral","noun/numeral","adverb"], labels: ["time-calendar","numbers-counters"], description: "Hours, minutes, and time-of-day vocabulary" },
+        b9TimeE: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Actions performed at a particular time" },
+        b9Go: { parts: ["noun","proper noun","noun phrase","verb"], labels: null, description: "Two actions linked by -고" },
+        b9FromTo: { parts: ["noun","proper noun","noun phrase","verb","numeral","noun/numeral"], labels: null, description: "Time ranges and an action" },
+        b9RangeQ: { parts: ["noun","proper noun","noun phrase","verb","numeral","noun/numeral"], labels: null, description: "Questions and answers about time ranges" },
+        likes: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Things liked or disliked" },
+        "and-link": { parts: ["verb","adjective"], labels: null, description: "Two verbs or adjectives joined with -고" },
+        contrast: { parts: ["verb","adjective"], labels: null, description: "Two predicates contrasted with -지만" },
+        "long-negation": { parts: ["verb","adjective"], labels: null, description: "A verb or adjective negated with -지 않다" },
+        "past-tense": { parts: ["verb","adjective"], labels: null, description: "A verb or adjective conjugated in the past tense" }
+    });
+    function kindForKey(key) {
+        if (key === "vocabulary") return key;
+        const section = LESSON.sections.find(item => item.id === key);
+        return section?.generator || section?.id || key;
+    }
+    function configForKey(key) { return CONFIG_BY_KIND[kindForKey(key)] || CONFIG_BY_KIND.vocabulary; }
+    function labelName(id) { return KoreanVocab.LABELS[id]?.name || id.replaceAll("-", " "); }
+    function entryHasAnyLabel(entry, labels) { return !labels?.length || labels.some(label => entry.category === label || entry.labels?.includes(label)); }
+    function entryMatchesExercise(entry, key) {
+        const config = configForKey(key);
+        return (!config.parts?.length || config.parts.includes(entry.partOfSpeech)) && entryHasAnyLabel(entry, config.labels);
+    }
+    function compatibleVocab(key, scope = "lesson") {
+        const source = scope === "relevant" ? SHARED_RELEVANT_VOCAB : SHARED_LESSON_VOCAB;
+        return source.filter(entry => entryMatchesExercise(entry, key));
+    }
+    const groupKey = entry => `${entry.partOfSpeech}::${entry.category}`;
+    function cleanEnglish(entry) { return String(entry?.english || "").split("/")[0].trim(); }
+    function nounEnglish(entry) { return cleanEnglish(entry).replace(/^the\s+/i, ""); }
+    function predicateEnglish(entry) { return cleanEnglish(entry).replace(/^to\s+be\s+/i, "").replace(/^to\s+/i, ""); }
+    function sharedEntry(korean) { return KoreanVocab.DATA.find(entry => entry.korean === korean) || null; }
+    function wordUse(entry, form, grammar, formHelp) {
+        if (!entry) return null;
+        return { id: entry.id, korean: entry.korean, romanization: entry.romanization || romanizeKorean(entry.korean), english: cleanEnglish(entry), partOfSpeech: entry.partOfSpeech, forms: [form || entry.korean], grammar: grammar ? [grammar] : [], formHelp: formHelp ? [formHelp] : [] };
+    }
+    function literalUse(korean, english, partOfSpeech, grammar, formHelp, form = korean) {
+        return { id: `literal:${korean}:${english}`, korean, romanization: romanizeKorean(korean), english, partOfSpeech: partOfSpeech || "expression", forms: [form], grammar: grammar ? [grammar] : [], formHelp: formHelp ? [formHelp] : [] };
+    }
+    function fixedUse(korean, grammar, formHelp, form = korean, englishOverride = "") {
+        const entry = sharedEntry(korean);
+        if (entry) return wordUse(entry, form, grammar, formHelp);
+        return literalUse(korean, englishOverride || korean, "expression", grammar, formHelp, form);
+    }
+    function wordUseKey(use) { return use.id || `literal:${use.korean}`; }
+    function identityEnglish(entry) { return entry.partOfSpeech === "proper noun" ? cleanEnglish(entry) : article(nounEnglish(entry)); }
+    function selectedEntry(pool, predicate) { const filtered = predicate ? pool.filter(predicate) : pool; return filtered.length ? pick(filtered) : null; }
+    function differentEntry(pool, first, predicate) { return selectedEntry(pool, entry => entry.id !== first?.id && (!predicate || predicate(entry))); }
+    const nounLike = entry => ["noun","proper noun","noun phrase"].includes(entry.partOfSpeech);
+    const ownerLike = entry => nounLike(entry) || entry.partOfSpeech === "pronoun";
+    const EXCLUDED_PREDICATES = new Set(["이다","아니다","않다"]);
+    const predicateLike = entry => (entry.partOfSpeech === "verb" || entry.partOfSpeech === "adjective") && entry.korean.endsWith("다") && !entry.korean.includes(" ") && !EXCLUDED_PREDICATES.has(entry.korean);
+    const isPlace = entry => entryHasAnyLabel(entry,["places-buildings","travel-movement","transport-directions","countries-languages"]);
+    const PERSON_PRONOUNS = new Set(["저","나","우리","너","당신","누구"]);
+    const isPerson = entry => entryHasAnyLabel(entry,["people-occupations","family-relationships"]) || (entry.partOfSpeech === "pronoun" && PERSON_PRONOUNS.has(entry.korean));
+    const isCountry = entry => entry.category === "countries-languages" && !/(language|Korean language|Japanese language|Chinese language)/i.test(cleanEnglish(entry));
+    const NON_OCCUPATIONS = new Set(["사람","남자","여자","아이","어른","친구","아기","여러분","외국인","한국 사람","가족","부모님","부모","손님"]);
+    const isOccupation = entry => entry.category === "people-occupations" && entry.partOfSpeech === "noun" && !NON_OCCUPATIONS.has(entry.korean);
+    const isEvent = entry => entryHasAnyLabel(entry,["events-celebrations","school-study"]) && !SEASON_WORDS.has(entry.korean);
+    const POSITION_WORDS = new Set(["위","아래","앞","뒤","옆","안","밖","사이","근처","왼쪽","오른쪽","가운데","속"]);
+    const isPosition = entry => POSITION_WORDS.has(entry.korean);
+    const SEASON_WORDS = new Set(["봄","여름","가을","겨울"]);
+    const isSeason = entry => SEASON_WORDS.has(entry.korean);
+    const INTRANSITIVE = new Set(["가다","오다","자다","앉다","서다","살다","죽다","있다","없다","도착하다","출발하다","일어나다","운동하다","수영하다","공부하다","일하다","쉬다","걷다","뛰다","여행하다"]);
+    const isLikelyTransitive = entry => entry?.partOfSpeech === "verb" && !INTRANSITIVE.has(entry.korean);
+    const BIEUP_IRREGULAR = new Set(["춥다","덥다","어렵다","쉽다","맵다","싱겁다","귀엽다","아름답다","무겁다","가볍다","가깝다","고맙다","반갑다","무섭다","돕다","곱다","고맙다","반갑다","무섭다"]);
+    const D_IRREGULAR = new Set(["듣다","걷다","묻다","싣다","깨닫다"]);
+    const S_IRREGULAR = new Set(["짓다","낫다","붓다","젓다"]);
+    const PRESENT_OVERRIDES = Object.freeze({
+        "하다":"해요","되다":"돼요","오다":"와요","보다":"봐요","주다":"줘요","마시다":"마셔요","배우다":"배워요","가르치다":"가르쳐요","치다":"쳐요","자다":"자요","서다":"서요","쓰다":"써요","크다":"커요","끄다":"꺼요","예쁘다":"예뻐요","바쁘다":"바빠요","아프다":"아파요","나쁘다":"나빠요","모르다":"몰라요","부르다":"불러요","빠르다":"빨라요","다르다":"달라요","고르다":"골라요","듣다":"들어요","걷다":"걸어요","묻다":"물어요","돕다":"도와요","곱다":"고와요","춥다":"추워요","덥다":"더워요","어렵다":"어려워요","쉽다":"쉬워요","맵다":"매워요","귀엽다":"귀여워요","아름답다":"아름다워요","무겁다":"무거워요","가볍다":"가벼워요","가깝다":"가까워요","고맙다":"고마워요","반갑다":"반가워요","무섭다":"무서워요","좋다":"좋아요","그렇다":"그래요","하얗다":"하얘요","빨갛다":"빨개요","파랗다":"파래요","노랗다":"노래요","있다":"있어요","없다":"없어요","이다":"이에요","아니다":"아니에요","먹다":"먹어요","읽다":"읽어요","찍다":"찍어요","씻다":"씻어요","만나다":"만나요","사다":"사요","만들다":"만들어요","열다":"열어요","닫다":"닫아요","놀다":"놀아요","울다":"울어요","웃다":"웃어요"
+    });
+    function syllableInfo(ch) { const code=ch?.charCodeAt(0); if (!(code>=0xAC00&&code<=0xD7A3)) return null; const o=code-0xAC00; return {cho:Math.floor(o/588),jung:Math.floor(o/28)%21,jong:o%28}; }
+    function composeSyllable(cho,jung,jong=0) { return String.fromCharCode(0xAC00+cho*588+jung*28+jong); }
+    function replaceLast(text, info) { return text.slice(0,-1)+composeSyllable(info.cho,info.jung,info.jong); }
+    function removeDictionaryDa(base) { return String(base).endsWith("다") ? String(base).slice(0,-1) : String(base); }
+    function addJong(text,jong) { const info=syllableInfo(text.at(-1)); return info&&info.jong===0 ? replaceLast(text,{...info,jong}) : text; }
+    function dropJong(text) { const info=syllableInfo(text.at(-1)); return info ? replaceLast(text,{...info,jong:0}) : text; }
+    function brightVowel(jung) { return jung===0||jung===2||jung===8||jung===9||jung===10||jung===12; }
+    function politeCore(base) {
+        const override=PRESENT_OVERRIDES[base]; if (override) return override.replace(/요$/,"");
+        let stem=removeDictionaryDa(base); if (!stem) return stem;
+        if (stem.endsWith("하")) return stem.slice(0,-1)+"해";
+        let info=syllableInfo(stem.at(-1)); if (!info) return stem;
+        if (stem.endsWith("르") && stem.length>1) {
+            const prev=syllableInfo(stem.at(-2)); const harmony=prev&&brightVowel(prev.jung); let prefix=stem.slice(0,-2)+addJong(stem.at(-2),8); return prefix+composeSyllable(info.cho,harmony?0:4,0);
+        }
+        if (info.jong===7 && D_IRREGULAR.has(base)) { stem=replaceLast(stem,{...info,jong:8}); info=syllableInfo(stem.at(-1)); }
+        if (info.jong===17 && BIEUP_IRREGULAR.has(base)) { const root=dropJong(stem); return root+(base==="돕다"||base==="곱다"?"와":"워"); }
+        if (info.jong===19 && S_IRREGULAR.has(base)) { stem=dropJong(stem); info=syllableInfo(stem.at(-1)); }
+        if (info.jong!==0) return stem+(brightVowel(info.jung)?"아":"어");
+        if ([0,1,4,5,6,7,9,10,14,15].includes(info.jung)) return stem;
+        if (info.jung===8) return replaceLast(stem,{...info,jung:9});
+        if (info.jung===13) return replaceLast(stem,{...info,jung:14});
+        if (info.jung===20) return replaceLast(stem,{...info,jung:6});
+        if (info.jung===18) { const prev=syllableInfo(stem.at(-2)); return replaceLast(stem,{...info,jung:prev&&brightVowel(prev.jung)?0:4}); }
+        if (info.jung===11) return replaceLast(stem,{...info,jung:10});
+        return stem+"어";
+    }
+    function presentPolite(base) { return politeCore(base)+"요"; }
+    function pastPolite(base) { let core=politeCore(base); const info=syllableInfo(core.at(-1)); if (info&&info.jong===0) core=replaceLast(core,{...info,jong:20}); else core+="었"; return core+"어요"; }
+    function connectiveGo(base) { return removeDictionaryDa(base)+"고"; }
+    function contrastJiman(base) { return removeDictionaryDa(base)+"지만"; }
+    function longNegative(base) { return removeDictionaryDa(base)+"지 않아요"; }
+    function formalPredicate(base, question=false) { let stem=removeDictionaryDa(base); let info=syllableInfo(stem.at(-1)); if (!info) return stem+(question?"습니까":"습니다"); if (info.jong===8) { stem=dropJong(stem); info=syllableInfo(stem.at(-1)); } if (info.jong===0) return addJong(stem,17)+(question?"니까":"니다"); return stem+(question?"습니까":"습니다"); }
+    const ADNOMINAL_OVERRIDES=Object.freeze({"있다":"있는","없다":"없는","좋다":"좋은","그렇다":"그런","재미있다":"재미있는","맛있다":"맛있는","맛없다":"맛없는","재미없다":"재미없는","어렵다":"어려운","쉽다":"쉬운","춥다":"추운","덥다":"더운","맵다":"매운","귀엽다":"귀여운","무겁다":"무거운","가볍다":"가벼운","가깝다":"가까운","고맙다":"고마운","반갑다":"반가운","무섭다":"무서운","아름답다":"아름다운"});
+    function adjectiveAdnominal(base) { if (ADNOMINAL_OVERRIDES[base]) return ADNOMINAL_OVERRIDES[base]; let stem=removeDictionaryDa(base); if (stem.endsWith("하")) return stem.slice(0,-1)+"한"; let info=syllableInfo(stem.at(-1)); if (!info) return stem; if (info.jong===17&&BIEUP_IRREGULAR.has(base)) return dropJong(stem)+"운"; if (info.jong===8) return replaceLast(stem,{...info,jong:4}); if (info.jong===0) return addJong(stem,4); return stem+"은"; }
+    function sinoUnder(n) { const d=["","일","이","삼","사","오","육","칠","팔","구"],u=["","십","백","천"]; let out=[]; for(let pos=3;pos>=0;pos--){const p=10**pos,v=Math.floor(n/p)%10;if(!v)continue;if(v!==1||pos===0)out.push(d[v]);if(pos)out.push(u[pos]);} return out.join(" "); }
+    function sinoNumber(n) { const man=Math.floor(n/10000),rest=n%10000,parts=[];if(man){if(man!==1)parts.push(sinoUnder(man));parts.push("만");}if(rest)parts.push(sinoUnder(rest));return parts.join(" ")||"영"; }
+    function compactSino(n) { return sinoNumber(n).replace(/\s+/g,""); }
+    const MONTHS=[{n:1,k:"일월",e:"January"},{n:2,k:"이월",e:"February"},{n:3,k:"삼월",e:"March"},{n:4,k:"사월",e:"April"},{n:5,k:"오월",e:"May"},{n:6,k:"유월",e:"June"},{n:7,k:"칠월",e:"July"},{n:8,k:"팔월",e:"August"},{n:9,k:"구월",e:"September"},{n:10,k:"시월",e:"October"},{n:11,k:"십일월",e:"November"},{n:12,k:"십이월",e:"December"}];
+    const WEEKDAYS=[{k:"월요일",e:"Monday"},{k:"화요일",e:"Tuesday"},{k:"수요일",e:"Wednesday"},{k:"목요일",e:"Thursday"},{k:"금요일",e:"Friday"},{k:"토요일",e:"Saturday"},{k:"일요일",e:"Sunday"}];
+    const NATIVE_HOURS=["","한","두","세","네","다섯","여섯","일곱","여덟","아홉","열","열한","열두"];
+    function datePhrase(month,day) { return `${month.k} ${compactSino(day)}일`; }
+    function clockPhrase(hour,minute=0,period="") { const prefix=period?`${period} `:""; if(!minute)return `${prefix}${NATIVE_HOURS[hour]} 시`; if(minute===30&&Math.random()<.35)return `${prefix}${NATIVE_HOURS[hour]} 시 반`; return `${prefix}${NATIVE_HOURS[hour]} 시 ${compactSino(minute)} 분`; }
+    function englishClock(hour,minute=0,period="") { return `${hour}:${String(minute).padStart(2,"0")}${period==="오전"?" A.M.":period==="오후"?" P.M.":""}`; }
+    function particleUse(entry, formed, particle, rule) { return wordUse(entry, formed, rule, `${entry.korean} takes ${particle}: ${formed}.`); }
+    function verbUse(entry, formed, rule, detail="") { return wordUse(entry, formed, rule, detail||`${entry.korean} becomes ${formed}.`); }
+    const VERB_OBJECT_LABELS = Object.freeze({
+        "먹다":["food-drink"],"마시다":["food-drink"],"요리하다":["food-drink"],
+        "읽다":["school-study","communication-media"],"쓰다":["school-study","communication-media"],"공부하다":["school-study","countries-languages"],
+        "배우다":["school-study","countries-languages","hobbies-sports"],"가르치다":["school-study","countries-languages","hobbies-sports"],
+        "보다":["communication-media","hobbies-sports"],"찍다":["communication-media","events-celebrations"],"듣다":["communication-media","hobbies-sports"],
+        "사다":["shopping-money","clothing-appearance","food-drink"],"팔다":["shopping-money","clothing-appearance","food-drink"],"고르다":["shopping-money","clothing-appearance","food-drink"],
+        "만나다":["people-occupations","family-relationships"],"돕다":["people-occupations","family-relationships"],
+        "입다":["clothing-appearance"],"신다":["clothing-appearance"],"벗다":["clothing-appearance"],
+        "씻다":["body-health","home-household"],"닦다":["body-health","home-household"],"청소하다":["home-household","places-buildings"],
+        "열다":["home-household","places-buildings"],"닫다":["home-household","places-buildings"],"타다":["transport-directions"],
+        "만들다":["food-drink","home-household","school-study"],"좋아하다":[],"싫어하다":[],"하다":[]
+    });
+    const DRINK_WORDS = new Set(["물","우유","주스","커피","차","녹차","홍차","콜라","음료수","맥주","와인","소주","막걸리"]);
+    function verbSpecificObjectFilter(verb,entry) {
+        if (verb.korean === "마시다") return DRINK_WORDS.has(entry.korean) || /(water|milk|juice|coffee|tea|cola|drink|beverage|beer|wine)/i.test(cleanEnglish(entry));
+        if (verb.korean === "먹다") return !DRINK_WORDS.has(entry.korean);
+        return true;
+    }
+    function objectCandidatesForVerb(nouns,verb) {
+        if (!verb) return [];
+        const labels=VERB_OBJECT_LABELS[verb.korean];
+        if (labels === undefined) return [];
+        if (!labels.length) return nouns;
+        return nouns.filter(entry=>entryHasAnyLabel(entry,labels)&&verbSpecificObjectFilter(verb,entry));
+    }
+    function actionPhrase(pool, connective=false) {
+        const verbs=pool.filter(predicateLike).filter(entry=>entry.partOfSpeech==="verb"); const nouns=pool.filter(nounLike); const places=nouns.filter(isPlace); const verb=selectedEntry(verbs); if(!verb)return null;
+        const form=connective?connectiveGo(verb.korean):presentPolite(verb.korean); const uses=[]; let korean=form, english=predicateEnglish(verb);
+        const objectChoices=objectCandidatesForVerb(nouns,verb);
+        if (objectChoices.length) { const obj=selectedEntry(objectChoices); const objForm=object(obj.korean); korean=`${objForm} ${form}`; english=`${predicateEnglish(verb)} ${nounEnglish(obj)}`; uses.push(particleUse(obj,objForm,hasBatchim(obj.korean)?"을":"를","This noun is the direct object of the action.")); }
+        else if (places.length&&["가다","오다","도착하다","여행하다"].includes(verb.korean)) { const place=selectedEntry(places); const placeForm=`${place.korean}에`; korean=`${placeForm} ${form}`; english=`${predicateEnglish(verb)} to ${nounEnglish(place)}`; uses.push(wordUse(place,placeForm,"에 marks a destination.",`Attach 에: ${placeForm}.`)); }
+        uses.push(verbUse(verb,form,connective?"Remove 다 and add -고 to link this action to the next predicate.":"Conjugate the dictionary form in polite present tense."));
+        return {korean,english,uses,verb};
+    }
+    const WEATHER_ADJECTIVES = new Set(["덥다","춥다","따뜻하다","시원하다","맑다","흐리다","쌀쌀하다","습하다","건조하다","좋다","나쁘다"]);
+    function weatherEntry(pool) { return selectedEntry(pool,entry=>entry.partOfSpeech==="adjective"&&WEATHER_ADJECTIVES.has(entry.korean)); }
+    function generate(kind, pool, section=null) {
+        const nouns=pool.filter(nounLike), verbs=pool.filter(entry=>entry.partOfSpeech==="verb"&&predicateLike(entry)), adjectives=pool.filter(entry=>entry.partOfSpeech==="adjective"&&predicateLike(entry)), predicates=pool.filter(predicateLike), places=nouns.filter(isPlace), positions=pool.filter(isPosition);
+        let a,b,c,uses,form,form2;
+        switch(kind) {
+            case "demonstratives": { a=selectedEntry(nouns); const d=pick([{k:"이건",e:"This"},{k:"그건",e:"That near you"},{k:"저건",e:"That over there"}]); form=copula(a.korean); uses=[literalUse(d.k,d.e,"pronoun","This contracted demonstrative marks distance from the speakers.",`Use ${d.k} as a complete form.`),particleUse(a,form,hasBatchim(a.korean)?"이에요":"예요","Attach the polite copula to identify the object.")]; return q(`${d.k} ${form}.`,`${d.e} is ${identityEnglish(a)}.`,[],uses,"Use 이건/그건/저건 followed by N이에요/예요."); }
+            case "negativeCopula": { a=selectedEntry(nouns);b=differentEntry(nouns,a)||a;const neg=subject(a.korean);const pos=copula(b.korean);uses=[particleUse(a,neg,hasBatchim(a.korean)?"이":"가","이/가 marks the noun rejected by 아니에요."),fixedUse("아니다","Use 아니에요 after N이/가 to negate identity.","아니다 becomes 아니에요.","아니에요","not to be"),particleUse(b,pos,hasBatchim(b.korean)?"이에요":"예요","Use the copula to give the corrected identity.")];return q(`${neg} 아니에요. ${pos}.`,`It is not ${identityEnglish(a)}. It is ${identityEnglish(b)}.`,[],uses,"N이/가 아니에요 rejects an identity; N이에요/예요 supplies the correction."); }
+            case "negativeProfile": { const countries=pool.filter(isCountry),jobs=pool.filter(isOccupation); const group=jobs.length>=2?jobs:countries;a=selectedEntry(group);b=differentEntry(group,a)||a;const countryMode=group===countries;const af=countryMode?`${a.korean} 사람`:a.korean,bf=countryMode?`${b.korean} 사람`:b.korean;const an=subject(af),bp=copula(bf);uses=[fixedUse("저","저 is the polite first-person pronoun.","Attach 는 to make 저는.","저는","I"),wordUse(a,an,"This is the identity being denied.",`${af} takes ${hasBatchim(af)?"이":"가"}: ${an}.`),fixedUse("아니다","Use 아니에요 for negative identity.","아니다 becomes 아니에요.","아니에요","not to be"),wordUse(b,bp,"This is the corrected profile information.",`${bf} takes ${hasBatchim(bf)?"이에요":"예요"}: ${bp}.`)]; if(countryMode)uses.push(fixedUse("사람","A country before 사람 expresses nationality.","Use Country + 사람.","사람","person")); return q(`저는 ${an} 아니에요. ${bp}.`,`I am not ${countryMode?`from ${nounEnglish(a)}`:identityEnglish(a)}. I am ${countryMode?`from ${nounEnglish(b)}`:identityEnglish(b)}.`,[],uses,"Use 저는 + N이/가 아니에요, then correct the profile with 이에요/예요."); }
+            case "present": { a=selectedEntry(verbs);form=presentPolite(a.korean);uses=[verbUse(a,form,"Conjugate the dictionary form with -아요/-어요/-해요.")];return q(`${form}.`,`I ${predicateEnglish(a)}.`,[],uses,"Use the polite-casual present ending."); }
+            case "object": { b=selectedEntry(verbs,verb=>objectCandidatesForVerb(nouns,verb).length)||selectedEntry(verbs);a=selectedEntry(objectCandidatesForVerb(nouns,b))||selectedEntry(nouns);const of=object(a.korean),vf=presentPolite(b.korean);uses=[particleUse(a,of,hasBatchim(a.korean)?"을":"를","을/를 marks the direct object."),verbUse(b,vf,"Conjugate the action verb in polite present tense.")];return q(`${of} ${vf}.`,`I ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Mark the direct object with 을/를 and conjugate the verb."); }
+            case "placeAction": { a=selectedEntry(places)||selectedEntry(nouns);c=selectedEntry(verbs,verb=>objectCandidatesForVerb(nouns,verb).some(entry=>entry.id!==a.id))||selectedEntry(verbs);b=selectedEntry(objectCandidatesForVerb(nouns,c),entry=>entry.id!==a.id)||selectedEntry(nouns,entry=>entry.id!==a.id)||a;const pf=`${a.korean}에서`,of=object(b.korean),vf=presentPolite(c.korean);uses=[wordUse(a,pf,"에서 marks the place where an action happens.",`Attach 에서: ${pf}.`),particleUse(b,of,hasBatchim(b.korean)?"을":"를","This noun is the action's object."),verbUse(c,vf,"Conjugate the action verb in polite present tense.")];return q(`${pf} ${of} ${vf}.`,`I ${predicateEnglish(c)} ${nounEnglish(b)} at ${nounEnglish(a)}.`,[],uses,"Use N에서 for the action location, then an object and verb."); }
+            case "also": { b=selectedEntry(verbs,verb=>objectCandidatesForVerb(nouns,verb).length)||selectedEntry(verbs);a=selectedEntry(objectCandidatesForVerb(nouns,b))||selectedEntry(nouns);const nf=`${a.korean}도`,vf=presentPolite(b.korean);uses=[wordUse(a,nf,"도 adds the meaning ‘also/too’ and replaces the usual object particle.",`Attach 도 directly: ${nf}.`),verbUse(b,vf,"Conjugate the verb in polite present tense.")];return q(`${nf} ${vf}.`,`I also ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Attach 도 to the noun to add ‘also/too.’"); }
+            case "destination": { a=selectedEntry(places)||selectedEntry(nouns);const go=Math.random()<.5;const base=go?"가다":"오다",vf=presentPolite(base),pf=`${a.korean}에`;uses=[wordUse(a,pf,"에 marks the destination.",`Attach 에: ${pf}.`),fixedUse(base,"가다 means go; 오다 means come.",`${base} becomes ${vf}.`,vf,go?"to go":"to come")];return q(`${pf} ${vf}.`,`I ${go?"go":"come"} to ${nounEnglish(a)}.`,[],uses,"Use destination + 에 + 가요/와요."); }
+            case "shortNegation": { a=selectedEntry(verbs);const vf=presentPolite(a.korean);uses=[fixedUse("안","Place 안 immediately before the conjugated verb for short negation.","안 does not change.","안","not"),verbUse(a,vf,"The verb is conjugated normally after 안.")];let korean=`안 ${vf}`,english=`I do not ${predicateEnglish(a)}`;if(isLikelyTransitive(a)&&nouns.length){b=selectedEntry(nouns);const of=object(b.korean);korean=`${of} 안 ${vf}`;english+=` ${nounEnglish(b)}`;uses.unshift(particleUse(b,of,hasBatchim(b.korean)?"을":"를","This noun is the direct object."));}return q(`${korean}.`,`${english}.`,[],uses,"Put 안 before the conjugated verb."); }
+            case "andThen": { const first=actionPhrase(pool),second=actionPhrase(pool);uses=[...(first?.uses||[]),fixedUse("그리고","그리고 joins two separate sentences in sequence.","Place 그리고 at the start of the second sentence.","그리고","and then"),...(second?.uses||[])];return q(`${first.korean}. 그리고 ${second.korean}.`,`I ${first.english}. And then I ${second.english}.`,[],uses,"Finish the first sentence, then begin the next with 그리고."); }
             case "adjective":
-                n = pick(NOUNS);
-                adj = pick(ADJS);
-                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
-            case "subjectAdjective":
-                n = pick(NOUNS);
-                adj = pick(ADJS);
-                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
-            case "whatKind":
-                kindN = pick(KINDS);
-                mod = pick(MODIFIERS);
-                return q(`무슨 ${object(kindN.k)} 좋아해요? ${mod.k} ${object(kindN.k)} 좋아해요.`, `What kind of ${kindN.e} do you like? I like ${mod.e} ${kindN.e}.`);
-            case "bieup":
-                n = pick(NOUNS);
-                adj = pick(BIEUP);
-                return q(`${subject(n.k)} ${adj.p}.`, `The ${n.e} is ${adj.e}.`);
-            case "weather":
-                season = pick(SEASONS);
-                weather = pick(WEATHER);
-                if (Math.random() < .5)
-                    return q(`${season.k} 날씨가 어때요? ${weather.p}.`, `How is the weather in ${season.e}? It is ${weather.e}.`);
-                a = pick([{ k: "비가 와요", e: "it rains" }, { k: "눈이 와요", e: "it snows" }]);
-                return q(`${season.k} 날씨가 어때요? ${weather.c} ${a.k}.`, `How is the weather in ${season.e}? It is ${weather.e}, and ${a.e}.`);
-            case "formal":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                if (Math.random() < .5)
-                    return q(`${object(obj.k)} ${verb.f}.`, `I ${verb.e} the ${obj.e}.`);
-                return q(`${object(obj.k)} ${verb.fq}?`, `Do you ${verb.e} the ${obj.e}?`);
-            case "clauseLink":
-                obj = pick(OBJECTS);
-                verb = pick(TRANS);
-                b = pick(OBJECTS);
-                verb2 = pick(TRANS);
-                return q(`${object(obj.k)} ${verb.c} ${object(b.k)} ${verb2.p}.`, `I ${verb.e} the ${obj.e} and ${verb2.e} the ${b.e}.`);
-            case "formalCopula":
-                a = pick([...NOUNS, ...JOBS]);
-                b = pick([...NOUNS, ...JOBS].filter(x => x.k !== a.k));
-                return q(`${topic(a.k)} ${b.k}입니까? 아니요, ${topic(a.k)} ${negativeN(b.k)} 아닙니다. ${topic(a.k)} ${a.k}입니다.`, `Is the ${a.e} ${article(b.e)}? No, the ${a.e} is not ${article(b.e)}. The ${a.e} is ${article(a.e)}.`);
-            case "numbers": {
-                const num = 1 + Math.floor(Math.random() * 99999);
-                return q(sinoNumber(num), num.toLocaleString("en-US"));
-            }
-            case "location":
-                n = pick(NOUNS);
-                a = pick([...NOUNS, ...PLACES]);
-                position = pick(POSITIONS);
-                if (Math.random() < .8)
-                    return q(`${topic(n.k)} ${a.k} ${position.k}에 있어요.`, `The ${n.e} is ${position.e} the ${a.e}.`);
-                return q(`${topic(n.k)} ${a.k} ${position.k}에 없어요.`, `The ${n.e} is not ${position.e} the ${a.e}.`);
-            case "nounAnd":
-                a = pick(NOUNS);
-                b = pick(NOUNS.filter(x => x.k !== a.k));
-                verb = pick(TRANS);
-                {
-                    const k1 = `${andFormal(a.k)} ${object(b.k)} ${verb.p}.`, k2 = `${a.k}하고 ${object(b.k)} ${verb.p}.`;
-                    return q(k1, `I ${verb.e} the ${a.e} and the ${b.e}.`, [k2]);
-                }
-            case "locationTopic":
-                place = pick(PLACES);
-                position = pick(POSITIONS);
-                n = pick(NOUNS);
-                return q(`${place.k} ${position.k}에는 ${subject(n.k)} 있어요.`, `As for ${position.e} the ${place.e}, there is the ${n.e}.`);
-            case "possessive":
-                owner = pick([...NAMES, ...JOBS]);
-                n = pick(NOUNS);
-                place = pick(PLACES);
-                position = pick(POSITIONS);
-                return q(`${owner.k}의 ${topic(n.k)} ${place.k} ${position.k}에 있어요.`, `${owner.e}'s ${n.e} is ${position.e} the ${place.e}.`);
-            default: return q("책이에요.", "It is a book.");
+            case "subjectAdjective": { a=selectedEntry(nouns);b=selectedEntry(adjectives);const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the subject being described."),verbUse(b,af,"Conjugate the adjective with -아요/-어요/-해요.")];return q(`${nf} ${af}.`,`${kind==="adjective"?"It":"The "+nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Use N이/가 followed by a polite descriptive adjective."); }
+            case "whatKind": { const kindNouns=nouns.filter(entry=>!isPlace(entry)&&!isPerson(entry)&&!isPosition(entry)&&!entryHasAnyLabel(entry,["time-calendar","numbers-counters"]));a=selectedEntry(kindNouns)||selectedEntry(nouns);b=selectedEntry(adjectives,entry=>!["있다","없다"].includes(entry.korean))||selectedEntry(adjectives);const of=object(a.korean),mod=adjectiveAdnominal(b.korean);uses=[fixedUse("무슨","무슨 asks what kind or category.","Place 무슨 directly before the noun.","무슨","what kind of"),particleUse(a,of,hasBatchim(a.korean)?"을":"를","The category noun is the object of 좋아하다."),wordUse(b,mod,"Use the adjective's noun-modifying form before the noun.",`${b.korean} becomes ${mod} before a noun.`),fixedUse("좋아하다","좋아하다 takes an object marked with 을/를.","좋아하다 becomes 좋아해요.","좋아해요","to like")];return q(`무슨 ${of} 좋아해요? ${mod} ${of} 좋아해요.`,`What kind of ${nounEnglish(a)} do you like? I like ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Use 무슨 + noun for the question and an adjective modifier in the answer."); }
+            case "bieup": { a=selectedEntry(nouns);b=selectedEntry(adjectives,entry=>BIEUP_IRREGULAR.has(entry.korean));const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the described subject."),verbUse(b,af,"For a ㅂ-irregular adjective, ㅂ changes before the vowel-initial polite ending.",`${b.korean} becomes ${af}.`)];return q(`${nf} ${af}.`,`The ${nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Apply the ㅂ-irregular change, then add the polite ending."); }
+            case "weather": { a=selectedEntry(pool,isSeason)||literalUse("오늘","today","noun");b=weatherEntry(pool)||selectedEntry(adjectives);const af=presentPolite(b.korean);uses=[];if(a.id)uses.push(wordUse(a,a.korean,"This word sets the season or time context.",`Use ${a.korean} before 날씨.`));else uses.push(a);uses.push(fixedUse("날씨","날씨 is marked with 가 in the question.","날씨 + 가 = 날씨가.","날씨가","weather"),fixedUse("어떻다","어때요 asks how something is.","어떻다 becomes 어때요.","어때요","how is it"),verbUse(b,af,"Conjugate the weather adjective in polite present tense."));return q(`${a.korean} 날씨가 어때요? ${af}.`,`How is the weather in ${nounEnglish(a)}? It is ${predicateEnglish(b)}.`,[],uses,"Ask with 날씨가 어때요? and answer with a descriptive adjective."); }
+            case "formal": { a=selectedEntry(predicates);const question=Math.random()<.5;form=formalPredicate(a.korean,question);uses=[verbUse(a,form,question?"Use the formal polite question ending -(스)ㅂ니까?":"Use the formal polite statement ending -(스)ㅂ니다.")];const subject=a.partOfSpeech==="adjective"?"It":"I";return q(`${form}${question?"?":"."}`,`${question?(a.partOfSpeech==="adjective"?"Is it":"Do you"):(subject)} ${predicateEnglish(a)}${question?"?":"."}`,[],uses,"Choose -(스)ㅂ니다 for a statement or -(스)ㅂ니까? for a question."); }
+            case "clauseLink": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||differentEntry(predicates,a)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -고 to link the first predicate."),verbUse(b,bf,"Only the final predicate receives the sentence-final polite ending.")];const eng=a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`;return q(`${af} ${bf}.`,eng,[],uses,"Attach -고 to the first predicate and conjugate the final predicate normally."); }
+            case "formalCopula": { const identityNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(identityNouns)||selectedEntry(nouns);b=differentEntry(identityNouns,a)||differentEntry(nouns,a)||a;const bn=subject(b.korean);uses=[fixedUse("이것","이것은 marks the item being identified.","이것 + 은 = 이것은.","이것은","this"),wordUse(b,`${b.korean}입니까`,"입니까? asks a formal identity question.",`Attach 입니까 directly: ${b.korean}입니까?`),wordUse(b,bn,"이/가 marks the identity being denied before 아닙니다.",`${b.korean} takes ${hasBatchim(b.korean)?"이":"가"}: ${bn}.`),fixedUse("아니다","아닙니다 is the formal negative copula.","아니다 becomes 아닙니다.","아닙니다","not to be"),wordUse(a,`${a.korean}입니다`,"입니다 is the formal affirmative copula.",`Attach 입니다 directly: ${a.korean}입니다.`)];return q(`이것은 ${b.korean}입니까? 아니요, ${bn} 아닙니다. ${a.korean}입니다.`,`Is this ${identityEnglish(b)}? No, it is not. It is ${identityEnglish(a)}.`,[],uses,"Use 입니까? for the question, 아닙니다 for negation, and 입니다 for affirmation."); }
+            case "numbers": { const num=1+Math.floor(Math.random()*99999),kor=compactSino(num);uses=[literalUse(kor,num.toLocaleString("en-US"),"numeral","Read the number with Sino-Korean number units.",`The generated number is ${kor}.`)];return q(kor,num.toLocaleString("en-US"),[],uses,"Read or write the generated Sino-Korean number."); }
+            case "location": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(contentNouns)||selectedEntry(nouns);b=differentEntry(contentNouns,a)||differentEntry(nouns,a)||a;c=selectedEntry(positions);const at=topic(a.korean),cf=`${c.korean}에`,exists=Math.random()<.8;uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the item being located."),wordUse(b,b.korean,"This noun is the spatial reference point.",`Use ${b.korean} before the position word.`),wordUse(c,cf,"The position noun is followed by 에.",`Attach 에: ${cf}.`),fixedUse(exists?"있다":"없다","있어요 expresses existence; 없어요 expresses absence.",`${exists?"있다":"없다"} becomes ${exists?"있어요":"없어요"}.`,exists?"있어요":"없어요",exists?"to exist":"not to exist")];return q(`${at} ${b.korean} ${cf} ${exists?"있어요":"없어요"}.`,`The ${nounEnglish(a)} is ${exists?"":"not "}${nounEnglish(c)} the ${nounEnglish(b)}.`,[],uses,"Use reference noun + position + 에 + 있어요/없어요."); }
+            case "nounAnd": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(contentNouns)||selectedEntry(nouns);b=differentEntry(contentNouns,a)||differentEntry(nouns,a)||a;const first=andFormal(a.korean),second=subject(b.korean),alt=`${a.korean}하고 ${second} 있어요`;uses=[wordUse(a,first,"와/과 joins the first noun to the next noun.",`${a.korean} takes ${hasBatchim(a.korean)?"과":"와"}: ${first}.`),particleUse(b,second,hasBatchim(b.korean)?"이":"가","이/가 marks the joined noun phrase as the subject."),fixedUse("있다","있어요 states that the two things exist or are present.","있다 becomes 있어요.","있어요","to exist")];return q(`${first} ${second} 있어요.`,`There are ${nounEnglish(a)} and ${nounEnglish(b)}.`,[`${alt}.`],uses,"Join nouns with 와/과 or 하고; no additional vocabulary type is required."); }
+            case "locationTopic": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(places)||selectedEntry(contentNouns)||selectedEntry(nouns);b=selectedEntry(positions);c=differentEntry(contentNouns,a)||differentEntry(nouns,a)||selectedEntry(nouns);const loc=`${b.korean}에는`,sub=subject(c.korean);uses=[wordUse(a,a.korean,"This noun is the spatial reference point.",`Use ${a.korean} before the position word.`),wordUse(b,loc,"에는 combines location 에 with contrastive topic 는.",`${b.korean} + 에는 = ${loc}.`),particleUse(c,sub,hasBatchim(c.korean)?"이":"가","이/가 marks what exists there."),fixedUse("있다","있어요 expresses existence.","있다 becomes 있어요.","있어요","to exist")];return q(`${a.korean} ${loc} ${sub} 있어요.`,`As for ${nounEnglish(b)} the ${nounEnglish(a)}, there is ${nounEnglish(c)}.`,[],uses,"Use position + 에는 as the contrastive location, then N이/가 있어요."); }
+            case "possessive": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(pool,isPerson)||selectedEntry(contentNouns)||selectedEntry(pool,ownerLike);b=selectedEntry(contentNouns,entry=>entry.id!==a.id)||selectedEntry(contentNouns)||selectedEntry(nouns);const af=`${a.korean}의`,bp=copula(b.korean);uses=[wordUse(a,af,"의 connects an owner to the possessed noun.",`Attach 의: ${af}.`),wordUse(b,bp,"The possessed noun is identified with 이에요/예요.",`${b.korean} becomes ${bp}.`),fixedUse("이것","이것은 introduces the possessed item as the topic.","이것 + 은 contracts naturally as 이것은.","이것은","this thing")];return q(`이것은 ${af} ${bp}.`,`This is ${nounEnglish(a)}'s ${nounEnglish(b)}.`,[],uses,"Use owner + 의 + possessed noun."); }
+            case "b8Date": { const m=pick(MONTHS),d=1+Math.floor(Math.random()*28),withYear=Math.random()<.55,y=1940+Math.floor(Math.random()*87);const date=datePhrase(m,d),kor=withYear?`${compactSino(y)}년 ${date}이에요.`:`${date}이에요.`;uses=[literalUse(m.k,m.e,"calendar word","This is the Korean month name.",`Use ${m.k} for ${m.e}.`),literalUse(`${compactSino(d)}일`,`${d}th day`,"date counter","일 marks the day of the month.",`Day ${d} is ${compactSino(d)}일.`),fixedUse("이다","Attach 이에요 after the date expression.","The date ends in a final consonant, so use 이에요.","이에요","to be")];if(withYear)uses.unshift(literalUse(`${compactSino(y)}년`,String(y),"year expression","년 marks a year.",`${y} is ${compactSino(y)}년.`));return q(kor,withYear?`It is ${m.e} ${d}, ${y}.`:`It is ${m.e} ${d}.`,[],uses,"Read the year, month, and date with 년, 월, and 일."); }
+            case "b8Wh": { const mode=Math.floor(Math.random()*3);if(mode===0){a=selectedEntry(nouns,isEvent)||selectedEntry(nouns);const m=pick(MONTHS),d=1+Math.floor(Math.random()*28),sf=subject(a.korean);uses=[particleUse(a,sf,hasBatchim(a.korean)?"이":"가","이/가 marks the event whose date is asked."),fixedUse("언제","언제 asks when.","언제 does not change.","언제","when"),literalUse(datePhrase(m,d),`${m.e} ${d}`,"date","Answer with a month and day.",`${m.k} + ${compactSino(d)}일.`)];return q(`${sf} 언제예요? ${datePhrase(m,d)}이에요.`,`When is the ${nounEnglish(a)}? It is ${m.e} ${d}.`,[],uses,"Use 언제예요? for an event date.");}if(mode===1){a=selectedEntry(places)||selectedEntry(nouns);form=copula(a.korean);uses=[fixedUse("여기","여기 means this place/here.","여기 + 는 = 여기는.","여기는","here"),fixedUse("어디","어디 asks where.","Use 어디예요? as the location question.","어디예요","where"),wordUse(a,form,"Identify the place with 이에요/예요.",`${a.korean} becomes ${form}.`)];return q(`여기는 어디예요? ${form}.`,`Where is this place? It is ${identityEnglish(a)}.`,[],uses,"Ask 어디예요? and answer with the place noun plus copula.");}a=selectedEntry(nouns);form=copula(a.korean);uses=[fixedUse("저것","저건 refers to that thing over there.","저것 + 은 contracts to 저건.","저건","that over there"),fixedUse("뭐","뭐예요? asks what something is.","Use 뭐예요? as a fixed question.","뭐예요","what"),wordUse(a,form,"Identify the object with 이에요/예요.",`${a.korean} becomes ${form}.`)];return q(`저건 뭐예요? 저건 ${form}.`,`What is that over there? It is ${identityEnglish(a)}.`,[],uses,"Ask 뭐예요? and identify the object."); }
+            case "b8Myeot": { if(Math.random()<.62){a=selectedEntry(nouns,isEvent)||selectedEntry(nouns);const m=pick(MONTHS),d=1+Math.floor(Math.random()*28),sf=subject(a.korean);uses=[particleUse(a,sf,hasBatchim(a.korean)?"이":"가","이/가 marks the event."),fixedUse("몇","몇 asks how many/which number before a counter.","Use 몇 월 며칠 as a fixed date question.","몇 월 며칠","what month and date"),literalUse(datePhrase(m,d),`${m.e} ${d}`,"date","Answer with month + day.",`${m.k} ${compactSino(d)}일.`)];return q(`${sf} 몇 월 며칠이에요? ${datePhrase(m,d)}이에요.`,`What month and date is the ${nounEnglish(a)}? It is ${m.e} ${d}.`,[],uses,"Use 몇 before 월 and 며칠 to ask the date.");}a=selectedEntry(places)||selectedEntry(nouns);const floor=1+Math.floor(Math.random()*8),at=topic(a.korean),floorForm=`${compactSino(floor)} 층`;uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the place being located."),fixedUse("몇","몇 asks which numbered floor.","Use 몇 층.","몇 층","what floor"),literalUse(floorForm,`floor ${floor}`,"counter phrase","층 counts floors.",`${floor} is ${floorForm}.`)];return q(`${at} 몇 층에 있어요? ${floorForm}에 있어요.`,`What floor is the ${nounEnglish(a)} on? It is on floor ${floor}.`,[],uses,"Use 몇 + counter and answer with number + counter + 에."); }
+            case "b8DateE": { const useDate=Math.random()<.6,m=pick(MONTHS),d=1+Math.floor(Math.random()*28),weekday=pick(WEEKDAYS),act=actionPhrase(pool);const time=useDate?datePhrase(m,d):weekday.k,timeE=`${time}에`;uses=[literalUse(time,useDate?`${m.e} ${d}`:weekday.e,"time expression","에 marks when the action happens.",`Attach 에: ${timeE}.`,timeE),...(act?.uses||[])];return q(`${timeE} ${act.korean}.`,`On ${useDate?`${m.e} ${d}`:weekday.e}, I ${act.english}.`,[],uses,"Attach 에 to the date or weekday, then state the action."); }
+            case "b8Together": { const people=pool.filter(isPerson);a=selectedEntry(people)||selectedEntry(pool,ownerLike);b=differentEntry(people,a)||differentEntry(pool,a,ownerLike)||a;const act=actionPhrase(pool),together=Math.random()<.5?"같이":"함께",partner=Math.random()<.5?`${b.korean}하고`:andFormal(b.korean),at=topic(a.korean);uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the main person."),wordUse(b,partner,"하고 or 와/과 joins the partner.",`Use ${partner}.`),fixedUse(together,"같이 and 함께 mean together.",`${together} does not change.`,together,"together"),...(act?.uses||[])];return q(`${at} ${partner} ${together} ${act.korean}.`,`${nounEnglish(a)} and ${nounEnglish(b)} ${act.english} together.`,[],uses,"Join the partner with 하고/와/과, then add 같이 or 함께."); }
+            case "b9Clock": { const h=1+Math.floor(Math.random()*12),min=pick([0,5,10,15,20,25,30,35,40,45,50,55]),period=Math.random()<.35?pick(["오전","오후"]):"",clock=clockPhrase(h,min,period);uses=[literalUse(clock,englishClock(h,min,period),"time expression","Native-Korean numbers count hours; Sino-Korean numbers count minutes.",`The generated clock form is ${clock}.`),fixedUse("이다","Attach 이에요 after the complete time expression.","The time expression takes 이에요.","이에요","to be")];return q(`${clock}이에요.`,`It is ${englishClock(h,min,period)}.`,[],uses,"Use native-Korean hours and Sino-Korean minutes."); }
+            case "b9TimeE": { const h=1+Math.floor(Math.random()*12),min=pick([0,10,20,30,40,50]),clock=clockPhrase(h,min),act=actionPhrase(pool);uses=[fixedUse("몇","몇 시 asks what time.","Use 몇 시에 before an action question.","몇 시에","what time"),...(act?.uses||[]),literalUse(`${clock}에`,englishClock(h,min),"time expression","에 marks the time of the action.",`Attach 에: ${clock}에.`)];return q(`몇 시에 ${act.korean}? ${clock}에 ${act.korean}.`,`What time do you ${act.english}? I ${act.english} at ${englishClock(h,min)}.`,[],uses,"Ask 몇 시에 and answer with Time + 에."); }
+            case "b9Go": { const first=actionPhrase(pool,true),second=actionPhrase(pool,false);uses=[...(first?.uses||[]),...(second?.uses||[])];return q(`${first.korean} ${second.korean}.`,`I ${first.english} and ${second.english}.`,[],uses,"Attach -고 to the first action; conjugate the second action normally."); }
+            case "b9FromTo": { const mode=Math.floor(Math.random()*4),act=selectedEntry(verbs)||sharedEntry("공부하다");let start,end,engStart,engEnd;if(mode===0){const sh=1+Math.floor(Math.random()*8),eh=sh+1+Math.floor(Math.random()*(12-sh));start=clockPhrase(sh);end=clockPhrase(eh);engStart=englishClock(sh);engEnd=englishClock(eh);}else if(mode===1){const si=Math.floor(Math.random()*5),ei=si+1+Math.floor(Math.random()*(6-si));start=WEEKDAYS[si].k;end=WEEKDAYS[ei].k;engStart=WEEKDAYS[si].e;engEnd=WEEKDAYS[ei].e;}else if(mode===2){const m=pick(MONTHS),sd=1+Math.floor(Math.random()*14),ed=sd+1+Math.floor(Math.random()*(28-sd));start=`${m.k} ${compactSino(sd)}일`;end=`${m.k} ${compactSino(ed)}일`;engStart=`${m.e} ${sd}`;engEnd=`${m.e} ${ed}`;}else{const sy=2000+Math.floor(Math.random()*20),ey=sy+1+Math.floor(Math.random()*6);start=`${compactSino(sy)}년`;end=`${compactSino(ey)}년`;engStart=String(sy);engEnd=String(ey);}const vf=presentPolite(act.korean);uses=[literalUse(`${start}부터`,engStart,"range start","부터 marks the beginning of a range.",`Attach 부터: ${start}부터.`),literalUse(`${end}까지`,engEnd,"range end","까지 marks the end of a range.",`Attach 까지: ${end}까지.`),verbUse(act,vf,"Conjugate the action in polite present tense.")];return q(`${start}부터 ${end}까지 ${vf}.`,`I ${predicateEnglish(act)} from ${engStart} to ${engEnd}.`,[],uses,"Use N부터 for the start and N까지 for the end."); }
+            case "b9RangeQ": { const mode=Math.floor(Math.random()*3);if(mode===0){const h=1+Math.floor(Math.random()*12),clock=clockPhrase(h);uses=[fixedUse("몇","몇 시부터 asks from what time.","Use 몇 시부터.","몇 시부터","from what time"),literalUse(`${clock}부터`,englishClock(h),"range start","부터 marks the starting time.",`Attach 부터: ${clock}부터.`),fixedUse("수업","수업을 해요 means have class.","수업 + 을 + 해요.","수업을 해요","class")];return q(`몇 시부터 수업을 해요? ${clock}부터 수업을 해요.`,`From what time do you have class? I have class from ${englishClock(h)}.`,[],uses,"Ask with 몇 시부터 and answer with Time + 부터.");}if(mode===1){const wd=pick(WEEKDAYS);uses=[fixedUse("언제","언제까지 asks until when.","Attach 까지 to 언제 in the question.","언제까지","until when"),literalUse(`${wd.k}까지`,wd.e,"range end","까지 marks the ending day.",`Attach 까지: ${wd.k}까지.`),fixedUse("시험","시험이 있어요 means there is an exam.","시험 + 이 + 있어요.","시험이 있어요","exam")];return q(`언제까지 시험이 있어요? ${wd.k}까지 시험이 있어요.`,`Until when is there an exam? There is an exam until ${wd.e}.`,[],uses,"Ask 언제까지 and answer with day + 까지.");}const sh=10+Math.floor(Math.random()*2),sm=pick([0,30]),eh=Math.min(12,sh+1),start=clockPhrase(sh,sm),end=clockPhrase(eh,sm);uses=[fixedUse("몇","몇 시부터 몇 시까지 asks the full time range.","Use the complete range question.","몇 시부터 몇 시까지","from what time to what time"),literalUse(`${start}부터`,englishClock(sh,sm),"range start","부터 marks the starting time.",`Use ${start}부터.`),literalUse(`${end}까지`,englishClock(eh,sm),"range end","까지 marks the ending time.",`Use ${end}까지.`),fixedUse("점심시간","점심시간이에요 identifies the lunch period.","Attach 이에요.","점심시간이에요","lunch time")];return q(`몇 시부터 몇 시까지 점심시간이에요? ${start}부터 ${end}까지 점심시간이에요.`,`From what time to what time is lunch? Lunch is from ${englishClock(sh,sm)} to ${englishClock(eh,sm)}.`,[],uses,"Use 부터 and 까지 to define both ends of the range."); }
+            case "likes": { a=selectedEntry(nouns);const like=Math.random()<.65,base=like?"좋아하다":"싫어하다",vf=presentPolite(base),of=object(a.korean);uses=[particleUse(a,of,hasBatchim(a.korean)?"을":"를",`${base} takes a direct object marked with 을/를.`),fixedUse(base,`${base} expresses a preference and takes 을/를.`,`${base} becomes ${vf}.`,vf,like?"to like":"to dislike")];return q(`${of} ${vf}.`,`I ${like?"like":"dislike"} ${nounEnglish(a)}.`,[],uses,"Mark the preferred item with 을/를, then use 좋아해요 or 싫어해요."); }
+            case "and-link": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||differentEntry(predicates,a)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Add -고 to the first predicate."),verbUse(b,bf,"Conjugate the final predicate in polite present tense.")];return q(`${af} ${bf}.`,a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`,[],uses,"Use A/V-고 to join the predicates."); }
+            case "contrast": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||differentEntry(predicates,a)||a;const af=contrastJiman(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -지만 to introduce a contrast."),verbUse(b,bf,"Conjugate the second predicate normally.")];return q(`${af} ${bf}.`,a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)}, but ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)}, but I ${predicateEnglish(b)}.`,[],uses,"Use A/V-지만 on the first predicate to express contrast."); }
+            case "long-negation": { a=selectedEntry(predicates);form=longNegative(a.korean);uses=[verbUse(a,form,"Remove 다 and add -지 않아요 for long-form negation.")];return q(`${form}.`,a.partOfSpeech==="adjective"?`It is not ${predicateEnglish(a)}.`:`I do not ${predicateEnglish(a)}.`,[],uses,"Use A/V-지 않아요."); }
+            case "past-tense": { a=selectedEntry(predicates);form=pastPolite(a.korean);uses=[verbUse(a,form,"Conjugate the predicate with the polite past ending -았/었어요.")];return q(`${form}.`,a.partOfSpeech==="adjective"?`It was ${predicateEnglish(a)}.`:`I ${predicateEnglish(a)} in the past.`,[],uses,"Use the past tense -았/었어요."); }
+            default: { a=selectedEntry(pool)||selectedEntry(SHARED_LESSON_VOCAB);return q(a.korean,cleanEnglish(a),[],[wordUse(a,a.korean,"Use the shared-vocabulary base form.",`The form is ${a.korean}.`)],section?.form||"Translate the selected vocabulary item."); }
         }
     }
-    function sinoUnder(n) { const d = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"], u = ["", "십", "백", "천"]; let out = []; for (let pos = 3; pos >= 0; pos--) {
-        const p = 10 ** pos, v = Math.floor(n / p) % 10;
-        if (!v)
-            continue;
-        if (v !== 1 || pos === 0)
-            out.push(d[v]);
-        if (pos)
-            out.push(u[pos]);
-    } return out.join(" "); }
-    function sinoNumber(n) { const man = Math.floor(n / 10000), rest = n % 10000, parts = []; if (man) {
-        if (man !== 1)
-            parts.push(sinoUnder(man));
-        parts.push("만");
-    } if (rest)
-        parts.push(sinoUnder(rest)); return parts.join(" ") || "영"; }
+    function validateExercisePool(key,pool) {
+        const kind=kindForKey(key); if(!pool.length)return "Choose at least one compatible vocabulary group.";
+        const nouns=pool.filter(nounLike),verbs=pool.filter(entry=>entry.partOfSpeech==="verb"),adjs=pool.filter(entry=>entry.partOfSpeech==="adjective"),preds=pool.filter(predicateLike),places=nouns.filter(isPlace),positions=pool.filter(isPosition);
+        const need=(condition,message)=>condition?"":message;
+        if(["demonstratives","negativeCopula","likes"].includes(kind))return need(nouns.length>=1,"Choose at least one noun.");
+        if(kind==="negativeProfile")return need(pool.filter(isOccupation).length>=2||pool.filter(isCountry).length>=2,"Choose at least two occupations or at least two countries.");
+        if(["present"].includes(kind))return need(verbs.length>=1,"Choose at least one verb.");
+        if(["object","also","shortNegation"].includes(kind))return need(nouns.length>=1&&verbs.length>=1,"Choose at least one noun and one verb.");
+        if(["placeAction"].includes(kind))return need(nouns.length>=2&&verbs.length>=1,"Choose at least two nouns (including a place when possible) and one verb.");
+        if(kind==="destination")return need((places.length||nouns.length)>=1,"Choose at least one destination noun.");
+        if(kind==="andThen")return need(verbs.length>=1,"Choose at least one verb; nouns add richer clauses.");
+        if(["adjective","subjectAdjective","whatKind"].includes(kind))return need(nouns.length>=1&&adjs.length>=1,"Choose at least one noun and one adjective.");
+        if(kind==="bieup")return need(nouns.length>=1&&adjs.some(entry=>BIEUP_IRREGULAR.has(entry.korean)),"Choose at least one noun and one ㅂ-irregular adjective.");
+        if(kind==="weather")return need(adjs.length>=1,"Choose at least one weather or descriptive adjective.");
+        if(kind==="formal")return need(preds.length>=1,"Choose at least one verb or adjective.");
+        if(["clauseLink","and-link","contrast"].includes(kind))return need(preds.length>=2,"Choose at least two verbs or adjectives.");
+        if(["formalCopula","nounAnd","possessive"].includes(kind))return need(nouns.length>=2,"Choose at least two nouns.");
+        if(["location","locationTopic"].includes(kind))return need(nouns.length>=2&&positions.length>=1,"Choose at least two nouns and one position word (위, 아래, 앞, 뒤, 옆, 안, 밖, etc.).");
+        if(["b8Wh","b8Myeot"].includes(kind))return need(nouns.length>=1,"Choose at least one event, place, or object noun.");
+        if(["b8DateE","b9TimeE","b9Go"].includes(kind))return need(verbs.length>=1,"Choose at least one verb; nouns add fuller action phrases.");
+        if(kind==="b8Together")return need(verbs.length>=1&&pool.filter(isPerson).length>=2,"Choose at least one verb and two people/family words.");
+        if(["b9FromTo"].includes(kind))return need(verbs.length>=1,"Choose at least one verb for the range sentence.");
+        if(["long-negation","past-tense"].includes(kind))return need(preds.length>=1,"Choose at least one verb or adjective.");
+        return "";
+    }
     // -------------------------------------------------------------------------
     // Answer normalization and evaluation
     // -------------------------------------------------------------------------
@@ -2582,27 +1915,32 @@ tbody tr:last-child td {
     // Exercise templates and runtime state
     // -------------------------------------------------------------------------
     const STATES = new Map();
+    function vocabPickerTemplate(key) {
+        const config = configForKey(key);
+        const lessonCount = compatibleVocab(key, "lesson").length;
+        const relevant = compatibleVocab(key, "relevant");
+        const grouped = new Map();
+        relevant.forEach(entry => {
+            if (!grouped.has(entry.partOfSpeech)) grouped.set(entry.partOfSpeech, new Map());
+            const categoryMap = grouped.get(entry.partOfSpeech);
+            if (!categoryMap.has(entry.category)) categoryMap.set(entry.category, []);
+            categoryMap.get(entry.category).push(entry);
+        });
+        const typeGroups = [...grouped.entries()].sort(([a], [b]) => (POS_LABELS[a] || a).localeCompare(POS_LABELS[b] || b)).map(([part, categories]) => {
+            const total = [...categories.values()].reduce((sum, entries) => sum + entries.length, 0);
+            const leaves = [...categories.entries()].sort(([a], [b]) => labelName(a).localeCompare(labelName(b))).map(([category, entries]) => {
+                const keyValue = `${part}::${category}`;
+                return `<label class="vocab-leaf-option" data-vocab-group-option="${esc(keyValue)}"><input class="vocab-leaf" type="checkbox" value="${esc(keyValue)}" checked><span>${esc(labelName(category))}<small data-group-count="${esc(keyValue)}">${entries.length} relevant words</small></span></label>`;
+            }).join("");
+            return `<details class="vocab-type-group" data-part="${esc(part)}" open><summary><span>${esc(POS_LABELS[part] || part)} <span class="vocab-category-count">${total} relevant words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc((POS_LABELS[part] || part).toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
+        }).join("");
+        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend><div class="vocab-scope-grid"><label class="vocab-scope-option"><input type="radio" name="vocab-scope-${esc(key)}" value="lesson" checked><span>Only this Bab vocabulary<small>${lessonCount} compatible words</small></span></label><label class="vocab-scope-option"><input type="radio" name="vocab-scope-${esc(key)}" value="relevant"><span>All relevant words<small>${relevant.length} compatible words across Bab lessons</small></span></label></div><details class="vocab-tree" open><summary><span>Word types and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${typeGroups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
+    }
     function exerciseTemplate(key, title, description, defaultCount = 20) {
-        const isVocabulary = key === "vocabulary";
-        const categories = [...new Set(LESSON.vocab.map(v => v.category || "Other"))];
-        const categoryPicker = isVocabulary ? `<fieldset class="master-section-picker vocab-category-picker">
-          <legend>Categories included in vocabulary quiz</legend>
-          <div class="master-section-grid">
-            ${categories.map(category => {
-              const count = LESSON.vocab.filter(v => (v.category || "Other") === category).length;
-              return `<label class="master-section-option"><input type="checkbox" value="${esc(category)}" checked><span>${esc(category)} <span class="vocab-category-count">${count} words</span></span></label>`;
-            }).join("")}
-          </div>
-          <div class="master-section-actions">
-            <button class="btn secondary select-all-categories" type="button">Select all</button>
-            <button class="btn secondary clear-all-categories" type="button">Clear all</button>
-          </div>
-          <p class="menu-error hidden category-error">Choose at least one category.</p>
-        </fieldset>` : "";
-        const setupText = isVocabulary
-          ? "Choose the vocabulary categories, quiz mode, question count, and both languages."
-          : "Choose typed or multiple choice, the number of questions, both languages, and whether wrong answers should repeat.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${categoryPicker}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn primary start" type="button">Start exercise</button></div></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        const setupText = key === "vocabulary"
+          ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages."
+          : "Choose the shared vocabulary allowed in generated sentences, then configure the quiz.";
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn primary prepare" type="button">Generate question preview</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart with preview</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
     // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring
@@ -2689,92 +2027,398 @@ tbody tr:last-child td {
         });
 
         document.querySelectorAll("[data-theme-toggle]").forEach(btn => btn.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true)));
-        document.querySelectorAll(".exercise").forEach(initExercise);
-
-        const vocabExercise = document.getElementById("ex-vocabulary");
-        if (vocabExercise) {
-            const inputs = [...vocabExercise.querySelectorAll(".master-section-option input")];
-            const countInput = vocabExercise.querySelector(".menu-count");
-            const error = vocabExercise.querySelector(".category-error");
-            const syncCategories = () => {
-                const selected = new Set(inputs.filter(input => input.checked).map(input => input.value));
-                const total = LESSON.vocab.filter(v => selected.has(v.category || "Other")).length;
-                countInput.max = String(Math.max(1, Math.min(100, total * 2)));
-                if (Number(countInput.value) > Number(countInput.max)) countInput.value = countInput.max;
-                if (Number(countInput.value) < 1) countInput.value = String(Math.min(20, Math.max(1, total)));
-                error?.classList.toggle("hidden", total > 0);
-            };
-            inputs.forEach(input => input.addEventListener("change", syncCategories));
-            vocabExercise.querySelector(".select-all-categories")?.addEventListener("click", () => { inputs.forEach(input => { input.checked = true; }); syncCategories(); });
-            vocabExercise.querySelector(".clear-all-categories")?.addEventListener("click", () => { inputs.forEach(input => { input.checked = false; }); syncCategories(); });
-            syncCategories();
-        }
+        document.querySelectorAll(".exercise").forEach(el => {
+            initExercise(el);
+            initVocabPicker(el);
+        });
+    }
+    function vocabPoolFromSelection(el, key, savedSettings = null) {
+        const scope = savedSettings?.vocabScope || el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
+        const selectedGroups = new Set(savedSettings?.vocabGroups || [...el.querySelectorAll('.vocab-leaf:checked')].map(input => input.value));
+        return compatibleVocab(key, scope).filter(entry => selectedGroups.has(groupKey(entry)));
+    }
+    function syncTypeToggle(typeGroup) {
+        const visibleLeaves = [...typeGroup.querySelectorAll('.vocab-leaf')].filter(input => !input.closest('[data-vocab-group-option]').hidden);
+        const parent = typeGroup.querySelector('.vocab-type-toggle');
+        const checked = visibleLeaves.filter(input => input.checked).length;
+        parent.checked = visibleLeaves.length > 0 && checked === visibleLeaves.length;
+        parent.indeterminate = checked > 0 && checked < visibleLeaves.length;
+    }
+    function syncVocabPicker(el) {
+        const key = el.id.replace(/^ex-/, "");
+        const scope = el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
+        const active = compatibleVocab(key, scope);
+        const counts = new Map();
+        active.forEach(entry => counts.set(groupKey(entry), (counts.get(groupKey(entry)) || 0) + 1));
+        el.querySelectorAll('[data-vocab-group-option]').forEach(option => {
+            const group = option.dataset.vocabGroupOption;
+            const count = counts.get(group) || 0;
+            option.hidden = count === 0;
+            const counter = option.querySelector('[data-group-count]');
+            if (counter) counter.textContent = `${count} ${scope === "lesson" ? "Bab" : "relevant"} words`;
+        });
+        el.querySelectorAll('.vocab-type-group').forEach(typeGroup => {
+            const visible = [...typeGroup.querySelectorAll('[data-vocab-group-option]')].some(option => !option.hidden);
+            typeGroup.hidden = !visible;
+            if (visible) syncTypeToggle(typeGroup);
+        });
+        const pool = vocabPoolFromSelection(el, key);
+        const validation = validateExercisePool(key, pool);
+        el.querySelector('.vocab-selected-count').textContent = String(pool.length);
+        const error = el.querySelector('.vocab-pool-error');
+        error.textContent = validation;
+        error.classList.toggle('hidden', !validation);
+        const countInput = el.querySelector('.menu-count');
+        const max = key === "vocabulary" ? Math.max(1, Math.min(100, pool.length * 2)) : 100;
+        countInput.max = String(max);
+        if (Number(countInput.value) > max) countInput.value = String(max);
+        if (Number(countInput.value) < 1) countInput.value = "1";
+        return pool;
+    }
+    function initVocabPicker(el) {
+        el.querySelectorAll('.vocab-scope-option input').forEach(input => input.addEventListener('change', () => syncVocabPicker(el)));
+        el.querySelectorAll('.vocab-leaf').forEach(input => input.addEventListener('change', () => {
+            syncTypeToggle(input.closest('.vocab-type-group'));
+            syncVocabPicker(el);
+        }));
+        el.querySelectorAll('.vocab-type-toggle').forEach(parent => parent.addEventListener('change', () => {
+            parent.closest('.vocab-type-group').querySelectorAll('.vocab-leaf').forEach(input => {
+                if (!input.closest('[data-vocab-group-option]').hidden) input.checked = parent.checked;
+            });
+            syncVocabPicker(el);
+        }));
+        el.querySelector('.vocab-select-all')?.addEventListener('click', () => {
+            el.querySelectorAll('.vocab-leaf').forEach(input => {
+                if (!input.closest('[data-vocab-group-option]').hidden) input.checked = true;
+            });
+            syncVocabPicker(el);
+        });
+        el.querySelector('.vocab-clear-all')?.addEventListener('click', () => {
+            el.querySelectorAll('.vocab-leaf').forEach(input => {
+                if (!input.closest('[data-vocab-group-option]').hidden) input.checked = false;
+            });
+            syncVocabPicker(el);
+        });
+        syncVocabPicker(el);
     }
     function initExercise(el) {
         const key = el.id.replace(/^ex-/, "");
         const section = LESSON.sections.find(s => s.id === key);
         const isVocabulary = key === "vocabulary";
-        const state = { key, section, isVocabulary, generator: null, vocabPool: [], questions: [], i: 0, score: 0, results: [], done: false, finished: false, settings: null, currentAttempts: [], currentHadWrong: false, retryCurrent: false };
+        const state = {
+            key, section, isVocabulary,
+            generator: null,
+            vocabPool: [], questions: [], i: 0, results: [],
+            independentScore: 0, assistedScore: 0,
+            done: false, finished: false, settings: null, previewReady: false,
+            currentAttempts: [], currentHadWrong: false, currentAssisted: false,
+            currentAnswerRevealed: false, currentLookupLevels: new Map(), retryCurrent: false,
+            seenHintEvents: new Set(), lookupStats: new Map(), revealStats: new Map()
+        };
         state.generator = isVocabulary
-            ? () => { const v = pick(state.vocabPool.length ? state.vocabPool : LESSON.vocab); return q(v.korean, v.english); }
-            : () => generate(section.generator);
+            ? () => {
+                const v = pick(state.vocabPool);
+                return q(v.korean, cleanEnglish(v), [], [wordUse(v, v.korean, "Recall the shared-vocabulary base form.", `Use the base form exactly as listed: ${v.korean}.`)], "Translate the selected shared-vocabulary item.");
+            }
+            : () => generate(section.generator || section.id, state.vocabPool, section);
         STATES.set(key, state);
-        el.querySelector(".start").onclick = () => start(el, state);
+        el.querySelector(".prepare").onclick = () => preparePreview(el, state);
+        el.querySelector(".regenerate").onclick = () => preparePreview(el, state);
+        el.querySelector(".begin-exercise").onclick = () => beginExercise(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
         el.querySelector(".next").onclick = () => next(el, state);
-        el.querySelector(".restart-same").onclick = () => start(el, state, true);
-        el.querySelector(".change-setup").onclick = () => showSetup(el, state);
+        el.querySelector(".restart-same").onclick = () => {
+            showSetup(el, state, true);
+            preparePreview(el, state, true);
+        };
+        el.querySelector(".change-setup").onclick = () => showSetup(el, state, false);
+        el.querySelector(".exercise-menu").addEventListener("change", event => {
+            if (event.target.matches("input, select")) invalidatePreview(el, state);
+        });
     }
-    function start(el, state, reuse = false) {
-        let settings;
-        if (reuse && state.settings) {
-            settings = state.settings;
-        } else {
-            const selectedCategories = state.isVocabulary
-                ? [...el.querySelectorAll(".master-section-option input:checked")].map(input => input.value)
-                : [];
-            if (state.isVocabulary && !selectedCategories.length) {
-                el.querySelector(".category-error")?.classList.remove("hidden");
-                return;
+    function invalidatePreview(el, state) {
+        state.previewReady = false;
+        el.querySelector(".question-preview").classList.add("hidden");
+    }
+    function readSettings(el, state, reuse = false) {
+        if (reuse && state.settings) return { ...state.settings, vocabGroups: [...state.settings.vocabGroups] };
+        return {
+            mode: el.querySelector(".menu-mode").value,
+            count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)),
+            qLang: el.querySelector(".menu-q").value,
+            aLang: el.querySelector(".menu-a").value,
+            repeatWrong: Boolean(el.querySelector(".menu-repeat-wrong")?.checked),
+            vocabScope: el.querySelector('.vocab-scope-option input:checked')?.value || "lesson",
+            vocabGroups: [...el.querySelectorAll('.vocab-leaf:checked')].map(input => input.value)
+        };
+    }
+    function makeChoiceOptions(state, question) {
+        const lang = state.settings.aLang;
+        const options = [{ value: question[lang], uses: question.vocabUses || [] }];
+        let tries = 0;
+        while (options.length < 4 && tries < 80) {
+            tries++;
+            const other = state.generator();
+            const value = other[lang];
+            if (!options.some(option => normalize(option.value, lang) === normalize(value, lang))) {
+                options.push({ value, uses: other.vocabUses || [] });
             }
-            settings = {
-                mode: el.querySelector(".menu-mode").value,
-                count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)),
-                qLang: el.querySelector(".menu-q").value,
-                aLang: el.querySelector(".menu-a").value,
-                repeatWrong: Boolean(el.querySelector(".menu-repeat-wrong")?.checked),
-                categories: selectedCategories
-            };
         }
+        question.choiceOptions = shuffle(options);
+        question.optionVocabUses = dedupeUses(question.choiceOptions.flatMap(option => option.uses || []));
+    }
+    function allQuestionUses(question) {
+        return dedupeUses([...(question.vocabUses || []), ...(question.optionVocabUses || [])]);
+    }
+    function renderPreview(el, state) {
+        const panel = el.querySelector(".question-preview");
+        const aggregate = new Map();
+        state.questions.forEach((question, questionIndex) => {
+            const seen = new Set();
+            allQuestionUses(question).forEach(use => {
+                const key = wordUseKey(use);
+                if (!aggregate.has(key)) aggregate.set(key, { use, forms: new Set(), questions: new Set() });
+                const item = aggregate.get(key);
+                (use.forms || []).forEach(form => item.forms.add(form));
+                if (!seen.has(key)) item.questions.add(questionIndex);
+                seen.add(key);
+            });
+        });
+        const words = [...aggregate.values()].sort((a, b) => a.use.korean.localeCompare(b.use.korean, "ko"));
+        panel.querySelector(".preview-summary").innerHTML = `<span>${state.questions.length} questions</span><span>${words.length} exact vocabulary bases</span><span>${state.settings.mode === "mc" ? "Includes choice-option vocabulary" : "Typed-answer set"}</span>`;
+        panel.querySelector(".preview-word-list").innerHTML = words.map(item => `<div class="preview-word"><strong>${esc(item.use.korean)} <span class="roman">${esc(item.use.romanization)}</span></strong>${esc(item.use.english)}<small>Forms: ${esc([...item.forms].join(" · ") || item.use.korean)} · appears in ${item.questions.size} question${item.questions.size === 1 ? "" : "s"}</small></div>`).join("");
+        panel.classList.remove("hidden");
+        panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    function preparePreview(el, state, reuse = false) {
+        const settings = readSettings(el, state, reuse);
+        state.vocabPool = vocabPoolFromSelection(el, state.key, settings);
+        const validation = validateExercisePool(state.key, state.vocabPool);
+        const error = el.querySelector('.vocab-pool-error');
+        error.textContent = validation;
+        error.classList.toggle('hidden', !validation);
+        if (validation) return;
+        if (settings.qLang === settings.aLang) {
+            const fallback = settings.aLang === "korean" ? "english" : "korean";
+            settings.qLang = fallback;
+            el.querySelector(".menu-q").value = fallback;
+        }
+        const max = state.isVocabulary ? Math.max(1, Math.min(100, state.vocabPool.length * 2)) : 100;
+        settings.count = Math.max(1, Math.min(max, settings.count));
+        el.querySelector(".menu-count").max = String(max);
+        el.querySelector(".menu-count").value = String(settings.count);
         state.settings = settings;
-        if (state.isVocabulary) {
-            const selected = new Set(settings.categories);
-            state.vocabPool = LESSON.vocab.filter(v => selected.has(v.category || "Other"));
-            if (!state.vocabPool.length) {
-                el.querySelector(".category-error")?.classList.remove("hidden");
-                return;
-            }
-            const max = Math.max(1, Math.min(100, state.vocabPool.length * 2));
-            settings.count = Math.max(1, Math.min(max, settings.count));
-            el.querySelector(".menu-count").max = String(max);
-            el.querySelector(".menu-count").value = String(settings.count);
-            el.querySelector(".category-error")?.classList.add("hidden");
-        }
         state.questions = buildSet(state.generator, settings.count);
+        if (settings.mode === "mc") state.questions.forEach(question => makeChoiceOptions(state, question));
+        state.previewReady = true;
+        renderPreview(el, state);
+    }
+    function resetRunState(state) {
         state.i = 0;
-        state.score = 0;
         state.results = [];
+        state.independentScore = 0;
+        state.assistedScore = 0;
         state.done = false;
         state.finished = false;
         state.currentAttempts = [];
         state.currentHadWrong = false;
+        state.currentAssisted = false;
+        state.currentAnswerRevealed = false;
+        state.currentLookupLevels = new Map();
         state.retryCurrent = false;
+        state.seenHintEvents = new Set();
+        state.lookupStats = new Map();
+        state.revealStats = new Map();
+    }
+    function beginExercise(el, state) {
+        if (!state.previewReady || !state.questions.length) return;
+        resetRunState(state);
         el.querySelector(".exercise-menu").classList.add("hidden");
         el.querySelector(".finish").style.display = "none";
         el.querySelector(".live").classList.remove("hidden");
         showQuestion(el, state);
     }
-    function showSetup(el, state) { state.finished = true; el.querySelector(".live").classList.add("hidden"); el.querySelector(".finish").style.display = "none"; el.querySelector(".exercise-menu").classList.remove("hidden"); el.querySelector(".score").textContent = "Not started"; }
+    function showSetup(el, state, keepSettings = false) {
+        state.finished = true;
+        el.querySelector(".live").classList.add("hidden");
+        el.querySelector(".finish").style.display = "none";
+        el.querySelector(".exercise-menu").classList.remove("hidden");
+        el.querySelector(".score").textContent = "Not started";
+        if (!keepSettings) invalidatePreview(el, state);
+    }
+    function scoreText(state) {
+        return `Independent: ${state.independentScore}<br>Assisted: ${state.assistedScore}`;
+    }
+    function hintText(use, level, question) {
+        if (level === 1) return `<strong>${esc(use.korean)}</strong> · <span class="roman">${esc(use.romanization)}</span><br>${esc(use.english)}`;
+        if (level === 2) return esc((use.grammar || []).join(" ") || question.grammarRule || "Use the vocabulary according to this section's grammar pattern.");
+        return esc((use.formHelp || []).join(" ") || `Form in this sentence: ${(use.forms || [use.korean]).join(" / ")}.`);
+    }
+    function registerHint(state, use, level) {
+        state.currentAssisted = true;
+        const key = wordUseKey(use);
+        if (!state.currentLookupLevels.has(key)) state.currentLookupLevels.set(key, new Set());
+        state.currentLookupLevels.get(key).add(level);
+        const eventKey = `${state.i}:${key}:${level}`;
+        if (state.seenHintEvents.has(eventKey)) return;
+        state.seenHintEvents.add(eventKey);
+        if (!state.lookupStats.has(key)) state.lookupStats.set(key, { use, questions: new Set(), levels: new Set(), hintViews: 0 });
+        const stat = state.lookupStats.get(key);
+        stat.questions.add(state.i);
+        stat.levels.add(level);
+        stat.hintViews++;
+    }
+    function registerReveal(state, question) {
+        state.currentAssisted = true;
+        state.currentAnswerRevealed = true;
+        (question.vocabUses || []).forEach(use => {
+            const key = wordUseKey(use);
+            if (!state.revealStats.has(key)) state.revealStats.set(key, { use, questions: new Set() });
+            state.revealStats.get(key).questions.add(state.i);
+        });
+    }
+    function promptCandidates(use, lang) {
+        const forms = [...new Set([...(use.forms || []), use.korean].filter(Boolean))];
+        if (lang === "korean") return forms;
+        if (lang === "romanization") return [...new Set([
+            ...forms.map(form => romanizeKorean(form)),
+            use.romanization
+        ].filter(Boolean))];
+        const english = String(use.english || "").trim();
+        const variants = [english];
+        if (/^to\s+/i.test(english)) variants.push(english.replace(/^to\s+/i, ""));
+        return [...new Set(variants.filter(Boolean))];
+    }
+    function boundaryMatch(text, start, length, lang) {
+        if (lang === "korean") return true;
+        const before = start > 0 ? text[start - 1] : "";
+        const after = start + length < text.length ? text[start + length] : "";
+        const first = text[start] || "", last = text[start + length - 1] || "";
+        const wordChar = ch => /[A-Za-z0-9가-힣]/.test(ch);
+        return !(wordChar(first) && wordChar(before)) && !(wordChar(last) && wordChar(after));
+    }
+    function promptMatches(question, lang) {
+        const text = String(question[lang] || "");
+        const haystack = lang === "korean" ? text : text.toLocaleLowerCase();
+        const candidates = [];
+        (question.vocabUses || []).forEach((use, useIndex) => {
+            promptCandidates(use, lang).forEach(value => {
+                const surface = String(value || "").trim();
+                if (surface) candidates.push({ use, useIndex, surface, needle: lang === "korean" ? surface : surface.toLocaleLowerCase() });
+            });
+        });
+        candidates.sort((a, b) => b.needle.length - a.needle.length);
+        const occupied = new Array(text.length).fill(false), matches = [];
+        candidates.forEach(candidate => {
+            let from = 0;
+            while (from <= haystack.length - candidate.needle.length) {
+                const start = haystack.indexOf(candidate.needle, from);
+                if (start < 0) break;
+                const end = start + candidate.needle.length;
+                const free = occupied.slice(start, end).every(value => !value);
+                if (free && boundaryMatch(text, start, candidate.needle.length, lang)) {
+                    matches.push({ ...candidate, start, end });
+                    for (let i = start; i < end; i++) occupied[i] = true;
+                }
+                from = start + Math.max(1, candidate.needle.length);
+            }
+        });
+        return matches.sort((a, b) => a.start - b.start || b.end - a.end);
+    }
+    function hintPopover(use, useIndex, state) {
+        const key = wordUseKey(use);
+        const opened = state.currentLookupLevels.get(key) || new Set();
+        const levels = ["Vocabulary", "Grammar rule", "Form & particle help"];
+        return `<span class="vocab-popover" role="dialog" aria-label="Optional hint levels"><span class="vocab-popover-heading"><strong>Optional hints</strong><small>${opened.size ? "Revealed hints count as assistance" : "Nothing revealed yet"}</small></span><span class="hint-levels">${levels.map((label, index) => {
+            const level = index + 1, isOpen = opened.has(level);
+            return `<button class="hint-step${isOpen ? " is-open" : ""}" type="button" data-use-index="${useIndex}" data-hint-level="${level}" aria-expanded="${isOpen}">Level ${level} · ${label}</button><span class="hint-content${isOpen ? " is-open" : ""}" data-hint-content="${level}">${isOpen ? hintText(use, level, state.questions[state.i]) : ""}</span>`;
+        }).join("")}</span></span>`;
+    }
+    function renderPromptWithHints(el, state, question) {
+        const prompt = el.querySelector(".prompt"), lang = state.settings.qLang;
+        const text = String(question[lang] || ""), uses = question.vocabUses || [];
+        const matches = promptMatches(question, lang);
+        let cursor = 0, html = "";
+        matches.forEach(match => {
+            html += esc(text.slice(cursor, match.start));
+            html += `<span class="vocab-token" tabindex="0" data-use-index="${match.useIndex}"><span class="vocab-surface">${esc(text.slice(match.start, match.end))}</span>${hintPopover(match.use, match.useIndex, state)}</span>`;
+            cursor = match.end;
+        });
+        html += esc(text.slice(cursor));
+        prompt.innerHTML = html;
+        const legend = el.querySelector(".prompt-hint-legend");
+        legend.classList.toggle("is-visible", matches.length > 0);
+        prompt.querySelectorAll(".vocab-token").forEach(token => {
+            const positionPopover = () => {
+                const popover = token.querySelector(".vocab-popover");
+                if (!popover) return;
+                requestAnimationFrame(() => {
+                    const tokenRect = token.getBoundingClientRect();
+                    const popRect = popover.getBoundingClientRect();
+                    const margin = 12, gap = 12;
+                    let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+                    left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+                    let top = tokenRect.top - popRect.height - gap;
+                    let below = false;
+                    if (top < margin) { top = tokenRect.bottom + gap; below = true; }
+                    top = Math.max(margin, Math.min(top, window.innerHeight - popRect.height - margin));
+                    popover.style.left = `${Math.round(left)}px`;
+                    popover.style.top = `${Math.round(top)}px`;
+                    popover.style.setProperty("--arrow-left", `${Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left))}px`);
+                    popover.classList.toggle("is-below", below);
+                });
+            };
+            token.addEventListener("mouseenter", positionPopover);
+            token.addEventListener("focusin", positionPopover);
+            token.addEventListener("click", event => {
+                if (event.target.closest(".hint-step")) return;
+                event.stopPropagation();
+                token.classList.toggle("is-pinned");
+                positionPopover();
+            });
+            token.querySelector(".vocab-popover")?.addEventListener("click", event => event.stopPropagation());
+        });
+        prompt.querySelectorAll(".hint-step").forEach(button => {
+            button.addEventListener("click", () => {
+                const use = uses[Number(button.dataset.useIndex)];
+                const level = Number(button.dataset.hintLevel);
+                if (!use) return;
+                registerHint(state, use, level);
+                button.classList.add("is-open");
+                button.setAttribute("aria-expanded", "true");
+                const content = button.nextElementSibling;
+                if (content?.classList.contains("hint-content")) {
+                    content.innerHTML = hintText(use, level, question);
+                    content.classList.add("is-open");
+                }
+                const headingNote = button.closest(".vocab-popover")?.querySelector(".vocab-popover-heading small");
+                if (headingNote) headingNote.textContent = "Revealed hints count as assistance";
+                button.closest(".vocab-token")?.classList.add("is-pinned");
+                positionPopover();
+                el.querySelector(".assistant-status").innerHTML = `<span class="assistance-used">Assistance used</span>`;
+                el.querySelector(".score").innerHTML = scoreText(state);
+            });
+        });
+        prompt.onclick = event => {
+            if (!event.target.closest(".vocab-token")) prompt.querySelectorAll(".vocab-token.is-pinned").forEach(token => token.classList.remove("is-pinned"));
+        };
+    }
+    function renderAssistant(el, state, question) {
+        renderPromptWithHints(el, state, question);
+        const revealButton = el.querySelector(".reveal-answer");
+        const revealed = el.querySelector(".revealed-answer");
+        revealButton.disabled = state.currentAnswerRevealed;
+        revealed.classList.toggle("hidden", !state.currentAnswerRevealed);
+        revealed.innerHTML = state.currentAnswerRevealed ? `<strong>Answer:</strong><br>${pretty(question)}` : "";
+        revealButton.onclick = () => {
+            if (state.done || state.currentAnswerRevealed) return;
+            registerReveal(state, question);
+            revealed.innerHTML = `<strong>Answer:</strong><br>${pretty(question)}`;
+            revealed.classList.remove("hidden");
+            revealButton.disabled = true;
+            el.querySelector(".assistant-status").innerHTML = `<span class="assistance-used">Answer revealed · assisted</span>`;
+        };
+    }
     function showQuestion(el, state, isRetry = false) {
         if (state.finished) return;
         const question = state.questions[state.i], S = state.settings;
@@ -2782,16 +2426,20 @@ tbody tr:last-child td {
         if (!isRetry) {
             state.currentAttempts = [];
             state.currentHadWrong = false;
+            state.currentAssisted = false;
+            state.currentAnswerRevealed = false;
+            state.currentLookupLevels = new Map();
             state.retryCurrent = false;
         }
         el.querySelector(".count").textContent = `Question ${state.i + 1} / ${state.questions.length}${isRetry ? " · retry" : ""}`;
         el.querySelector(".mode-label").textContent = S.mode === "typed" ? "Typed" : "Multiple choice";
-        el.querySelector(".score").textContent = `Score: ${state.score}`;
+        el.querySelector(".score").innerHTML = scoreText(state);
         const pct = state.i / state.questions.length * 100;
         el.querySelector(".progress>div").style.width = `${pct}%`;
         el.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(pct)));
         el.querySelector(".prompt-label").textContent = `${S.qLang} → ${S.aLang}`;
-        el.querySelector(".prompt").textContent = question[S.qLang];
+        el.querySelector(".assistant-status").textContent = state.currentAssisted ? "Assistance has already been used on this retry." : "No assistance used on this question.";
+        renderAssistant(el, state, question);
         const feedback = el.querySelector(".feedback");
         feedback.className = "feedback";
         feedback.innerHTML = "";
@@ -2821,15 +2469,8 @@ tbody tr:last-child td {
             });
             requestAnimationFrame(() => input.focus({ preventScroll: true }));
         } else {
-            const correct = question[S.aLang];
-            let options = [correct], tries = 0;
-            while (options.length < 4 && tries < 50) {
-                tries++;
-                const other = state.generator()[S.aLang];
-                if (!options.some(x => normalize(x, S.aLang) === normalize(other, S.aLang))) options.push(other);
-            }
-            options = shuffle(options);
-            zone.innerHTML = `<div class="choices">${options.map(o => `<button class="choice" data-value="${esc(o)}" type="button">${esc(o)}</button>`).join("")}</div>`;
+            const options = question.choiceOptions || [{ value: question[S.aLang] }];
+            zone.innerHTML = `<div class="choices">${options.map(option => `<button class="choice" data-value="${esc(option.value)}" type="button">${esc(option.value)}</button>`).join("")}</div>`;
             zone.querySelectorAll(".choice").forEach(btn => btn.onclick = () => {
                 if (state.done) return;
                 const value = btn.dataset.value, ok = isCorrect(question, value, S.aLang);
@@ -2839,11 +2480,37 @@ tbody tr:last-child td {
             });
         }
     }
-    function submitTyped(el, state, value) { if (state.done)
-        return; const question = state.questions[state.i], ok = isCorrect(question, value, state.settings.aLang); complete(el, state, value, ok); const input = el.querySelector(".answer"); if (input) {
-        input.readOnly = true;
-        requestAnimationFrame(() => input.focus({ preventScroll: true }));
-    } }
+    function submitTyped(el, state, value) {
+        if (state.done) return;
+        const question = state.questions[state.i], ok = isCorrect(question, value, state.settings.aLang);
+        complete(el, state, value, ok);
+        const input = el.querySelector(".answer");
+        if (input) {
+            input.readOnly = true;
+            requestAnimationFrame(() => input.focus({ preventScroll: true }));
+        }
+    }
+    function serializedLookups(state) {
+        const out = {};
+        state.currentLookupLevels.forEach((levels, key) => { out[key] = [...levels].sort(); });
+        return out;
+    }
+    function makeResult(state, question, value, classification, extra = {}) {
+        return {
+            question,
+            questionIndex: state.i,
+            value,
+            ok: classification !== "missed",
+            classification,
+            masteredAfterRetry: state.currentHadWrong && classification === "assisted",
+            attempts: [...state.currentAttempts],
+            hadError: state.currentHadWrong || classification === "missed",
+            assisted: state.currentAssisted || classification === "assisted",
+            answerRevealed: state.currentAnswerRevealed,
+            lookupLevels: serializedLookups(state),
+            ...extra
+        };
+    }
     function complete(el, state, value, ok) {
         if (state.done || state.finished) return;
         state.done = true;
@@ -2851,26 +2518,27 @@ tbody tr:last-child td {
         state.currentAttempts.push({ value, ok });
         const question = state.questions[state.i];
         const f = el.querySelector(".feedback");
-
         if (ok) {
-            if (!state.currentHadWrong) state.score++;
-            state.results.push({ question, value, ok: !state.currentHadWrong, masteredAfterRetry: state.currentHadWrong, attempts: [...state.currentAttempts] });
+            const assisted = state.currentAssisted || state.currentHadWrong;
+            const classification = assisted ? "assisted" : "independent";
+            if (assisted) state.assistedScore++; else state.independentScore++;
+            state.results.push(makeResult(state, question, value, classification));
             state.retryCurrent = false;
             f.className = "feedback good";
-            f.innerHTML = `${state.currentHadWrong ? "Correct on retry." : "Correct."}<br>${pretty(question)}`;
+            f.innerHTML = `${classification === "independent" ? "Correct independently." : (state.currentHadWrong ? "Correct on retry · assisted." : "Correct with assistance.")}<br>${pretty(question)}`;
         } else {
             state.currentHadWrong = true;
+            state.currentAssisted = true;
             f.className = "feedback bad";
             f.innerHTML = `Not quite.<br>${pretty(question)}`;
             if (state.settings.repeatWrong) {
                 state.retryCurrent = true;
             } else {
-                state.results.push({ question, value, ok: false, masteredAfterRetry: false, attempts: [...state.currentAttempts] });
+                state.results.push(makeResult(state, question, value, "missed"));
                 state.retryCurrent = false;
             }
         }
-
-        el.querySelector(".score").textContent = `Score: ${state.score}`;
+        el.querySelector(".score").innerHTML = scoreText(state);
         const nextBtn = el.querySelector(".next");
         nextBtn.textContent = state.retryCurrent ? "Retry question" : (state.i === state.questions.length - 1 ? "Finish" : "Next");
         nextBtn.classList.remove("hidden");
@@ -2888,11 +2556,35 @@ tbody tr:last-child td {
             finish(el, state, "Exercise complete");
         }
     }
+    function personalizedVocabulary(state) {
+        const merged = new Map();
+        const ensure = use => {
+            const key = wordUseKey(use);
+            if (!merged.has(key)) merged.set(key, { use, lookupQuestions: new Set(), hintViews: 0, levels: new Set(), revealQuestions: new Set(), errorQuestions: new Set() });
+            return merged.get(key);
+        };
+        state.lookupStats.forEach(stat => {
+            const item = ensure(stat.use);
+            stat.questions.forEach(index => item.lookupQuestions.add(index));
+            stat.levels.forEach(level => item.levels.add(level));
+            item.hintViews += stat.hintViews;
+        });
+        state.revealStats.forEach(stat => {
+            const item = ensure(stat.use);
+            stat.questions.forEach(index => item.revealQuestions.add(index));
+        });
+        state.results.filter(result => result.hadError).forEach(result => {
+            (result.question.vocabUses || []).forEach(use => ensure(use).errorQuestions.add(result.questionIndex));
+        });
+        return [...merged.values()]
+            .filter(item => item.lookupQuestions.size || item.revealQuestions.size || item.errorQuestions.size)
+            .sort((a, b) => b.errorQuestions.size - a.errorQuestions.size || b.lookupQuestions.size - a.lookupQuestions.size || a.use.korean.localeCompare(b.use.korean, "ko"));
+    }
     function finish(el, state, title) {
         if (state.finished) return;
         if (state.retryCurrent && state.currentAttempts?.length) {
             const last = state.currentAttempts[state.currentAttempts.length - 1];
-            state.results.push({ question: state.questions[state.i], value: last.value, ok: false, masteredAfterRetry: false, attempts: [...state.currentAttempts] });
+            state.results.push(makeResult(state, state.questions[state.i], last.value, "missed"));
             state.retryCurrent = false;
         }
         state.finished = true;
@@ -2900,12 +2592,22 @@ tbody tr:last-child td {
         const fin = el.querySelector(".finish");
         fin.style.display = "block";
         fin.querySelector("h4").textContent = title;
-        const answered = state.results.length, pct = answered ? Math.round(state.score / answered * 100) : 0;
-        fin.querySelector(".summary").innerHTML = answered ? `First-try score: <strong>${state.score} / ${answered}</strong> (${pct}%). ${answered} of ${state.questions.length} questions answered.` : "No questions were answered.";
-        fin.querySelector(".review").innerHTML = state.results.map((r, i) => {
-            const attempts = (r.attempts || [{ value: r.value, ok: r.ok }]).map((a, index) => `${index + 1}: ${a.value || "(blank)"}${a.ok ? " ✓" : " ✗"}`).join(" · ");
-            const status = r.masteredAfterRetry ? "Mastered on retry" : (r.ok ? "Correct" : "Review");
-            return `<div class="review-item"><strong>${i + 1}. ${status}</strong>Your attempts: ${esc(attempts)}<br>${pretty(r.question)}</div>`;
+        const answered = state.results.length;
+        const missed = state.results.filter(result => result.classification === "missed").length;
+        fin.querySelector(".summary").innerHTML = answered
+            ? `Independent correct: <strong>${state.independentScore}</strong> · Assisted correct: <strong>${state.assistedScore}</strong> · Missed: <strong>${missed}</strong>. ${answered} of ${state.questions.length} questions completed.`
+            : "No questions were completed.";
+        const personalized = personalizedVocabulary(state);
+        fin.querySelector(".personalized-vocab-list").innerHTML = personalized.length ? personalized.map(item => `<div class="personalized-word"><div><strong>${esc(item.use.korean)} <span class="roman">${esc(item.use.romanization)}</span></strong>${esc(item.use.english)}<small>${esc(item.use.partOfSpeech || "vocabulary")}</small></div><div class="frequency-line">Hint lookups: ${item.lookupQuestions.size} question${item.lookupQuestions.size === 1 ? "" : "s"} / ${item.hintViews} level view${item.hintViews === 1 ? "" : "s"}<br>Answer reveals: ${item.revealQuestions.size}<br>Error frequency: ${item.errorQuestions.size} question${item.errorQuestions.size === 1 ? "" : "s"}${item.levels.size ? `<br>Levels used: ${[...item.levels].sort().join(", ")}` : ""}</div></div>`).join("") : `<p>No vocabulary lookups or errors were recorded.</p>`;
+        fin.querySelector(".review").innerHTML = state.results.map((result, index) => {
+            const attempts = (result.attempts || [{ value: result.value, ok: result.ok }]).map((attempt, attemptIndex) => `${attemptIndex + 1}: ${attempt.value || "(blank)"}${attempt.ok ? " ✓" : " ✗"}`).join(" · ");
+            const status = result.classification === "independent" ? "Independent correct" : (result.classification === "assisted" ? "Assisted correct" : "Missed");
+            const looked = Object.entries(result.lookupLevels || {}).map(([key, levels]) => {
+                const use = (result.question.vocabUses || []).find(item => wordUseKey(item) === key);
+                return `${use?.korean || key} (levels ${levels.join(", ")})`;
+            }).join(" · ");
+            const assistance = [looked ? `Hints: ${looked}` : "", result.answerRevealed ? "Answer revealed" : ""].filter(Boolean).join(" · ");
+            return `<div class="review-item"><strong>${index + 1}. ${status}</strong>Your attempts: ${esc(attempts)}${assistance ? `<br>Assistance: ${esc(assistance)}` : ""}<br>${pretty(result.question)}</div>`;
         }).join("");
         fin.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
