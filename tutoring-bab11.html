@@ -896,6 +896,27 @@ tbody tr:last-child td {
   font-size: .76rem;
   font-weight: 700;
 }
+
+html[data-theme=light] .vocab-category > summary .vocab-category-count {
+  color: #FFFFFF;
+  opacity: 1;
+}
+html[data-theme=light] .vocab-type-group > summary .vocab-category-count {
+  color: #28468A;
+  opacity: 1;
+}
+html[data-theme=light] .vocab-leaf-option small,
+html[data-theme=light] .vocab-scope-option small {
+  color: #28468A;
+  opacity: 1;
+}
+html[data-theme=light] .vocab-popover .roman,
+html[data-theme=light] .preview-word .roman,
+html[data-theme=light] .personalized-word .roman {
+  color: #28468A;
+  opacity: 1;
+}
+
 .vocab-category .table-wrap {
   border: 0;
   border-radius: 0;
@@ -2751,8 +2772,10 @@ tbody tr:last-child td {
     const STATES = new Map();
 
     const BAB_ID = `bab${String(Number(LESSON.title.match(/\d+/)?.[0] || 0)).padStart(2,"0")}`;
-    const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID);
+    const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID).length ? KoreanVocab.forLesson(BAB_ID) : [];
     const SHARED_RELEVANT_VOCAB = KoreanVocab.DATA.filter(entry => entry.lessons?.length);
+    const POPOVER_PARTS = new Set(["noun","proper noun","dependent noun","verb","adjective"]);
+    const POPOVER_VOCAB = [...KoreanVocab.DATA, ...SHARED_LESSON_VOCAB].filter(entry => POPOVER_PARTS.has(entry.partOfSpeech));
     const POS_LABELS = Object.freeze({"noun":"Common nouns","proper noun":"Proper nouns","pronoun":"Pronouns","dependent noun":"Dependent nouns","noun/adverb":"Nouns / adverbs","noun/numeral":"Nouns / numerals","noun phrase":"Noun phrases","expression":"Expressions","phrase":"Phrases","interjection":"Interjections","adverb":"Adverbs","verb":"Verbs","adjective":"Adjectives","determiner":"Determiners","determiner/pronoun":"Determiners / pronouns","conjunction":"Conjunctions","numeral":"Numerals"});
     const CONFIG_BY_KIND = Object.freeze({
       vocabulary:{parts:null,description:"Any shared word type"},
@@ -2825,18 +2848,116 @@ tbody tr:last-child td {
       el.querySelectorAll('.vocab-picker input[type="radio"]').forEach(i=>i.addEventListener('change',update));
       el.querySelector('.vocab-select-all')?.addEventListener('click',()=>{el.querySelectorAll('.vocab-leaf').forEach(i=>i.checked=true);el.querySelectorAll('.vocab-type-toggle').forEach(i=>{i.checked=true;i.indeterminate=false;});update();});
       el.querySelector('.vocab-clear-all')?.addEventListener('click',()=>{el.querySelectorAll('.vocab-leaf').forEach(i=>i.checked=false);el.querySelectorAll('.vocab-type-toggle').forEach(i=>{i.checked=false;i.indeterminate=false;});update();}); update(); }
-    function englishHint(entry){ return cleanEnglish(entry).replace(/^to be\s+/i,"").replace(/^to\s+/i,""); }
+    function englishHintVariants(entry){
+      const cache=englishHintVariants._cache||(englishHintVariants._cache=new Map()),cacheKey=entry?.id||`${entry?.korean||''}|${entry?.english||''}|${entry?.partOfSpeech||''}`; if(cache.has(cacheKey))return cache.get(cacheKey);
+      const variants=new Set(),add=value=>{const cleaned=String(value||'').trim().replace(/[“”]/g,'"').replace(/\s+/g,' ');if(cleaned&&cleaned.length>1)variants.add(cleaned);};
+      const aliases={
+        '가르치다':['teach'],'오다':['come'],'말하다':['speak','talk'],'그리다':['draw'],'운전하다':['drive'],
+        '구경하다':['look around','sightsee'],'음료수':['soft drink','beverage'],'바다':['seaside','sea'],
+        '왼쪽':['left'],'오른쪽':['right'],'길':['way','directions'],'노래하다':['sing'],'노래':['song'],
+        '주차하다':['park'],'식사':['meal','meals'],'목':['throat'],'영어':['English'],'일본어':['Japanese'],
+        '프랑스어':['French'],'처음':['first time'],'여자 친구':['girlfriend'],'가방':['bag'],'좋아하다':['like'],
+        '춤':['dance'],'춤추다':['dance'],'초대하다':['invite'],'어학당':['language school','language-school'],
+        '친구':['friend','friends'],'집':['house','home'],'공부하다':['study'],'하루':['day'],'시간':['hour','hours'],
+        '한국어':['Korean'],'병':['bottle','bottles'],'마시다':['drink'],'먹다':['eat'],'배우다':['learn'],
+        '돌다':['turn'],'보여 주다':['show'],'주다':['give'],'아프다':['hurt'],'하다':['do']
+      };
+      const rawValues=String(entry?.english||'').split('/').map(value=>value.replace(/\([^)]*\)/g,'').trim()).filter(Boolean);
+      [...rawValues,...(aliases[entry?.korean]||[])].forEach(raw=>{
+        add(raw);add(raw.replace(/^not\s+to\s+be\s*/i,'not '));add(raw.replace(/^to\s+be\s+/i,''));add(raw.replace(/^to\s+/i,''));add(raw.replace(/^be\s+/i,''));add(raw.replace(/^(?:a|an|the)\s+/i,''));
+        add(raw.replace(/\s+(?:language|side)$/i,''));
+      });
+      [...variants].forEach(value=>{add(value.replace(/^(?:a|an|the)\s+/i,''));add(value.replace(/^be\s+/i,''));add(value.replace(/\s+(?:language|side)$/i,''));});
+      const irregular={be:['am','is','are','was','were','been','being'],go:['goes','went','gone','going'],come:['comes','came','coming'],do:['does','did','done','doing'],have:['has','had','having'],eat:['eats','ate','eaten','eating'],drink:['drinks','drank','drunk','drinking'],take:['takes','took','taken','taking'],make:['makes','made','making'],give:['gives','gave','given','giving'],get:['gets','got','gotten','getting'],see:['sees','saw','seen','seeing'],watch:['watches','watched','watching'],read:['reads','reading'],write:['writes','wrote','written','writing'],speak:['speaks','spoke','spoken','speaking'],sing:['sings','sang','sung','singing'],teach:['teaches','taught','teaching'],buy:['buys','bought','buying'],bring:['brings','brought','bringing'],meet:['meets','met','meeting'],sleep:['sleeps','slept','sleeping'],sit:['sits','sat','sitting'],stand:['stands','stood','standing'],run:['runs','ran','running'],swim:['swims','swam','swum','swimming'],ride:['rides','rode','ridden','riding'],drive:['drives','drove','driven','driving'],wear:['wears','wore','worn','wearing'],leave:['leaves','left','leaving'],feel:['feels','felt','feeling'],hurt:['hurts','hurting'],hold:['holds','held','holding'],hear:['hears','heard','hearing'],tell:['tells','told','telling'],say:['says','said','saying'],know:['knows','knew','known','knowing'],think:['thinks','thought','thinking'],find:['finds','found','finding'],pay:['pays','paid','paying'],send:['sends','sent','sending'],cut:['cuts','cutting'],put:['puts','putting'],call:['calls','called','calling'],help:['helps','helped','helping'],prepare:['prepares','prepared','preparing'],invite:['invites','invited','inviting'],ask:['asks','asked','asking'],close:['closes','closed','closing'],open:['opens','opened','opening'],walk:['walks','walked','walking'],work:['works','worked','working'],study:['studies','studied','studying'],play:['plays','played','playing'],cook:['cooks','cooked','cooking'],clean:['cleans','cleaned','cleaning'],travel:['travels','traveled','travelled','traveling','travelling'],learn:['learns','learned','learnt','learning'],like:['likes','liked','liking'],love:['loves','loved','loving'],live:['lives','lived','living'],look:['looks','looked','looking'],use:['uses','used','using'],talk:['talks','talked','talking'],listen:['listens','listened','listening'],receive:['receives','received','receiving'],rest:['rests','rested','resting'],draw:['draws','drew','drawn','drawing'],turn:['turns','turned','turning'],show:['shows','showed','shown','showing'],dance:['dances','danced','dancing'],park:['parks','parked','parking']};
+      const bases=[...variants];
+      bases.forEach(base=>{const words=base.split(' '),head=words[0]||'',tail=words.slice(1).join(' '),join=form=>add([form,tail].filter(Boolean).join(' ')),lower=head.toLowerCase();
+        if(entry?.partOfSpeech==='verb'&&head){(irregular[lower]||[]).forEach(join);join(/[^aeiou]y$/i.test(lower)?lower.slice(0,-1)+'ies':/(s|sh|ch|x|z|o)$/i.test(lower)?lower+'es':lower+'s');join(/e$/i.test(lower)?lower+'d':/[^aeiou]y$/i.test(lower)?lower.slice(0,-1)+'ied':lower+'ed');join(/ie$/i.test(lower)?lower.slice(0,-2)+'ying':/e$/i.test(lower)&&!/ee$/i.test(lower)?lower.slice(0,-1)+'ing':lower+'ing');}
+        if(['noun','proper noun','dependent noun'].includes(entry?.partOfSpeech)){const nounWords=base.split(' '),last=nounWords.pop()||'',prefix=nounWords.join(' '),plural=/[^aeiou]y$/i.test(last)?last.slice(0,-1)+'ies':/(s|sh|ch|x|z)$/i.test(last)?last+'es':last+'s';add([prefix,plural].filter(Boolean).join(' '));if(/ies$/i.test(last))add([prefix,last.slice(0,-3)+'y'].filter(Boolean).join(' '));else if(/ing$/i.test(last)&&last.length>4){let stem=last.slice(0,-3);if(/([b-df-hj-np-tv-z])\1$/i.test(stem))stem=stem.slice(0,-1);if(/v$/i.test(stem))stem+='e';add([prefix,stem].filter(Boolean).join(' '));}else if(/s$/i.test(last)&&!/ss$/i.test(last))add([prefix,last.slice(0,-1)].filter(Boolean).join(' '));}
+      });
+      const result=[...variants];cache.set(cacheKey,result);return result;
+    }
     function koreanTokens(text){ return [...String(text||"").matchAll(/[가-힣]+/g)].map(m=>({text:m[0],start:m.index,end:m.index+m[0].length})); }
-    function predicateVariants(k){ if(!k.endsWith('다'))return [k]; const stem=k.slice(0,-1), out=[stem]; const last=stem.at(-1),code=last?.charCodeAt(0); if(code>=0xAC00&&code<=0xD7A3){const off=code-0xAC00,j=off%28;if(j===7)out.push(stem.slice(0,-1)+String.fromCharCode(code-7+8)); if(j===17)out.push(stem.slice(0,-1)+String.fromCharCode(code-17));} return [...new Set(out)].filter(Boolean); }
-    function detectVocabUses(question,entries,section){ const tokens=koreanTokens(question.korean), used=[], occupied=new Set(); const sorted=[...entries].sort((a,b)=>b.korean.length-a.korean.length); sorted.forEach(entry=>{ const variants=predicateVariants(entry.korean); const forms=[]; tokens.forEach((tok,idx)=>{ if(occupied.has(idx))return; let ok=false; if(tok.text.includes(entry.korean))ok=true; else if(entry.korean.endsWith('다'))ok=variants.some(v=>tok.text.startsWith(v)); if(ok){forms.push(tok.text);occupied.add(idx);} }); if(forms.length)used.push({id:entry.id,korean:entry.korean,romanization:entry.romanization||romanizeKorean(entry.korean),english:cleanEnglish(entry),partOfSpeech:entry.partOfSpeech,forms:[...new Set(forms)],grammar:[section?.form||section?.title||'Vocabulary used in this sentence.'],formHelp:[`In this question, ${entry.korean} appears as ${[...new Set(forms)].join(' / ')}.`]}); }); return used; }
-    function annotateQuestion(question,state){ question.vocabUses=detectVocabUses(question,state.selectedEntries?.length?state.selectedEntries:SHARED_LESSON_VOCAB,state.section); return question; }
+    function predicateVariants(k){
+      if(!k.endsWith('다'))return [k];
+      const stem=k.slice(0,-1),out=new Set([stem]);
+      const addJong=(value,jong)=>{const last=value.at(-1),code=last?.charCodeAt(0);if(code>=0xAC00&&code<=0xD7A3&&(code-0xAC00)%28===0)out.add(value.slice(0,-1)+String.fromCharCode(code+jong));};
+      const fixed={
+        '하다':['해','했'],'오다':['와','왔'],'가다':['가','갔'],'보다':['봐','봤'],'주다':['줘','줬'],
+        '쓰다':['써','썼'],'듣다':['들어','들었'],'걷다':['걸어','걸었'],'묻다':['물어','물었'],
+        '돕다':['도와','도왔'],'춥다':['추워','추웠'],'어렵다':['어려워','어려웠'],'맵다':['매워','매웠'],
+        '가깝다':['가까워','가까웠'],'예쁘다':['예뻐','예뻤'],'아프다':['아파','아팠'],'바쁘다':['바빠','바빴'],
+        '좋다':['좋아','좋았'],'부르다':['불러','불렀'],'모르다':['몰라','몰랐'],'그리다':['그려','그렸'],
+        '가르치다':['가르쳐','가르쳤'],'마시다':['마셔','마셨'],'드시다':['드셔','드셨'],'계시다':['계셔','계셨'],
+        '주무시다':['주무셔','주무셨'],'타다':['타','탔'],'사다':['사','샀'],'만나다':['만나','만났'],
+        '일어나다':['일어나','일어났'],'열다':['열어','열었'],'닫다':['닫아','닫았'],'받다':['받아','받았'],
+        '읽다':['읽어','읽었'],'먹다':['먹어','먹었'],'만들다':['만들어','만들었'],'살다':['살아','살았'],
+        '배우다':['배워','배웠'],'춤추다':['춤춰','춤췄'],'돌다':['돌아','돌았','도'],'나다':['나','났'],
+        '아니다':['아니','아니었'],'이다':['이','이었','였'],'있다':['있','있었'],'없다':['없','없었']
+      };
+      (fixed[k]||[]).forEach(v=>out.add(v));
+      if(k.endsWith('하다')){const base=k.slice(0,-2);out.add(base+'하');out.add(base+'해');out.add(base+'했');}
+      [...out].forEach(value=>{addJong(value,4);addJong(value,8);addJong(value,17);});
+      const last=stem.at(-1),code=last?.charCodeAt(0);
+      if(code>=0xAC00&&code<=0xD7A3){const off=code-0xAC00,j=off%28;if(j===7)out.add(stem.slice(0,-1)+String.fromCharCode(code-7+8));if(j===17)out.add(stem.slice(0,-1)+String.fromCharCode(code-17));}
+      return [...out].filter(Boolean).sort((a,b)=>b.length-a.length);
+    }
+    function nounTokenMatch(token,korean){
+      if(token===korean)return true;
+      if(!token.startsWith(korean))return false;
+      const tail=token.slice(korean.length);
+      const particles=/^(?:은|는|이|가|을|를|의|에|에서|에게|께|하고|와|과|도|만|부터|까지|으로|로|보다|처럼|마다|쯤|이나|나|께서|한테|한테서|에는|에서는|에게는|께는|에도|에서도|에게도|께도|한테도|한테서도|으로도|로도|이라고|라고|이에요|예요|입니다|입니까|이세요|세요|이십니다|십니다|이었다|였다|이었어요|였어요)?$/;
+      const actionNoun=/^(?:하|해|했|합|할|한|하는|하면|해서|하니|하니까|하려|하러|하지|하시|하세요|하십시오|하겠습니다|하겠어요|하나요|할까요|합니까|합니다|합시다|해요|했어요|했습니다).*/;
+      return particles.test(tail)||actionNoun.test(tail);
+    }
+    function predicateTokenMatch(token,korean){
+      const pronounForms=new Set(['나는','나도','나를','나의','나에게','나한테','저는','제가','저를','저의','너는','네가','그는','그녀는','우리는']);
+      if(korean==='나다'&&pronounForms.has(token))return false;
+      const stem=korean.endsWith('다')?korean.slice(0,-1):korean;
+      const particleOnly=/^(?:은|는|이|가|을|를|의|에|에서|에게|께|하고|와|과|도|만|부터|까지|으로|로|보다|처럼|마다|쯤|이나|나|께서|한테|한테서)$/;
+      const ending=/^(?:요|어요|아요|여요|워요|와요|해요|습니다|ㅂ니다|습니까|세요|셔요|셨어요|셨습니다|고|고요|고\s*있어요|고\s*계세요|고\s*있습니다|고\s*계십니다|서|아서|어서|여서|워서|와서|해서|니까|으니까|면|으면|려고|으려고|러|으러|지|지마세요|지마십시오|지\s*마세요|지\s*마십시오|는|은|ㄴ|을|ㄹ|게|기|자|ㅂ시다|읍시다|십시오|으십시오|겠어요|겠습니다|겠습니까|실거예요|을거예요|ㄹ거예요|실겁니다|을겁니다|ㄹ겁니다|실\s*거예요|을\s*거예요|ㄹ\s*거예요|실\s*겁니다|을\s*겁니다|ㄹ\s*겁니다|었어요|았어요|였어요|웠어요|왔어요|했어요|었습니다|았습니다|였습니다|웠습니다|왔습니다|했습니다|었고|았고|였고|웠고|왔고|했고|었으면|았으면|였으면|웠으면|왔으면|했으면|어야|아야|여야|워야|와야|해야|어도|아도|여도|워도|와도|해도|어|아|여|워|와|해).*$/;
+      return predicateVariants(korean).some(prefix=>{
+        if(!token.startsWith(prefix))return false;
+        const tail=token.slice(prefix.length);
+        if(!tail)return prefix.length>1||token===stem;
+        if(prefix===stem&&stem.length===1&&particleOnly.test(tail))return false;
+        return ending.test(tail);
+      });
+    }
+    function makeVocabUse(entry,section,forms=[],englishForms=[]){
+      const uniqueForms=[...new Set(forms)],uniqueEnglish=[...new Set(englishForms)];
+      return {id:entry.id||`literal:${entry.korean}`,korean:entry.korean,romanization:entry.romanization||romanizeKorean(entry.korean),english:cleanEnglish(entry),partOfSpeech:entry.partOfSpeech,forms:uniqueForms,englishForms:uniqueEnglish,grammar:[section?.form||section?.title||'Vocabulary used in this sentence.'],formHelp:[uniqueForms.length?`In this question, ${entry.korean} appears as ${uniqueForms.join(' / ')}.`:uniqueEnglish.length?`In this question, ${entry.korean} is represented by ${uniqueEnglish.join(' / ')}.`:'This vocabulary item is used in the question.']};
+    }
+    function detectVocabUses(question,entries,section){
+      const tokens=koreanTokens(question.korean),used=[],occupied=new Set(),content=[...entries].filter(entry=>POPOVER_PARTS.has(entry.partOfSpeech));
+      const nouns=content.filter(entry=>['noun','proper noun','dependent noun'].includes(entry.partOfSpeech)).sort((a,b)=>b.korean.length-a.korean.length);
+      const predicates=content.filter(entry=>['verb','adjective'].includes(entry.partOfSpeech)).sort((a,b)=>b.korean.length-a.korean.length);
+      nouns.forEach(entry=>{const forms=[];tokens.forEach((tok,idx)=>{if(!occupied.has(idx)&&nounTokenMatch(tok.text,entry.korean)){forms.push(tok.text);occupied.add(idx);}});if(forms.length)used.push(makeVocabUse(entry,section,forms));});
+      predicates.forEach(entry=>{const forms=[];tokens.forEach((tok,idx)=>{if(!occupied.has(idx)&&predicateTokenMatch(tok.text,entry.korean)){forms.push(tok.text);occupied.add(idx);}});if(forms.length)used.push(makeVocabUse(entry,section,forms));});
+      return used;
+    }
+    function detectEnglishVocabUses(question,entries,existing,section){
+      const text=String(question.english||''),hay=text.toLowerCase(),occupied=Array(text.length).fill(false),byId=new Map((existing||[]).map(use=>[wordUseKey(use),use]));
+      const cache=detectEnglishVocabUses._cache||(detectEnglishVocabUses._cache=new Map()),cacheKey=`${entries.length}:${entries[0]?.id||entries[0]?.korean||''}:${entries.at(-1)?.id||entries.at(-1)?.korean||''}`;
+      let index=cache.get(cacheKey);
+      if(!index){index=new Map();const seen=new Set();entries.filter(entry=>POPOVER_PARTS.has(entry.partOfSpeech)).forEach(entry=>englishHintVariants(entry).forEach(form=>{const needle=String(form||'').trim();if(needle.length<2)return;const key=`${entry.id||entry.korean}|${needle.toLowerCase()}`;if(seen.has(key))return;seen.add(key);const first=(needle.toLowerCase().match(/[a-z]+(?:-[a-z]+)?/)||[])[0];if(!first)return;if(!index.has(first))index.set(first,[]);index.get(first).push({entry,needle});}));index.forEach(list=>list.sort((a,b)=>b.needle.length-a.needle.length||b.entry.korean.length-a.entry.korean.length));cache.set(cacheKey,index);}
+      const words=new Set((hay.match(/[a-z]+(?:-[a-z]+)?/g)||[])),candidates=[],seenCandidates=new Set();words.forEach(word=>(index.get(word)||[]).forEach(candidate=>{const key=`${candidate.entry.id||candidate.entry.korean}|${candidate.needle.toLowerCase()}`;if(!seenCandidates.has(key)){seenCandidates.add(key);candidates.push(candidate);}}));
+      candidates.sort((a,b)=>b.needle.length-a.needle.length||b.entry.korean.length-a.entry.korean.length);
+      candidates.forEach(({entry,needle})=>{const low=needle.toLowerCase();let from=0;while((from=hay.indexOf(low,from))>=0){const end=from+low.length,before=text[from-1],after=text[end];if((!before||!/[A-Za-z0-9]/.test(before))&&(!after||!/[A-Za-z0-9]/.test(after))&&occupied.slice(from,end).every(v=>!v)){
+          const key=entry.id||`literal:${entry.korean}`,surface=text.slice(from,end);let use=byId.get(key);
+          if(use){use.englishForms=[...new Set([...(use.englishForms||[]),surface])];}
+          else{use=makeVocabUse(entry,section,[],[surface]);existing.push(use);byId.set(key,use);}
+          for(let i=from;i<end;i++)occupied[i]=true;
+        }from=Math.max(end,from+1);}});
+      return existing;
+    }
+    function annotateQuestion(question,state){ const selected=state.selectedEntries?.length?state.selectedEntries:SHARED_LESSON_VOCAB,merged=new Map(); [...selected,...POPOVER_VOCAB].forEach(entry=>merged.set(entry.id||`literal:${entry.korean}`,entry)); const entries=[...merged.values()]; const uses=detectVocabUses(question,entries,state.section); question.vocabUses=detectEnglishVocabUses(question,entries,uses,state.section); return question; }
     function withActiveSelection(entries,fn){ ACTIVE_VOCAB_KOREAN=new Set(entries.map(e=>e.korean)); try{return fn();}finally{ACTIVE_VOCAB_KOREAN=null;} }
     function makeQuestion(state){ let item; if(state.isVocabulary){ const v=pick(state.vocabPool); item=q(v.korean,v.english); } else if(state.filteredBank?.length){ item=pick(state.filteredBank); } else item=withActiveSelection(state.selectedEntries,()=>state.baseGenerator()); return annotateQuestion(item,state); }
     function prepareChoiceOptions(question,state){ if(state.settings.mode!=="mc")return; const lang=state.settings.aLang, options=[{value:question[lang],vocabUses:question.vocabUses||[]}], seen=new Set([normalize(question[lang],lang)]); let tries=0; while(options.length<4&&tries<80){tries++;const other=makeQuestion(state),value=other[lang],norm=normalize(value,lang);if(value&&!seen.has(norm)){seen.add(norm);options.push({value,vocabUses:other.vocabUses||[]});}} question.choiceOptions=shuffle(options); }
     function previewWords(questions){ const map=new Map(); questions.forEach(qn=>{ [...(qn.vocabUses||[]),...(qn.choiceOptions||[]).flatMap(o=>o.vocabUses||[])].forEach(use=>{ const k=wordUseKey(use); if(!map.has(k))map.set(k,{...use,forms:new Set()}); (use.forms||[]).forEach(f=>map.get(k).forms.add(f)); }); }); return [...map.values()].map(v=>({...v,forms:[...v.forms]})).sort((a,b)=>a.korean.localeCompare(b.korean)); }
     function renderPreview(el,state){ const words=previewWords(state.preparedQuestions||[]), box=el.querySelector('.question-preview'); box.classList.remove('hidden'); box.querySelector('.preview-summary').innerHTML=`<span>${state.preparedQuestions.length} frozen questions</span><span>${words.length} vocabulary bases</span><span>${state.settings.mode==='mc'?'Includes answer options':'Typed answers'}</span>`; box.querySelector('.preview-word-list').innerHTML=words.length?words.map(w=>`<div class="preview-word"><strong>${esc(w.korean)}</strong><small>${esc(w.romanization)} · ${esc(w.english)}</small><small>Forms: ${esc((w.forms||[]).join(' / ')||w.korean)}</small></div>`).join(''):'<p>No separate vocabulary items were detected in this generated set.</p>'; }
     function hintText(use,level,question){ if(level===1)return `<strong>${esc(use.korean)}</strong><br><span class="roman">${esc(use.romanization)}</span><br>${esc(use.english)}`; if(level===2)return esc((use.grammar||[]).join(' ')||'Review the grammar pattern for this exercise.'); return esc((use.formHelp||[]).join(' ')||`The word appears as ${(use.forms||[use.korean]).join(' / ')}.`); }
-    function promptCandidates(question,lang){ const out=[]; (question.vocabUses||[]).forEach((use,useIndex)=>{ let forms=[]; if(lang==='korean')forms=use.forms||[]; else if(lang==='romanization')forms=(use.forms||[]).map(romanizeKorean); else { const e=englishHint(use); if(e)forms=[e]; } forms.forEach(form=>{if(form&&form.length)out.push({needle:form,use,useIndex});}); }); return out.sort((a,b)=>b.needle.length-a.needle.length); }
+    function promptCandidates(question,lang){ const out=[]; (question.vocabUses||[]).forEach((use,useIndex)=>{ let forms=[]; if(lang==='korean')forms=use.forms||[]; else if(lang==='romanization')forms=(use.forms||[]).map(romanizeKorean); else forms=use.englishForms?.length?use.englishForms:englishHintVariants(use); forms.forEach(form=>{if(form&&form.length)out.push({needle:form,use,useIndex});}); }); return out.sort((a,b)=>b.needle.length-a.needle.length); }
     function boundaryMatch(text,start,len,lang){ if(lang!=='english')return true; const before=text[start-1],after=text[start+len]; return (!before||!/[A-Za-z0-9]/.test(before))&&(!after||!/[A-Za-z0-9]/.test(after)); }
     function promptMatches(question,lang){ const text=String(question[lang]||''), hay=lang==='english'?text.toLowerCase():text, occupied=Array(text.length).fill(false), matches=[]; promptCandidates(question,lang).forEach(c=>{const needle=lang==='english'?c.needle.toLowerCase():c.needle;let from=0;while(needle&&(from=hay.indexOf(needle,from))>=0){const end=from+needle.length;if(occupied.slice(from,end).every(x=>!x)&&boundaryMatch(text,from,needle.length,lang)){matches.push({...c,start:from,end});for(let i=from;i<end;i++)occupied[i]=true;}from=end;}}); return matches.sort((a,b)=>a.start-b.start||b.end-a.end); }
     function scoreText(state){ return `Independent: ${state.independentScore}<br>Assisted: ${state.assistedScore}`; }
@@ -2850,7 +2971,7 @@ tbody tr:last-child td {
     function personalizedStats(state){ const map=new Map(); state.results.forEach(r=>{(r.question.vocabUses||[]).forEach(use=>{const k=wordUseKey(use);if(!map.has(k))map.set(k,{use,lookupQuestions:0,views:0,levels:new Set(),reveals:0,errors:0});const s=map.get(k),levels=r.lookupLevels?.[k]||[];if(levels.length)s.lookupQuestions++;s.views+=levels.length;levels.forEach(x=>s.levels.add(x));if(r.answerRevealed)s.reveals++;if(r.hadError)s.errors++;});}); return [...map.values()].filter(s=>s.views||s.reveals||s.errors).sort((a,b)=>(b.errors+b.views+b.reveals)-(a.errors+a.views+a.reveals)); }
     function exerciseTemplate(key, title, description, defaultCount = 20) {
         const setupText = key === "vocabulary" ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages." : "Choose the shared vocabulary allowed in the stored/generated questions, then configure the quiz.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn primary prepare" type="button">Generate question preview</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms detected in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a missed question.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart with preview</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms detected in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a missed question.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
         // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring    // -------------------------------------------------------------------------
@@ -2942,21 +3063,17 @@ tbody tr:last-child td {
 
         const vocabExercise = document.getElementById("ex-vocabulary");
         if (vocabExercise) {
-            const inputs = [...vocabExercise.querySelectorAll(".master-section-option input")];
             const countInput = vocabExercise.querySelector(".menu-count");
-            const error = vocabExercise.querySelector(".category-error");
-            const syncCategories = () => {
-                const selected = new Set(inputs.filter(input => input.checked).map(input => input.value));
-                const total = LESSON.vocab.filter(v => selected.has(v.category || "Other")).length;
+            const syncVocabularyCount = () => {
+                const total = Number(vocabExercise.querySelector(".vocab-selected-count")?.textContent || 0);
                 countInput.max = String(Math.max(1, Math.min(100, total * 2)));
                 if (Number(countInput.value) > Number(countInput.max)) countInput.value = countInput.max;
                 if (Number(countInput.value) < 1) countInput.value = String(Math.min(20, Math.max(1, total)));
-                error?.classList.toggle("hidden", total > 0);
             };
-            inputs.forEach(input => input.addEventListener("change", syncCategories));
-            vocabExercise.querySelector(".select-all-categories")?.addEventListener("click", () => { inputs.forEach(input => { input.checked = true; }); syncCategories(); });
-            vocabExercise.querySelector(".clear-all-categories")?.addEventListener("click", () => { inputs.forEach(input => { input.checked = false; }); syncCategories(); });
-            syncCategories();
+            vocabExercise.querySelector(".vocab-picker")?.addEventListener("change", syncVocabularyCount);
+            vocabExercise.querySelector(".vocab-select-all")?.addEventListener("click", () => requestAnimationFrame(syncVocabularyCount));
+            vocabExercise.querySelector(".vocab-clear-all")?.addEventListener("click", () => requestAnimationFrame(syncVocabularyCount));
+            syncVocabularyCount();
         }
     }
     function initExercise(el) {
@@ -2965,13 +3082,13 @@ tbody tr:last-child td {
         state.baseGenerator=isVocabulary?()=>{const v=pick(state.vocabPool);return q(v.korean,v.english);}:()=>section.questions?bankQuestion(section.questions):generate(section.generator);
         STATES.set(key,state); syncVocabPicker(el,state);
         const invalidate=()=>{state.preparedQuestions=null;el.querySelector('.question-preview')?.classList.add('hidden');}; el.querySelectorAll('.menu-mode,.menu-count,.menu-q,.menu-a,.menu-repeat-wrong').forEach(c=>c.addEventListener('change',invalidate));
-        el.querySelector('.prepare').onclick=()=>prepareExercise(el,state); el.querySelector('.regenerate').onclick=()=>prepareExercise(el,state,true); el.querySelector('.begin-exercise').onclick=()=>beginExercise(el,state);
-        el.querySelector('.end-early-btn').onclick=()=>finish(el,state,'Exercise ended early'); el.querySelector('.next').onclick=()=>next(el,state); el.querySelector('.restart-same').onclick=()=>{showSetup(el,state);prepareExercise(el,state,true);}; el.querySelector('.change-setup').onclick=()=>showSetup(el,state);
+        el.querySelector('.prepare').onclick=()=>prepareExercise(el,state,true); el.querySelector('.begin-direct').onclick=()=>{if(!state.preparedQuestions?.length)prepareExercise(el,state,false);if(state.preparedQuestions?.length)beginExercise(el,state);}; el.querySelector('.regenerate').onclick=()=>prepareExercise(el,state,true); el.querySelector('.begin-exercise').onclick=()=>beginExercise(el,state);
+        el.querySelector('.end-early-btn').onclick=()=>finish(el,state,'Exercise ended early'); el.querySelector('.next').onclick=()=>next(el,state); el.querySelector('.restart-same').onclick=()=>{showSetup(el,state);if(prepareExercise(el,state,false))beginExercise(el,state);}; el.querySelector('.change-setup').onclick=()=>showSetup(el,state);
     }
     function readSettings(el,state){ const selectedEntries=selectedVocabFromPicker(el,state.key); if(!selectedEntries.length){const e=el.querySelector('.vocab-pool-error');e.textContent='Choose at least one compatible vocabulary group.';e.classList.remove('hidden');return null;} el.querySelector('.vocab-pool-error').classList.add('hidden'); return {mode:el.querySelector('.menu-mode').value,count:Math.max(1,Math.min(100,Number(el.querySelector('.menu-count').value)||20)),qLang:el.querySelector('.menu-q').value,aLang:el.querySelector('.menu-a').value,repeatWrong:Boolean(el.querySelector('.menu-repeat-wrong')?.checked),selectedEntries}; }
-    function prepareExercise(el,state){ const settings=readSettings(el,state);if(!settings)return;state.settings=settings;state.selectedEntries=settings.selectedEntries;state.vocabPool=KoreanVocab.toLessonVocab(state.selectedEntries); if(state.isVocabulary&&!state.vocabPool.length)return;
-      if(!state.isVocabulary&&state.section?.questions){ const all=state.section.questions.map(item=>Array.isArray(item)?q(item[0],item[1],item[2]||[]):q(item.korean,item.english,item.alternatives||[])).map(item=>annotateQuestion(item,state)); const selectedIds=new Set(state.selectedEntries.map(e=>e.id)); const eligible=all.filter(item=>(item.vocabUses||[]).length&&(item.vocabUses||[]).every(use=>selectedIds.has(use.id))); state.filteredBank=(eligible.length?eligible:all); }
-      state.preparedQuestions=buildSet(()=>makeQuestion(state),settings.count);state.preparedQuestions.forEach(question=>prepareChoiceOptions(question,state));renderPreview(el,state); }
+    function prepareExercise(el,state,showPreview=false){ const settings=readSettings(el,state);if(!settings)return false;state.settings=settings;state.selectedEntries=settings.selectedEntries;state.vocabPool=KoreanVocab.toLessonVocab(state.selectedEntries); if(state.isVocabulary&&!state.vocabPool.length)return false;
+      if(!state.isVocabulary&&state.section?.questions){ const all=state.section.questions.map(item=>Array.isArray(item)?q(item[0],item[1],item[2]||[]):q(item.korean,item.english,item.alternatives||[])); const eligible=all.filter(item=>detectVocabUses(item,state.selectedEntries,state.section).length); const needed=Math.min(settings.count,all.length); state.filteredBank=(eligible.length>=needed?eligible:all).map(item=>annotateQuestion(item,state)); }
+      state.preparedQuestions=buildSet(()=>makeQuestion(state),settings.count);state.preparedQuestions.forEach(question=>prepareChoiceOptions(question,state));if(showPreview)renderPreview(el,state);return true; }
     function beginExercise(el,state){ if(!state.preparedQuestions?.length){prepareExercise(el,state);if(!state.preparedQuestions?.length)return;}state.questions=state.preparedQuestions;state.i=0;state.independentScore=0;state.assistedScore=0;state.results=[];state.done=false;state.finished=false;state.currentAttempts=[];state.currentHadWrong=false;state.currentAssisted=false;state.currentAnswerRevealed=false;state.currentLookupLevels=new Map();state.retryCurrent=false;el.querySelector('.exercise-menu').classList.add('hidden');el.querySelector('.finish').style.display='none';el.querySelector('.live').classList.remove('hidden');showQuestion(el,state); }
     function showSetup(el,state){state.finished=true;el.querySelector('.live').classList.add('hidden');el.querySelector('.finish').style.display='none';el.querySelector('.exercise-menu').classList.remove('hidden');el.querySelector('.score').textContent='Not started';}
     function renderAssistant(el,state,question){renderPromptWithHints(el,state,question);const btn=el.querySelector('.reveal-answer'),box=el.querySelector('.revealed-answer');btn.disabled=state.currentAnswerRevealed;box.classList.toggle('hidden',!state.currentAnswerRevealed);box.innerHTML=state.currentAnswerRevealed?`<strong>Answer:</strong><br>${pretty(question)}`:'';btn.onclick=()=>{if(state.done||state.currentAnswerRevealed)return;registerReveal(state);box.innerHTML=`<strong>Answer:</strong><br>${pretty(question)}`;box.classList.remove('hidden');btn.disabled=true;el.querySelector('.assistant-status').innerHTML='<span class="assistance-used">Answer revealed · assisted</span>';el.querySelector('.score').innerHTML=scoreText(state);};}

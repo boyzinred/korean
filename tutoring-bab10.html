@@ -896,6 +896,26 @@ tbody tr:last-child td {
   font-size: .76rem;
   font-weight: 700;
 }
+
+html[data-theme=light] .vocab-category > summary .vocab-category-count {
+  color: #FFFFFF;
+  opacity: 1;
+}
+html[data-theme=light] .vocab-type-group > summary .vocab-category-count {
+  color: #28468A;
+  opacity: 1;
+}
+html[data-theme=light] .vocab-leaf-option small,
+html[data-theme=light] .vocab-scope-option small {
+  color: #28468A;
+  opacity: 1;
+}
+html[data-theme=light] .vocab-popover .roman,
+html[data-theme=light] .preview-word .roman,
+html[data-theme=light] .personalized-word .roman {
+  color: #28468A;
+  opacity: 1;
+}
 .vocab-category .table-wrap {
   border: 0;
   border-radius: 0;
@@ -2273,7 +2293,7 @@ tbody tr:last-child td {
         const setupText = key === "vocabulary"
           ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages."
           : "Choose the shared vocabulary allowed in generated sentences, then configure the quiz.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn primary prepare" type="button">Generate question preview</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart with preview</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Hover or focus a term, then click a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
     // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring
@@ -2455,14 +2475,20 @@ tbody tr:last-child td {
             }
             : () => generate(section.generator || section.id, state.vocabPool, section);
         STATES.set(key, state);
-        el.querySelector(".prepare").onclick = () => preparePreview(el, state);
-        el.querySelector(".regenerate").onclick = () => preparePreview(el, state);
+        el.querySelector(".prepare").onclick = () => {
+            preparePreview(el, state, false, true);
+        };
+        el.querySelector(".begin-direct").onclick = () => {
+            if (!state.previewReady) preparePreview(el, state);
+            if (state.previewReady) beginExercise(el, state);
+        };
+        el.querySelector(".regenerate").onclick = () => preparePreview(el, state, false, true);
         el.querySelector(".begin-exercise").onclick = () => beginExercise(el, state);
         el.querySelector(".end-early-btn").onclick = () => finish(el, state, "Exercise ended early");
         el.querySelector(".next").onclick = () => next(el, state);
         el.querySelector(".restart-same").onclick = () => {
             showSetup(el, state, true);
-            preparePreview(el, state, true);
+            if (preparePreview(el, state, true)) beginExercise(el, state);
         };
         el.querySelector(".change-setup").onclick = () => showSetup(el, state, false);
         el.querySelector(".exercise-menu").addEventListener("change", event => {
@@ -2523,14 +2549,14 @@ tbody tr:last-child td {
         panel.classList.remove("hidden");
         panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-    function preparePreview(el, state, reuse = false) {
+    function preparePreview(el, state, reuse = false, showPreview = false) {
         const settings = readSettings(el, state, reuse);
         state.vocabPool = vocabPoolFromSelection(el, state.key, settings);
         const validation = validateExercisePool(state.key, state.vocabPool);
         const error = el.querySelector('.vocab-pool-error');
         error.textContent = validation;
         error.classList.toggle('hidden', !validation);
-        if (validation) return;
+        if (validation) return false;
         if (settings.qLang === settings.aLang) {
             const fallback = settings.aLang === "korean" ? "english" : "korean";
             settings.qLang = fallback;
@@ -2544,7 +2570,8 @@ tbody tr:last-child td {
         state.questions = buildSet(state.generator, settings.count);
         if (settings.mode === "mc") state.questions.forEach(question => makeChoiceOptions(state, question));
         state.previewReady = true;
-        renderPreview(el, state);
+        if (showPreview) renderPreview(el, state);
+        return true;
     }
     function resetRunState(state) {
         state.i = 0;
@@ -2618,9 +2645,25 @@ tbody tr:last-child td {
             use.romanization
         ].filter(Boolean))];
         const english = String(use.english || "").trim();
-        const variants = [english];
-        if (/^to\s+/i.test(english)) variants.push(english.replace(/^to\s+/i, ""));
-        return [...new Set(variants.filter(Boolean))];
+        const variants = new Set();
+        const addVariant = value => {
+            const cleaned = String(value || "").trim().replace(/\s+/g, " ");
+            if (cleaned) variants.add(cleaned);
+        };
+        addVariant(english);
+        addVariant(english.replace(/^not\s+to\s+be\s*/i, "not "));
+        addVariant(english.replace(/^to\s+be\s+/i, ""));
+        addVariant(english.replace(/^to\s+/i, ""));
+        addVariant(english.replace(/^be\s+/i, ""));
+        addVariant(english.replace(/^(?:a|an|the)\s+/i, ""));
+
+        // Apply article removal again after infinitive/copular cleanup so entries
+        // such as “to be a student” can match the visible word “student.”
+        [...variants].forEach(value => {
+            addVariant(value.replace(/^(?:a|an|the)\s+/i, ""));
+            addVariant(value.replace(/^be\s+/i, ""));
+        });
+        return [...variants];
     }
     function boundaryMatch(text, start, length, lang) {
         if (lang === "korean") return true;
