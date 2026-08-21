@@ -666,6 +666,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   gap: 16px;
   margin-bottom: 28px;
 }
+.exercise-grid.single { grid-template-columns: 1fr; }
 .exercise-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -771,6 +772,86 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
 }
 
 /* Exercise setup menus, timers, and mobile keyboard workflow */
+.vocab-picker {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-picker legend {
+  padding: 0 6px;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.vocab-source-note { margin: 0 !important; font-size: .82rem; font-weight: 600; opacity: .8; }
+.vocab-tree { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.vocab-tree > summary,
+.vocab-source-group > summary,
+.vocab-type-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+  font-size: .88rem;
+}
+.vocab-tree > summary::-webkit-details-marker,
+.vocab-source-group > summary::-webkit-details-marker,
+.vocab-type-group > summary::-webkit-details-marker { display: none; }
+.vocab-tree > summary::after,
+.vocab-source-group > summary::after,
+.vocab-type-group > summary::after { content: '+'; }
+.vocab-tree[open] > summary::after,
+.vocab-source-group[open] > summary::after,
+.vocab-type-group[open] > summary::after { content: '\2212'; }
+.vocab-source-headline { font-size: .78rem; font-weight: 700; opacity: .8; text-transform: none; }
+.vocab-category-count { font-size: .76rem; font-weight: 700; opacity: .72; }
+.vocab-tree-body { padding: 12px; }
+.vocab-tree-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.vocab-tree-actions .btn { width: auto; min-height: 38px; }
+.vocab-group-list { display: grid; gap: 8px; }
+.vocab-source-group,
+.vocab-type-group { overflow: hidden; border-radius: var(--radius-md); background: rgba(127,127,127,.09); }
+.vocab-group-body { padding: 0 11px 11px; }
+.vocab-parent-option,
+.vocab-leaf-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(127,127,127,.09);
+  font-size: .84rem;
+  font-weight: 700;
+}
+.vocab-parent-option { margin-bottom: 7px; }
+.vocab-leaf-option small,
+.vocab-parent-option small { display: block; margin-top: 2px; font-weight: 700; opacity: .72; }
+.vocab-leaf-option input,
+.vocab-parent-option input { width: 18px; height: 18px; flex: 0 0 18px; margin: 1px 0 0; }
+.vocab-leaf-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.vocab-source-option:has(input:checked) { outline: 2px solid var(--primary); outline-offset: -2px; }
+.vocab-selection-summary { margin: 0 !important; font-size: .86rem; font-weight: 800; }
+.vocab-pool-error {
+  margin: 0 !important;
+  padding: 9px 11px;
+  border-radius: var(--radius-md);
+  background: rgba(220,80,80,.14);
+  font-size: .84rem;
+  font-weight: 700;
+}
+.vocab-pool-error.hidden { display: none; }
+@media (max-width:680px) {
+  .vocab-leaf-grid { grid-template-columns: 1fr; }
+  .vocab-tree-actions .btn { width: 100%; }
+}
 .exercise-menu {
   display: grid;
   gap: 20px;
@@ -866,14 +947,12 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       <div class="toc-grid" id="tocGrid"></div>
     </nav>
 
-    <section class="section" id="bank" aria-labelledby="grammar-bank-title">
-      <div class="section-header">
-        <h2 id="grammar-bank-title">Grammar Bank</h2>
-      </div>
-      <div class="section-content">
+    <details class="section" id="bank" open>
+      <summary><span>Grammar Bank</span></summary>
+      <div class="section-body">
         <div class="grammar-grid" id="grammarGrid"></div>
       </div>
-    </section>
+    </details>
 
     <details class="block" id="batchim-guide">
       <summary><span>Batchim (Consonant Endings) Guide</span></summary>
@@ -913,12 +992,16 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
   </div>
 
+  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="./shared-vocab/korean-grammar.js?v=1.2.0"></script>
+  <script src="./shared-vocab/grammar-templates.js?v=1.2.0"></script>
+
   <script>
       // Strict transliteration conversion logic matching the provided keys
       function romanizeKorean(text) {
-        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+        const CHO = ["g", "gg", "n", "d", "dd", "r", "m", "b", "bb", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
         const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
-        const JONG = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+        const JONG = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
 
         return text.split(" ").map(word => {
           let parts = [];
@@ -947,6 +1030,221 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       }
 
       // Compact Vocabulary Bank without hardcoded romanizations
+      // ---- Shared vocabulary and its sources --------------------------------
+      // Every word is listed under exactly one source, resolved in the shared
+      // library's order: TOPIK vocabulary lists, Bab lessons, practice tests,
+      // then the extra core list.
+      const SOURCE_OF = new Map(KoreanVocab.DATA.map(entry => [entry.id, KoreanVocab.primarySourceOf(entry)]));
+      const sourceOf = entry => SOURCE_OF.get(entry.id);
+      const SOURCE_GROUP_ORDER = ["topik-vocab", "bab", "topik-test", "topik-extra"];
+      const VOCAB_SOURCES = KoreanVocab.SOURCES.slice().sort((a, b) =>
+        (SOURCE_GROUP_ORDER.indexOf(a.group) - SOURCE_GROUP_ORDER.indexOf(b.group)) ||
+        (KoreanVocab.SOURCES.indexOf(a) - KoreanVocab.SOURCES.indexOf(b)));
+      // A TOPIK I page starts from the TOPIK vocabulary lists.
+      const DEFAULT_SOURCES = KoreanVocab.SOURCES.filter(source => source.group === "topik-vocab").map(source => source.id);
+      const vocabGroupKey = entry => `${entry.partOfSpeech}::${entry.category}`;
+      const labelName = id => KoreanVocab.LABELS[id]?.name || String(id).replaceAll("-", " ");
+
+      function vocabPool(element) {
+        const inputs = element ? element.querySelectorAll(".vocab-source") : [];
+        if (!inputs.length) return KoreanVocab.DATA.filter(entry => DEFAULT_SOURCES.includes(sourceOf(entry)));
+        const sources = new Set([...element.querySelectorAll(".vocab-source:checked")].map(input => input.value));
+        const groups = new Set([...element.querySelectorAll(".vocab-leaf:checked")].map(input => input.value));
+        return KoreanVocab.DATA.filter(entry => sources.has(sourceOf(entry)) && groups.has(vocabGroupKey(entry)));
+      }
+
+      function vocabPickerTemplate(id) {
+        const counts = new Map();
+        KoreanVocab.DATA.forEach(entry => {
+          const source = sourceOf(entry);
+          counts.set(source, (counts.get(source) || 0) + 1);
+        });
+        const sourceGroups = KoreanVocab.SOURCE_GROUPS.slice()
+          .sort((a, b) => SOURCE_GROUP_ORDER.indexOf(a.id) - SOURCE_GROUP_ORDER.indexOf(b.id))
+          .map(group => {
+            const list = VOCAB_SOURCES.filter(source => source.group === group.id && counts.get(source.id));
+            if (!list.length) return "";
+            const total = list.reduce((sum, source) => sum + counts.get(source.id), 0);
+            const options = list.map(source => `<label class="vocab-leaf-option vocab-source-option"><input class="vocab-source" type="checkbox" value="${escapeHtml(source.id)}"${DEFAULT_SOURCES.includes(source.id) ? " checked" : ""}><span>${escapeHtml(source.label)}<small>${counts.get(source.id)} words</small></span></label>`).join("");
+            const toggle = list.length > 1 ? `<label class="vocab-parent-option"><input class="vocab-source-group-toggle" type="checkbox"><span>Select every source in this group</span></label>` : "";
+            return `<details class="vocab-source-group"${list.some(source => DEFAULT_SOURCES.includes(source.id)) ? " open" : ""}><summary><span>${escapeHtml(group.label)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-group-body">${toggle}<div class="vocab-leaf-grid">${options}</div></div></details>`;
+          }).join("");
+
+        const grouped = new Map();
+        KoreanVocab.DATA.forEach(entry => {
+          if (!grouped.has(entry.partOfSpeech)) grouped.set(entry.partOfSpeech, new Map());
+          const categories = grouped.get(entry.partOfSpeech);
+          categories.set(entry.category, (categories.get(entry.category) || 0) + 1);
+        });
+        const typeGroups = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([part, categories]) => {
+          const total = [...categories.values()].reduce((sum, n) => sum + n, 0);
+          const leaves = [...categories.entries()].sort(([a], [b]) => labelName(a).localeCompare(labelName(b))).map(([category, n]) => {
+            const value = `${part}::${category}`;
+            return `<label class="vocab-leaf-option"><input class="vocab-leaf" type="checkbox" value="${escapeHtml(value)}" checked><span>${escapeHtml(labelName(category))}<small>${n} words</small></span></label>`;
+          }).join("");
+          return `<details class="vocab-type-group"><summary><span>${escapeHtml(part)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-group-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include every group here</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
+        }).join("");
+
+        const needs = slotsForPoint(id).map(slot => SLOT_LABELS[slot] || slot).join(", ");
+        return `<fieldset class="vocab-picker"><legend>Vocabulary to build sentences from</legend>
+          <p class="vocab-source-note">These sentences are built from ${escapeHtml(needs)}. A word that appears in several places is counted once, under the TOPIK vocabulary lists first, then the Bab lessons, then the practice tests.</p>
+          <details class="vocab-tree vocab-source-tree" open><summary><span>Vocabulary sources</span><span class="vocab-source-headline">one source per word</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-source-reset" type="button">TOPIK lists only</button><button class="btn secondary vocab-source-all" type="button">Select all sources</button><button class="btn secondary vocab-source-none" type="button">Clear all sources</button></div><div class="vocab-group-list">${sourceGroups}</div></div></details>
+          <details class="vocab-tree"><summary><span>Word types and categories</span><span class="vocab-source-headline">optional filter</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-group-list">${typeGroups}</div></div></details>
+          <p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p>
+          <p class="vocab-pool-error hidden"></p></fieldset>`;
+      }
+
+      /* Keeps the counts, group toggles, and the "not enough words" notice in sync. */
+      function syncVocabPicker(element, id) {
+        const pool = vocabPool(element);
+        const bank = buildBank(pool);
+        element.querySelectorAll(".vocab-source-group").forEach(group => {
+          const parent = group.querySelector(".vocab-source-group-toggle");
+          if (!parent) return;
+          const inputs = [...group.querySelectorAll(".vocab-source")];
+          const checked = inputs.filter(input => input.checked).length;
+          parent.checked = inputs.length > 0 && checked === inputs.length;
+          parent.indeterminate = checked > 0 && checked < inputs.length;
+        });
+        element.querySelectorAll(".vocab-type-group").forEach(group => {
+          const parent = group.querySelector(".vocab-type-toggle");
+          if (!parent) return;
+          const leaves = [...group.querySelectorAll(".vocab-leaf")];
+          const checked = leaves.filter(input => input.checked).length;
+          parent.checked = leaves.length > 0 && checked === leaves.length;
+          parent.indeterminate = checked > 0 && checked < leaves.length;
+        });
+        const selected = element.querySelectorAll(".vocab-source:checked").length;
+        const headline = element.querySelector(".vocab-source-headline");
+        if (headline) headline.textContent = selected
+          ? `${selected} source${selected === 1 ? "" : "s"} selected`
+          : "no sources selected";
+        element.querySelector(".vocab-selected-count").textContent = String(pool.length);
+        const short = missingSlots(id, bank);
+        const error = element.querySelector(".vocab-pool-error");
+        error.textContent = short.length ? `These sentences also need ${short.join(", ")} in the selected vocabulary.` : "";
+        error.classList.toggle("hidden", !short.length);
+        const start = element.querySelector(".start-exercise");
+        if (start) start.disabled = short.length > 0;
+      }
+
+      function initVocabPicker(element, id) {
+        const sync = () => syncVocabPicker(element, id);
+        element.querySelectorAll(".vocab-source, .vocab-leaf").forEach(input => input.addEventListener("change", sync));
+        element.querySelectorAll(".vocab-source-group-toggle").forEach(parent => parent.addEventListener("change", () => {
+          parent.closest(".vocab-source-group").querySelectorAll(".vocab-source").forEach(input => { input.checked = parent.checked; });
+          sync();
+        }));
+        element.querySelectorAll(".vocab-type-toggle").forEach(parent => parent.addEventListener("change", () => {
+          parent.closest(".vocab-type-group").querySelectorAll(".vocab-leaf").forEach(input => { input.checked = parent.checked; });
+          sync();
+        }));
+        const setSources = predicate => {
+          element.querySelectorAll(".vocab-source").forEach(input => { input.checked = predicate(input.value); });
+          element.querySelectorAll(".vocab-source-group").forEach(group => {
+            if (group.querySelector(".vocab-source:checked")) group.open = true;
+          });
+          sync();
+        };
+        element.querySelector(".vocab-source-reset")?.addEventListener("click", () => setSources(value => DEFAULT_SOURCES.includes(value)));
+        element.querySelector(".vocab-source-all")?.addEventListener("click", () => setSources(() => true));
+        element.querySelector(".vocab-source-none")?.addEventListener("click", () => setSources(() => false));
+        element.querySelector(".vocab-select-all")?.addEventListener("click", () => {
+          element.querySelectorAll(".vocab-leaf").forEach(input => { input.checked = true; });
+          sync();
+        });
+        element.querySelector(".vocab-clear-all")?.addEventListener("click", () => {
+          element.querySelectorAll(".vocab-leaf").forEach(input => { input.checked = false; });
+          sync();
+        });
+        sync();
+      }
+
+      // ---- Vocabulary slots -------------------------------------------------
+      // The sentence templates below draw from seven buckets. They used to be a
+      // hand-written list; they are now views over the shared vocabulary, so the
+      // learner can choose which sources feed them.
+      const PEOPLE_CATEGORIES = new Set(["people-occupations", "family-relationships"]);
+      const SLOT_FILTERS = {
+        people: entry => (entry.partOfSpeech === "noun" || entry.partOfSpeech === "proper noun") && PEOPLE_CATEGORIES.has(entry.category),
+        places: entry => entry.partOfSpeech === "noun" && entry.category === "places-buildings",
+        food: entry => entry.partOfSpeech === "noun" && entry.category === "food-drink",
+        time: entry => entry.partOfSpeech === "noun" && entry.category === "time-calendar",
+        objects: entry => entry.partOfSpeech === "noun" && !PEOPLE_CATEGORIES.has(entry.category) &&
+          !["places-buildings", "food-drink", "time-calendar"].includes(entry.category),
+        adjectives: entry => GrammarTemplates.fillsSlot(entry, "adj"),
+        verbs: entry => GrammarTemplates.fillsSlot(entry, "verb")
+      };
+      const SLOT_LABELS = {
+        people: "people", places: "places", food: "food and drink",
+        objects: "objects", time: "time words", adjectives: "adjectives", verbs: "verbs"
+      };
+      // Buckets whose English gloss is used as a bare object phrase and so needs
+      // an article ("a book", "an apple").
+      const ARTICLE_SLOTS = new Set(["food", "objects"]);
+
+      // Sentences that put a noun in front of the verb need a verb that can take
+      // an object, or they come out as "I work a tea".
+      const OBJECT_VERBS = new Set([
+        "먹다", "마시다", "사다", "팔다", "만들다", "주다", "받다", "보다", "찾다", "좋아하다",
+        "싫어하다", "준비하다", "씻다", "넣다", "가져오다", "가져가다", "고르다", "나누다", "버리다",
+        "읽다", "배우다", "가르치다", "요리하다", "주문하다", "보내다", "자르다", "쓰다", "바꾸다",
+        "가지다", "들다", "옮기다", "꺼내다", "구입하다", "이용하다", "선택하다", "확인하다"
+      ]);
+
+      // The time slot is an adverbial, so it needs an adverbial English phrase.
+      const TIME_ADVERBIALS = {
+        "오늘": "today", "내일": "tomorrow", "어제": "yesterday", "지금": "now",
+        "아침": "in the morning", "점심": "at lunch", "저녁": "in the evening", "밤": "at night",
+        "오전": "in the morning", "오후": "in the afternoon", "낮": "during the day", "새벽": "at dawn",
+        "주말": "on the weekend", "매일": "every day", "요즘": "these days", "올해": "this year",
+        "작년": "last year", "내년": "next year", "지난주": "last week", "이번 주": "this week",
+        "다음 주": "next week", "월요일": "on Monday", "화요일": "on Tuesday", "수요일": "on Wednesday",
+        "목요일": "on Thursday", "금요일": "on Friday", "토요일": "on Saturday", "일요일": "on Sunday"
+      };
+
+      /* Turns the chosen vocabulary into the [korean, english] pairs the templates expect. */
+      function buildBank(pool) {
+        const bank = {};
+        Object.keys(SLOT_FILTERS).forEach(slot => {
+          bank[slot] = pool.filter(SLOT_FILTERS[slot]).map(entry => {
+            const gloss = slot === "verbs" ? KoreanGrammar.verbEnglish(entry)
+              : slot === "adjectives" ? KoreanGrammar.adjectiveEnglish(entry)
+              : KoreanGrammar.baseEnglish(entry);
+            return [entry.korean, ARTICLE_SLOTS.has(slot) ? KoreanGrammar.article(gloss) : gloss];
+          }).filter(pair => pair[1]);
+        });
+        // Prefer verbs that take an object; fall back to any verb so a narrow
+        // selection still produces questions.
+        const transitive = pool.filter(entry => SLOT_FILTERS.verbs(entry) && OBJECT_VERBS.has(entry.korean))
+          .map(entry => [entry.korean, KoreanGrammar.verbEnglish(entry)]);
+        bank.objectVerbs = transitive.length ? transitive : bank.verbs;
+        // Prefer time words that read as adverbials.
+        const adverbial = pool.filter(entry => SLOT_FILTERS.time(entry) && TIME_ADVERBIALS[entry.korean])
+          .map(entry => [entry.korean, TIME_ADVERBIALS[entry.korean]]);
+        if (adverbial.length) bank.time = adverbial;
+        return bank;
+      }
+
+      /* Which buckets a grammar point still cannot fill from the chosen pool. */
+      const POINT_SLOTS = {
+        g1: ["people", "places"], g2: ["people"], g3: ["food", "verbs"], g4: ["places", "time"],
+        g5: ["places"], g6: ["people"], g7: ["places", "food"], g8: ["verbs", "time"],
+        g9: ["verbs", "time"], g10: ["food", "verbs"], g11: ["verbs", "time"], g12: ["verbs", "time"],
+        g13: ["verbs"], g14: ["verbs"], g15: ["verbs"], g16: ["verbs"], g17: ["verbs", "places"],
+        g18: ["adjectives"], g19: ["adjectives"], g20: ["objects", "places"], g21: ["verbs", "time"],
+        g22: ["food", "verbs"], g23: ["places", "verbs"], g24: ["food", "verbs"], g25: ["verbs"],
+        g26: ["verbs"], g27: ["places", "verbs"], g28: ["places", "verbs"], g29: ["food", "verbs"],
+        g30: ["food"], g31: ["adjectives"], g32: ["people", "places"]
+      };
+      function slotsForPoint(id) {
+        if (id === "all-grammar") return Object.keys(SLOT_FILTERS);
+        return POINT_SLOTS[id] || Object.keys(SLOT_FILTERS);
+      }
+      function missingSlots(id, bank) {
+        return slotsForPoint(id).filter(slot => !bank[slot] || !bank[slot].length).map(slot => SLOT_LABELS[slot] || slot);
+      }
+
       const VOCABULARY_BANK = {
         people: [["학생", "student"], ["선생님", "teacher"], ["의사", "doctor"], ["간호사", "nurse"], ["회사원", "office worker"], ["친구", "friend"], ["어머니", "mother"], ["아버지", "father"]],
         places: [["학교", "school"], ["회사", "company"], ["병원", "hospital"], ["은행", "bank"], ["식당", "restaurant"], ["카페", "cafe"], ["공원", "park"], ["시장", "market"], ["도서관", "library"], ["집", "home"]],
@@ -1120,6 +1418,8 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
         ]]
       ];
 
+      // Superseded by KoreanGrammar; kept only so the bundled examples above
+      // keep resolving if anything still reads them.
       const PRESENT_CONJUGATIONS = { 가다: "가요", 오다: "와요", 먹다: "먹어요", 마시다: "마셔요", 보다: "봐요", 듣다: "들어요", 읽다: "읽어요", 쓰다: "써요", 말하다: "말해요", 공부하다: "공부해요", 일하다: "일해요", 자다: "자요", 만나다: "만나요", 배우다: "배워요", 만들다: "만들어요", 좋아하다: "좋아해요" };
       const PAST_CONJUGATIONS = { 가다: "갔어요", 오다: "왔어요", 먹다: "먹었어요", 마시다: "마셨어요", 보다: "봤어요", 듣다: "들었어요", 읽다: "읽었어요", 쓰다: "썼어요", 말하다: "말했어요", 공부하다: "공부했어요", 일하다: "일했어요", 자다: "잤어요", 만나다: "만났어요", 배우다: "배웠어요", 만들다: "만들었어요", 좋아하다: "좋아했어요" };
       const FUTURE_CONJUGATIONS = { 가다: "갈 거예요", 오다: "올 거예요", 먹다: "먹을 거예요", 마시다: "마실 거예요", 보다: "볼 거예요", 듣다: "들을 거예요", 읽다: "읽을 거예요", 쓰다: "쓸 거예요", 말하다: "말할 거예요", 공부하다: "공부할 거예요", 일하다: "일할 거예요", 자다: "잘 거예요", 만나다: "만날 거예요", 배우다: "배울 거예요", 만들다: "만들 거예요", 좋아하다: "좋아할 거예요" };
@@ -1127,59 +1427,68 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       // Helper for question generation
       const randomItem = (array) => array[Math.floor(Math.random() * array.length)];
       const CONSONANT_ENDING_WORDS = new Set(["학생", "선생님", "의사", "간호사", "회사원", "친구", "어머니", "아버지", "집", "학교", "회사", "병원", "은행", "식당", "카페", "공원", "시장", "도서관", "밥", "물", "빵", "과일", "고기", "김치", "라면", "책", "사진", "카드", "돈"]);
-      const chooseParticle = (word, consonantForm, vowelForm) => CONSONANT_ENDING_WORDS.has(word) ? consonantForm : vowelForm;
+      // Batchim is computed from the syllable, so any shared-vocabulary noun works.
+      const chooseParticle = (word, consonantForm, vowelForm) => KoreanGrammar.hasBatchim(word) ? consonantForm : vowelForm;
       
       const createQuestion = (english, romanization, korean) => ({ english, romanization, korean });
 
-      function generateQuestion(id) {
-        let p = randomItem(VOCABULARY_BANK.people),
-            pl = randomItem(VOCABULARY_BANK.places),
-            f = randomItem(VOCABULARY_BANK.food),
-            o = randomItem(VOCABULARY_BANK.objects),
-            t = randomItem(VOCABULARY_BANK.time),
-            a = randomItem(VOCABULARY_BANK.adjectives),
-            v = randomItem(VOCABULARY_BANK.verbs);
+      let DEFAULT_BANK = null;
+      function defaultBank() {
+        if (!DEFAULT_BANK) DEFAULT_BANK = buildBank(KoreanVocab.DATA.filter(entry => DEFAULT_SOURCES.includes(sourceOf(entry))));
+        return DEFAULT_BANK;
+      }
+
+      function generateQuestion(id, bank) {
+        const B = bank && bank.verbs && bank.verbs.length ? bank : defaultBank();
+        let ov = randomItem(B.objectVerbs && B.objectVerbs.length ? B.objectVerbs : B.verbs),
+            p = randomItem(B.people),
+            pl = randomItem(B.places),
+            f = randomItem(B.food),
+            o = randomItem(B.objects),
+            t = randomItem(B.time),
+            a = randomItem(B.adjectives),
+            v = randomItem(B.verbs);
 
         let pn = chooseParticle(p[0], "은", "는"),
             pg = chooseParticle(p[0], "이", "가"),
             fo = chooseParticle(f[0], "을", "를");
 
-        let vp = PRESENT_CONJUGATIONS[v[0]],
-            va = PAST_CONJUGATIONS[v[0]],
-            vf = FUTURE_CONJUGATIONS[v[0]];
+        let vp = KoreanGrammar.politeEnding(v[0]),
+            va = KoreanGrammar.pastPolite(v[0]),
+            vf = KoreanGrammar.futurePolite(v[0]);
 
         let M = {
           g1: () => [`As for the ${p[1]}, he or she is at the ${pl[1]}.`, `${p[0]}${pn} ${pl[0]}에 있어요.`],
           g2: () => [`The ${p[1]} came today.`, `${p[0]}${pg} 오늘 왔어요.`],
-          g3: () => [`I ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${vp}.`],
+          g3: () => [`I ${ov[1]} ${f[1]}.`, `${f[0]}${fo} ${KoreanGrammar.politeEnding(ov[0])}.`],
           g4: () => [`I go to the ${pl[1]} ${t[1]}.`, `${t[0]} ${pl[0]}에 가요.`],
           g5: () => [`I study at the ${pl[1]}.`, `${pl[0]}에서 공부해요.`],
-          g6: () => [`He or she is a ${p[1]}.`, `${p[0]}${chooseParticle(p[0], "이에요", "예요")}.`],
+          g6: () => [`He or she is ${KoreanGrammar.article(p[1])}.`, `${p[0]}${chooseParticle(p[0], "이에요", "예요")}.`],
           g7: () => [`There is ${f[1]} at the ${pl[1]}.`, `${pl[0]}에 ${f[0]}${chooseParticle(f[0], "이", "가")} 있어요.`],
           g8: () => [`I do not ${v[1]} ${t[1]}.`, `${t[0]} 안 ${vp}.`],
           g9: () => [`I cannot ${v[1]} ${t[1]}.`, `${t[0]} 못 ${vp}.`],
-          g10: () => [`I ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${vp}.`],
+          g10: () => [`I ${ov[1]} ${f[1]}.`, `${f[0]}${fo} ${KoreanGrammar.politeEnding(ov[0])}.`],
           g11: () => [`I did ${v[1]} ${t[1]}.`, `${t[0]} ${va}.`],
           g12: () => [`I will ${v[1]} ${t[1]}.`, `${t[0]} ${vf}.`],
-          g13: () => [`Please ${v[1]}.`, `${vp.replace("요", "세요")}.`],
-          g14: () => [`Please ${v[1]}.`, `${vp.replace("요", "십시오")}.`],
-          g15: () => [`Let's ${v[1]} together.`, `같이 ${vf.replace(" 거예요", "ㅂ시다")}.`],
-          g16: () => [`Shall we ${v[1]} together?`, `같이 ${vf.replace(" 거예요", "까요")}?`],
-          g17: () => [`I ${v[1]} and then go to the ${pl[1]}.`, `${v[0].slice(0, -1)}고 ${pl[0]}에 가요.`],
-          g18: () => [`Because it is ${a[1]}, I rest.`, `${a[0].slice(0, -1)}서 쉬어요.`],
-          g19: () => [`It is ${a[1]}, but interesting.`, `${a[0].slice(0, -1)}지만 재미있어요.`],
+          g13: () => [`Please ${v[1]}.`, `${KoreanGrammar.attachEu(v[0], "(으)세요")}.`],
+          g14: () => [`Please ${v[1]}.`, `${KoreanGrammar.attachEu(v[0], "(으)십시오")}.`],
+          g15: () => [`Let's ${v[1]} together.`, `같이 ${KoreanGrammar.attachEu(v[0], "(으)ㅂ시다")}.`],
+          g16: () => [`Shall we ${v[1]} together?`, `같이 ${KoreanGrammar.attachEu(v[0], "(으)ㄹ까요")}?`],
+          g17: () => [`I ${v[1]} and then go to the ${pl[1]}.`, `${KoreanGrammar.plainStem(v[0], "고")}고 ${pl[0]}에 가요.`],
+          g18: () => [`Because it is ${a[1]}, I rest.`, `${KoreanGrammar.infinitive(a[0])}서 쉬어요.`],
+          g19: () => [`It is ${a[1]}, but interesting.`, `${KoreanGrammar.plainStem(a[0], "지")}지만 재미있어요.`],
           g20: () => [`If I have ${o[1]}, I will go to the ${pl[1]}.`, `${o[0]}${chooseParticle(o[0], "이", "가")} 있으면 ${pl[0]}에 갈 거예요.`],
-          g21: () => [`I plan to ${v[1]} ${t[1]}.`, `${t[0]} ${vf.replace(" 거예요", "려고 해요")}.`],
-          g22: () => [`I want to ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${v[0].slice(0, -1)}고 싶어요.`],
-          g23: () => [`I go to the ${pl[1]} in order to ${v[1]}.`, `${v[0].slice(0, -1)}러 ${pl[0]}에 가요.`],
-          g24: () => [`I have tried ${v[1]}ing ${f[1]}.`, `${f[0]}${fo} ${vp.replace("요", " 봤어요")}.`],
-          g25: () => [`May I ${v[1]} here?`, `여기서 ${vp.replace("요", "도 돼요")}?`],
-          g26: () => [`You must not ${v[1]} here.`, `여기서 ${vf.replace(" 거예요", "면 안 돼요")}.`],
-          g27: () => [`I go to the ${pl[1]} after ${v[1]}ing.`, `${va.replace("었어요", "은 후에").replace("았어요", "ㄴ 후에").replace("했어요", "한 후에")} ${pl[0]}에 가요.`],
+          g21: () => [`I plan to ${v[1]} ${t[1]}.`, `${t[0]} ${KoreanGrammar.attachEu(v[0], "(으)려고")} 해요.`],
+          g22: () => [`I want to ${ov[1]} ${f[1]}.`, `${f[0]}${fo} ${KoreanGrammar.plainStem(ov[0], "고")}고 싶어요.`],
+          g23: () => [`I go to the ${pl[1]} in order to ${v[1]}.`, `${KoreanGrammar.attachEu(v[0], "(으)러")} ${pl[0]}에 가요.`],
+          g24: () => [`I have tried ${KoreanGrammar.gerund(ov[1])} ${f[1]}.`, `${f[0]}${fo} ${KoreanGrammar.infinitive(ov[0])} 봤어요.`],
+          g25: () => [`May I ${v[1]} here?`, `여기서 ${KoreanGrammar.infinitive(v[0])}도 돼요?`],
+          g26: () => [`You must not ${v[1]} here.`, `여기서 ${KoreanGrammar.attachEu(v[0], "(으)면")} 안 돼요.`],
+          g27: () => [`I go to the ${pl[1]} after ${KoreanGrammar.gerund(v[1])}.`, `${KoreanGrammar.attachEu(v[0], "(으)ㄴ")} 후에 ${pl[0]}에 가요.`],
           g28: () => [`I ${v[1]} before going to the ${pl[1]}.`, `${pl[0]}에 가기 전에 ${vp}.`],
-          g29: () => [`I can ${v[1]} ${f[1]}.`, `${f[0]}${fo} ${vf.replace(" 거예요", " 수 있어요")}.`],
-          g30: () => [`Oh, the ${f[1]} is delicious.`, `${f[0]}${chooseParticle(f[0], "이", "가")} 맛있네요.`],
-          g31: () => [`Wow, it is really ${a[1]}!`, `정말 ${a[0].slice(0, -1)}군요!`],
+          g29: () => [`I can ${ov[1]} ${f[1]}.`, `${f[0]}${fo} ${KoreanGrammar.attachEu(ov[0], "(으)ㄹ")} 수 있어요.`],
+          g30: () => [`Oh, the ${f[1].replace(/^an? /, "")} is delicious.`, `${f[0]}${chooseParticle(f[0], "이", "가")} 맛있네요.`],
+          g31: () => [`Wow, it is really ${a[1]}!`, `정말 ${KoreanGrammar.plainStem(a[0], "군")}군요!`],
           g32: () => [`I think the ${p[1]} is at the ${pl[1]}.`, `${p[0]}${pg} ${pl[0]}에 있는 것 같아요.`]
         };
         
@@ -1187,7 +1496,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
         return createQuestion(english, romanizeKorean(korean), korean);
       }
 
-      function buildGrammarQuestions(id, count) {
+      function buildGrammarQuestions(id, count, bank) {
         const result = [];
         if (id === "all-grammar") {
           const points = GRAMMAR_POINTS.map(x => x[0]);
@@ -1199,14 +1508,14 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
               }
             }
             result.push(...batch.map(gId => {
-              const q = generateQuestion(gId);
+              const q = generateQuestion(gId, bank);
               q.gId = gId;
               return q;
             }));
           }
         } else {
           while (result.length < count) {
-            result.push(generateQuestion(id));
+            result.push(generateQuestion(id, bank));
           }
         }
         return result.slice(0, count);
@@ -1224,7 +1533,10 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
 
       function normalizeAnswer(s, m) {
         s = String(s ?? "").trim().toLowerCase();
-        return m === "korean" ? s.replace(/\s+/g, "").replace(/[.?!]/g, "") : s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim();
+        if (m === "korean") return s.replace(/\s+/g, "").replace(/[.?!]/g, "");
+        // Syllables are shown with dashes but checked without them.
+        if (m === "romanization") return s.replace(/[^a-z]/g, "");
+        return s.replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim();
       }
 
       function feedbackMarkup(q) {
@@ -1236,7 +1548,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
         
         tocGrid.innerHTML = `<a class="toc-link" href="#bank"><span>Grammar Bank</span><small>32 points</small></a><a class="toc-link" href="#batchim-guide"><span>Batchim Guide</span></a><a class="toc-link" href="#all-grammar"><span>All Grammar</span><small>Comprehensive</small></a>` + GRAMMAR_POINTS.map(x => `<a class="toc-link" href="#${x[0]}"><span>${x[1]} · ${x[2]}</span></a>`).join("");
         
-        const allGrammarHtml = `<details class="section" id="all-grammar" open><summary><span>All Grammar Points Together</span></summary><div class="section-body"><div class="section-intro"><article class="info-card" style="grid-column: 1 / -1;"><span class="rule-label">Review</span><h3>Comprehensive Test</h3><p>This section automatically shuffles through all 32 grammar points randomly for a comprehensive quiz.</p></article></div><div class="exercise-grid">${exerciseTemplate("all-grammar","typed","Typed translation")}${exerciseTemplate("all-grammar","mc","Multiple choice")}</div></div></details>`;
+        const allGrammarHtml = `<details class="section" id="all-grammar" open><summary><span>All Grammar Points Together</span></summary><div class="section-body"><div class="section-intro"><article class="info-card" style="grid-column: 1 / -1;"><span class="rule-label">Review</span><h3>Comprehensive Test</h3><p>This section automatically shuffles through all 32 grammar points randomly for a comprehensive quiz.</p></article></div><div class="exercise-grid single">${exerciseTemplate("all-grammar","Translation")}</div></div></details>`;
         
         const sectionsHtml = GRAMMAR_POINTS.map(x => `
           <details class="section" id="${x[0]}">
@@ -1264,9 +1576,8 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
                   </div>
                 </article>
               </div>
-              <div class="exercise-grid">
-                ${exerciseTemplate(x[0], "typed", "Typed translation")}
-                ${exerciseTemplate(x[0], "mc", "Multiple choice")}
+              <div class="exercise-grid single">
+                ${exerciseTemplate(x[0], "Translation")}
               </div>
             </div>
           </details>
@@ -1276,13 +1587,13 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
         // Initialization handled later dynamically
       }
 
-      function exerciseTemplate(id, t, title) {
-        return `<article class="exercise" id="${id}-${t}">
+      function exerciseTemplate(id, title) {
+        return `<article class="exercise" id="${id}-ex">
           <div class="exercise-head">
             <div class="exercise-head-copy">
-              <span class="exercise-kicker">${t==="typed"?"Type":"Select"}</span>
+              <span class="exercise-kicker">Translate</span>
               <h3>${title}</h3>
-              <p>Translate randomized prompts and review every response.</p>
+              <p>Choose typed or multiple choice, then translate randomized prompts and review every response.</p>
             </div>
             <div class="score" aria-live="polite"></div>
           </div>
@@ -1404,8 +1715,10 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     element.querySelector(".menu-count").value = String(count);
     clearTimer(key); 
     state.i = 0; state.score = 0; state.r = []; 
+    state.mode = element.querySelector(".menu-mode")?.value || "typed";
     state.qm = element.querySelector(".menu-question").value; state.am = element.querySelector(".menu-answer").value; 
-    state.qs = buildGrammarQuestions(id, count); 
+    state.bank = buildBank(vocabPool(element));
+    state.qs = buildGrammarQuestions(id, count, state.bank); 
     state.done = false; state.finished = false;
     element.querySelector(".exercise-menu").classList.add("hidden"); element.querySelector(".finish").style.display = "none"; setLive(element, true); showQuestion(id, type);
     const minutes = Math.max(0, Number(element.querySelector(".menu-timer").value) || 0), label = element.querySelector(".runtime-timer");
@@ -1420,7 +1733,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     element.querySelector(".prompt-label").textContent = state.qm; element.querySelector(".prompt").textContent = q[state.qm]; element.querySelector(".feedback").className = "feedback"; element.querySelector(".feedback").innerHTML = ""; element.querySelector(".next").classList.add("hidden");
     const zone = element.querySelector(".zone");
     
-    if (type === "typed") {
+    if ((state.mode || "typed") === "typed") {
       zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn primary" type="button">Check</button></div>`;
       const input = zone.querySelector("input"), submit = () => submitAnswer(id, type, input.value); 
       zone.querySelector("button").onclick = submit;
@@ -1450,7 +1763,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       requestAnimationFrame(() => input.focus({preventScroll:true}));
     } else {
       let gId = q.gId || id;
-      let opts = [q, ...Array.from({length:5}, () => generateQuestion(gId))].sort(() => Math.random()-.5).slice(0,4); if (!opts.includes(q)) opts[0] = q;
+      let opts = [q, ...Array.from({length:5}, () => generateQuestion(gId, state.bank))].sort(() => Math.random()-.5).slice(0,4); if (!opts.includes(q)) opts[0] = q;
       zone.innerHTML = `<div class="choices">${opts.map((o,i) => `<button class="choice" type="button" data-i="${i}">${escapeHtml(o[state.am])}</button>`).join("")}</div>`;
       zone.querySelectorAll(".choice").forEach((button,index) => button.onclick = () => { const ok = normalizeAnswer(opts[index][state.am],state.am) === normalizeAnswer(q[state.am],state.am); zone.querySelectorAll(".choice").forEach((other,j) => { other.disabled = true; if (normalizeAnswer(opts[j][state.am],state.am) === normalizeAnswer(q[state.am],state.am)) other.classList.add("correct"); }); if (!ok) button.classList.add("wrong"); completeQuestion(id,type,opts[index][state.am],ok); });
     }
@@ -1460,7 +1773,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     const state = exerciseStates[`${id}-${type}`], element = document.getElementById(`${id}-${type}`), q = state.qs[state.i]; if (state.done || state.finished) return; state.done = true; if (correct) state.score += 1; state.r.push({q,u:userAnswer,ok:correct,qm:state.qm,am:state.am}); element.querySelector(".score").textContent = `Score: ${state.score}`;
     const feedback = element.querySelector(".feedback"); feedback.className = `feedback ${correct?"good":"bad"}`; feedback.innerHTML = `${correct?"Correct.":"Not quite."}<br>${feedbackMarkup(q)}`;
     const next = element.querySelector(".next"); next.textContent = state.i === state.qs.length-1 ? "Finish" : "Next"; next.classList.remove("hidden");
-    if (type === "typed") { const input = element.querySelector(".ans"); if (input) { input.readOnly = true; requestAnimationFrame(() => input.focus({preventScroll:true})); } }
+    if ((state.mode || "typed") === "typed") { const input = element.querySelector(".ans"); if (input) { input.readOnly = true; requestAnimationFrame(() => input.focus({preventScroll:true})); } }
   };
 
   finishExercise = function(id,type,reason="Completed") {
@@ -1470,14 +1783,15 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   };
 
   document.querySelectorAll(".exercise").forEach(element => {
-    const match = element.id.match(/^([a-z0-9-]+)-(typed|mc)$/); if (!match) return; const [,id,type] = match, body = element.querySelector(".exercise-body");
+    const match = element.id.match(/^([a-z0-9-]+)-(ex)$/); if (!match) return; const [,id,type] = match, body = element.querySelector(".exercise-body");
     const defaultCount = id === "all-grammar" ? 32 : 10;
     
     // Initialize blank state for robust toggling
     exerciseStates[`${id}-${type}`] = { qs: [], r: [], done: false, finished: false };
 
-    const menu = document.createElement("div"); menu.className = "exercise-menu"; menu.innerHTML = `<h4>Exercise setup</h4><p>Choose how many questions to answer, both languages, and an optional time limit.</p><div class="exercise-menu-grid"><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`; body.insertBefore(menu,body.firstChild);
+    const menu = document.createElement("div"); menu.className = "exercise-menu"; menu.innerHTML = `<h4>Exercise setup</h4><p>Pick the answer mode and the vocabulary sources, then how many questions to answer, both languages, and an optional time limit.</p>${vocabPickerTemplate(id)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`; body.insertBefore(menu,body.firstChild);
     const runtime = document.createElement("div"); runtime.className = "runtime-bar"; runtime.innerHTML = `<span class="runtime-timer">Untimed</span><button class="end-early-btn" type="button">End exercise early</button>`; body.insertBefore(runtime,body.querySelector(".status"));
+    initVocabPicker(element, id);
     menu.querySelector(".start-exercise").onclick = () => startExercise(id,type); runtime.querySelector(".end-early-btn").onclick = () => finishExercise(id,type,"Exercise ended early");
     element.querySelector(".next").onclick = () => { const state = exerciseStates[`${id}-${type}`]; if (state.i < state.qs.length-1) { state.i += 1; showQuestion(id,type); } else finishExercise(id,type); };
     element.querySelectorAll(".restart").forEach(button => button.onclick = () => showSetup(id,type)); showSetup(id,type);

@@ -905,8 +905,7 @@ html[data-theme=light] .vocab-type-group > summary .vocab-category-count {
   color: #28468A;
   opacity: 1;
 }
-html[data-theme=light] .vocab-leaf-option small,
-html[data-theme=light] .vocab-scope-option small {
+html[data-theme=light] .vocab-leaf-option small {
   color: #28468A;
   opacity: 1;
 }
@@ -1031,12 +1030,13 @@ html[data-theme=light] .personalized-word .roman {
 .exercise-menu-grid label { min-width: 0; }
 .vocab-picker { padding:18px; border:1px solid var(--border); border-radius:var(--radius-lg); }
 .vocab-picker > legend { padding:0 8px; font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
-.vocab-scope-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-.vocab-scope-option,.vocab-parent-option,.vocab-leaf-option { display:flex !important; grid-template-rows:none !important; align-items:flex-start; gap:10px; color:var(--surface-text); letter-spacing:0 !important; text-transform:none !important; }
-.vocab-scope-option { min-height:74px; padding:13px; background:var(--surface-muted); border:2px solid transparent; border-radius:var(--radius-md); font-size:.9rem !important; font-weight:800 !important; }
-.vocab-scope-option:has(input:checked) { border-color:var(--primary); background:var(--surface); }
-.vocab-scope-option input,.vocab-leaf-option input,.vocab-parent-option input { width:20px !important; min-height:20px !important; height:20px !important; flex:0 0 20px; margin:1px 0 0; padding:0; }
-.vocab-scope-option small,.vocab-leaf-option small { display:block; margin-top:2px; opacity:.72; font-weight:700; }
+.vocab-parent-option,.vocab-leaf-option { display:flex !important; grid-template-rows:none !important; align-items:flex-start; gap:10px; color:var(--surface-text); letter-spacing:0 !important; text-transform:none !important; }
+.vocab-leaf-option input,.vocab-parent-option input { width:20px !important; min-height:20px !important; height:20px !important; flex:0 0 20px; margin:1px 0 0; padding:0; }
+.vocab-leaf-option small { display:block; margin-top:2px; opacity:.72; font-weight:700; }
+.vocab-source-tree { margin-top:0; }
+.vocab-source-headline { font-size:.8rem; font-weight:800; opacity:.82; text-transform:none; }
+.vocab-source-note { margin:0 0 12px !important; font-size:.82rem; font-weight:700; opacity:.78; }
+.vocab-source-option:has(input:checked) { outline:2px solid var(--primary); outline-offset:-2px; }
 .vocab-tree { margin-top:12px; overflow:hidden; border:1px solid var(--border); border-radius:var(--radius-lg); }
 .vocab-tree > summary,.vocab-type-group > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 15px; cursor:pointer; list-style:none; font-weight:800; }
 .vocab-tree > summary { color:var(--inverse-text); background:var(--inverse); }
@@ -1100,7 +1100,7 @@ html[data-theme=light] .personalized-word .roman {
 .frequency-line { font-size:.85rem; font-weight:800; }
 .score-breakdown { line-height:1.35; text-align:center; }
 .exercise,.exercise-body,.live,.prompt { isolation:auto; }
-@media (max-width:680px) { .vocab-scope-grid,.vocab-leaf-grid,.preview-word-list,.personalized-word { grid-template-columns:1fr; } .vocab-tree-actions .btn,.preview-actions .btn { width:100%; } .assistant-heading { display:grid; } .assistant-heading small { text-align:left; } }
+@media (max-width:680px) { .vocab-leaf-grid,.preview-word-list,.personalized-word { grid-template-columns:1fr; } .vocab-tree-actions .btn,.preview-actions .btn { width:100%; } .assistant-heading { display:grid; } .assistant-heading small { text-align:left; } }
 
 </style>
  </head>
@@ -1218,7 +1218,7 @@ html[data-theme=light] .personalized-word .roman {
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.0.1"></script>
+  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1553,7 +1553,7 @@ html[data-theme=light] .personalized-word .roman {
     } return b; };
     // Literal transliteration requested by the learner. No pronunciation assimilation is applied.
     function romanizeKorean(text) {
-        const CHO = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+        const CHO = ["g", "gg", "n", "d", "dd", "r", "m", "b", "bb", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
         const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
         const JONG = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
         let out = "", previousHangul = false;
@@ -2623,7 +2623,15 @@ html[data-theme=light] .personalized-word .roman {
 
     const BAB_ID = `bab${String(Number(LESSON.title.match(/\d+/)?.[0] || 0)).padStart(2,"0")}`;
     const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID).length ? KoreanVocab.forLesson(BAB_ID) : [];
-    const SHARED_RELEVANT_VOCAB = KoreanVocab.DATA.filter(entry => entry.lessons?.length);
+    // Every word is listed under exactly one source. Duplicates resolve to this
+    // Bab first, then the TOPIK vocabulary lists, then the other Bab lessons,
+    // then the practice tests, then the extra TOPIK core list.
+    const SOURCE_OF = new Map(KoreanVocab.DATA.map(entry => [entry.id, KoreanVocab.primarySourceOf(entry, BAB_ID)]));
+    const sourceOf = entry => SOURCE_OF.get(entry.id);
+    const SOURCE_GROUP_ORDER = ["bab","topik-vocab","topik-test","topik-extra"];
+    const VOCAB_SOURCES = KoreanVocab.SOURCES.slice().sort((a,b)=>{ if(a.id===BAB_ID)return -1; if(b.id===BAB_ID)return 1; return (SOURCE_GROUP_ORDER.indexOf(a.group)-SOURCE_GROUP_ORDER.indexOf(b.group)) || (KoreanVocab.SOURCES.indexOf(a)-KoreanVocab.SOURCES.indexOf(b)); });
+    const SOURCE_LABELS = new Map(VOCAB_SOURCES.map(s => [s.id, s.id===BAB_ID ? `${s.label} (this lesson)` : s.label]));
+    const DEFAULT_SOURCES = [BAB_ID];
     const POPOVER_PARTS = new Set(["noun","proper noun","dependent noun","verb","adjective"]);
     const POPOVER_VOCAB = [...KoreanVocab.DATA, ...SHARED_LESSON_VOCAB].filter(entry => POPOVER_PARTS.has(entry.partOfSpeech));
     const POS_LABELS = Object.freeze({"noun":"Common nouns","proper noun":"Proper nouns","pronoun":"Pronouns","dependent noun":"Dependent nouns","noun/adverb":"Nouns / adverbs","noun/numeral":"Nouns / numerals","noun phrase":"Noun phrases","expression":"Expressions","phrase":"Phrases","interjection":"Interjections","adverb":"Adverbs","verb":"Verbs","adjective":"Adjectives","determiner":"Determiners","determiner/pronoun":"Determiners / pronouns","conjunction":"Conjunctions","numeral":"Numerals"});
@@ -2682,20 +2690,41 @@ html[data-theme=light] .personalized-word .roman {
     function configForKey(key){ return CONFIG_BY_KIND[key] || CONFIG_BY_KIND.vocabulary; }
     function labelName(id){ return KoreanVocab.LABELS[id]?.name || String(id).replaceAll("-"," "); }
     function entryMatchesExercise(entry,key){ const c=configForKey(key); return !c.parts?.length || c.parts.includes(entry.partOfSpeech); }
-    function compatibleVocab(key,scope="lesson"){ const source=scope==="relevant"?SHARED_RELEVANT_VOCAB:SHARED_LESSON_VOCAB; return source.filter(e=>entryMatchesExercise(e,key)); }
+    const EXERCISE_VOCAB=new Map();
+    function exerciseVocab(key){ if(!EXERCISE_VOCAB.has(key))EXERCISE_VOCAB.set(key,KoreanVocab.DATA.filter(e=>entryMatchesExercise(e,key))); return EXERCISE_VOCAB.get(key); }
+    function compatibleVocab(key,sources=DEFAULT_SOURCES){ const allowed=sources instanceof Set?sources:new Set(sources); return exerciseVocab(key).filter(e=>allowed.has(sourceOf(e))); }
+    function sourceCounts(key){ const counts=new Map(); exerciseVocab(key).forEach(e=>{ const id=sourceOf(e); counts.set(id,(counts.get(id)||0)+1); }); return counts; }
+    function sourceTreeTemplate(key){
+      const counts=sourceCounts(key);
+      const groups=KoreanVocab.SOURCE_GROUPS.slice().sort((a,b)=>SOURCE_GROUP_ORDER.indexOf(a.id)-SOURCE_GROUP_ORDER.indexOf(b.id)).map(group=>{
+        const list=VOCAB_SOURCES.filter(s=>s.group===group.id&&(counts.get(s.id)||0)>0);
+        if(!list.length)return "";
+        const total=list.reduce((sum,s)=>sum+counts.get(s.id),0);
+        const options=list.map(s=>`<label class="vocab-leaf-option vocab-source-option" data-vocab-source-option="${esc(s.id)}"><input class="vocab-source" type="checkbox" value="${esc(s.id)}"${DEFAULT_SOURCES.includes(s.id)?" checked":""}><span>${esc(SOURCE_LABELS.get(s.id))}<small>${counts.get(s.id)} compatible words</small></span></label>`).join("");
+        const toggle=list.length>1?`<label class="vocab-parent-option"><input class="vocab-source-group-toggle" type="checkbox"><span>Select every source in this group</span></label>`:"";
+        return `<details class="vocab-type-group vocab-source-group" data-source-group="${esc(group.id)}"${list.some(s=>DEFAULT_SOURCES.includes(s.id))?" open":""}><summary><span>${esc(group.label)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body">${toggle}<div class="vocab-leaf-grid">${options}</div></div></details>`;
+      }).join("");
+      return `<details class="vocab-tree vocab-source-tree" open><summary><span>Vocabulary sources</span><span class="vocab-source-headline">one source per word</span></summary><div class="vocab-tree-body"><p class="vocab-source-note">A word that appears in several places is counted once, under this Bab first, then the TOPIK vocabulary lists, then the other Bab lessons, then the practice tests.</p><div class="vocab-tree-actions"><button class="btn secondary vocab-source-reset" type="button">Only this Bab</button><button class="btn secondary vocab-source-all" type="button">Select all sources</button><button class="btn secondary vocab-source-none" type="button">Clear all sources</button></div><div class="vocab-type-list">${groups}</div></div></details>`;
+    }
     const groupKey=e=>`${e.partOfSpeech}::${e.category}`;
     function cleanEnglish(entry){ return String(entry?.english||"").split("/")[0].replace(/\([^)]*\)/g,"").trim(); }
     function wordUseKey(use){ return use.id || `literal:${use.korean}`; }
     function vocabPickerTemplate(key){
-      const config=configForKey(key), lesson=compatibleVocab(key,"lesson"), relevant=compatibleVocab(key,"relevant"), grouped=new Map();
+      const config=configForKey(key), relevant=exerciseVocab(key), grouped=new Map();
       relevant.forEach(e=>{ if(!grouped.has(e.partOfSpeech))grouped.set(e.partOfSpeech,new Map()); const m=grouped.get(e.partOfSpeech); if(!m.has(e.category))m.set(e.category,[]); m.get(e.category).push(e); });
-      const groups=[...grouped.entries()].sort(([a],[b])=>(POS_LABELS[a]||a).localeCompare(POS_LABELS[b]||b)).map(([part,cats])=>{ const total=[...cats.values()].reduce((s,a)=>s+a.length,0); const leaves=[...cats.entries()].sort(([a],[b])=>labelName(a).localeCompare(labelName(b))).map(([cat,entries])=>{ const k=`${part}::${cat}`; return `<label class="vocab-leaf-option"><input class="vocab-leaf" type="checkbox" value="${esc(k)}" checked><span>${esc(labelName(cat))}<small>${entries.length} relevant words</small></span></label>`; }).join(""); return `<details class="vocab-type-group" data-part="${esc(part)}" open><summary><span>${esc(POS_LABELS[part]||part)} <span class="vocab-category-count">${total} relevant words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc((POS_LABELS[part]||part).toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`; }).join("");
-      return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend><div class="vocab-scope-grid"><label class="vocab-scope-option"><input type="radio" name="vocab-scope-${esc(key)}" value="lesson" checked><span>Only this Bab vocabulary<small>${lesson.length} compatible words</small></span></label><label class="vocab-scope-option"><input type="radio" name="vocab-scope-${esc(key)}" value="relevant"><span>All relevant words<small>${relevant.length} compatible words across Bab lessons</small></span></label></div><details class="vocab-tree" open><summary><span>Word types and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${groups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
+      const groups=[...grouped.entries()].sort(([a],[b])=>(POS_LABELS[a]||a).localeCompare(POS_LABELS[b]||b)).map(([part,cats])=>{ const total=[...cats.values()].reduce((s,a)=>s+a.length,0); const leaves=[...cats.entries()].sort(([a],[b])=>labelName(a).localeCompare(labelName(b))).map(([cat,entries])=>{ const k=`${part}::${cat}`; return `<label class="vocab-leaf-option"><input class="vocab-leaf" type="checkbox" value="${esc(k)}" checked><span>${esc(labelName(cat))}<small>${entries.length} words</small></span></label>`; }).join(""); return `<details class="vocab-type-group" data-part="${esc(part)}" open><summary><span>${esc(POS_LABELS[part]||part)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc((POS_LABELS[part]||part).toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`; }).join("");
+      return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend>${sourceTreeTemplate(key)}<details class="vocab-tree" open><summary><span>Word types and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${groups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
     }
-    function selectedVocabFromPicker(el,key){ const scope=el.querySelector('.vocab-picker input[type="radio"]:checked')?.value||"lesson"; const groups=new Set([...el.querySelectorAll('.vocab-leaf:checked')].map(i=>i.value)); return compatibleVocab(key,scope).filter(e=>groups.has(groupKey(e))); }
-    function syncVocabPicker(el,state){ const update=()=>{ const entries=selectedVocabFromPicker(el,state.key); el.querySelector('.vocab-selected-count').textContent=String(entries.length); el.querySelector('.vocab-pool-error').classList.toggle('hidden',entries.length>0); el.querySelector('.vocab-pool-error').textContent=entries.length?'':'Choose at least one compatible vocabulary group.'; state.preparedQuestions=null; el.querySelector('.question-preview')?.classList.add('hidden'); };
-      el.querySelectorAll('.vocab-type-group').forEach(g=>{ const p=g.querySelector('.vocab-type-toggle'), leaves=[...g.querySelectorAll('.vocab-leaf')]; const sync=()=>{ const n=leaves.filter(x=>x.checked).length; p.checked=n===leaves.length&&n>0; p.indeterminate=n>0&&n<leaves.length; }; p.addEventListener('change',()=>{ leaves.forEach(x=>x.checked=p.checked); sync(); update(); }); leaves.forEach(x=>x.addEventListener('change',()=>{sync();update();})); sync(); });
-      el.querySelectorAll('.vocab-picker input[type="radio"]').forEach(i=>i.addEventListener('change',update));
+    function selectedSources(el){ return [...el.querySelectorAll('.vocab-source:checked')].map(i=>i.value); }
+    function selectedVocabFromPicker(el,key){ const groups=new Set([...el.querySelectorAll('.vocab-leaf:checked')].map(i=>i.value)); return compatibleVocab(key,selectedSources(el)).filter(e=>groups.has(groupKey(e))); }
+    function syncVocabPicker(el,state){ const update=()=>{ const entries=selectedVocabFromPicker(el,state.key); const sources=selectedSources(el); el.querySelectorAll('.vocab-source-group').forEach(g=>{ const p=g.querySelector('.vocab-source-group-toggle'); if(!p)return; const inputs=[...g.querySelectorAll('.vocab-source')], n=inputs.filter(i=>i.checked).length; p.checked=inputs.length>0&&n===inputs.length; p.indeterminate=n>0&&n<inputs.length; }); const headline=el.querySelector('.vocab-source-headline'); if(headline)headline.textContent=sources.length?`${sources.length} source${sources.length===1?"":"s"} · ${compatibleVocab(state.key,sources).length} word${compatibleVocab(state.key,sources).length===1?"":"s"}`:"no sources selected"; el.querySelector('.vocab-selected-count').textContent=String(entries.length); el.querySelector('.vocab-pool-error').classList.toggle('hidden',entries.length>0); el.querySelector('.vocab-pool-error').textContent=entries.length?'':'Choose at least one compatible vocabulary group.'; state.preparedQuestions=null; el.querySelector('.question-preview')?.classList.add('hidden'); };
+      el.querySelectorAll('.vocab-type-group:not(.vocab-source-group)').forEach(g=>{ const p=g.querySelector('.vocab-type-toggle'), leaves=[...g.querySelectorAll('.vocab-leaf')]; const sync=()=>{ const n=leaves.filter(x=>x.checked).length; p.checked=n===leaves.length&&n>0; p.indeterminate=n>0&&n<leaves.length; }; p.addEventListener('change',()=>{ leaves.forEach(x=>x.checked=p.checked); sync(); update(); }); leaves.forEach(x=>x.addEventListener('change',()=>{sync();update();})); sync(); });
+      el.querySelectorAll('.vocab-source').forEach(i=>i.addEventListener('change',update));
+      el.querySelectorAll('.vocab-source-group-toggle').forEach(p=>p.addEventListener('change',()=>{ p.closest('.vocab-source-group').querySelectorAll('.vocab-source').forEach(i=>{i.checked=p.checked;}); update(); }));
+      const setSources=predicate=>{ el.querySelectorAll('.vocab-source').forEach(i=>{i.checked=predicate(i.value);}); el.querySelectorAll('.vocab-source-group').forEach(g=>{ if(g.querySelector('.vocab-source:checked'))g.open=true; }); update(); };
+      el.querySelector('.vocab-source-reset')?.addEventListener('click',()=>setSources(id=>DEFAULT_SOURCES.includes(id)));
+      el.querySelector('.vocab-source-all')?.addEventListener('click',()=>setSources(()=>true));
+      el.querySelector('.vocab-source-none')?.addEventListener('click',()=>setSources(()=>false));
       el.querySelector('.vocab-select-all')?.addEventListener('click',()=>{el.querySelectorAll('.vocab-leaf').forEach(i=>i.checked=true);el.querySelectorAll('.vocab-type-toggle').forEach(i=>{i.checked=true;i.indeterminate=false;});update();});
       el.querySelector('.vocab-clear-all')?.addEventListener('click',()=>{el.querySelectorAll('.vocab-leaf').forEach(i=>i.checked=false);el.querySelectorAll('.vocab-type-toggle').forEach(i=>{i.checked=false;i.indeterminate=false;});update();}); update(); }
     function englishHintVariants(entry){

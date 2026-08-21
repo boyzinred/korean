@@ -905,8 +905,7 @@ html[data-theme=light] .vocab-type-group > summary .vocab-category-count {
   color: #28468A;
   opacity: 1;
 }
-html[data-theme=light] .vocab-leaf-option small,
-html[data-theme=light] .vocab-scope-option small {
+html[data-theme=light] .vocab-leaf-option small {
   color: #28468A;
   opacity: 1;
 }
@@ -1027,32 +1026,6 @@ html[data-theme=light] .personalized-word .roman {
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.vocab-scope-grid {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 10px;
-}
-.vocab-scope-option {
-  min-height: 74px;
-  display: flex !important;
-  grid-template-rows: none !important;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 13px;
-  color: var(--surface-text);
-  background: var(--surface-muted);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  font-size: .9rem !important;
-  font-weight: 800 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-}
-.vocab-scope-option:has(input:checked) {
-  border-color: var(--primary);
-  background: var(--surface);
-}
-.vocab-scope-option input,
 .vocab-leaf-option input,
 .vocab-parent-option input {
   width: 20px !important;
@@ -1062,12 +1035,28 @@ html[data-theme=light] .personalized-word .roman {
   margin: 1px 0 0;
   padding: 0;
 }
-.vocab-scope-option small,
 .vocab-leaf-option small {
   display: block;
   margin-top: 2px;
   opacity: .72;
   font-weight: 700;
+}
+.vocab-source-tree { margin-top: 0; }
+.vocab-source-headline {
+  font-size: .8rem;
+  font-weight: 800;
+  opacity: .82;
+  text-transform: none;
+}
+.vocab-source-note {
+  margin: 0 0 12px !important;
+  font-size: .82rem;
+  font-weight: 700;
+  opacity: .78;
+}
+.vocab-source-option:has(input:checked) {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 .vocab-tree {
   margin-top: 12px;
@@ -1125,7 +1114,6 @@ html[data-theme=light] .personalized-word .roman {
 .vocab-selection-summary { margin: 12px 0 0 !important; font-size: .88rem; font-weight: 800; }
 .vocab-selection-summary span { color: var(--accent); }
 @media (max-width:680px) {
-  .vocab-scope-grid,
   .vocab-leaf-grid { grid-template-columns: 1fr; }
   .vocab-tree-actions .btn { width: 100%; }
 }
@@ -1491,7 +1479,8 @@ html[data-theme=light] .personalized-word .roman {
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.0.0"></script>
+  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="./shared-vocab/korean-grammar.js?v=1.2.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1665,7 +1654,20 @@ html[data-theme=light] .personalized-word .roman {
     // -------------------------------------------------------------------------
     const BAB_ID = "bab09";
     const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID);
-    const SHARED_RELEVANT_VOCAB = KoreanVocab.DATA.filter(entry => entry.lessons?.length);
+    // Every word is listed under exactly one source. Duplicates resolve to this
+    // Bab first, then the TOPIK vocabulary lists, then the other Bab lessons,
+    // then the practice tests, then the extra TOPIK core list.
+    const SOURCE_OF = new Map(KoreanVocab.DATA.map(entry => [entry.id, KoreanVocab.primarySourceOf(entry, BAB_ID)]));
+    const sourceOf = entry => SOURCE_OF.get(entry.id);
+    const SOURCE_GROUP_ORDER = ["bab", "topik-vocab", "topik-test", "topik-extra"];
+    const VOCAB_SOURCES = KoreanVocab.SOURCES.slice().sort((a, b) => {
+        if (a.id === BAB_ID) return -1;
+        if (b.id === BAB_ID) return 1;
+        const group = SOURCE_GROUP_ORDER.indexOf(a.group) - SOURCE_GROUP_ORDER.indexOf(b.group);
+        return group || KoreanVocab.SOURCES.indexOf(a) - KoreanVocab.SOURCES.indexOf(b);
+    });
+    const SOURCE_LABELS = new Map(VOCAB_SOURCES.map(source => [source.id, source.id === BAB_ID ? `${source.label} (this lesson)` : source.label]));
+    const DEFAULT_SOURCES = [BAB_ID];
     const POS_LABELS = Object.freeze({
         "noun": "Common nouns", "proper noun": "Proper nouns", "pronoun": "Pronouns",
         "dependent noun": "Dependent nouns", "noun/adverb": "Nouns / adverbs",
@@ -1728,9 +1730,22 @@ html[data-theme=light] .personalized-word .roman {
         const config = configForKey(key);
         return (!config.parts?.length || config.parts.includes(entry.partOfSpeech)) && entryHasAnyLabel(entry, config.labels);
     }
-    function compatibleVocab(key, scope = "lesson") {
-        const source = scope === "relevant" ? SHARED_RELEVANT_VOCAB : SHARED_LESSON_VOCAB;
-        return source.filter(entry => entryMatchesExercise(entry, key));
+    const EXERCISE_VOCAB = new Map();
+    function exerciseVocab(key) {
+        if (!EXERCISE_VOCAB.has(key)) EXERCISE_VOCAB.set(key, KoreanVocab.DATA.filter(entry => entryMatchesExercise(entry, key)));
+        return EXERCISE_VOCAB.get(key);
+    }
+    function compatibleVocab(key, sources = DEFAULT_SOURCES) {
+        const allowed = sources instanceof Set ? sources : new Set(sources);
+        return exerciseVocab(key).filter(entry => allowed.has(sourceOf(entry)));
+    }
+    function sourceCounts(key) {
+        const counts = new Map();
+        exerciseVocab(key).forEach(entry => {
+            const id = sourceOf(entry);
+            counts.set(id, (counts.get(id) || 0) + 1);
+        });
+        return counts;
     }
     const groupKey = entry => `${entry.partOfSpeech}::${entry.category}`;
     function cleanEnglish(entry) { return String(entry?.english || "").split("/")[0].trim(); }
@@ -1770,9 +1785,22 @@ html[data-theme=light] .personalized-word .roman {
     const isSeason = entry => SEASON_WORDS.has(entry.korean);
     const INTRANSITIVE = new Set(["가다","오다","자다","앉다","서다","살다","죽다","있다","없다","도착하다","출발하다","일어나다","운동하다","수영하다","공부하다","일하다","쉬다","걷다","뛰다","여행하다"]);
     const isLikelyTransitive = entry => entry?.partOfSpeech === "verb" && !INTRANSITIVE.has(entry.korean);
-    const BIEUP_IRREGULAR = new Set(["춥다","덥다","어렵다","쉽다","맵다","싱겁다","귀엽다","아름답다","무겁다","가볍다","가깝다","고맙다","반갑다","무섭다","돕다","곱다","고맙다","반갑다","무섭다"]);
-    const D_IRREGULAR = new Set(["듣다","걷다","묻다","싣다","깨닫다"]);
-    const S_IRREGULAR = new Set(["짓다","낫다","붓다","젓다"]);
+    // A stem ending in ㅂ, ㄷ, or ㅅ is irregular unless it is one of the known
+    // regular ones, so words the lesson has never seen still conjugate correctly.
+    const finalJong = word => {
+        const stem = String(word).replace(/다$/, "");
+        const code = stem.charCodeAt(stem.length - 1);
+        return code >= 0xAC00 && code <= 0xD7A3 ? (code - 0xAC00) % 28 : -1;
+    };
+    const REGULAR_BIEUP = new Set(["입다","잡다","좁다","씹다","뽑다","접다","업다","집다","굽다","꼽다","밟다","넓다","짧다","씩씩하다"]);
+    const REGULAR_DIGEUT = new Set(["받다","닫다","믿다","얻다","쏟다","뜯다","돋다"]);
+    const REGULAR_SIOT = new Set(["웃다","씻다","벗다","빗다","솟다","빼앗다"]);
+    const BIEUP_IRREGULAR = { has: word => finalJong(word) === 17 && !REGULAR_BIEUP.has(word) };
+    const D_IRREGULAR = { has: word => finalJong(word) === 7 && !REGULAR_DIGEUT.has(word) };
+    const S_IRREGULAR = { has: word => finalJong(word) === 19 && !REGULAR_SIOT.has(word) };
+    // 있다/없다 and compounds built on them take 는 in front of a noun.
+    const NEUN_ADNOMINAL = word => /(있다|없다)$/.test(String(word));
+    const REGULAR_HIEUT = new Set(["좋다","낳다","넣다","놓다","많다","싫다","괜찮다","쌓다","닿다"]);
     const PRESENT_OVERRIDES = Object.freeze({
         "하다":"해요","되다":"돼요","오다":"와요","보다":"봐요","주다":"줘요","마시다":"마셔요","배우다":"배워요","가르치다":"가르쳐요","치다":"쳐요","자다":"자요","서다":"서요","쓰다":"써요","크다":"커요","끄다":"꺼요","예쁘다":"예뻐요","바쁘다":"바빠요","아프다":"아파요","나쁘다":"나빠요","모르다":"몰라요","부르다":"불러요","빠르다":"빨라요","다르다":"달라요","고르다":"골라요","듣다":"들어요","걷다":"걸어요","묻다":"물어요","돕다":"도와요","곱다":"고와요","춥다":"추워요","덥다":"더워요","어렵다":"어려워요","쉽다":"쉬워요","맵다":"매워요","귀엽다":"귀여워요","아름답다":"아름다워요","무겁다":"무거워요","가볍다":"가벼워요","가깝다":"가까워요","고맙다":"고마워요","반갑다":"반가워요","무섭다":"무서워요","좋다":"좋아요","그렇다":"그래요","하얗다":"하얘요","빨갛다":"빨개요","파랗다":"파래요","노랗다":"노래요","있다":"있어요","없다":"없어요","이다":"이에요","아니다":"아니에요","먹다":"먹어요","읽다":"읽어요","찍다":"찍어요","씻다":"씻어요","만나다":"만나요","사다":"사요","만들다":"만들어요","열다":"열어요","닫다":"닫아요","놀다":"놀아요","울다":"울어요","웃다":"웃어요"
     });
@@ -1785,6 +1813,10 @@ html[data-theme=light] .personalized-word .roman {
     function brightVowel(jung) { return jung===0||jung===2||jung===8||jung===9||jung===10||jung===12; }
     function politeCore(base) {
         const override=PRESENT_OVERRIDES[base]; if (override) return override.replace(/요$/,"");
+        return KoreanGrammar.infinitive(base);
+    }
+    // Superseded by the shared engine; kept for reference.
+    function politeCoreLocal(base) {
         let stem=removeDictionaryDa(base); if (!stem) return stem;
         if (stem.endsWith("하")) return stem.slice(0,-1)+"해";
         let info=syllableInfo(stem.at(-1)); if (!info) return stem;
@@ -1810,7 +1842,8 @@ html[data-theme=light] .personalized-word .roman {
     function longNegative(base) { return removeDictionaryDa(base)+"지 않아요"; }
     function formalPredicate(base, question=false) { let stem=removeDictionaryDa(base); let info=syllableInfo(stem.at(-1)); if (!info) return stem+(question?"습니까":"습니다"); if (info.jong===8) { stem=dropJong(stem); info=syllableInfo(stem.at(-1)); } if (info.jong===0) return addJong(stem,17)+(question?"니까":"니다"); return stem+(question?"습니까":"습니다"); }
     const ADNOMINAL_OVERRIDES=Object.freeze({"있다":"있는","없다":"없는","좋다":"좋은","그렇다":"그런","재미있다":"재미있는","맛있다":"맛있는","맛없다":"맛없는","재미없다":"재미없는","어렵다":"어려운","쉽다":"쉬운","춥다":"추운","덥다":"더운","맵다":"매운","귀엽다":"귀여운","무겁다":"무거운","가볍다":"가벼운","가깝다":"가까운","고맙다":"고마운","반갑다":"반가운","무섭다":"무서운","아름답다":"아름다운"});
-    function adjectiveAdnominal(base) { if (ADNOMINAL_OVERRIDES[base]) return ADNOMINAL_OVERRIDES[base]; let stem=removeDictionaryDa(base); if (stem.endsWith("하")) return stem.slice(0,-1)+"한"; let info=syllableInfo(stem.at(-1)); if (!info) return stem; if (info.jong===17&&BIEUP_IRREGULAR.has(base)) return dropJong(stem)+"운"; if (info.jong===8) return replaceLast(stem,{...info,jong:4}); if (info.jong===0) return addJong(stem,4); return stem+"은"; }
+    function adjectiveAdnominal(base) { if (ADNOMINAL_OVERRIDES[base]) return ADNOMINAL_OVERRIDES[base]; return KoreanGrammar.modifier(base, { adjective: true }); }
+    function adjectiveAdnominalLocal(base) { let stem=removeDictionaryDa(base); if (NEUN_ADNOMINAL(base)) return stem+"는"; if (stem.endsWith("하")) return stem.slice(0,-1)+"한"; let info=syllableInfo(stem.at(-1)); if (!info) return stem; if (info.jong===17&&BIEUP_IRREGULAR.has(base)) return dropJong(stem)+"운"; if (info.jong===27&&!REGULAR_HIEUT.has(base)) return addJong(dropJong(stem),4); if (info.jong===8) return replaceLast(stem,{...info,jong:4}); if (info.jong===0) return addJong(stem,4); return stem+"은"; }
     function sinoUnder(n) { const d=["","일","이","삼","사","오","육","칠","팔","구"],u=["","십","백","천"]; let out=[]; for(let pos=3;pos>=0;pos--){const p=10**pos,v=Math.floor(n/p)%10;if(!v)continue;if(v!==1||pos===0)out.push(d[v]);if(pos)out.push(u[pos]);} return out.join(" "); }
     function sinoNumber(n) { const man=Math.floor(n/10000),rest=n%10000,parts=[];if(man){if(man!==1)parts.push(sinoUnder(man));parts.push("만");}if(rest)parts.push(sinoUnder(rest));return parts.join(" ")||"영"; }
     function compactSino(n) { return sinoNumber(n).replace(/\s+/g,""); }
@@ -1956,8 +1989,8 @@ html[data-theme=light] .personalized-word .roman {
     const STATES = new Map();
     function vocabPickerTemplate(key) {
         const config = configForKey(key);
-        const lessonCount = compatibleVocab(key, "lesson").length;
-        const relevant = compatibleVocab(key, "relevant");
+        const relevant = exerciseVocab(key);
+        const counts = sourceCounts(key);
         const grouped = new Map();
         relevant.forEach(entry => {
             if (!grouped.has(entry.partOfSpeech)) grouped.set(entry.partOfSpeech, new Map());
@@ -1969,16 +2002,25 @@ html[data-theme=light] .personalized-word .roman {
             const total = [...categories.values()].reduce((sum, entries) => sum + entries.length, 0);
             const leaves = [...categories.entries()].sort(([a], [b]) => labelName(a).localeCompare(labelName(b))).map(([category, entries]) => {
                 const keyValue = `${part}::${category}`;
-                return `<label class="vocab-leaf-option" data-vocab-group-option="${esc(keyValue)}"><input class="vocab-leaf" type="checkbox" value="${esc(keyValue)}" checked><span>${esc(labelName(category))}<small data-group-count="${esc(keyValue)}">${entries.length} relevant words</small></span></label>`;
+                return `<label class="vocab-leaf-option" data-vocab-group-option="${esc(keyValue)}"><input class="vocab-leaf" type="checkbox" value="${esc(keyValue)}" checked><span>${esc(labelName(category))}<small data-group-count="${esc(keyValue)}">${entries.length} words</small></span></label>`;
             }).join("");
-            return `<details class="vocab-type-group" data-part="${esc(part)}" open><summary><span>${esc(POS_LABELS[part] || part)} <span class="vocab-category-count">${total} relevant words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc((POS_LABELS[part] || part).toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
+            return `<details class="vocab-type-group" data-part="${esc(part)}" open><summary><span>${esc(POS_LABELS[part] || part)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc((POS_LABELS[part] || part).toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
         }).join("");
-        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend><div class="vocab-scope-grid"><label class="vocab-scope-option"><input type="radio" name="vocab-scope-${esc(key)}" value="lesson" checked><span>Only this Bab vocabulary<small>${lessonCount} compatible words</small></span></label><label class="vocab-scope-option"><input type="radio" name="vocab-scope-${esc(key)}" value="relevant"><span>All relevant words<small>${relevant.length} compatible words across Bab lessons</small></span></label></div><details class="vocab-tree" open><summary><span>Word types and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${typeGroups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
+        const sourceGroups = KoreanVocab.SOURCE_GROUPS.slice().sort((a, b) => SOURCE_GROUP_ORDER.indexOf(a.id) - SOURCE_GROUP_ORDER.indexOf(b.id)).map(group => {
+            const groupSources = VOCAB_SOURCES.filter(source => source.group === group.id && (counts.get(source.id) || 0) > 0);
+            if (!groupSources.length) return "";
+            const total = groupSources.reduce((sum, source) => sum + counts.get(source.id), 0);
+            const options = groupSources.map(source => `<label class="vocab-leaf-option vocab-source-option" data-vocab-source-option="${esc(source.id)}"><input class="vocab-source" type="checkbox" value="${esc(source.id)}"${DEFAULT_SOURCES.includes(source.id) ? " checked" : ""}><span>${esc(SOURCE_LABELS.get(source.id))}<small>${counts.get(source.id)} compatible words</small></span></label>`).join("");
+            const open = groupSources.some(source => DEFAULT_SOURCES.includes(source.id));
+            return `<details class="vocab-type-group vocab-source-group" data-source-group="${esc(group.id)}"${open ? " open" : ""}><summary><span>${esc(group.label)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body">${groupSources.length > 1 ? `<label class="vocab-parent-option"><input class="vocab-source-group-toggle" type="checkbox"><span>Select every source in this group</span></label>` : ""}<div class="vocab-leaf-grid">${options}</div></div></details>`;
+        }).join("");
+        const sourceTree = `<details class="vocab-tree vocab-source-tree" open><summary><span>Vocabulary sources</span><span class="vocab-source-headline">one source per word</span></summary><div class="vocab-tree-body"><p class="vocab-source-note">A word that appears in several places is counted once, under this Bab first, then the TOPIK vocabulary lists, then the other Bab lessons, then the practice tests.</p><div class="vocab-tree-actions"><button class="btn secondary vocab-source-reset" type="button">Only this Bab</button><button class="btn secondary vocab-source-all" type="button">Select all sources</button><button class="btn secondary vocab-source-none" type="button">Clear all sources</button></div><div class="vocab-type-list">${sourceGroups}</div></div></details>`;
+        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend>${sourceTree}<details class="vocab-tree" open><summary><span>Word types and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${typeGroups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
     }
     function exerciseTemplate(key, title, description, defaultCount = 20) {
         const setupText = key === "vocabulary"
-          ? "Choose a shared-vocabulary scope, compatible word groups, quiz mode, question count, and both languages."
-          : "Choose the shared vocabulary allowed in generated sentences, then configure the quiz.";
+          ? "Choose the vocabulary sources, compatible word groups, quiz mode, question count, and both languages."
+          : "Choose the vocabulary sources and word groups allowed in generated sentences, then configure the quiz.";
         return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="${defaultCount}"></label><label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Click a term, then select a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
     // -------------------------------------------------------------------------
@@ -2095,9 +2137,27 @@ html[data-theme=light] .personalized-word .roman {
         window.addEventListener("resize", updateActivePopovers, { passive: true });
     }
     function vocabPoolFromSelection(el, key, savedSettings = null) {
-        const scope = savedSettings?.vocabScope || el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
+        const sources = savedSettings?.vocabSources || selectedSources(el);
         const selectedGroups = new Set(savedSettings?.vocabGroups || [...el.querySelectorAll('.vocab-leaf:checked')].map(input => input.value));
-        return compatibleVocab(key, scope).filter(entry => selectedGroups.has(groupKey(entry)));
+        return compatibleVocab(key, sources).filter(entry => selectedGroups.has(groupKey(entry)));
+    }
+    function selectedSources(el) {
+        return [...el.querySelectorAll('.vocab-source:checked')].map(input => input.value);
+    }
+    function setSources(el, predicate) {
+        el.querySelectorAll('.vocab-source').forEach(input => { input.checked = predicate(input.value); });
+        el.querySelectorAll('.vocab-source-group').forEach(group => {
+            if (group.querySelector('.vocab-source:checked')) group.open = true;
+        });
+        syncVocabPicker(el);
+    }
+    function syncSourceGroupToggle(group) {
+        const inputs = [...group.querySelectorAll('.vocab-source')];
+        const parent = group.querySelector('.vocab-source-group-toggle');
+        if (!parent) return;
+        const checked = inputs.filter(input => input.checked).length;
+        parent.checked = inputs.length > 0 && checked === inputs.length;
+        parent.indeterminate = checked > 0 && checked < inputs.length;
     }
     function syncTypeToggle(typeGroup) {
         const visibleLeaves = [...typeGroup.querySelectorAll('.vocab-leaf')].filter(input => !input.closest('[data-vocab-group-option]').hidden);
@@ -2108,8 +2168,9 @@ html[data-theme=light] .personalized-word .roman {
     }
     function syncVocabPicker(el) {
         const key = el.id.replace(/^ex-/, "");
-        const scope = el.querySelector('.vocab-scope-option input:checked')?.value || "lesson";
-        const active = compatibleVocab(key, scope);
+        const sources = selectedSources(el);
+        const active = compatibleVocab(key, sources);
+        el.querySelectorAll('.vocab-source-group').forEach(syncSourceGroupToggle);
         const counts = new Map();
         active.forEach(entry => counts.set(groupKey(entry), (counts.get(groupKey(entry)) || 0) + 1));
         el.querySelectorAll('[data-vocab-group-option]').forEach(option => {
@@ -2117,9 +2178,9 @@ html[data-theme=light] .personalized-word .roman {
             const count = counts.get(group) || 0;
             option.hidden = count === 0;
             const counter = option.querySelector('[data-group-count]');
-            if (counter) counter.textContent = `${count} ${scope === "lesson" ? "Bab" : "relevant"} words`;
+            if (counter) counter.textContent = `${count} word${count === 1 ? "" : "s"}`;
         });
-        el.querySelectorAll('.vocab-type-group').forEach(typeGroup => {
+        el.querySelectorAll('.vocab-type-group:not(.vocab-source-group)').forEach(typeGroup => {
             const visible = [...typeGroup.querySelectorAll('[data-vocab-group-option]')].some(option => !option.hidden);
             typeGroup.hidden = !visible;
             if (visible) syncTypeToggle(typeGroup);
@@ -2127,6 +2188,10 @@ html[data-theme=light] .personalized-word .roman {
         const pool = vocabPoolFromSelection(el, key);
         const validation = validateExercisePool(key, pool);
         el.querySelector('.vocab-selected-count').textContent = String(pool.length);
+        const headline = el.querySelector('.vocab-source-headline');
+        if (headline) headline.textContent = sources.length
+            ? `${sources.length} source${sources.length === 1 ? "" : "s"} · ${active.length} word${active.length === 1 ? "" : "s"}`
+            : "no sources selected";
         const error = el.querySelector('.vocab-pool-error');
         error.textContent = validation;
         error.classList.toggle('hidden', !validation);
@@ -2138,7 +2203,14 @@ html[data-theme=light] .personalized-word .roman {
         return pool;
     }
     function initVocabPicker(el) {
-        el.querySelectorAll('.vocab-scope-option input').forEach(input => input.addEventListener('change', () => syncVocabPicker(el)));
+        el.querySelectorAll('.vocab-source').forEach(input => input.addEventListener('change', () => syncVocabPicker(el)));
+        el.querySelectorAll('.vocab-source-group-toggle').forEach(parent => parent.addEventListener('change', () => {
+            parent.closest('.vocab-source-group').querySelectorAll('.vocab-source').forEach(input => { input.checked = parent.checked; });
+            syncVocabPicker(el);
+        }));
+        el.querySelector('.vocab-source-reset')?.addEventListener('click', () => setSources(el, id => DEFAULT_SOURCES.includes(id)));
+        el.querySelector('.vocab-source-all')?.addEventListener('click', () => setSources(el, () => true));
+        el.querySelector('.vocab-source-none')?.addEventListener('click', () => setSources(el, () => false));
         el.querySelectorAll('.vocab-leaf').forEach(input => input.addEventListener('change', () => {
             syncTypeToggle(input.closest('.vocab-type-group'));
             syncVocabPicker(el);
@@ -2209,14 +2281,14 @@ html[data-theme=light] .personalized-word .roman {
         el.querySelector(".question-preview").classList.add("hidden");
     }
     function readSettings(el, state, reuse = false) {
-        if (reuse && state.settings) return { ...state.settings, vocabGroups: [...state.settings.vocabGroups] };
+        if (reuse && state.settings) return { ...state.settings, vocabSources: [...state.settings.vocabSources], vocabGroups: [...state.settings.vocabGroups] };
         return {
             mode: el.querySelector(".menu-mode").value,
             count: Math.max(1, Math.min(100, Number(el.querySelector(".menu-count").value) || 20)),
             qLang: el.querySelector(".menu-q").value,
             aLang: el.querySelector(".menu-a").value,
             repeatWrong: Boolean(el.querySelector(".menu-repeat-wrong")?.checked),
-            vocabScope: el.querySelector('.vocab-scope-option input:checked')?.value || "lesson",
+            vocabSources: selectedSources(el),
             vocabGroups: [...el.querySelectorAll('.vocab-leaf:checked')].map(input => input.value)
         };
     }

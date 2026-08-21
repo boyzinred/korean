@@ -799,6 +799,87 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   
 
 /* Exercise setup menus, timers, and mobile keyboard workflow */
+.vocab-picker {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-picker legend {
+  padding: 0 6px;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.vocab-source-note { margin: 0 !important; font-size: .82rem; font-weight: 600; opacity: .8; }
+.vocab-tree { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.vocab-tree > summary,
+.vocab-source-group > summary,
+.vocab-type-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+  font-size: .88rem;
+}
+.vocab-tree > summary::-webkit-details-marker,
+.vocab-source-group > summary::-webkit-details-marker,
+.vocab-type-group > summary::-webkit-details-marker { display: none; }
+.vocab-tree > summary::after,
+.vocab-source-group > summary::after,
+.vocab-type-group > summary::after { content: '+'; }
+.vocab-tree[open] > summary::after,
+.vocab-source-group[open] > summary::after,
+.vocab-type-group[open] > summary::after { content: '\2212'; }
+.vocab-source-headline { font-size: .78rem; font-weight: 700; opacity: .8; text-transform: none; }
+.vocab-category-count { font-size: .76rem; font-weight: 700; opacity: .72; }
+.vocab-tree-body { padding: 12px; }
+.vocab-tree-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.vocab-tree-actions .btn { width: auto; min-height: 38px; }
+.vocab-group-list { display: grid; gap: 8px; }
+.vocab-source-group,
+.vocab-type-group { overflow: hidden; border-radius: var(--radius-md); background: rgba(127,127,127,.09); }
+.vocab-group-body { padding: 0 11px 11px; }
+.vocab-parent-option,
+.vocab-leaf-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(127,127,127,.09);
+  font-size: .84rem;
+  font-weight: 700;
+}
+.vocab-parent-option { margin-bottom: 7px; }
+.vocab-leaf-option small,
+.vocab-parent-option small { display: block; margin-top: 2px; font-weight: 700; opacity: .72; }
+.vocab-leaf-option input,
+.vocab-parent-option input { width: 18px; height: 18px; flex: 0 0 18px; margin: 1px 0 0; }
+.vocab-leaf-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.vocab-source-option:has(input:checked) { outline: 2px solid var(--primary); outline-offset: -2px; }
+.vocab-selection-summary { margin: 0 !important; font-size: .86rem; font-weight: 800; }
+.vocab-pool-error {
+  margin: 0 !important;
+  padding: 9px 11px;
+  border-radius: var(--radius-md);
+  background: rgba(220,80,80,.14);
+  font-size: .84rem;
+  font-weight: 700;
+}
+.vocab-pool-error.hidden { display: none; }
+.exercise-grid.single { grid-template-columns: 1fr; }
+@media (max-width:680px) {
+  .vocab-leaf-grid { grid-template-columns: 1fr; }
+  .vocab-tree-actions .btn { width: 100%; }
+}
 .exercise-menu {
   display: grid;
   gap: 20px;
@@ -890,14 +971,12 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       <div class="toc-grid" id="tocGrid"></div>
     </nav>
 
-    <section class="section" id="bank" aria-labelledby="grammar-bank-title">
-      <div class="section-header">
-        <h2 id="grammar-bank-title">Grammar Bank</h2>
-      </div>
-      <div class="section-content">
+    <details class="section" id="bank" open>
+      <summary><span>Grammar Bank</span></summary>
+      <div class="section-body">
         <div class="grammar-grid" id="grammarGrid"></div>
       </div>
-    </section>
+    </details>
 
     <div id="sections"></div>
     <p class="source-note">Content is based on the attached Expanded TOPIK II Level 5 Grammar and Vocabulary document. Examples retain its three speech levels and practical pronunciation-style romanization.</p>
@@ -909,9 +988,137 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   </div>
 
 
+  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="./shared-vocab/korean-grammar.js?v=1.2.0"></script>
+  <script src="./shared-vocab/grammar-templates.js?v=1.2.0"></script>
+
   <script>
-    const GRAMMAR_POINTS = [{"id":"g1","form":"-더라도","title":"Even If / Even Though","meaning":"Expresses that the following result or decision will not change even if the first condition happens.","formRule":"Verb/adjective stem + -더라도. Related noun forms include 이더라도/라도.","nuance":"This is stronger and more hypothetical than -아/어도 and is common in formal speech, essays, and determined statements.","examples":[{"speechLevel":"Casual intimate","korean":"비가 오더라도 경기는 계속돼.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae","english":"Even if it rains, the game will continue."},{"speechLevel":"Polite casual","korean":"비가 오더라도 경기는 계속돼요.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae-yo","english":"Even if it rains, the game will continue."},{"speechLevel":"Formal polite","korean":"비가 오더라도 경기는 계속됩니다.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doem-ni-da","english":"Even if it rains, the game will continue."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"비가 오더라도 경기는 계속돼.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae","english":"Even if it rains, the game will continue."},{"speechLevel":"Polite casual","korean":"비가 오더라도 경기는 계속돼요.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-dwae-yo","english":"Even if it rains, the game will continue."},{"speechLevel":"Formal polite","korean":"비가 오더라도 경기는 계속됩니다.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doem-ni-da","english":"Even if it rains, the game will continue."}]},{"id":"g2","form":"-(으)ㄹ 뿐만 아니라","title":"Not Only... But Also","meaning":"Adds another related fact, usually in the same logical direction.","formRule":"Verb/adjective stem + -(으)ㄹ 뿐만 아니라. Noun + 일 뿐만 아니라.","nuance":"Both sides should usually be parallel and support the same argument. It is polished and useful in TOPIK writing.","examples":[{"speechLevel":"Casual intimate","korean":"이 책은 재미있을 뿐만 아니라 유익해.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae","english":"This book is not only interesting but also useful."},{"speechLevel":"Polite casual","korean":"이 책은 재미있을 뿐만 아니라 유익해요.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae-yo","english":"This book is not only interesting but also useful."},{"speechLevel":"Formal polite","korean":"이 책은 재미있을 뿐만 아니라 유익합니다.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kam-ni-da","english":"This book is not only interesting but also useful."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 책은 재미있을 뿐만 아니라 유익해.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae","english":"This book is not only interesting but also useful."},{"speechLevel":"Polite casual","korean":"이 책은 재미있을 뿐만 아니라 유익해요.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kae-yo","english":"This book is not only interesting but also useful."},{"speechLevel":"Formal polite","korean":"이 책은 재미있을 뿐만 아니라 유익합니다.","romanization":"i chae-geun jae-mi-i-sseul ppun-man a-ni-ra yu-i-kam-ni-da","english":"This book is not only interesting but also useful."}]},{"id":"g3","form":"-(으)ㄹ 리가 없다","title":"There Is No Way / Cannot Possibly","meaning":"Expresses strong certainty that something is impossible or extremely unlikely.","formRule":"Verb/adjective stem + -(으)ㄹ 리가 없다. Past: -았/었을 리가 없다. Noun: 일 리가 없다.","nuance":"It is stronger than -(으)ㄹ 것 같지 않다 and implies logical evidence, trust, or a strong assumption.","examples":[{"speechLevel":"Casual intimate","korean":"그 사람이 거짓말을 했을 리가 없어.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo","english":"There is no way that person lied."},{"speechLevel":"Polite casual","korean":"그 사람이 거짓말을 했을 리가 없어요.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo-yo","english":"There is no way that person lied."},{"speechLevel":"Formal polite","korean":"그 사람이 거짓말을 했을 리가 없습니다.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-seum-ni-da","english":"There is no way that person lied."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"그 사람이 거짓말을 했을 리가 없어.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo","english":"There is no way that person lied."},{"speechLevel":"Polite casual","korean":"그 사람이 거짓말을 했을 리가 없어요.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-sseo-yo","english":"There is no way that person lied."},{"speechLevel":"Formal polite","korean":"그 사람이 거짓말을 했을 리가 없습니다.","romanization":"geu sa-ra-mi geo-jin-ma-reul hae-sseul ri-ga eop-seum-ni-da","english":"There is no way that person lied."}]},{"id":"g4","form":"-(으)ㄴ/는 셈이다","title":"It Is Equivalent To / It Means That","meaning":"States that a situation is practically equivalent to another result, even if not literally exact.","formRule":"Action present → -는 셈이다. Adjective or completed action → -(으)ㄴ 셈이다. Noun → 인 셈이다.","nuance":"Use it to interpret the practical meaning of numbers, calculations, social judgments, or conclusions: in effect, basically, or you could say that.","examples":[{"speechLevel":"Casual intimate","korean":"이제 거의 끝난 셈이야.","romanization":"i-je geo-ui kkeut-nan se-mi-ya","english":"Now it is basically finished."},{"speechLevel":"Polite casual","korean":"이제 거의 끝난 셈이에요.","romanization":"i-je geo-ui kkeut-nan se-mi-e-yo","english":"Now it is basically finished."},{"speechLevel":"Formal polite","korean":"이제 거의 끝난 셈입니다.","romanization":"i-je geo-ui kkeut-nan se-mim-ni-da","english":"Now it is basically finished."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이제 거의 끝난 셈이야.","romanization":"i-je geo-ui kkeut-nan se-mi-ya","english":"Now it is basically finished."},{"speechLevel":"Polite casual","korean":"이제 거의 끝난 셈이에요.","romanization":"i-je geo-ui kkeut-nan se-mi-e-yo","english":"Now it is basically finished."},{"speechLevel":"Formal polite","korean":"이제 거의 끝난 셈입니다.","romanization":"i-je geo-ui kkeut-nan se-mim-ni-da","english":"Now it is basically finished."}]},{"id":"g5","form":"-(으)ㄹ 정도로","title":"To The Extent That / So... That","meaning":"Shows the degree or intensity of a situation by giving a result or comparison.","formRule":"Verb/adjective stem + -(으)ㄹ 정도로. Noun + 정도로.","nuance":"It is common with emotional and physical intensity and sounds more vivid than using 너무 or 매우 alone.","examples":[{"speechLevel":"Casual intimate","korean":"눈물이 날 정도로 감동적이었어.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo","english":"It was so moving that I almost cried."},{"speechLevel":"Polite casual","korean":"눈물이 날 정도로 감동적이었어요.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo-yo","english":"It was so moving that I almost cried."},{"speechLevel":"Formal polite","korean":"눈물이 날 정도로 감동적이었습니다.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eot-seum-ni-da","english":"It was so moving that I almost cried."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"눈물이 날 정도로 감동적이었어.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo","english":"It was so moving that I almost cried."},{"speechLevel":"Polite casual","korean":"눈물이 날 정도로 감동적이었어요.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eo-sseo-yo","english":"It was so moving that I almost cried."},{"speechLevel":"Formal polite","korean":"눈물이 날 정도로 감동적이었습니다.","romanization":"nun-mu-ri nal jeong-do-ro gam-dong-jeo-gi-eot-seum-ni-da","english":"It was so moving that I almost cried."}]},{"id":"g6","form":"-(으)ㄴ/는 반면(에)","title":"Whereas / On The Other Hand","meaning":"Compares two opposite or contrasting facts.","formRule":"Action present → -는 반면(에). Adjective or completed action → -(으)ㄴ 반면(에). Noun → 인 반면(에).","nuance":"This structured contrast is common in essays and explanations and is more formal than -지만.","examples":[{"speechLevel":"Casual intimate","korean":"이 도시는 편리한 반면 물가가 비싸.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Polite casual","korean":"이 도시는 편리한 반면 물가가 비싸요.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa-yo","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Formal polite","korean":"이 도시는 편리한 반면 물가가 비쌉니다.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssam-ni-da","english":"This city is convenient, whereas prices are high."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 도시는 편리한 반면 물가가 비싸.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Polite casual","korean":"이 도시는 편리한 반면 물가가 비싸요.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssa-yo","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Formal polite","korean":"이 도시는 편리한 반면 물가가 비쌉니다.","romanization":"i do-shi-neun pyeol-li-han ban-myeon mul-kka-ga bi-ssam-ni-da","english":"This city is convenient, whereas prices are high."}]},{"id":"g7","form":"-(으)ㄴ 탓에","title":"Because Of / Due To A Negative Cause","meaning":"Gives a cause for an undesirable result.","formRule":"Completed action or adjective + -(으)ㄴ 탓에. Noun + 탓에. Ongoing action can use -는 탓에.","nuance":"The expression carries blame or regret and is frequent in explanations of failure, delay, illness, and accidents.","examples":[{"speechLevel":"Casual intimate","korean":"비가 온 탓에 길이 막혔어.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo","english":"Because it rained, the road was blocked."},{"speechLevel":"Polite casual","korean":"비가 온 탓에 길이 막혔어요.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo-yo","english":"Because it rained, the road was blocked."},{"speechLevel":"Formal polite","korean":"비가 온 탓에 길이 막혔습니다.","romanization":"bi-ga on ta-se gi-ri ma-kyeot-seum-ni-da","english":"Because it rained, the road was blocked."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"비가 온 탓에 길이 막혔어.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo","english":"Because it rained, the road was blocked."},{"speechLevel":"Polite casual","korean":"비가 온 탓에 길이 막혔어요.","romanization":"bi-ga on ta-se gi-ri ma-kyeo-sseo-yo","english":"Because it rained, the road was blocked."},{"speechLevel":"Formal polite","korean":"비가 온 탓에 길이 막혔습니다.","romanization":"bi-ga on ta-se gi-ri ma-kyeot-seum-ni-da","english":"Because it rained, the road was blocked."}]},{"id":"g8","form":"-(으)ㄴ 덕분에","title":"Thanks To / Due To A Positive Cause","meaning":"Gives a beneficial cause for a positive result.","formRule":"Completed action or adjective + -(으)ㄴ 덕분에. Noun + 덕분에. Honorific forms such as 도와주신 덕분에 are common.","nuance":"The pattern expresses gratitude or a positive cause and is generally not used for bad results except sarcastically.","examples":[{"speechLevel":"Casual intimate","korean":"친구가 도와준 덕분에 끝냈어.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Polite casual","korean":"친구가 도와준 덕분에 끝냈어요.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo-yo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Formal polite","korean":"친구가 도와준 덕분에 끝냈습니다.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-naet-seum-ni-da","english":"Thanks to my friend helping me, I finished it."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"친구가 도와준 덕분에 끝냈어.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Polite casual","korean":"친구가 도와준 덕분에 끝냈어요.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-nae-sseo-yo","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Formal polite","korean":"친구가 도와준 덕분에 끝냈습니다.","romanization":"chin-gu-ga do-wa-jun deok-bu-ne kkeut-naet-seum-ni-da","english":"Thanks to my friend helping me, I finished it."}]},{"id":"g9","form":"-다시피","title":"As You Know / As You Can See","meaning":"Refers to something the listener already knows, sees, hears, or can infer.","formRule":"Common forms include 알다시피, 아시다시피, 보다시피, 보시다시피, and 들었다시피.","nuance":"It often opens formal explanations. The separate pattern -다시피 하다 can mean almost, but this lesson focuses on the 'as' meaning.","examples":[{"speechLevel":"Casual intimate","korean":"너도 알다시피 그 일은 쉽지 않아.","romanization":"neo-do al-da-shi-pi geu i-reun swip-ji a-na","english":"As you know, that work is not easy."},{"speechLevel":"Polite casual","korean":"아시다시피 그 일은 쉽지 않아요.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji a-na-yo","english":"As you know, that work is not easy."},{"speechLevel":"Formal polite","korean":"아시다시피 그 일은 쉽지 않습니다.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji an-seum-ni-da","english":"As you know, that work is not easy."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"너도 알다시피 그 일은 쉽지 않아.","romanization":"neo-do al-da-shi-pi geu i-reun swip-ji a-na","english":"As you know, that work is not easy."},{"speechLevel":"Polite casual","korean":"아시다시피 그 일은 쉽지 않아요.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji a-na-yo","english":"As you know, that work is not easy."},{"speechLevel":"Formal polite","korean":"아시다시피 그 일은 쉽지 않습니다.","romanization":"a-shi-da-shi-pi geu i-reun swip-ji an-seum-ni-da","english":"As you know, that work is not easy."}]},{"id":"g10","form":"-(으)ㄹ 따름이다","title":"Nothing But / Simply / Can Only","meaning":"States that there is nothing else to do, say, or feel except the stated action or attitude.","formRule":"Verb stem + -(으)ㄹ 따름이다. It often appears with 그저, 단지, or 오직.","nuance":"This is formal, literary, and humble, often expressing modesty, resignation, or limited options.","examples":[{"speechLevel":"Casual intimate","korean":"나는 최선을 다할 따름이야.","romanization":"na-neun choe-seo-neul da-hal tta-reu-mi-ya","english":"I can only do my best."},{"speechLevel":"Polite casual","korean":"저는 최선을 다할 따름이에요.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mi-e-yo","english":"I can only do my best."},{"speechLevel":"Formal polite","korean":"저는 최선을 다할 따름입니다.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mim-ni-da","english":"I can only do my best."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"나는 최선을 다할 따름이야.","romanization":"na-neun choe-seo-neul da-hal tta-reu-mi-ya","english":"I can only do my best."},{"speechLevel":"Polite casual","korean":"저는 최선을 다할 따름이에요.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mi-e-yo","english":"I can only do my best."},{"speechLevel":"Formal polite","korean":"저는 최선을 다할 따름입니다.","romanization":"jeo-neun choe-seo-neul da-hal tta-reu-mim-ni-da","english":"I can only do my best."}]},{"id":"g11","form":"-(으)ㄹ 법하다","title":"Likely / Understandable / Reasonable","meaning":"Says something is likely, expected, or understandable given the situation.","formRule":"Verb/adjective stem + -(으)ㄹ 법하다.","nuance":"It presents a reason-based judgment that an action or reaction would be natural, softer than certainty and more reasoned than 것 같다.","examples":[{"speechLevel":"Casual intimate","korean":"이 정도면 화낼 법해.","romanization":"i jeong-do-myeon hwa-nael beo-pae","english":"At this point, it is understandable to get angry."},{"speechLevel":"Polite casual","korean":"이 정도면 화낼 법해요.","romanization":"i jeong-do-myeon hwa-nael beo-pae-yo","english":"At this point, it is understandable to get angry."},{"speechLevel":"Formal polite","korean":"이 정도면 화낼 법합니다.","romanization":"i jeong-do-myeon hwa-nael beo-pam-ni-da","english":"At this point, it is understandable to get angry."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 정도면 화낼 법해.","romanization":"i jeong-do-myeon hwa-nael beo-pae","english":"At this point, it is understandable to get angry."},{"speechLevel":"Polite casual","korean":"이 정도면 화낼 법해요.","romanization":"i jeong-do-myeon hwa-nael beo-pae-yo","english":"At this point, it is understandable to get angry."},{"speechLevel":"Formal polite","korean":"이 정도면 화낼 법합니다.","romanization":"i jeong-do-myeon hwa-nael beo-pam-ni-da","english":"At this point, it is understandable to get angry."}]},{"id":"g12","form":"-기에","title":"Because / Since","meaning":"Gives a reason or basis for the following judgment, action, or decision.","formRule":"Verb/adjective stem + -기에. Noun + 이기에.","nuance":"This is more written, formal, and explanatory than -아서/어서 and is useful in essays, reports, public speaking, and careful explanations.","examples":[{"speechLevel":"Casual intimate","korean":"시간이 없기에 먼저 갈게.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge","english":"Since I do not have time, I will go first."},{"speechLevel":"Polite casual","korean":"시간이 없기에 먼저 갈게요.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge-yo","english":"Since I do not have time, I will go first."},{"speechLevel":"Formal polite","korean":"시간이 없기에 먼저 가겠습니다.","romanization":"shi-ga-ni eop-gi-e meon-jeo ga-get-seum-ni-da","english":"Since I do not have time, I will go first."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"시간이 없기에 먼저 갈게.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge","english":"Since I do not have time, I will go first."},{"speechLevel":"Polite casual","korean":"시간이 없기에 먼저 갈게요.","romanization":"shi-ga-ni eop-gi-e meon-jeo gal-ge-yo","english":"Since I do not have time, I will go first."},{"speechLevel":"Formal polite","korean":"시간이 없기에 먼저 가겠습니다.","romanization":"shi-ga-ni eop-gi-e meon-jeo ga-get-seum-ni-da","english":"Since I do not have time, I will go first."}]},{"id":"g13","form":"-(으)ㄹ 만하다","title":"Worth Doing / Bearable / Acceptable","meaning":"Says that something is worth doing, good enough, or acceptable enough.","formRule":"Verb stem + -(으)ㄹ 만하다. Modifier form: -(으)ㄹ 만한 + noun.","nuance":"Depending on context, it can mean worth doing, acceptable or bearable, or understandable, making it useful in reviews and evaluations.","examples":[{"speechLevel":"Casual intimate","korean":"이 영화는 볼 만해.","romanization":"i yeong-hwa-neun bol ma-nae","english":"This movie is worth watching."},{"speechLevel":"Polite casual","korean":"이 영화는 볼 만해요.","romanization":"i yeong-hwa-neun bol ma-nae-yo","english":"This movie is worth watching."},{"speechLevel":"Formal polite","korean":"이 영화는 볼 만합니다.","romanization":"i yeong-hwa-neun bol ma-nam-ni-da","english":"This movie is worth watching."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 영화는 볼 만해.","romanization":"i yeong-hwa-neun bol ma-nae","english":"This movie is worth watching."},{"speechLevel":"Polite casual","korean":"이 영화는 볼 만해요.","romanization":"i yeong-hwa-neun bol ma-nae-yo","english":"This movie is worth watching."},{"speechLevel":"Formal polite","korean":"이 영화는 볼 만합니다.","romanization":"i yeong-hwa-neun bol ma-nam-ni-da","english":"This movie is worth watching."}]},{"id":"g14","form":"-(으)ㄴ/는 척하다","title":"Pretend To / Act As If","meaning":"Says that someone intentionally pretends to do something, be something, or not know something.","formRule":"Action present → -는 척하다. Adjective or completed action → -(으)ㄴ 척하다. Noun → 인 척하다.","nuance":"It normally implies deliberate false behavior and can sound critical when applied to real people.","examples":[{"speechLevel":"Casual intimate","korean":"그는 모르는 척했어.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo","english":"He pretended not to know."},{"speechLevel":"Polite casual","korean":"그는 모르는 척했어요.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo-yo","english":"He pretended not to know."},{"speechLevel":"Formal polite","korean":"그는 모르는 척했습니다.","romanization":"geu-neun mo-reu-neun cheo-kaet-seum-ni-da","english":"He pretended not to know."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"그는 모르는 척했어.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo","english":"He pretended not to know."},{"speechLevel":"Polite casual","korean":"그는 모르는 척했어요.","romanization":"geu-neun mo-reu-neun cheo-kae-sseo-yo","english":"He pretended not to know."},{"speechLevel":"Formal polite","korean":"그는 모르는 척했습니다.","romanization":"geu-neun mo-reu-neun cheo-kaet-seum-ni-da","english":"He pretended not to know."}]},{"id":"g15","form":"-(으)ㄹ 뻔하다","title":"Almost / Nearly","meaning":"Shows that something almost happened but did not actually happen.","formRule":"Verb stem + -(으)ㄹ 뻔하다, usually in the past as -(으)ㄹ 뻔했어요 or -(으)ㄹ 뻔했습니다.","nuance":"It is common for near accidents, mistakes, and narrowly avoided situations and often conveys relief or surprise.","examples":[{"speechLevel":"Casual intimate","korean":"계단에서 넘어질 뻔했어.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo","english":"I almost fell on the stairs."},{"speechLevel":"Polite casual","korean":"계단에서 넘어질 뻔했어요.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo-yo","english":"I almost fell on the stairs."},{"speechLevel":"Formal polite","korean":"계단에서 넘어질 뻔했습니다.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-haet-seum-ni-da","english":"I almost fell on the stairs."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"계단에서 넘어질 뻔했어.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo","english":"I almost fell on the stairs."},{"speechLevel":"Polite casual","korean":"계단에서 넘어질 뻔했어요.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-hae-sseo-yo","english":"I almost fell on the stairs."},{"speechLevel":"Formal polite","korean":"계단에서 넘어질 뻔했습니다.","romanization":"gye-da-ne-seo neo-meo-jil ppeon-haet-seum-ni-da","english":"I almost fell on the stairs."}]},{"id":"g16","form":"-(으)ㄹ수록","title":"The More..., The More...","meaning":"Shows that as one action, quality, or situation increases, another also changes.","formRule":"Verb/adjective stem + -(으)ㄹ수록. It can appear as -(으)면 -(으)ㄹ수록 for emphasis.","nuance":"This pattern is especially useful for trends, comparisons, and abstract arguments in TOPIK writing.","examples":[{"speechLevel":"Casual intimate","korean":"한국어는 배울수록 재미있어.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Polite casual","korean":"한국어는 배울수록 재미있어요.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo-yo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Formal polite","korean":"한국어는 배울수록 재미있습니다.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-it-seum-ni-da","english":"The more I learn Korean, the more interesting it is."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"한국어는 배울수록 재미있어.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Polite casual","korean":"한국어는 배울수록 재미있어요.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-i-sseo-yo","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Formal polite","korean":"한국어는 배울수록 재미있습니다.","romanization":"han-gu-geo-neun bae-ul-su-rok jae-mi-it-seum-ni-da","english":"The more I learn Korean, the more interesting it is."}]},{"id":"g17","form":"-(으)ㄴ 나머지","title":"So... That / As A Result Of Excess","meaning":"Shows that an excessive emotion or condition caused a result, often unexpectedly or negatively.","formRule":"Adjective or completed-action stem + -(으)ㄴ 나머지.","nuance":"It often appears with strong emotions or conditions and produces an uncontrolled, impulsive, or undesirable result.","examples":[{"speechLevel":"Casual intimate","korean":"너무 놀란 나머지 말을 못 했어.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo","english":"I was so surprised that I could not speak."},{"speechLevel":"Polite casual","korean":"너무 놀란 나머지 말을 못 했어요.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo-yo","english":"I was so surprised that I could not speak."},{"speechLevel":"Formal polite","korean":"너무 놀란 나머지 말을 못 했습니다.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-taet-seum-ni-da","english":"I was so surprised that I could not speak."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"너무 놀란 나머지 말을 못 했어.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo","english":"I was so surprised that I could not speak."},{"speechLevel":"Polite casual","korean":"너무 놀란 나머지 말을 못 했어요.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-tae-sseo-yo","english":"I was so surprised that I could not speak."},{"speechLevel":"Formal polite","korean":"너무 놀란 나머지 말을 못 했습니다.","romanization":"neo-mu nol-lan na-meo-ji ma-reul mo-taet-seum-ni-da","english":"I was so surprised that I could not speak."}]},{"id":"g18","form":"-(으)ㄹ지라도","title":"Even If / Even Though — Formal","meaning":"Expresses strong concession: even if the first condition happens, the following decision or truth remains.","formRule":"Verb/adjective stem + -(으)ㄹ지라도.","nuance":"This resembles -더라도 but is more formal, literary, and emphatic, fitting essays, speeches, mottos, and formal encouragement.","examples":[{"speechLevel":"Casual intimate","korean":"실패할지라도 포기하지 않을 거야.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ya","english":"Even if I fail, I will not give up."},{"speechLevel":"Polite casual","korean":"실패할지라도 포기하지 않을 거예요.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ye-yo","english":"Even if I fail, I will not give up."},{"speechLevel":"Formal polite","korean":"실패할지라도 포기하지 않겠습니다.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji an-ke-sseum-ni-da","english":"Even if I fail, I will not give up."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"실패할지라도 포기하지 않을 거야.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ya","english":"Even if I fail, I will not give up."},{"speechLevel":"Polite casual","korean":"실패할지라도 포기하지 않을 거예요.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji a-neul geo-ye-yo","english":"Even if I fail, I will not give up."},{"speechLevel":"Formal polite","korean":"실패할지라도 포기하지 않겠습니다.","romanization":"shil-pae-hal-ji-ra-do po-gi-ha-ji an-ke-sseum-ni-da","english":"Even if I fail, I will not give up."}]}];
+    const GRAMMAR_POINTS = [{"id":"g1","form":"-더라도","title":"Even If / Even Though","meaning":"Expresses that the following result or decision will not change even if the first condition happens.","formRule":"Verb/adjective stem + -더라도. Related noun forms include 이더라도/라도.","nuance":"This is stronger and more hypothetical than -아/어도 and is common in formal speech, essays, and determined statements.","examples":[{"speechLevel":"Casual intimate","korean":"비가 오더라도 경기는 계속돼.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doae.","english":"Even if it rains, the game will continue."},{"speechLevel":"Polite casual","korean":"비가 오더라도 경기는 계속돼요.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doae-yo.","english":"Even if it rains, the game will continue."},{"speechLevel":"Formal polite","korean":"비가 오더라도 경기는 계속됩니다.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doip-ni-da.","english":"Even if it rains, the game will continue."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"비가 오더라도 경기는 계속돼.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doae.","english":"Even if it rains, the game will continue."},{"speechLevel":"Polite casual","korean":"비가 오더라도 경기는 계속돼요.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doae-yo.","english":"Even if it rains, the game will continue."},{"speechLevel":"Formal polite","korean":"비가 오더라도 경기는 계속됩니다.","romanization":"bi-ga o-deo-ra-do gyeong-gi-neun gye-sok-doip-ni-da.","english":"Even if it rains, the game will continue."}]},{"id":"g2","form":"-(으)ㄹ 뿐만 아니라","title":"Not Only... But Also","meaning":"Adds another related fact, usually in the same logical direction.","formRule":"Verb/adjective stem + -(으)ㄹ 뿐만 아니라. Noun + 일 뿐만 아니라.","nuance":"Both sides should usually be parallel and support the same argument. It is polished and useful in TOPIK writing.","examples":[{"speechLevel":"Casual intimate","korean":"이 책은 재미있을 뿐만 아니라 유익해.","romanization":"i chaek-eun jae-mi-iss-eul bbun-man a-ni-ra yu-ik-hae.","english":"This book is not only interesting but also useful."},{"speechLevel":"Polite casual","korean":"이 책은 재미있을 뿐만 아니라 유익해요.","romanization":"i chaek-eun jae-mi-iss-eul bbun-man a-ni-ra yu-ik-hae-yo.","english":"This book is not only interesting but also useful."},{"speechLevel":"Formal polite","korean":"이 책은 재미있을 뿐만 아니라 유익합니다.","romanization":"i chaek-eun jae-mi-iss-eul bbun-man a-ni-ra yu-ik-hap-ni-da.","english":"This book is not only interesting but also useful."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 책은 재미있을 뿐만 아니라 유익해.","romanization":"i chaek-eun jae-mi-iss-eul bbun-man a-ni-ra yu-ik-hae.","english":"This book is not only interesting but also useful."},{"speechLevel":"Polite casual","korean":"이 책은 재미있을 뿐만 아니라 유익해요.","romanization":"i chaek-eun jae-mi-iss-eul bbun-man a-ni-ra yu-ik-hae-yo.","english":"This book is not only interesting but also useful."},{"speechLevel":"Formal polite","korean":"이 책은 재미있을 뿐만 아니라 유익합니다.","romanization":"i chaek-eun jae-mi-iss-eul bbun-man a-ni-ra yu-ik-hap-ni-da.","english":"This book is not only interesting but also useful."}]},{"id":"g3","form":"-(으)ㄹ 리가 없다","title":"There Is No Way / Cannot Possibly","meaning":"Expresses strong certainty that something is impossible or extremely unlikely.","formRule":"Verb/adjective stem + -(으)ㄹ 리가 없다. Past: -았/었을 리가 없다. Noun: 일 리가 없다.","nuance":"It is stronger than -(으)ㄹ 것 같지 않다 and implies logical evidence, trust, or a strong assumption.","examples":[{"speechLevel":"Casual intimate","korean":"그 사람이 거짓말을 했을 리가 없어.","romanization":"geu sa-ram-i geo-jis-mal-eul haess-eul ri-ga eops-eo.","english":"There is no way that person lied."},{"speechLevel":"Polite casual","korean":"그 사람이 거짓말을 했을 리가 없어요.","romanization":"geu sa-ram-i geo-jis-mal-eul haess-eul ri-ga eops-eo-yo.","english":"There is no way that person lied."},{"speechLevel":"Formal polite","korean":"그 사람이 거짓말을 했을 리가 없습니다.","romanization":"geu sa-ram-i geo-jis-mal-eul haess-eul ri-ga eops-seup-ni-da.","english":"There is no way that person lied."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"그 사람이 거짓말을 했을 리가 없어.","romanization":"geu sa-ram-i geo-jis-mal-eul haess-eul ri-ga eops-eo.","english":"There is no way that person lied."},{"speechLevel":"Polite casual","korean":"그 사람이 거짓말을 했을 리가 없어요.","romanization":"geu sa-ram-i geo-jis-mal-eul haess-eul ri-ga eops-eo-yo.","english":"There is no way that person lied."},{"speechLevel":"Formal polite","korean":"그 사람이 거짓말을 했을 리가 없습니다.","romanization":"geu sa-ram-i geo-jis-mal-eul haess-eul ri-ga eops-seup-ni-da.","english":"There is no way that person lied."}]},{"id":"g4","form":"-(으)ㄴ/는 셈이다","title":"It Is Equivalent To / It Means That","meaning":"States that a situation is practically equivalent to another result, even if not literally exact.","formRule":"Action present → -는 셈이다. Adjective or completed action → -(으)ㄴ 셈이다. Noun → 인 셈이다.","nuance":"Use it to interpret the practical meaning of numbers, calculations, social judgments, or conclusions: in effect, basically, or you could say that.","examples":[{"speechLevel":"Casual intimate","korean":"이제 거의 끝난 셈이야.","romanization":"i-je geo-eui ggeut-nan sem-i-ya.","english":"Now it is basically finished."},{"speechLevel":"Polite casual","korean":"이제 거의 끝난 셈이에요.","romanization":"i-je geo-eui ggeut-nan sem-i-e-yo.","english":"Now it is basically finished."},{"speechLevel":"Formal polite","korean":"이제 거의 끝난 셈입니다.","romanization":"i-je geo-eui ggeut-nan sem-ip-ni-da.","english":"Now it is basically finished."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이제 거의 끝난 셈이야.","romanization":"i-je geo-eui ggeut-nan sem-i-ya.","english":"Now it is basically finished."},{"speechLevel":"Polite casual","korean":"이제 거의 끝난 셈이에요.","romanization":"i-je geo-eui ggeut-nan sem-i-e-yo.","english":"Now it is basically finished."},{"speechLevel":"Formal polite","korean":"이제 거의 끝난 셈입니다.","romanization":"i-je geo-eui ggeut-nan sem-ip-ni-da.","english":"Now it is basically finished."}]},{"id":"g5","form":"-(으)ㄹ 정도로","title":"To The Extent That / So... That","meaning":"Shows the degree or intensity of a situation by giving a result or comparison.","formRule":"Verb/adjective stem + -(으)ㄹ 정도로. Noun + 정도로.","nuance":"It is common with emotional and physical intensity and sounds more vivid than using 너무 or 매우 alone.","examples":[{"speechLevel":"Casual intimate","korean":"눈물이 날 정도로 감동적이었어.","romanization":"nun-mul-i nal jeong-do-ro gam-dong-jeok-i-eoss-eo.","english":"It was so moving that I almost cried."},{"speechLevel":"Polite casual","korean":"눈물이 날 정도로 감동적이었어요.","romanization":"nun-mul-i nal jeong-do-ro gam-dong-jeok-i-eoss-eo-yo.","english":"It was so moving that I almost cried."},{"speechLevel":"Formal polite","korean":"눈물이 날 정도로 감동적이었습니다.","romanization":"nun-mul-i nal jeong-do-ro gam-dong-jeok-i-eoss-seup-ni-da.","english":"It was so moving that I almost cried."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"눈물이 날 정도로 감동적이었어.","romanization":"nun-mul-i nal jeong-do-ro gam-dong-jeok-i-eoss-eo.","english":"It was so moving that I almost cried."},{"speechLevel":"Polite casual","korean":"눈물이 날 정도로 감동적이었어요.","romanization":"nun-mul-i nal jeong-do-ro gam-dong-jeok-i-eoss-eo-yo.","english":"It was so moving that I almost cried."},{"speechLevel":"Formal polite","korean":"눈물이 날 정도로 감동적이었습니다.","romanization":"nun-mul-i nal jeong-do-ro gam-dong-jeok-i-eoss-seup-ni-da.","english":"It was so moving that I almost cried."}]},{"id":"g6","form":"-(으)ㄴ/는 반면(에)","title":"Whereas / On The Other Hand","meaning":"Compares two opposite or contrasting facts.","formRule":"Action present → -는 반면(에). Adjective or completed action → -(으)ㄴ 반면(에). Noun → 인 반면(에).","nuance":"This structured contrast is common in essays and explanations and is more formal than -지만.","examples":[{"speechLevel":"Casual intimate","korean":"이 도시는 편리한 반면 물가가 비싸.","romanization":"i do-si-neun pyeon-ri-han ban-myeon mul-ga-ga bi-ssa.","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Polite casual","korean":"이 도시는 편리한 반면 물가가 비싸요.","romanization":"i do-si-neun pyeon-ri-han ban-myeon mul-ga-ga bi-ssa-yo.","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Formal polite","korean":"이 도시는 편리한 반면 물가가 비쌉니다.","romanization":"i do-si-neun pyeon-ri-han ban-myeon mul-ga-ga bi-ssap-ni-da.","english":"This city is convenient, whereas prices are high."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 도시는 편리한 반면 물가가 비싸.","romanization":"i do-si-neun pyeon-ri-han ban-myeon mul-ga-ga bi-ssa.","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Polite casual","korean":"이 도시는 편리한 반면 물가가 비싸요.","romanization":"i do-si-neun pyeon-ri-han ban-myeon mul-ga-ga bi-ssa-yo.","english":"This city is convenient, whereas prices are high."},{"speechLevel":"Formal polite","korean":"이 도시는 편리한 반면 물가가 비쌉니다.","romanization":"i do-si-neun pyeon-ri-han ban-myeon mul-ga-ga bi-ssap-ni-da.","english":"This city is convenient, whereas prices are high."}]},{"id":"g7","form":"-(으)ㄴ 탓에","title":"Because Of / Due To A Negative Cause","meaning":"Gives a cause for an undesirable result.","formRule":"Completed action or adjective + -(으)ㄴ 탓에. Noun + 탓에. Ongoing action can use -는 탓에.","nuance":"The expression carries blame or regret and is frequent in explanations of failure, delay, illness, and accidents.","examples":[{"speechLevel":"Casual intimate","korean":"비가 온 탓에 길이 막혔어.","romanization":"bi-ga on tas-e gil-i mak-hyeoss-eo.","english":"Because it rained, the road was blocked."},{"speechLevel":"Polite casual","korean":"비가 온 탓에 길이 막혔어요.","romanization":"bi-ga on tas-e gil-i mak-hyeoss-eo-yo.","english":"Because it rained, the road was blocked."},{"speechLevel":"Formal polite","korean":"비가 온 탓에 길이 막혔습니다.","romanization":"bi-ga on tas-e gil-i mak-hyeoss-seup-ni-da.","english":"Because it rained, the road was blocked."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"비가 온 탓에 길이 막혔어.","romanization":"bi-ga on tas-e gil-i mak-hyeoss-eo.","english":"Because it rained, the road was blocked."},{"speechLevel":"Polite casual","korean":"비가 온 탓에 길이 막혔어요.","romanization":"bi-ga on tas-e gil-i mak-hyeoss-eo-yo.","english":"Because it rained, the road was blocked."},{"speechLevel":"Formal polite","korean":"비가 온 탓에 길이 막혔습니다.","romanization":"bi-ga on tas-e gil-i mak-hyeoss-seup-ni-da.","english":"Because it rained, the road was blocked."}]},{"id":"g8","form":"-(으)ㄴ 덕분에","title":"Thanks To / Due To A Positive Cause","meaning":"Gives a beneficial cause for a positive result.","formRule":"Completed action or adjective + -(으)ㄴ 덕분에. Noun + 덕분에. Honorific forms such as 도와주신 덕분에 are common.","nuance":"The pattern expresses gratitude or a positive cause and is generally not used for bad results except sarcastically.","examples":[{"speechLevel":"Casual intimate","korean":"친구가 도와준 덕분에 끝냈어.","romanization":"chin-gu-ga do-oa-jun deok-bun-e ggeut-naess-eo.","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Polite casual","korean":"친구가 도와준 덕분에 끝냈어요.","romanization":"chin-gu-ga do-oa-jun deok-bun-e ggeut-naess-eo-yo.","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Formal polite","korean":"친구가 도와준 덕분에 끝냈습니다.","romanization":"chin-gu-ga do-oa-jun deok-bun-e ggeut-naess-seup-ni-da.","english":"Thanks to my friend helping me, I finished it."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"친구가 도와준 덕분에 끝냈어.","romanization":"chin-gu-ga do-oa-jun deok-bun-e ggeut-naess-eo.","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Polite casual","korean":"친구가 도와준 덕분에 끝냈어요.","romanization":"chin-gu-ga do-oa-jun deok-bun-e ggeut-naess-eo-yo.","english":"Thanks to my friend helping me, I finished it."},{"speechLevel":"Formal polite","korean":"친구가 도와준 덕분에 끝냈습니다.","romanization":"chin-gu-ga do-oa-jun deok-bun-e ggeut-naess-seup-ni-da.","english":"Thanks to my friend helping me, I finished it."}]},{"id":"g9","form":"-다시피","title":"As You Know / As You Can See","meaning":"Refers to something the listener already knows, sees, hears, or can infer.","formRule":"Common forms include 알다시피, 아시다시피, 보다시피, 보시다시피, and 들었다시피.","nuance":"It often opens formal explanations. The separate pattern -다시피 하다 can mean almost, but this lesson focuses on the 'as' meaning.","examples":[{"speechLevel":"Casual intimate","korean":"너도 알다시피 그 일은 쉽지 않아.","romanization":"neo-do al-da-si-pi geu il-eun suip-ji anh-a.","english":"As you know, that work is not easy."},{"speechLevel":"Polite casual","korean":"아시다시피 그 일은 쉽지 않아요.","romanization":"a-si-da-si-pi geu il-eun suip-ji anh-a-yo.","english":"As you know, that work is not easy."},{"speechLevel":"Formal polite","korean":"아시다시피 그 일은 쉽지 않습니다.","romanization":"a-si-da-si-pi geu il-eun suip-ji anh-seup-ni-da.","english":"As you know, that work is not easy."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"너도 알다시피 그 일은 쉽지 않아.","romanization":"neo-do al-da-si-pi geu il-eun suip-ji anh-a.","english":"As you know, that work is not easy."},{"speechLevel":"Polite casual","korean":"아시다시피 그 일은 쉽지 않아요.","romanization":"a-si-da-si-pi geu il-eun suip-ji anh-a-yo.","english":"As you know, that work is not easy."},{"speechLevel":"Formal polite","korean":"아시다시피 그 일은 쉽지 않습니다.","romanization":"a-si-da-si-pi geu il-eun suip-ji anh-seup-ni-da.","english":"As you know, that work is not easy."}]},{"id":"g10","form":"-(으)ㄹ 따름이다","title":"Nothing But / Simply / Can Only","meaning":"States that there is nothing else to do, say, or feel except the stated action or attitude.","formRule":"Verb stem + -(으)ㄹ 따름이다. It often appears with 그저, 단지, or 오직.","nuance":"This is formal, literary, and humble, often expressing modesty, resignation, or limited options.","examples":[{"speechLevel":"Casual intimate","korean":"나는 최선을 다할 따름이야.","romanization":"na-neun choi-seon-eul da-hal dda-reum-i-ya.","english":"I can only do my best."},{"speechLevel":"Polite casual","korean":"저는 최선을 다할 따름이에요.","romanization":"jeo-neun choi-seon-eul da-hal dda-reum-i-e-yo.","english":"I can only do my best."},{"speechLevel":"Formal polite","korean":"저는 최선을 다할 따름입니다.","romanization":"jeo-neun choi-seon-eul da-hal dda-reum-ip-ni-da.","english":"I can only do my best."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"나는 최선을 다할 따름이야.","romanization":"na-neun choi-seon-eul da-hal dda-reum-i-ya.","english":"I can only do my best."},{"speechLevel":"Polite casual","korean":"저는 최선을 다할 따름이에요.","romanization":"jeo-neun choi-seon-eul da-hal dda-reum-i-e-yo.","english":"I can only do my best."},{"speechLevel":"Formal polite","korean":"저는 최선을 다할 따름입니다.","romanization":"jeo-neun choi-seon-eul da-hal dda-reum-ip-ni-da.","english":"I can only do my best."}]},{"id":"g11","form":"-(으)ㄹ 법하다","title":"Likely / Understandable / Reasonable","meaning":"Says something is likely, expected, or understandable given the situation.","formRule":"Verb/adjective stem + -(으)ㄹ 법하다.","nuance":"It presents a reason-based judgment that an action or reaction would be natural, softer than certainty and more reasoned than 것 같다.","examples":[{"speechLevel":"Casual intimate","korean":"이 정도면 화낼 법해.","romanization":"i jeong-do-myeon hoa-nael beop-hae.","english":"At this point, it is understandable to get angry."},{"speechLevel":"Polite casual","korean":"이 정도면 화낼 법해요.","romanization":"i jeong-do-myeon hoa-nael beop-hae-yo.","english":"At this point, it is understandable to get angry."},{"speechLevel":"Formal polite","korean":"이 정도면 화낼 법합니다.","romanization":"i jeong-do-myeon hoa-nael beop-hap-ni-da.","english":"At this point, it is understandable to get angry."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 정도면 화낼 법해.","romanization":"i jeong-do-myeon hoa-nael beop-hae.","english":"At this point, it is understandable to get angry."},{"speechLevel":"Polite casual","korean":"이 정도면 화낼 법해요.","romanization":"i jeong-do-myeon hoa-nael beop-hae-yo.","english":"At this point, it is understandable to get angry."},{"speechLevel":"Formal polite","korean":"이 정도면 화낼 법합니다.","romanization":"i jeong-do-myeon hoa-nael beop-hap-ni-da.","english":"At this point, it is understandable to get angry."}]},{"id":"g12","form":"-기에","title":"Because / Since","meaning":"Gives a reason or basis for the following judgment, action, or decision.","formRule":"Verb/adjective stem + -기에. Noun + 이기에.","nuance":"This is more written, formal, and explanatory than -아서/어서 and is useful in essays, reports, public speaking, and careful explanations.","examples":[{"speechLevel":"Casual intimate","korean":"시간이 없기에 먼저 갈게.","romanization":"si-gan-i eops-gi-e meon-jeo gal-ge.","english":"Since I do not have time, I will go first."},{"speechLevel":"Polite casual","korean":"시간이 없기에 먼저 갈게요.","romanization":"si-gan-i eops-gi-e meon-jeo gal-ge-yo.","english":"Since I do not have time, I will go first."},{"speechLevel":"Formal polite","korean":"시간이 없기에 먼저 가겠습니다.","romanization":"si-gan-i eops-gi-e meon-jeo ga-gess-seup-ni-da.","english":"Since I do not have time, I will go first."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"시간이 없기에 먼저 갈게.","romanization":"si-gan-i eops-gi-e meon-jeo gal-ge.","english":"Since I do not have time, I will go first."},{"speechLevel":"Polite casual","korean":"시간이 없기에 먼저 갈게요.","romanization":"si-gan-i eops-gi-e meon-jeo gal-ge-yo.","english":"Since I do not have time, I will go first."},{"speechLevel":"Formal polite","korean":"시간이 없기에 먼저 가겠습니다.","romanization":"si-gan-i eops-gi-e meon-jeo ga-gess-seup-ni-da.","english":"Since I do not have time, I will go first."}]},{"id":"g13","form":"-(으)ㄹ 만하다","title":"Worth Doing / Bearable / Acceptable","meaning":"Says that something is worth doing, good enough, or acceptable enough.","formRule":"Verb stem + -(으)ㄹ 만하다. Modifier form: -(으)ㄹ 만한 + noun.","nuance":"Depending on context, it can mean worth doing, acceptable or bearable, or understandable, making it useful in reviews and evaluations.","examples":[{"speechLevel":"Casual intimate","korean":"이 영화는 볼 만해.","romanization":"i yeong-hoa-neun bol man-hae.","english":"This movie is worth watching."},{"speechLevel":"Polite casual","korean":"이 영화는 볼 만해요.","romanization":"i yeong-hoa-neun bol man-hae-yo.","english":"This movie is worth watching."},{"speechLevel":"Formal polite","korean":"이 영화는 볼 만합니다.","romanization":"i yeong-hoa-neun bol man-hap-ni-da.","english":"This movie is worth watching."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"이 영화는 볼 만해.","romanization":"i yeong-hoa-neun bol man-hae.","english":"This movie is worth watching."},{"speechLevel":"Polite casual","korean":"이 영화는 볼 만해요.","romanization":"i yeong-hoa-neun bol man-hae-yo.","english":"This movie is worth watching."},{"speechLevel":"Formal polite","korean":"이 영화는 볼 만합니다.","romanization":"i yeong-hoa-neun bol man-hap-ni-da.","english":"This movie is worth watching."}]},{"id":"g14","form":"-(으)ㄴ/는 척하다","title":"Pretend To / Act As If","meaning":"Says that someone intentionally pretends to do something, be something, or not know something.","formRule":"Action present → -는 척하다. Adjective or completed action → -(으)ㄴ 척하다. Noun → 인 척하다.","nuance":"It normally implies deliberate false behavior and can sound critical when applied to real people.","examples":[{"speechLevel":"Casual intimate","korean":"그는 모르는 척했어.","romanization":"geu-neun mo-reu-neun cheok-haess-eo.","english":"He pretended not to know."},{"speechLevel":"Polite casual","korean":"그는 모르는 척했어요.","romanization":"geu-neun mo-reu-neun cheok-haess-eo-yo.","english":"He pretended not to know."},{"speechLevel":"Formal polite","korean":"그는 모르는 척했습니다.","romanization":"geu-neun mo-reu-neun cheok-haess-seup-ni-da.","english":"He pretended not to know."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"그는 모르는 척했어.","romanization":"geu-neun mo-reu-neun cheok-haess-eo.","english":"He pretended not to know."},{"speechLevel":"Polite casual","korean":"그는 모르는 척했어요.","romanization":"geu-neun mo-reu-neun cheok-haess-eo-yo.","english":"He pretended not to know."},{"speechLevel":"Formal polite","korean":"그는 모르는 척했습니다.","romanization":"geu-neun mo-reu-neun cheok-haess-seup-ni-da.","english":"He pretended not to know."}]},{"id":"g15","form":"-(으)ㄹ 뻔하다","title":"Almost / Nearly","meaning":"Shows that something almost happened but did not actually happen.","formRule":"Verb stem + -(으)ㄹ 뻔하다, usually in the past as -(으)ㄹ 뻔했어요 or -(으)ㄹ 뻔했습니다.","nuance":"It is common for near accidents, mistakes, and narrowly avoided situations and often conveys relief or surprise.","examples":[{"speechLevel":"Casual intimate","korean":"계단에서 넘어질 뻔했어.","romanization":"gye-dan-e-seo neom-eo-jil bbeon-haess-eo.","english":"I almost fell on the stairs."},{"speechLevel":"Polite casual","korean":"계단에서 넘어질 뻔했어요.","romanization":"gye-dan-e-seo neom-eo-jil bbeon-haess-eo-yo.","english":"I almost fell on the stairs."},{"speechLevel":"Formal polite","korean":"계단에서 넘어질 뻔했습니다.","romanization":"gye-dan-e-seo neom-eo-jil bbeon-haess-seup-ni-da.","english":"I almost fell on the stairs."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"계단에서 넘어질 뻔했어.","romanization":"gye-dan-e-seo neom-eo-jil bbeon-haess-eo.","english":"I almost fell on the stairs."},{"speechLevel":"Polite casual","korean":"계단에서 넘어질 뻔했어요.","romanization":"gye-dan-e-seo neom-eo-jil bbeon-haess-eo-yo.","english":"I almost fell on the stairs."},{"speechLevel":"Formal polite","korean":"계단에서 넘어질 뻔했습니다.","romanization":"gye-dan-e-seo neom-eo-jil bbeon-haess-seup-ni-da.","english":"I almost fell on the stairs."}]},{"id":"g16","form":"-(으)ㄹ수록","title":"The More..., The More...","meaning":"Shows that as one action, quality, or situation increases, another also changes.","formRule":"Verb/adjective stem + -(으)ㄹ수록. It can appear as -(으)면 -(으)ㄹ수록 for emphasis.","nuance":"This pattern is especially useful for trends, comparisons, and abstract arguments in TOPIK writing.","examples":[{"speechLevel":"Casual intimate","korean":"한국어는 배울수록 재미있어.","romanization":"han-guk-eo-neun bae-ul-su-rok jae-mi-iss-eo.","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Polite casual","korean":"한국어는 배울수록 재미있어요.","romanization":"han-guk-eo-neun bae-ul-su-rok jae-mi-iss-eo-yo.","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Formal polite","korean":"한국어는 배울수록 재미있습니다.","romanization":"han-guk-eo-neun bae-ul-su-rok jae-mi-iss-seup-ni-da.","english":"The more I learn Korean, the more interesting it is."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"한국어는 배울수록 재미있어.","romanization":"han-guk-eo-neun bae-ul-su-rok jae-mi-iss-eo.","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Polite casual","korean":"한국어는 배울수록 재미있어요.","romanization":"han-guk-eo-neun bae-ul-su-rok jae-mi-iss-eo-yo.","english":"The more I learn Korean, the more interesting it is."},{"speechLevel":"Formal polite","korean":"한국어는 배울수록 재미있습니다.","romanization":"han-guk-eo-neun bae-ul-su-rok jae-mi-iss-seup-ni-da.","english":"The more I learn Korean, the more interesting it is."}]},{"id":"g17","form":"-(으)ㄴ 나머지","title":"So... That / As A Result Of Excess","meaning":"Shows that an excessive emotion or condition caused a result, often unexpectedly or negatively.","formRule":"Adjective or completed-action stem + -(으)ㄴ 나머지.","nuance":"It often appears with strong emotions or conditions and produces an uncontrolled, impulsive, or undesirable result.","examples":[{"speechLevel":"Casual intimate","korean":"너무 놀란 나머지 말을 못 했어.","romanization":"neo-mu nol-ran na-meo-ji mal-eul mos haess-eo.","english":"I was so surprised that I could not speak."},{"speechLevel":"Polite casual","korean":"너무 놀란 나머지 말을 못 했어요.","romanization":"neo-mu nol-ran na-meo-ji mal-eul mos haess-eo-yo.","english":"I was so surprised that I could not speak."},{"speechLevel":"Formal polite","korean":"너무 놀란 나머지 말을 못 했습니다.","romanization":"neo-mu nol-ran na-meo-ji mal-eul mos haess-seup-ni-da.","english":"I was so surprised that I could not speak."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"너무 놀란 나머지 말을 못 했어.","romanization":"neo-mu nol-ran na-meo-ji mal-eul mos haess-eo.","english":"I was so surprised that I could not speak."},{"speechLevel":"Polite casual","korean":"너무 놀란 나머지 말을 못 했어요.","romanization":"neo-mu nol-ran na-meo-ji mal-eul mos haess-eo-yo.","english":"I was so surprised that I could not speak."},{"speechLevel":"Formal polite","korean":"너무 놀란 나머지 말을 못 했습니다.","romanization":"neo-mu nol-ran na-meo-ji mal-eul mos haess-seup-ni-da.","english":"I was so surprised that I could not speak."}]},{"id":"g18","form":"-(으)ㄹ지라도","title":"Even If / Even Though — Formal","meaning":"Expresses strong concession: even if the first condition happens, the following decision or truth remains.","formRule":"Verb/adjective stem + -(으)ㄹ지라도.","nuance":"This resembles -더라도 but is more formal, literary, and emphatic, fitting essays, speeches, mottos, and formal encouragement.","examples":[{"speechLevel":"Casual intimate","korean":"실패할지라도 포기하지 않을 거야.","romanization":"sil-pae-hal-ji-ra-do po-gi-ha-ji anh-eul geo-ya.","english":"Even if I fail, I will not give up."},{"speechLevel":"Polite casual","korean":"실패할지라도 포기하지 않을 거예요.","romanization":"sil-pae-hal-ji-ra-do po-gi-ha-ji anh-eul geo-ye-yo.","english":"Even if I fail, I will not give up."},{"speechLevel":"Formal polite","korean":"실패할지라도 포기하지 않겠습니다.","romanization":"sil-pae-hal-ji-ra-do po-gi-ha-ji anh-gess-seup-ni-da.","english":"Even if I fail, I will not give up."}],"practice":[],"questions":[{"speechLevel":"Casual intimate","korean":"실패할지라도 포기하지 않을 거야.","romanization":"sil-pae-hal-ji-ra-do po-gi-ha-ji anh-eul geo-ya.","english":"Even if I fail, I will not give up."},{"speechLevel":"Polite casual","korean":"실패할지라도 포기하지 않을 거예요.","romanization":"sil-pae-hal-ji-ra-do po-gi-ha-ji anh-eul geo-ye-yo.","english":"Even if I fail, I will not give up."},{"speechLevel":"Formal polite","korean":"실패할지라도 포기하지 않겠습니다.","romanization":"sil-pae-hal-ji-ra-do po-gi-ha-ji anh-gess-seup-ni-da.","english":"Even if I fail, I will not give up."}]}];
     const exerciseStates = {};
+
+    // ---- Generated practice: shared vocabulary and its sources -------------
+    // Every word is listed under exactly one source, resolved in the shared
+    // library's order: TOPIK vocabulary lists, Bab lessons, practice tests,
+    // then the extra core list.
+    const SOURCE_OF = new Map(KoreanVocab.DATA.map(entry => [entry.id, KoreanVocab.primarySourceOf(entry)]));
+    const sourceOf = entry => SOURCE_OF.get(entry.id);
+    const SOURCE_GROUP_ORDER = ["topik-vocab", "bab", "topik-test", "topik-extra"];
+    const VOCAB_SOURCES = KoreanVocab.SOURCES.slice().sort((a, b) =>
+      (SOURCE_GROUP_ORDER.indexOf(a.group) - SOURCE_GROUP_ORDER.indexOf(b.group)) ||
+      (KoreanVocab.SOURCES.indexOf(a) - KoreanVocab.SOURCES.indexOf(b)));
+    // A TOPIK reference page starts from the TOPIK vocabulary lists.
+    const DEFAULT_SOURCES = KoreanVocab.SOURCES.filter(source => source.group === "topik-vocab").map(source => source.id);
+    const SLOT_LABELS = { verb: "verbs", verb2: "verbs", adj: "adjectives", adj2: "adjectives", place: "places", noun: "nouns", time: "time words" };
+
+    /* "generated" or "examples"; the menu does not exist during the first render. */
+    function sentenceSource(element) {
+      return element?.querySelector(".menu-source")?.value || "generated";
+    }
+    function exerciseMode(element) {
+      return element?.querySelector(".menu-mode")?.value || "typed";
+    }
+    function pointSlots(point) { return GrammarTemplates.slotsFor(point.form) || []; }
+    function pointGenerates(point) { return Boolean(GrammarTemplates.templateFor(point.form)); }
+
+    /* Words from the chosen sources that also pass the chosen category filters. */
+    function vocabPool(element) {
+      // The picker is injected with the exercise menu, after the first render,
+      // so fall back to the default sources until it exists.
+      const inputs = element ? element.querySelectorAll(".vocab-source") : [];
+      if (!inputs.length) return KoreanVocab.DATA.filter(entry => DEFAULT_SOURCES.includes(sourceOf(entry)));
+      const sources = new Set([...element.querySelectorAll(".vocab-source:checked")].map(input => input.value));
+      const groups = new Set([...element.querySelectorAll(".vocab-leaf:checked")].map(input => input.value));
+      return KoreanVocab.DATA.filter(entry => sources.has(sourceOf(entry)) && groups.has(vocabGroupKey(entry)));
+    }
+    const vocabGroupKey = entry => `${entry.partOfSpeech}::${entry.category}`;
+    const labelName = id => KoreanVocab.LABELS[id]?.name || String(id).replaceAll("-", " ");
+
+    /* Which slots this grammar point still cannot fill from the chosen pool. */
+    function missingSlots(point, pool) {
+      const needed = {};
+      pointSlots(point).forEach(slot => { needed[slot] = (needed[slot] || 0) + 1; });
+      const short = [];
+      Object.keys(needed).forEach(slot => {
+        const available = pool.filter(entry => GrammarTemplates.fillsSlot(entry, slot)).length;
+        // verb/verb2 and adj/adj2 draw from the same words, so count them together.
+        const twin = slot === "verb" ? "verb2" : slot === "verb2" ? "verb" : slot === "adj" ? "adj2" : slot === "adj2" ? "adj" : null;
+        const required = needed[slot] + (twin && needed[twin] ? needed[twin] : 0);
+        if (available < required) short.push(`${required} ${SLOT_LABELS[slot] || slot}`);
+      });
+      return [...new Set(short)];
+    }
+
+    function vocabPickerTemplate(point) {
+      const counts = new Map();
+      KoreanVocab.DATA.forEach(entry => {
+        const id = sourceOf(entry);
+        counts.set(id, (counts.get(id) || 0) + 1);
+      });
+      const sourceGroups = KoreanVocab.SOURCE_GROUPS.slice()
+        .sort((a, b) => SOURCE_GROUP_ORDER.indexOf(a.id) - SOURCE_GROUP_ORDER.indexOf(b.id))
+        .map(group => {
+          const list = VOCAB_SOURCES.filter(source => source.group === group.id && counts.get(source.id));
+          if (!list.length) return "";
+          const total = list.reduce((sum, source) => sum + counts.get(source.id), 0);
+          const options = list.map(source => `<label class="vocab-leaf-option vocab-source-option" data-vocab-source-option="${escapeHtml(source.id)}"><input class="vocab-source" type="checkbox" value="${escapeHtml(source.id)}"${DEFAULT_SOURCES.includes(source.id) ? " checked" : ""}><span>${escapeHtml(source.label)}<small>${counts.get(source.id)} words</small></span></label>`).join("");
+          const toggle = list.length > 1 ? `<label class="vocab-parent-option"><input class="vocab-source-group-toggle" type="checkbox"><span>Select every source in this group</span></label>` : "";
+          return `<details class="vocab-source-group"${list.some(source => DEFAULT_SOURCES.includes(source.id)) ? " open" : ""}><summary><span>${escapeHtml(group.label)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-group-body">${toggle}<div class="vocab-leaf-grid">${options}</div></div></details>`;
+        }).join("");
+
+      const grouped = new Map();
+      KoreanVocab.DATA.forEach(entry => {
+        if (!grouped.has(entry.partOfSpeech)) grouped.set(entry.partOfSpeech, new Map());
+        const categories = grouped.get(entry.partOfSpeech);
+        categories.set(entry.category, (categories.get(entry.category) || 0) + 1);
+      });
+      const typeGroups = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([part, categories]) => {
+        const total = [...categories.values()].reduce((sum, n) => sum + n, 0);
+        const leaves = [...categories.entries()].sort(([a], [b]) => labelName(a).localeCompare(labelName(b))).map(([category, n]) => {
+          const value = `${part}::${category}`;
+          return `<label class="vocab-leaf-option" data-vocab-group-option="${escapeHtml(value)}"><input class="vocab-leaf" type="checkbox" value="${escapeHtml(value)}" checked><span>${escapeHtml(labelName(category))}<small data-group-count="${escapeHtml(value)}">${n} words</small></span></label>`;
+        }).join("");
+        return `<details class="vocab-type-group"><summary><span>${escapeHtml(part)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-group-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include every group here</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
+      }).join("");
+
+      const needs = pointSlots(point).map(slot => SLOT_LABELS[slot] || slot);
+      const needsText = [...new Set(needs)].join(" and ");
+      return `<fieldset class="vocab-picker"><legend>Vocabulary to build sentences from</legend>
+        <p class="vocab-source-note">This grammar point needs ${escapeHtml(needsText)}. A word that appears in several places is counted once, under the TOPIK vocabulary lists first, then the Bab lessons, then the practice tests.</p>
+        <details class="vocab-tree vocab-source-tree" open><summary><span>Vocabulary sources</span><span class="vocab-source-headline">one source per word</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-source-reset" type="button">TOPIK lists only</button><button class="btn secondary vocab-source-all" type="button">Select all sources</button><button class="btn secondary vocab-source-none" type="button">Clear all sources</button></div><div class="vocab-group-list">${sourceGroups}</div></div></details>
+        <details class="vocab-tree"><summary><span>Word types and categories</span><span class="vocab-source-headline">optional filter</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-group-list">${typeGroups}</div></div></details>
+        <p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p>
+        <p class="vocab-pool-error hidden"></p></fieldset>`;
+    }
+
+    /* Builds one generated question in the shape the exercise runtime expects. */
+    function generatedQuestion(point, pool, index) {
+      const slots = GrammarTemplates.fillSlots(point.form, pool);
+      if (!slots) return null;
+      const built = GrammarTemplates.build(point.form, slots);
+      if (!built) return null;
+      return {
+        korean: built.korean,
+        english: built.english,
+        romanization: KoreanVocab.romanize(built.korean),
+        speechLevel: "Polite casual",
+        sourceId: `${point.id}-gen-${index}`,
+        vocab: Object.values(slots)
+      };
+    }
+
+    function makeGeneratedQuestions(point, count, pool) {
+      const questions = [];
+      const seen = new Set();
+      let guard = 0;
+      while (questions.length < count && guard++ < count * 40) {
+        const question = generatedQuestion(point, pool, questions.length);
+        if (!question) break;
+        if (seen.has(question.korean) && guard < count * 20) continue;
+        seen.add(question.korean);
+        questions.push(question);
+      }
+      return questions;
+    }
     const grammarGrid = document.getElementById("grammarGrid");
     const tocGrid = document.getElementById("tocGrid");
     const sections = document.getElementById("sections");
@@ -942,9 +1149,8 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     function normalizeAnswer(value, mode) {
       let text = String(value ?? "").trim().toLowerCase().replace(/[’']/g, "");
       if (mode === "korean") return text.replace(/\s+/g, "").replace(/[.?!]/g, "");
-      if (mode === "romanization") {
-        return text.replace(/[^a-z\-\s]/g, "").replace(/-+/g, "-").replace(/\s+/g, " ").trim();
-      }
+      // Syllables are shown with dashes but checked without them.
+      if (mode === "romanization") return text.replace(/[^a-z]/g, "");
       return text.replace(/&/g, "and").replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
     }
 
@@ -957,7 +1163,8 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       return `<b>${escapeHtml(question.english)}</b><br><span class="roman">${escapeHtml(question.romanization)}</span><br>${escapeHtml(question.korean)}<br><span class="small">${escapeHtml(question.speechLevel)}</span>`;
     }
 
-    function buildQuestionList(point) {
+    function buildQuestionList(point, type, element) {
+      if (sentenceSource(element) === "generated") return makeGeneratedQuestions(point, 10, vocabPool(element));
       const source = point.questions.map((question, index) => ({...question, sourceId: `${point.id}-${index}`}));
       const result = [];
       while (result.length < 10) {
@@ -967,18 +1174,33 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       return result;
     }
 
-    function buildChoices(pointId, correctQuestion, answerMode) {
+    function buildChoices(pointId, correctQuestion, answerMode, pool) {
       const correct = correctQuestion[answerMode];
       const seen = new Set([normalizeAnswer(correct, answerMode)]);
       const distractors = [];
-      const allQuestions = shuffle(GRAMMAR_POINTS.flatMap(point => point.questions.map(q => ({...q, pointId: point.id}))));
+      // A generated question needs generated distractors, or the wrong answers
+      // would all be visibly off-topic.
+      if (pool && pool.length) {
+        const point = pointById(pointId);
+        for (let guard = 0; guard < 80 && distractors.length < 3; guard++) {
+          const other = generatedQuestion(point, pool, guard);
+          if (!other) break;
+          const value = other[answerMode];
+          const normalized = normalizeAnswer(value, answerMode);
+          if (!normalized || seen.has(normalized)) continue;
+          seen.add(normalized);
+          distractors.push(value);
+        }
+      }
+      // Top up from the fixed sentences only if the generated pass fell short.
+      const allQuestions = distractors.length >= 3 ? [] : shuffle(GRAMMAR_POINTS.flatMap(point => point.questions.map(q => ({...q, pointId: point.id}))));
       for (const candidate of allQuestions) {
         const value = candidate[answerMode];
         const normalized = normalizeAnswer(value, answerMode);
         if (!normalized || seen.has(normalized)) continue;
         seen.add(normalized);
         distractors.push(value);
-        if (distractors.length === 3) break;
+        if (distractors.length >= 3) break;
       }
       return shuffle([{value: correct, correct: true}, ...distractors.map(value => ({value, correct: false}))]);
     }
@@ -1023,14 +1245,13 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
                 <div class="speech-examples">${examplesMarkup(point)}</div>
               </article>
             </div>
-            <div class="exercise-grid">
-              ${exerciseTemplate(point.id, "typed", "Typed translation")}
-              ${exerciseTemplate(point.id, "mc", "Multiple-choice translation")}
+            <div class="exercise-grid single">
+              ${exerciseTemplate(point.id, "ex", "Translation")}
             </div>
           </div>
         </details>`).join("");
 
-      GRAMMAR_POINTS.forEach(point => ["typed", "mc"].forEach(type => initializeExercise(point.id, type)));
+      GRAMMAR_POINTS.forEach(point => initializeExercise(point.id, "ex"));
       document.querySelectorAll("details.section").forEach(details => {
         const summary = details.querySelector(":scope > summary");
         const sync = () => summary?.setAttribute("aria-expanded", String(details.open));
@@ -1043,9 +1264,9 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       return `<article class="exercise" id="${id}-${type}">
         <div class="exercise-head">
           <div class="exercise-head-copy">
-            <span class="exercise-kicker">${type === "typed" ? "Type" : "Select"}</span>
+            <span class="exercise-kicker">Translate</span>
             <h3>${title}</h3>
-            <p>Ten randomized prompts drawn from the document’s examples and answer key.</p>
+            <p>Choose typed or multiple choice, and whether to practise the lesson’s own sentences or fresh ones built from the vocabulary you pick.</p>
           </div>
           <div class="score" aria-live="polite"></div>
         </div>
@@ -1091,7 +1312,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
           state.answerMode = state.questionMode === "english" ? "korean" : "english";
           answerMode.value = state.answerMode;
         }
-        state.questions = buildQuestionList(pointById(id));
+        state.questions = buildQuestionList(pointById(id), type, element);
         element.querySelector(".finish").style.display = "none";
         showQuestion(id, type);
       };
@@ -1114,6 +1335,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     function showQuestion(id, type) {
       const state = exerciseStates[`${id}-${type}`];
       const element = document.getElementById(`${id}-${type}`);
+      if (!state.questions.length) return;
       const question = state.questions[state.index];
       state.answered = false;
       element.querySelector(".count").textContent = `Question ${state.index + 1} / 10 · ${question.speechLevel}`;
@@ -1128,14 +1350,14 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       element.querySelector(".next").classList.add("hidden");
       const zone = element.querySelector(".zone");
 
-      if (type === "typed") {
+      if ((state.mode || "typed") === "typed") {
         zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" placeholder="${state.answerMode === "romanization" ? "Type with syllable dashes" : "Type your answer"}"><button class="btn primary" type="button">Check</button></div>`;
         const submit = () => submitAnswer(id, type, zone.querySelector("input").value);
         zone.querySelector("button").onclick = submit;
         zone.querySelector("input").onkeydown = event => { if (event.key === "Enter") submit(); };
         // No automatic focus: Safari should open the page at the top.
       } else {
-        const choices = buildChoices(id, question, state.answerMode);
+        const choices = buildChoices(id, question, state.answerMode, state.vocabPool);
         zone.innerHTML = `<div class="choices">${choices.map((choice, index) => `<button class="choice" type="button" data-index="${index}">${escapeHtml(choice.value)}</button>`).join("")}</div>`;
         zone.querySelectorAll(".choice").forEach((button, index) => {
           button.onclick = () => {
@@ -1268,7 +1490,8 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       node.classList.toggle("hidden", !visible);
     }));
   }
-  function makeQuestions(point, count) {
+  function makeQuestions(point, count, type, element) {
+    if (sentenceSource(element) === "generated") return makeGeneratedQuestions(point, count, vocabPool(element));
     const source = point.questions.map((question, index) => ({...question, sourceId: `${point.id}-${index}`}));
     const result = [];
     while (result.length < count) {
@@ -1277,6 +1500,74 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     }
     return result;
   }
+  /* Keeps the counts, group toggles, and the "not enough words" notice in sync. */
+  function syncVocabPicker(element, point) {
+    const pool = vocabPool(element);
+    const sources = [...element.querySelectorAll(".vocab-source:checked")];
+    element.querySelectorAll(".vocab-source-group").forEach(group => {
+      const parent = group.querySelector(".vocab-source-group-toggle");
+      if (!parent) return;
+      const inputs = [...group.querySelectorAll(".vocab-source")];
+      const checked = inputs.filter(input => input.checked).length;
+      parent.checked = inputs.length > 0 && checked === inputs.length;
+      parent.indeterminate = checked > 0 && checked < inputs.length;
+    });
+    element.querySelectorAll(".vocab-type-group").forEach(group => {
+      const parent = group.querySelector(".vocab-type-toggle");
+      if (!parent) return;
+      const leaves = [...group.querySelectorAll(".vocab-leaf")];
+      const checked = leaves.filter(input => input.checked).length;
+      parent.checked = leaves.length > 0 && checked === leaves.length;
+      parent.indeterminate = checked > 0 && checked < leaves.length;
+    });
+    const headline = element.querySelector(".vocab-source-headline");
+    if (headline) headline.textContent = sources.length
+      ? `${sources.length} source${sources.length === 1 ? "" : "s"} selected`
+      : "no sources selected";
+    element.querySelector(".vocab-selected-count").textContent = String(pool.length);
+    const short = missingSlots(point, pool);
+    const error = element.querySelector(".vocab-pool-error");
+    error.textContent = short.length
+      ? `This grammar point needs at least ${short.join(" and ")} in the selected vocabulary.`
+      : "";
+    error.classList.toggle("hidden", !short.length);
+    const start = element.querySelector(".start-exercise");
+    if (start) start.disabled = short.length > 0;
+    return pool;
+  }
+
+  function initVocabPicker(element, point) {
+    const sync = () => syncVocabPicker(element, point);
+    element.querySelectorAll(".vocab-source, .vocab-leaf").forEach(input => input.addEventListener("change", sync));
+    element.querySelectorAll(".vocab-source-group-toggle").forEach(parent => parent.addEventListener("change", () => {
+      parent.closest(".vocab-source-group").querySelectorAll(".vocab-source").forEach(input => { input.checked = parent.checked; });
+      sync();
+    }));
+    element.querySelectorAll(".vocab-type-toggle").forEach(parent => parent.addEventListener("change", () => {
+      parent.closest(".vocab-type-group").querySelectorAll(".vocab-leaf").forEach(input => { input.checked = parent.checked; });
+      sync();
+    }));
+    const setSources = predicate => {
+      element.querySelectorAll(".vocab-source").forEach(input => { input.checked = predicate(input.value); });
+      element.querySelectorAll(".vocab-source-group").forEach(group => {
+        if (group.querySelector(".vocab-source:checked")) group.open = true;
+      });
+      sync();
+    };
+    element.querySelector(".vocab-source-reset")?.addEventListener("click", () => setSources(id => DEFAULT_SOURCES.includes(id)));
+    element.querySelector(".vocab-source-all")?.addEventListener("click", () => setSources(() => true));
+    element.querySelector(".vocab-source-none")?.addEventListener("click", () => setSources(() => false));
+    element.querySelector(".vocab-select-all")?.addEventListener("click", () => {
+      element.querySelectorAll(".vocab-leaf").forEach(input => { input.checked = true; });
+      sync();
+    });
+    element.querySelector(".vocab-clear-all")?.addEventListener("click", () => {
+      element.querySelectorAll(".vocab-leaf").forEach(input => { input.checked = false; });
+      sync();
+    });
+    sync();
+  }
+
   function showSetup(id, type) {
     const key = `${id}-${type}`;
     clearTimer(key);
@@ -1300,7 +1591,11 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     state.results = [];
     state.questionMode = element.querySelector(".menu-question").value;
     state.answerMode = element.querySelector(".menu-answer").value;
-    state.questions = makeQuestions(pointById(id), count);
+    state.mode = exerciseMode(element);
+    state.source = sentenceSource(element);
+    // Freeze the pool so the generated set cannot drift mid-exercise.
+    state.vocabPool = state.source === "generated" ? vocabPool(element) : null;
+    state.questions = makeQuestions(pointById(id), count, type, element);
     state.answered = false;
     state.finished = false;
     element.querySelector(".question-mode").value = state.questionMode;
@@ -1341,7 +1636,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     element.querySelector(".next").classList.add("hidden");
     const zone = element.querySelector(".zone");
 
-    if (type === "typed") {
+    if ((state.mode || "typed") === "typed") {
       zone.innerHTML = `<div class="answer-row"><label class="sr-only" for="${id}-${type}-answer">Your answer</label><input id="${id}-${type}-answer" class="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${state.answerMode === "romanization" ? "Type the romanization" : "Type your answer"}"><button class="btn primary" type="button">Check</button></div>`;
       const input = zone.querySelector("input");
       const submit = () => submitAnswer(id, type, input.value);
@@ -1354,7 +1649,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
       };
       requestAnimationFrame(() => input.focus({preventScroll: true}));
     } else {
-      const choices = buildChoices(id, question, state.answerMode);
+      const choices = buildChoices(id, question, state.answerMode, state.vocabPool);
       zone.innerHTML = `<div class="choices">${choices.map((choice, index) => `<button class="choice" type="button" data-index="${index}">${escapeHtml(choice.value)}</button>`).join("")}</div>`;
       zone.querySelectorAll(".choice").forEach((button, index) => {
         button.onclick = () => {
@@ -1385,7 +1680,7 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
     const next = element.querySelector(".next");
     next.textContent = state.index === state.questions.length - 1 ? "Finish" : "Next";
     next.classList.remove("hidden");
-    if (type === "typed") {
+    if ((state.mode || "typed") === "typed") {
       const input = element.querySelector(".ans");
       if (input) { input.readOnly = true; requestAnimationFrame(() => input.focus({preventScroll: true})); }
     }
@@ -1416,16 +1711,28 @@ html[data-theme="light"] .finish { color: #FFFFFF; }
   };
 
   document.querySelectorAll(".exercise").forEach(element => {
-    const [id, type] = element.id.match(/^(g\d+)-(typed|mc)$/).slice(1);
+    const [id, type] = element.id.match(/^(g\d+)-(ex)$/).slice(1);
     const body = element.querySelector(".exercise-body");
     const menu = document.createElement("div");
     menu.className = "exercise-menu";
-    menu.innerHTML = `<h4>Exercise setup</h4><p>Choose how many questions to answer, both languages, and an optional time limit.</p><div class="exercise-menu-grid"><label>Questions<input class="menu-count" type="number" min="1" max="100" value="10"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`;
+    menu.innerHTML = `<h4>Exercise setup</h4><p>Pick the answer mode, where the sentences come from, how many questions to answer, both languages, and an optional time limit.</p>${vocabPickerTemplate(pointById(id))}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label><label>Sentences<select class="menu-source"><option value="generated">Generated from vocabulary</option><option value="examples">This lesson's examples</option></select></label><label>Questions<input class="menu-count" type="number" min="1" max="100" value="10"></label><label>Timer in minutes<input class="menu-timer" type="number" min="0" step="0.5" value="0" placeholder="0 = untimed"></label><label>Question language<select class="menu-question"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-answer"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean" selected>Korean</option></select></label></div><div class="exercise-menu-actions"><button class="btn primary start-exercise" type="button">Start exercise</button></div>`;
     body.insertBefore(menu, body.firstChild);
     const runtime = document.createElement("div");
     runtime.className = "runtime-bar";
     runtime.innerHTML = `<span class="runtime-timer">Untimed</span><button class="end-early-btn" type="button">End exercise early</button>`;
     body.insertBefore(runtime, body.querySelector(".status"));
+    initVocabPicker(element, pointById(id));
+    // The vocabulary picker only matters when the sentences are generated.
+    const sourceSelect = menu.querySelector(".menu-source");
+    const picker = menu.querySelector(".vocab-picker");
+    const syncSourceVisibility = () => {
+      const generated = sourceSelect.value === "generated";
+      picker.hidden = !generated;
+      if (!generated) menu.querySelector(".start-exercise").disabled = false;
+      else syncVocabPicker(element, pointById(id));
+    };
+    sourceSelect.addEventListener("change", syncSourceVisibility);
+    syncSourceVisibility();
     menu.querySelector(".start-exercise").onclick = () => startExercise(id, type);
     runtime.querySelector(".end-early-btn").onclick = () => finishExercise(id, type, "Exercise ended early");
     element.querySelector(".next").onclick = () => {
