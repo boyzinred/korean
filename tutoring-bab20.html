@@ -482,9 +482,13 @@ tbody tr:last-child td {
   user-select: none;
 }
 
-.is-blurred:hover .blur-target,
-.is-blurred:focus .blur-target {
+.is-blurred {
+  cursor: pointer;
+}
+
+.is-blurred.is-peeking .blur-target {
   filter: none;
+  user-select: auto;
 }
 
 .source-note {
@@ -3079,8 +3083,30 @@ html[data-theme=light] .personalized-word .roman {
         document.querySelectorAll("[data-blur-field]").forEach(btn => btn.addEventListener("click", () => {
             const field = btn.dataset.blurField, on = btn.getAttribute("aria-pressed") !== "true";
             btn.setAttribute("aria-pressed", String(on));
-            document.querySelectorAll(`#vocabCategorySections [data-vocab-field="${field}"]`).forEach(cell => cell.classList.toggle("is-blurred", on));
+            document.querySelectorAll(`#vocabCategorySections [data-vocab-field="${field}"]`).forEach(cell => {
+                cell.classList.toggle("is-blurred", on);
+                cell.classList.remove("is-peeking");
+            });
         }));
+
+        const togglePeek = cell => {
+            if (!cell || !cell.classList.contains("is-blurred")) return;
+            cell.classList.toggle("is-peeking");
+        };
+        const vocabSections = document.getElementById("vocabCategorySections");
+        if (vocabSections) {
+            vocabSections.addEventListener("click", event => {
+                const cell = event.target.closest("[data-vocab-field]");
+                if (cell) togglePeek(cell);
+            });
+            vocabSections.addEventListener("keydown", event => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                const cell = event.target.closest("[data-vocab-field]");
+                if (!cell || !cell.classList.contains("is-blurred")) return;
+                event.preventDefault();
+                togglePeek(cell);
+            });
+        }
 
         let familiarity = {};
         try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
