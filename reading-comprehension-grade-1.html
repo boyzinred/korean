@@ -1,0 +1,3469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Korean Reading Comprehension &middot; Beginner</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.hidden { display: none !important; }
+
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero { color: var(--hero-heading); background: var(--background); }
+.hero-inner { padding: clamp(48px, 7vw, 82px); }
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.02em;
+}
+.hero p { max-width: 62ch; margin: 24px 0 0; color: var(--hero-text); font-size: 1.05rem; }
+
+.section { scroll-margin-top: 18px; border-bottom: 1px solid var(--border); }
+details.section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  cursor: pointer;
+  list-style: none;
+}
+details.section:nth-of-type(2) > summary { background: var(--primary); }
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after { content: "Expand"; }
+.section-body {
+  display: grid;
+  gap: 22px;
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.info-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .info-card { color: #F5F5F5; }
+.info-card h4 { margin: 0 0 8px; font-size: 1.15rem; }
+.info-card p { margin: 0; }
+
+.wordbank-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.wordbank-tools input { max-width: 320px; }
+.wordbank-count { font-size: .86rem; font-weight: 800; opacity: .78; }
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.blur-toggle:hover { transform: scale(1.04); }
+.blur-toggle[aria-pressed="true"] { color: #192B5D; background: var(--primary); }
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--inverse-text);
+  background: var(--inverse);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td .roman { opacity: .78; }
+
+.is-blurred .blur-target { filter: blur(7px); user-select: none; }
+.is-blurred { cursor: pointer; }
+.is-blurred.is-peeking .blur-target { filter: none; user-select: auto; }
+
+.vocab-category-stack { display: grid; gap: 14px; }
+.vocab-category {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-category > summary {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.vocab-category > summary::-webkit-details-marker { display: none; }
+.vocab-category > summary::after {
+  content: '−';
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+}
+.vocab-category:not([open]) > summary::after { content: '+'; }
+.vocab-category-count {
+  display: block;
+  margin-top: 2px;
+  color: var(--subtle);
+  font-size: .76rem;
+  font-weight: 700;
+}
+html[data-theme="light"] .vocab-category > summary .vocab-category-count { color: #FFFFFF; opacity: 1; }
+.vocab-category .table-wrap { border: 0; border-radius: 0; }
+.vocab-category table { min-width: 720px; }
+
+.familiarity-cell { min-width: 176px; }
+.familiarity-stars {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.3rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
+.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
+.familiarity-label { display: block; margin-top: 5px; font-size: .72rem; font-weight: 800; }
+
+.group-picker {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.group-picker legend {
+  padding: 0 8px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.group-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.answer-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.answer-input:focus { background: var(--surface); border-color: var(--primary); }
+.word-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.word-card { padding: 12px 14px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.word-card .word-ko { display: block; font-size: 1.1rem; font-weight: 800; }
+.word-card .word-ro { display: block; font-size: .8rem; font-weight: 700; opacity: .72; }
+.word-card .word-en { display: block; margin-top: 2px; font-size: .86rem; }
+
+.exercise {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy { padding: 24px 28px; }
+.exercise-kicker,
+.prompt-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p { margin: 10px 0 0; color: var(--subtle); }
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+  text-align: center;
+}
+.exercise-body { padding: clamp(24px, 4vw, 38px); }
+
+.exercise-menu { display: grid; gap: 20px; }
+.exercise-menu h4 { margin: 0; font-size: 1.45rem; }
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu-grid label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-grid label > * { width: 100%; height: 56px; min-width: 0; }
+.exercise-menu-grid .wide { grid-column: span 2; }
+.option-stack { display: grid; gap: 8px; }
+.exercise-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.exercise-option input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  padding: 0;
+}
+.exercise-option small { display: block; font-weight: 600; opacity: .74; }
+.timed-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.timed-fields label {
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+input, select {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus, select:focus { background: var(--surface); border-color: var(--primary); }
+input:disabled, select:disabled { color: var(--subtle); background: var(--muted-strong); cursor: not-allowed; }
+
+.btn {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled) { transform: scale(1.04); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn.primary { color: #192B5D; background: var(--primary); }
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn.positive { color: #192B5D; background: var(--secondary); }
+.btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
+.btn.warning { color: #FFFFFF; background: var(--accent); }
+.btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
+
+.runtime-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.timer-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.timer-chip.is-low { color: #FFFFFF; background: var(--accent); }
+.timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+.progress { height: 12px; overflow: hidden; background: var(--muted-strong); }
+.progress > div { height: 100%; background: var(--secondary); transition: width 200ms ease; }
+
+.story-panel {
+  margin: 20px 0;
+  padding: 22px;
+  background: var(--surface-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.story-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.story-panel-head h4 { margin: 0; font-size: 1.35rem; letter-spacing: -.01em; }
+.story-skill {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.story-purpose { margin: 0 0 14px; font-size: .92rem; font-weight: 700; opacity: .82; }
+.story-text {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  font-size: clamp(1.1rem, 2vw, 1.32rem);
+  font-weight: 600;
+  line-height: 2;
+}
+.story-line { display: block; }
+
+.prompt {
+  margin: 8px 0 6px;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.8;
+}
+.prompt-hint-legend {
+  display: none;
+  margin: 0 0 16px;
+  font-size: .82rem;
+  font-weight: 800;
+  opacity: .76;
+}
+.prompt-hint-legend.is-visible { display: block; }
+
+.choice-list { display: grid; gap: 10px; }
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  line-height: 1.9;
+  text-align: left;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.choice:hover:not(.is-locked) { color: #192B5D; background: var(--primary); transform: scale(1.01); }
+.choice.is-locked { cursor: default; }
+.choice-letter {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .85rem;
+  font-weight: 800;
+}
+.choice-text { min-width: 0; }
+.choice.correct { color: #FFFFFF; background: var(--secondary); border-color: var(--secondary); }
+.choice.correct .choice-letter { color: #192B5D; }
+.choice.wrong { color: #FFFFFF; background: var(--accent); border-color: var(--accent); }
+.choice.wrong .choice-letter { color: #192B5D; }
+.choice.faded { opacity: .55; }
+
+.hint-row { display: grid; gap: 8px; margin: 16px 0; }
+.question-hint {
+  display: none;
+  padding: 14px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+.question-hint.is-open { display: block; }
+.assistant-status { margin: 0; font-size: .84rem; font-weight: 800; }
+.assistance-used {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+}
+.feedback strong { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+.feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
+.feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+.finish { display: grid; gap: 20px; }
+.finish h4 { margin: 0; font-size: 1.6rem; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+.summary-tile { padding: 16px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.summary-tile strong { display: block; font-size: 1.8rem; line-height: 1.1; }
+.summary-tile small {
+  display: block;
+  margin-top: 4px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .78;
+}
+.review { display: grid; gap: 10px; }
+.review-item {
+  padding: 14px 16px;
+  background: var(--surface-muted);
+  border-left: 8px solid var(--secondary);
+  border-radius: var(--radius-md);
+  font-size: .92rem;
+}
+.review-item.is-wrong { border-left-color: var(--accent); }
+.review-item .review-q { display: block; font-weight: 800; margin-bottom: 6px; }
+.review-item .review-line { display: block; opacity: .86; }
+.review-tag {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  background: var(--surface);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.skill-breakdown { display: grid; gap: 8px; }
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.finish-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.vocab-token {
+  position: relative;
+  display: inline-block;
+  border-bottom: 4px solid var(--accent);
+  border-radius: 2px;
+  cursor: pointer;
+  line-height: 1.08;
+  outline: none;
+}
+.vocab-token::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 7px;
+}
+.vocab-token:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; }
+.vocab-popover {
+  --arrow-left: 50%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  isolation: isolate;
+  width: min(340px, calc(100vw - 24px));
+  max-height: min(70vh, 520px);
+  display: none;
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 54px rgba(15,23,42,.38);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.42;
+  text-align: left;
+  white-space: normal;
+  cursor: default;
+}
+.vocab-popover::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left);
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
+}
+.vocab-token.is-pinned > .vocab-popover { display: grid; }
+.vocab-popover-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.vocab-popover-heading strong { font-size: .82rem; }
+.vocab-popover-heading small { opacity: .68; }
+.hint-content .roman { opacity: .75; }
+.hint-content em { opacity: .7; }
+.popover-close-btn {
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-text);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: var(--transition);
+}
+.popover-close-btn:hover { color: var(--accent); background: var(--surface-muted); }
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
+.hint-step {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-weight: 800;
+}
+.hint-step:hover, .hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
+.hint-step.is-open { color: #192B5D; background: var(--primary); border-color: var(--primary); }
+.hint-content {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: 7px;
+  padding: 10px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.42;
+}
+.hint-content.is-open { display: block; }
+
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
+.utility-button.top { background: var(--accent); }
+
+@media (max-width: 1000px) {
+  .exercise-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .exercise-menu-grid .wide { grid-column: span 2; }
+}
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner, .page-main { width: 100%; }
+  .header-inner { min-height: 60px; padding: 0 14px; }
+  .page-main { margin-top: 0; border-radius: 0; }
+  .hero-inner { padding: 48px 22px; }
+  details.section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after { width: 100%; }
+  .section-body, .exercise-body { padding: 22px; }
+  .exercise-menu-grid, .timed-fields { grid-template-columns: 1fr; }
+  .exercise-menu-grid .wide { grid-column: span 1; }
+  .btn { width: 100%; }
+  .btn.small { width: auto; }
+  .exercise-menu-actions .btn, .finish-actions .btn { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
+}
+
+  </style>
+</head>
+<body id="top">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">Korean Reading Comprehension &middot; Beginner</p>
+        <h1 id="page-title">읽고 답해요</h1>
+        <p>Ten original beginner-level Korean stories, each with ten multiple-choice questions about the main idea, the details, the people, the place, and the order of events. Read the story and the questions in Hangul, in romanization, or in English &mdash; pick each one separately. Click any underlined word for a three-level popover, and use the per-question hint when a line is hard to find.</p>
+      </div>
+    </section>
+
+    <details class="section" id="wordbank" open>
+      <summary>Word bank</summary>
+      <div class="section-body">
+        <div class="info-card">
+          <h4>The words these stories are built from</h4>
+          <p>This list lives in <code>shared-vocab/reading-vocab.js</code>, separate from the main lesson vocabulary. Every word here can appear underlined in a story, a question, or an answer choice, and romanization is generated character by character from the Hangul spelling.</p>
+        </div>
+        <div class="wordbank-tools">
+          <input id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, or English" aria-label="Search the word bank">
+          <button class="blur-toggle" type="button" data-blur-field="english" aria-pressed="false">Blur English</button>
+          <button class="blur-toggle" type="button" data-blur-field="romanization" aria-pressed="false">Blur Romanization</button>
+          <button class="blur-toggle" type="button" data-blur-field="korean" aria-pressed="false">Blur Korean</button>
+          <span class="wordbank-count" id="wordbankCount"></span>
+        </div>
+        <p class="wordbank-count">Blur a column to test yourself, then click any blurred cell to peek at it. Rate a word with the stars and the rating is remembered on this device.</p>
+        <div id="wordbankGroups"></div>
+
+        <article class="exercise" id="vocabExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Word bank</span>
+              <h3>Vocabulary test</h3>
+              <p>Test the groups you choose, in either direction.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="exercise-menu">
+              <h4>Test setup</h4>
+              <p>Pick the groups you want, choose how the question and the answer are written, then begin.</p>
+
+              <fieldset class="group-picker">
+                <legend>Word groups</legend>
+                <div class="group-grid" id="vocabGroupGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small select-all" type="button">Select all</button>
+                  <button class="btn secondary small select-none" type="button">Select none</button>
+                </div>
+                <label class="exercise-option" style="margin-top:12px;">
+                  <input class="menu-weak" type="checkbox">
+                  <span>Only words I rated ★ or ★★<small>Uses the star ratings from the tables above.</small></span>
+                </label>
+              </fieldset>
+
+              <div class="exercise-menu-grid">
+                <label>Mode
+                  <select class="menu-mode">
+                    <option value="mc">Multiple choice</option>
+                    <option value="typed">Typed</option>
+                  </select>
+                </label>
+                <label>Questions
+                  <input class="menu-count" type="number" min="1" max="100" value="15">
+                </label>
+                <label>Question shows
+                  <select class="menu-prompt-lang">
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Answer in
+                  <select class="menu-answer-lang">
+                    <option value="en">English</option>
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin vocabulary test</button>
+              </div>
+              <p class="assistant-status vocab-pool-note"></p>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <span class="wordbank-count vocab-direction"></span>
+                <button class="btn warning small end-early" type="button">End test early</button>
+              </div>
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Test progress" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+
+              <div class="zone"></div>
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">Next word</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+          </div>
+        </article>
+      </div>
+    </details>
+
+    <details class="section" id="exercise" open>
+      <summary>Story exercise</summary>
+      <div class="section-body">
+        <article class="exercise" id="readingExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Multiple choice</span>
+              <h3>Reading comprehension</h3>
+              <p>One story, ten questions, instant feedback.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+
+            <div class="exercise-menu">
+              <h4>Exercise setup</h4>
+              <p>Choose a story and the script you want each part shown in. The story stays on screen the whole time, and the hint popovers are always available.</p>
+
+              <div class="exercise-menu-grid">
+                <label class="wide">Story
+                  <select class="menu-story"></select>
+                </label>
+                <label>Story language
+                  <select class="menu-story-lang">
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Questions &amp; answers
+                  <select class="menu-qa-lang">
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Hints &amp; popovers
+                  <select class="menu-hint-lang">
+                    <option value="en">English</option>
+                    <option value="ro">Romanization</option>
+                    <option value="ko">한국어 Korean</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="option-stack">
+                <label class="exercise-option">
+                  <input class="menu-timed" type="checkbox">
+                  <span>Timed exercise<small>Adds a countdown clock while you answer.</small></span>
+                </label>
+
+                <div class="timed-fields hidden">
+                  <label>Timer style
+                    <select class="menu-timer-mode">
+                      <option value="total">Whole exercise</option>
+                      <option value="perQuestion">Each question</option>
+                    </select>
+                  </label>
+                  <label>Time limit
+                    <select class="menu-timer-limit"></select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin exercise</button>
+                <button class="btn secondary preview-story" type="button">Read the story first</button>
+              </div>
+
+              <section class="story-preview hidden" aria-live="polite"></section>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <div class="timer-chip hidden"><small>Time left</small><span class="timer-value">--:--</span></div>
+                <button class="btn warning small end-early" type="button">End exercise early</button>
+              </div>
+
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="story-panel">
+                <div class="story-panel-head">
+                  <h4 class="story-title"></h4>
+                  <span class="story-skill"></span>
+                </div>
+                <p class="story-purpose"></p>
+                <div class="story-text"></div>
+              </div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+              <p class="prompt-hint-legend">Underlined words have help. Click a word to open its popover, then choose a level.</p>
+
+              <div class="choice-list"></div>
+
+              <div class="hint-row">
+                <div><button class="btn secondary small show-hint" type="button">Show hint</button></div>
+                <div class="question-hint" aria-live="polite"></div>
+                <p class="assistant-status">No help used on this question.</p>
+              </div>
+
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">Next question</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+
+          </div>
+        </article>
+      </div>
+    </details>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+
+  <script src="./shared-vocab/reading-vocab.js?v=2.0.0"></script>
+  <script>
+  (() => {
+    "use strict";
+
+    /* -----------------------------------------------------------------------
+       STORIES
+       Ten original beginner-level Korean stories written for this page. Every
+       piece of text carries both a Hangul and an English version; romanization
+       is generated from the Hangul at render time, so nothing is stored twice.
+
+       Story fields
+         title / purpose  { ko, en }
+         lines            [{ ko, en }]  one sentence per line
+       Question fields
+         q        { ko, en }
+         choices  [{ ko, en }] three choices, deliberately written to the same
+                  length and shape so the correct one is never the odd one out
+         answer   index of the correct choice (the runtime always reshuffles,
+                  so the stored position never leaks the answer)
+         hint     { ko, en }  points at the line that holds the answer
+         why      { ko, en }  shown with the instant feedback
+         skill    the comprehension skill the question practises
+    ----------------------------------------------------------------------- */
+    const STORIES = [
+      {
+        id: "minsu",
+        skill: "Main idea",
+        title: { ko: "제 이름은 민수예요", en: "My Name Is Minsu" },
+        purpose: { ko: "이야기를 읽고 민수에 대해 알아보세요.", en: "Read the story and find out about Minsu." },
+        lines: [
+          { ko: "안녕하세요. 제 이름은 민수예요.", en: "Hello. My name is Minsu." },
+          { ko: "저는 학생이에요.", en: "I am a student." },
+          { ko: "저는 한국 사람이에요.", en: "I am Korean." },
+          { ko: "저는 열 살이에요.", en: "I am ten years old." },
+          { ko: "저는 책을 좋아해요.", en: "I like books." },
+          { ko: "아침마다 학교에 가요.", en: "Every morning I go to school." },
+          { ko: "학교에서 친구를 만나요.", en: "At school I meet my friends." },
+          { ko: "저는 학교가 좋아요.", en: "I like school." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "민수가 자기를 소개해요.", en: "Minsu introduces himself." },
+              { ko: "민수가 책을 많이 사요.", en: "Minsu buys a lot of books." },
+              { ko: "민수가 친구하고 놀아요.", en: "Minsu plays with a friend." }
+            ], answer: 0,
+            hint: { ko: "이야기 전체를 생각해 보세요.", en: "Think about the whole story." },
+            why: { ko: "이야기가 민수의 이름, 나이, 학교를 알려 줘요.", en: "The story gives his name, his age, and his school." } },
+          { skill: "Recall details",
+            q: { ko: "민수는 몇 살이에요?", en: "How old is Minsu?" },
+            choices: [
+              { ko: "열 살이에요.", en: "He is ten." },
+              { ko: "여덟 살이에요.", en: "He is eight." },
+              { ko: "열두 살이에요.", en: "He is twelve." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '저는 열 살이에요.'", en: "Line four says, \"I am ten years old.\"" } },
+          { skill: "Recall details",
+            q: { ko: "민수는 무엇을 좋아해요?", en: "What does Minsu like?" },
+            choices: [
+              { ko: "책을 좋아해요.", en: "He likes books." },
+              { ko: "우유를 좋아해요.", en: "He likes milk." },
+              { ko: "라면을 좋아해요.", en: "He likes ramyeon." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '저는 책을 좋아해요.'", en: "Line five says, \"I like books.\"" } },
+          { skill: "Setting",
+            q: { ko: "민수는 아침마다 어디에 가요?", en: "Where does Minsu go every morning?" },
+            choices: [
+              { ko: "학교에 가요.", en: "He goes to school." },
+              { ko: "시장에 가요.", en: "He goes to the market." },
+              { ko: "공원에 가요.", en: "He goes to the park." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '아침마다 학교에 가요.'", en: "Line six says, \"Every morning I go to school.\"" } },
+          { skill: "Story elements",
+            q: { ko: "민수는 학교에서 누구를 만나요?", en: "Whom does Minsu meet at school?" },
+            choices: [
+              { ko: "친구를 만나요.", en: "He meets his friends." },
+              { ko: "동생을 만나요.", en: "He meets his younger sibling." },
+              { ko: "언니를 만나요.", en: "He meets his older sister." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '학교에서 친구를 만나요.'", en: "Line seven says, \"At school I meet my friends.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'학생'은 무슨 뜻이에요?", en: "What does 학생 mean?" },
+            choices: [
+              { ko: "공부하는 사람이에요.", en: "a person who studies" },
+              { ko: "요리하는 사람이에요.", en: "a person who cooks" },
+              { ko: "가르치는 사람이에요.", en: "a person who teaches" }
+            ], answer: 0,
+            hint: { ko: "민수는 아침마다 학교에 가요.", en: "Minsu goes to school every morning." },
+            why: { ko: "학생은 학교에서 공부하는 사람이에요.", en: "A 학생 is a person who studies at school." } },
+          { skill: "Recall details",
+            q: { ko: "민수는 어느 나라 사람이에요?", en: "What country is Minsu from?" },
+            choices: [
+              { ko: "한국 사람이에요.", en: "He is Korean." },
+              { ko: "일본 사람이에요.", en: "He is Japanese." },
+              { ko: "중국 사람이에요.", en: "He is Chinese." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '저는 한국 사람이에요.'", en: "Line three says, \"I am Korean.\"" } },
+          { skill: "Sequence",
+            q: { ko: "민수는 언제 학교에 가요?", en: "When does Minsu go to school?" },
+            choices: [
+              { ko: "아침마다 가요.", en: "Every morning." },
+              { ko: "저녁마다 가요.", en: "Every evening." },
+              { ko: "주말마다 가요.", en: "Every weekend." }
+            ], answer: 0,
+            hint: { ko: "'마다'가 있는 줄을 찾아보세요.", en: "Find the line with the word 마다 (every)." },
+            why: { ko: "'아침마다'는 매일 아침이라는 뜻이에요.", en: "아침마다 means every morning." } },
+          { skill: "Character feelings",
+            q: { ko: "민수는 학교를 어떻게 생각해요?", en: "How does Minsu feel about school?" },
+            choices: [
+              { ko: "학교가 좋아요.", en: "He likes school." },
+              { ko: "학교가 싫어요.", en: "He dislikes school." },
+              { ko: "학교가 멀어요.", en: "School is far away." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '저는 학교가 좋아요.'", en: "The last line says, \"I like school.\"" } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "민수의 소개", en: "Minsu Introduces Himself" },
+              { ko: "민수의 방", en: "Minsu's Room" },
+              { ko: "민수의 주말", en: "Minsu's Weekend" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "이야기가 민수를 소개해요. 방이나 주말은 나오지 않아요.", en: "The story introduces Minsu. It never mentions his room or his weekend." } }
+        ]
+      },
+      {
+        id: "gajok",
+        skill: "Recall details",
+        title: { ko: "우리 가족", en: "My Family" },
+        purpose: { ko: "이야기를 읽고 가족이 몇 명인지 알아보세요.", en: "Read the story and find out how many people are in the family." },
+        lines: [
+          { ko: "우리 가족은 네 명이에요.", en: "My family has four people." },
+          { ko: "아버지, 어머니, 언니, 그리고 저예요.", en: "My father, my mother, my older sister, and me." },
+          { ko: "아버지는 의사예요.", en: "My father is a doctor." },
+          { ko: "어머니는 선생님이에요.", en: "My mother is a teacher." },
+          { ko: "언니는 대학교에서 공부해요.", en: "My older sister studies at university." },
+          { ko: "우리 집에 고양이도 한 마리 있어요.", en: "We also have one cat at home." },
+          { ko: "고양이 이름은 나비예요.", en: "The cat's name is Nabi." },
+          { ko: "주말에 우리는 같이 공원에 가요.", en: "On the weekend we go to the park together." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "우리 가족 이야기예요.", en: "It is about my family." },
+              { ko: "우리 학교 이야기예요.", en: "It is about my school." },
+              { ko: "우리 교실 이야기예요.", en: "It is about my classroom." }
+            ], answer: 0,
+            hint: { ko: "이야기 전체를 생각해 보세요.", en: "Think about the whole story." },
+            why: { ko: "모든 줄이 가족 한 사람 한 사람을 말해요.", en: "Every line tells about one member of the family." } },
+          { skill: "Recall details",
+            q: { ko: "가족이 몇 명이에요?", en: "How many people are in the family?" },
+            choices: [
+              { ko: "네 명이에요.", en: "Four people." },
+              { ko: "세 명이에요.", en: "Three people." },
+              { ko: "다섯 명이에요.", en: "Five people." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 다시 읽어 보세요.", en: "Read the first line again." },
+            why: { ko: "첫 번째 줄에 있어요: '우리 가족은 네 명이에요.'", en: "Line one says, \"My family has four people.\"" } },
+          { skill: "Recall details",
+            q: { ko: "아버지는 무슨 일을 해요?", en: "What is the father's job?" },
+            choices: [
+              { ko: "의사예요.", en: "He is a doctor." },
+              { ko: "선생님이에요.", en: "He is a teacher." },
+              { ko: "대학생이에요.", en: "He is a university student." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '아버지는 의사예요.'", en: "Line three says, \"My father is a doctor.\"" } },
+          { skill: "Recall details",
+            q: { ko: "어머니는 무슨 일을 해요?", en: "What is the mother's job?" },
+            choices: [
+              { ko: "선생님이에요.", en: "She is a teacher." },
+              { ko: "의사예요.", en: "She is a doctor." },
+              { ko: "학생이에요.", en: "She is a student." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '어머니는 선생님이에요.'", en: "Line four says, \"My mother is a teacher.\"" } },
+          { skill: "Recall details",
+            q: { ko: "언니는 어디에서 공부해요?", en: "Where does the older sister study?" },
+            choices: [
+              { ko: "대학교에서 공부해요.", en: "She studies at university." },
+              { ko: "도서관에서 공부해요.", en: "She studies at the library." },
+              { ko: "교실에서 공부해요.", en: "She studies in a classroom." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '언니는 대학교에서 공부해요.'", en: "Line five says, \"My older sister studies at university.\"" } },
+          { skill: "Recall details",
+            q: { ko: "고양이 이름은 뭐예요?", en: "What is the cat's name?" },
+            choices: [
+              { ko: "나비예요.", en: "Nabi." },
+              { ko: "콩이예요.", en: "Kongi." },
+              { ko: "유나예요.", en: "Yuna." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '고양이 이름은 나비예요.'", en: "Line seven says, \"The cat's name is Nabi.\"" } },
+          { skill: "Recall details",
+            q: { ko: "고양이가 몇 마리 있어요?", en: "How many cats are there?" },
+            choices: [
+              { ko: "한 마리 있어요.", en: "One cat." },
+              { ko: "두 마리 있어요.", en: "Two cats." },
+              { ko: "세 마리 있어요.", en: "Three cats." }
+            ], answer: 0,
+            hint: { ko: "'마리'가 있는 줄을 찾아보세요.", en: "Find the line with the counter 마리." },
+            why: { ko: "여섯 번째 줄에 있어요: '고양이도 한 마리 있어요.'", en: "Line six says, \"We also have one cat.\"" } },
+          { skill: "Setting",
+            q: { ko: "주말에 가족은 어디에 가요?", en: "Where does the family go on the weekend?" },
+            choices: [
+              { ko: "공원에 가요.", en: "They go to the park." },
+              { ko: "시장에 가요.", en: "They go to the market." },
+              { ko: "도서관에 가요.", en: "They go to the library." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '주말에 우리는 같이 공원에 가요.'", en: "The last line says, \"On the weekend we go to the park together.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'가족'은 무슨 뜻이에요?", en: "What does 가족 mean?" },
+            choices: [
+              { ko: "같이 사는 사람들이에요.", en: "people who live together" },
+              { ko: "같이 일하는 사람들이에요.", en: "people who work together" },
+              { ko: "같이 배우는 사람들이에요.", en: "people who learn together" }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄에 누가 나와요?", en: "Look at who is named in the second line." },
+            why: { ko: "가족은 아버지, 어머니, 언니처럼 같이 사는 사람들이에요.", en: "가족 means the people you live with, like a father, a mother, and a sister." } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "우리 가족", en: "My Family" },
+              { ko: "우리 고양이", en: "My Cat" },
+              { ko: "우리 공원", en: "My Park" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "고양이와 공원은 한 줄에만 나와요. 가족은 처음부터 끝까지 나와요.", en: "The cat and the park each appear in one line only. The family runs through the whole story." } }
+        ]
+      },
+      {
+        id: "bang",
+        skill: "Setting",
+        title: { ko: "제 방", en: "My Room" },
+        purpose: { ko: "이야기를 읽고 방 안에 무엇이 있는지 찾아보세요.", en: "Read the story and find out what is in the room." },
+        lines: [
+          { ko: "제 방은 작아요.", en: "My room is small." },
+          { ko: "하지만 아주 깨끗해요.", en: "But it is very clean." },
+          { ko: "방에 침대가 있어요.", en: "There is a bed in the room." },
+          { ko: "침대 옆에 책상이 있어요.", en: "There is a desk next to the bed." },
+          { ko: "책상 위에 책이 많아요.", en: "There are many books on the desk." },
+          { ko: "창문 앞에 의자가 한 개 있어요.", en: "There is one chair in front of the window." },
+          { ko: "저는 의자에 앉아서 책을 읽어요.", en: "I sit on the chair and read a book." },
+          { ko: "제 방이 정말 좋아요.", en: "I really like my room." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "제 방을 소개해요.", en: "It introduces my room." },
+              { ko: "제 학교를 소개해요.", en: "It introduces my school." },
+              { ko: "제 가족을 소개해요.", en: "It introduces my family." }
+            ], answer: 0,
+            hint: { ko: "이야기 전체를 생각해 보세요.", en: "Think about the whole story." },
+            why: { ko: "모든 줄이 방과 방 안의 물건을 말해요.", en: "Every line describes the room or something in it." } },
+          { skill: "Recall details",
+            q: { ko: "제 방은 어때요?", en: "What is the room like?" },
+            choices: [
+              { ko: "작고 깨끗해요.", en: "It is small and clean." },
+              { ko: "크고 깨끗해요.", en: "It is big and clean." },
+              { ko: "작고 더러워요.", en: "It is small and dirty." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄과 두 번째 줄을 같이 보세요.", en: "Read the first and second lines together." },
+            why: { ko: "'제 방은 작아요.' 그리고 '아주 깨끗해요.'", en: "The story says it is small, and then that it is very clean." } },
+          { skill: "Recall details",
+            q: { ko: "침대 옆에 무엇이 있어요?", en: "What is next to the bed?" },
+            choices: [
+              { ko: "책상이 있어요.", en: "There is a desk." },
+              { ko: "의자가 있어요.", en: "There is a chair." },
+              { ko: "창문이 있어요.", en: "There is a window." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '침대 옆에 책상이 있어요.'", en: "Line four says, \"There is a desk next to the bed.\"" } },
+          { skill: "Recall details",
+            q: { ko: "책상 위에 무엇이 많아요?", en: "What is there a lot of on the desk?" },
+            choices: [
+              { ko: "책이 많아요.", en: "There are many books." },
+              { ko: "연필이 많아요.", en: "There are many pencils." },
+              { ko: "가방이 많아요.", en: "There are many bags." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '책상 위에 책이 많아요.'", en: "Line five says, \"There are many books on the desk.\"" } },
+          { skill: "Setting",
+            q: { ko: "의자는 어디에 있어요?", en: "Where is the chair?" },
+            choices: [
+              { ko: "창문 앞에 있어요.", en: "In front of the window." },
+              { ko: "침대 옆에 있어요.", en: "Next to the bed." },
+              { ko: "책상 뒤에 있어요.", en: "Behind the desk." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '창문 앞에 의자가 한 개 있어요.'", en: "Line six says, \"There is one chair in front of the window.\"" } },
+          { skill: "Recall details",
+            q: { ko: "의자가 몇 개 있어요?", en: "How many chairs are there?" },
+            choices: [
+              { ko: "한 개 있어요.", en: "One chair." },
+              { ko: "두 개 있어요.", en: "Two chairs." },
+              { ko: "세 개 있어요.", en: "Three chairs." }
+            ], answer: 0,
+            hint: { ko: "'개'가 있는 줄을 찾아보세요.", en: "Find the line with the counter 개." },
+            why: { ko: "여섯 번째 줄에 '의자가 한 개 있어요'라고 나와요.", en: "Line six says there is one chair." } },
+          { skill: "Recall details",
+            q: { ko: "의자에 앉아서 무엇을 해요?", en: "What does the writer do on the chair?" },
+            choices: [
+              { ko: "책을 읽어요.", en: "Reads a book." },
+              { ko: "밥을 먹어요.", en: "Eats a meal." },
+              { ko: "노래를 들어요.", en: "Listens to a song." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '의자에 앉아서 책을 읽어요.'", en: "Line seven says, \"I sit on the chair and read a book.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'깨끗하다'는 무슨 뜻이에요?", en: "What does 깨끗하다 mean?" },
+            choices: [
+              { ko: "더럽지 않아요.", en: "It is not dirty." },
+              { ko: "크지 않아요.", en: "It is not big." },
+              { ko: "멀지 않아요.", en: "It is not far." }
+            ], answer: 0,
+            hint: { ko: "'깨끗해요'의 반대말을 생각해 보세요.", en: "Think of the opposite of 깨끗해요." },
+            why: { ko: "깨끗하다의 반대말은 더럽다예요.", en: "The opposite of 깨끗하다 is 더럽다 (dirty)." } },
+          { skill: "Character feelings",
+            q: { ko: "이 사람은 자기 방을 어떻게 생각해요?", en: "How does the writer feel about the room?" },
+            choices: [
+              { ko: "방이 정말 좋아요.", en: "The room is really nice." },
+              { ko: "방이 조금 싫어요.", en: "The room is a little unpleasant." },
+              { ko: "방이 너무 시끄러워요.", en: "The room is much too noisy." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '제 방이 정말 좋아요.'", en: "The last line says, \"I really like my room.\"" } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "제 작은 방", en: "My Small Room" },
+              { ko: "제 큰 학교", en: "My Big School" },
+              { ko: "제 큰 가방", en: "My Big Bag" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "이야기는 작은 방 하나를 처음부터 끝까지 말해요.", en: "The story describes one small room from beginning to end." } }
+        ]
+      },
+      {
+        id: "hakgyo-gayo",
+        skill: "Sequence",
+        title: { ko: "학교에 가요", en: "Going to School" },
+        purpose: { ko: "이야기를 읽고 하는 일의 순서를 찾아보세요.", en: "Read the story and follow the order of what he does." },
+        lines: [
+          { ko: "아침 일곱 시에 일어나요.", en: "I get up at seven in the morning." },
+          { ko: "세수를 하고 밥을 먹어요.", en: "I wash my face and eat a meal." },
+          { ko: "가방에 책과 연필을 넣어요.", en: "I put books and pencils in my bag." },
+          { ko: "여덟 시에 집에서 나가요.", en: "At eight I leave the house." },
+          { ko: "버스를 타고 학교에 가요.", en: "I take the bus to school." },
+          { ko: "학교는 집에서 멀지 않아요.", en: "The school is not far from my house." },
+          { ko: "여덟 시 삼십 분에 교실에 도착해요.", en: "I arrive at the classroom at eight thirty." },
+          { ko: "친구들이 저를 기다려요.", en: "My friends are waiting for me." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "학교에 가는 아침이에요.", en: "It is a morning going to school." },
+              { ko: "집에 오는 저녁이에요.", en: "It is an evening coming home." },
+              { ko: "공원에 가는 주말이에요.", en: "It is a weekend going to the park." }
+            ], answer: 0,
+            hint: { ko: "이야기 전체를 생각해 보세요.", en: "Think about the whole story." },
+            why: { ko: "일어나는 것부터 교실에 도착하는 것까지 아침 이야기예요.", en: "From getting up to arriving in the classroom, it is all one morning." } },
+          { skill: "Recall details",
+            q: { ko: "몇 시에 일어나요?", en: "What time does he get up?" },
+            choices: [
+              { ko: "일곱 시에 일어나요.", en: "At seven o'clock." },
+              { ko: "여덟 시에 일어나요.", en: "At eight o'clock." },
+              { ko: "여섯 시에 일어나요.", en: "At six o'clock." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 다시 읽어 보세요.", en: "Read the first line again." },
+            why: { ko: "첫 번째 줄에 있어요: '아침 일곱 시에 일어나요.'", en: "Line one says, \"I get up at seven in the morning.\"" } },
+          { skill: "Sequence",
+            q: { ko: "밥을 먹기 전에 무엇을 해요?", en: "What does he do before he eats?" },
+            choices: [
+              { ko: "세수를 해요.", en: "He washes his face." },
+              { ko: "버스를 타요.", en: "He takes the bus." },
+              { ko: "가방을 들어요.", en: "He picks up his bag." }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄을 다시 읽어 보세요.", en: "Read the second line again." },
+            why: { ko: "'세수를 하고 밥을 먹어요'에서 세수가 먼저예요.", en: "In \"I wash my face and eat,\" washing comes first." } },
+          { skill: "Recall details",
+            q: { ko: "가방에 무엇을 넣어요?", en: "What does he put in his bag?" },
+            choices: [
+              { ko: "책과 연필을 넣어요.", en: "Books and pencils." },
+              { ko: "밥과 우유를 넣어요.", en: "Rice and milk." },
+              { ko: "칼과 접시를 넣어요.", en: "A knife and a plate." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '가방에 책과 연필을 넣어요.'", en: "Line three says, \"I put books and pencils in my bag.\"" } },
+          { skill: "Recall details",
+            q: { ko: "몇 시에 집에서 나가요?", en: "What time does he leave the house?" },
+            choices: [
+              { ko: "여덟 시에 나가요.", en: "At eight o'clock." },
+              { ko: "일곱 시에 나가요.", en: "At seven o'clock." },
+              { ko: "아홉 시에 나가요.", en: "At nine o'clock." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '여덟 시에 집에서 나가요.'", en: "Line four says, \"At eight I leave the house.\"" } },
+          { skill: "Recall details",
+            q: { ko: "학교에 어떻게 가요?", en: "How does he get to school?" },
+            choices: [
+              { ko: "버스를 타고 가요.", en: "He takes the bus." },
+              { ko: "천천히 걸어서 가요.", en: "He walks there slowly." },
+              { ko: "아버지하고 같이 가요.", en: "He goes with his father." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '버스를 타고 학교에 가요.'", en: "Line five says, \"I take the bus to school.\"" } },
+          { skill: "Recall details",
+            q: { ko: "학교는 집에서 멀어요?", en: "Is the school far from his house?" },
+            choices: [
+              { ko: "멀지 않아요.", en: "It is not far." },
+              { ko: "아주 멀어요.", en: "It is very far." },
+              { ko: "조금 멀어요.", en: "It is a little far." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '학교는 집에서 멀지 않아요.'", en: "Line six says, \"The school is not far from my house.\"" } },
+          { skill: "Recall details",
+            q: { ko: "교실에 몇 시에 도착해요?", en: "What time does he reach the classroom?" },
+            choices: [
+              { ko: "여덟 시 삼십 분에 도착해요.", en: "At eight thirty." },
+              { ko: "일곱 시 삼십 분에 도착해요.", en: "At seven thirty." },
+              { ko: "아홉 시 삼십 분에 도착해요.", en: "At nine thirty." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '여덟 시 삼십 분에 교실에 도착해요.'", en: "Line seven says, \"I arrive at the classroom at eight thirty.\"" } },
+          { skill: "Story elements",
+            q: { ko: "교실에서 누가 기다려요?", en: "Who is waiting in the classroom?" },
+            choices: [
+              { ko: "친구들이 기다려요.", en: "His friends are waiting." },
+              { ko: "선생님이 기다려요.", en: "The teacher is waiting." },
+              { ko: "어머니가 기다려요.", en: "His mother is waiting." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '친구들이 저를 기다려요.'", en: "The last line says, \"My friends are waiting for me.\"" } },
+          { skill: "Sequence",
+            q: { ko: "제일 먼저 하는 일은 뭐예요?", en: "What does he do first of all?" },
+            choices: [
+              { ko: "일어나요.", en: "He gets up." },
+              { ko: "밥을 먹어요.", en: "He eats a meal." },
+              { ko: "버스를 타요.", en: "He takes the bus." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 보세요.", en: "Look at the first line." },
+            why: { ko: "이야기는 일어나는 것부터 시작해요.", en: "The story starts with getting up." } }
+        ]
+      },
+      {
+        id: "jumal",
+        skill: "Recall details",
+        title: { ko: "주말에 뭐 해요?", en: "What Do You Do on the Weekend?" },
+        purpose: { ko: "이야기를 읽고 토요일과 일요일에 하는 일을 찾아보세요.", en: "Read the story and find out what she does on Saturday and Sunday." },
+        lines: [
+          { ko: "저는 주말을 좋아해요.", en: "I like weekends." },
+          { ko: "토요일 아침에는 늦게 일어나요.", en: "On Saturday morning I get up late." },
+          { ko: "어머니하고 시장에 가요.", en: "I go to the market with my mother." },
+          { ko: "시장에서 사과와 딸기를 사요.", en: "At the market we buy apples and strawberries." },
+          { ko: "집에 와서 같이 요리해요.", en: "We come home and cook together." },
+          { ko: "일요일에는 도서관에 가요.", en: "On Sunday I go to the library." },
+          { ko: "도서관에서 책을 세 권 빌려요.", en: "At the library I borrow three books." },
+          { ko: "주말은 정말 재미있어요.", en: "The weekend is really fun." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "주말에 하는 일이에요.", en: "What she does on the weekend." },
+              { ko: "학교에서 하는 일이에요.", en: "What she does at school." },
+              { ko: "밤에 하는 일이에요.", en: "What she does at night." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄과 마지막 줄을 같이 보세요.", en: "Read the first and last lines together." },
+            why: { ko: "이야기가 토요일과 일요일에 하는 일을 말해요.", en: "The story tells what she does on Saturday and on Sunday." } },
+          { skill: "Recall details",
+            q: { ko: "토요일 아침에 어떻게 일어나요?", en: "How does she get up on Saturday morning?" },
+            choices: [
+              { ko: "늦게 일어나요.", en: "She gets up late." },
+              { ko: "일찍 일어나요.", en: "She gets up early." },
+              { ko: "빨리 일어나요.", en: "She gets up quickly." }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄을 다시 읽어 보세요.", en: "Read the second line again." },
+            why: { ko: "두 번째 줄에 있어요: '토요일 아침에는 늦게 일어나요.'", en: "Line two says, \"On Saturday morning I get up late.\"" } },
+          { skill: "Story elements",
+            q: { ko: "누구하고 시장에 가요?", en: "Who does she go to the market with?" },
+            choices: [
+              { ko: "어머니하고 가요.", en: "With her mother." },
+              { ko: "아버지하고 가요.", en: "With her father." },
+              { ko: "친구하고 가요.", en: "With her friend." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '어머니하고 시장에 가요.'", en: "Line three says, \"I go to the market with my mother.\"" } },
+          { skill: "Recall details",
+            q: { ko: "시장에서 무엇을 사요?", en: "What do they buy at the market?" },
+            choices: [
+              { ko: "사과와 딸기를 사요.", en: "Apples and strawberries." },
+              { ko: "우유와 라면을 사요.", en: "Milk and ramyeon." },
+              { ko: "당근과 계란을 사요.", en: "Carrots and eggs." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '사과와 딸기를 사요.'", en: "Line four says they buy apples and strawberries." } },
+          { skill: "Sequence",
+            q: { ko: "집에 와서 무엇을 해요?", en: "What do they do after coming home?" },
+            choices: [
+              { ko: "같이 요리해요.", en: "They cook together." },
+              { ko: "같이 공부해요.", en: "They study together." },
+              { ko: "같이 산책해요.", en: "They take a walk together." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '집에 와서 같이 요리해요.'", en: "Line five says, \"We come home and cook together.\"" } },
+          { skill: "Setting",
+            q: { ko: "일요일에는 어디에 가요?", en: "Where does she go on Sunday?" },
+            choices: [
+              { ko: "도서관에 가요.", en: "To the library." },
+              { ko: "시장에 가요.", en: "To the market." },
+              { ko: "공원에 가요.", en: "To the park." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '일요일에는 도서관에 가요.'", en: "Line six says, \"On Sunday I go to the library.\"" } },
+          { skill: "Recall details",
+            q: { ko: "책을 몇 권 빌려요?", en: "How many books does she borrow?" },
+            choices: [
+              { ko: "세 권 빌려요.", en: "Three books." },
+              { ko: "두 권 빌려요.", en: "Two books." },
+              { ko: "네 권 빌려요.", en: "Four books." }
+            ], answer: 0,
+            hint: { ko: "'권'이 있는 줄을 찾아보세요.", en: "Find the line with the counter 권." },
+            why: { ko: "일곱 번째 줄에 있어요: '책을 세 권 빌려요.'", en: "Line seven says she borrows three books." } },
+          { skill: "Character feelings",
+            q: { ko: "이 사람은 주말을 어떻게 생각해요?", en: "How does she feel about the weekend?" },
+            choices: [
+              { ko: "정말 재미있어요.", en: "It is really fun." },
+              { ko: "조금 재미없어요.", en: "It is a little boring." },
+              { ko: "아주 시끄러워요.", en: "It is very noisy." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '주말은 정말 재미있어요.'", en: "The last line says, \"The weekend is really fun.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'시장'은 어떤 곳이에요?", en: "What kind of place is a 시장?" },
+            choices: [
+              { ko: "물건을 사는 곳이에요.", en: "a place where you buy things" },
+              { ko: "책을 읽는 곳이에요.", en: "a place where you read books" },
+              { ko: "운동을 하는 곳이에요.", en: "a place where you exercise" }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄에서 시장에서 무엇을 해요?", en: "Look at what they do at the market in line four." },
+            why: { ko: "시장에서 사과와 딸기를 사요. 시장은 물건을 사는 곳이에요.", en: "They buy apples and strawberries there, so a 시장 is a place to buy things." } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "제 주말", en: "My Weekend" },
+              { ko: "제 교실", en: "My Classroom" },
+              { ko: "제 방", en: "My Room" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "이야기는 토요일과 일요일, 즉 주말 이야기예요.", en: "The story covers Saturday and Sunday, which is the weekend." } }
+        ]
+      },
+      {
+        id: "bi-oneun-nal",
+        skill: "Setting",
+        title: { ko: "비 오는 날", en: "A Rainy Day" },
+        purpose: { ko: "이야기를 읽고 오늘 날씨가 어떤지 알아보세요.", en: "Read the story and find out what the weather is like today." },
+        lines: [
+          { ko: "오늘은 비가 와요.", en: "Today it is raining." },
+          { ko: "하늘이 어두워요.", en: "The sky is dark." },
+          { ko: "저는 우산을 가지고 나가요.", en: "I go out with my umbrella." },
+          { ko: "우산은 파란색이에요.", en: "The umbrella is blue." },
+          { ko: "공원에 사람이 없어요.", en: "There are no people in the park." },
+          { ko: "새 한 마리가 나무 밑에 있어요.", en: "One bird is under a tree." },
+          { ko: "저는 나무 밑에서 새를 조금 봐요.", en: "I watch the bird under the tree for a little while." },
+          { ko: "비 오는 날도 예뻐요.", en: "A rainy day is pretty too." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "비 오는 날 이야기예요.", en: "It is about a rainy day." },
+              { ko: "눈 오는 날 이야기예요.", en: "It is about a snowy day." },
+              { ko: "바람 부는 날 이야기예요.", en: "It is about a windy day." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄과 마지막 줄을 같이 보세요.", en: "Read the first and last lines together." },
+            why: { ko: "첫 줄과 마지막 줄이 모두 비에 대해 말해요.", en: "The first line and the last line both talk about rain." } },
+          { skill: "Recall details",
+            q: { ko: "오늘 날씨가 어때요?", en: "What is the weather like today?" },
+            choices: [
+              { ko: "비가 와요.", en: "It is raining." },
+              { ko: "눈이 와요.", en: "It is snowing." },
+              { ko: "바람이 불어요.", en: "The wind is blowing." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 다시 읽어 보세요.", en: "Read the first line again." },
+            why: { ko: "첫 번째 줄에 있어요: '오늘은 비가 와요.'", en: "Line one says, \"Today it is raining.\"" } },
+          { skill: "Recall details",
+            q: { ko: "하늘이 어때요?", en: "What is the sky like?" },
+            choices: [
+              { ko: "어두워요.", en: "It is dark." },
+              { ko: "밝아요.", en: "It is bright." },
+              { ko: "예뻐요.", en: "It is pretty." }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄을 다시 읽어 보세요.", en: "Read the second line again." },
+            why: { ko: "두 번째 줄에 있어요: '하늘이 어두워요.'", en: "Line two says, \"The sky is dark.\"" } },
+          { skill: "Recall details",
+            q: { ko: "우산은 무슨 색이에요?", en: "What colour is the umbrella?" },
+            choices: [
+              { ko: "파란색이에요.", en: "It is blue." },
+              { ko: "빨간색이에요.", en: "It is red." },
+              { ko: "노란색이에요.", en: "It is yellow." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '우산은 파란색이에요.'", en: "Line four says, \"The umbrella is blue.\"" } },
+          { skill: "Recall details",
+            q: { ko: "공원에 사람이 많아요?", en: "Are there many people in the park?" },
+            choices: [
+              { ko: "사람이 없어요.", en: "There are no people." },
+              { ko: "사람이 많아요.", en: "There are many people." },
+              { ko: "사람이 조금 있어요.", en: "There are a few people." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '공원에 사람이 없어요.'", en: "Line five says, \"There are no people in the park.\"" } },
+          { skill: "Recall details",
+            q: { ko: "나무 밑에 무엇이 있어요?", en: "What is under the tree?" },
+            choices: [
+              { ko: "새 한 마리가 있어요.", en: "One bird." },
+              { ko: "고양이 한 마리가 있어요.", en: "One cat." },
+              { ko: "강아지 한 마리가 있어요.", en: "One puppy." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '새 한 마리가 나무 밑에 있어요.'", en: "Line six says, \"One bird is under a tree.\"" } },
+          { skill: "Recall details",
+            q: { ko: "이 사람은 나무 밑에서 무엇을 해요?", en: "What does the writer do under the tree?" },
+            choices: [
+              { ko: "새를 조금 봐요.", en: "Watches the bird a little." },
+              { ko: "책을 조금 읽어요.", en: "Reads a book a little." },
+              { ko: "노래를 조금 들어요.", en: "Listens to a song a little." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '나무 밑에서 새를 조금 봐요.'", en: "Line seven says the writer watches the bird for a little while." } },
+          { skill: "Character feelings",
+            q: { ko: "이 사람은 비 오는 날을 어떻게 생각해요?", en: "How does the writer feel about a rainy day?" },
+            choices: [
+              { ko: "비 오는 날이 예뻐요.", en: "A rainy day is pretty." },
+              { ko: "비 오는 날이 싫어요.", en: "A rainy day is unpleasant." },
+              { ko: "비 오는 날이 무서워요.", en: "A rainy day is frightening." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '비 오는 날도 예뻐요.'", en: "The last line says, \"A rainy day is pretty too.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'우산'은 언제 써요?", en: "When do you use a 우산?" },
+            choices: [
+              { ko: "비가 올 때 써요.", en: "When it rains." },
+              { ko: "밥을 먹을 때 써요.", en: "When you eat." },
+              { ko: "잠을 잘 때 써요.", en: "When you sleep." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄에서 왜 우산을 가지고 나가요?", en: "Look at why the writer takes it out in line three." },
+            why: { ko: "비가 오니까 우산을 가지고 나가요.", en: "The writer takes it out because it is raining." } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "예쁜 비 오는 날", en: "A Pretty Rainy Day" },
+              { ko: "시끄러운 공원", en: "A Noisy Park" },
+              { ko: "밝은 하늘", en: "A Bright Sky" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "공원은 조용하고 하늘은 어두워요. 이야기는 예쁜 비 오는 날이에요.", en: "The park is empty and the sky is dark, so only the rainy day title fits." } }
+        ]
+      },
+      {
+        id: "chingu-yuna",
+        skill: "Story elements",
+        title: { ko: "제 친구 유나", en: "My Friend Yuna" },
+        purpose: { ko: "이야기를 읽고 유나에 대해 알아보세요.", en: "Read the story and find out about Yuna." },
+        lines: [
+          { ko: "유나는 제 친구예요.", en: "Yuna is my friend." },
+          { ko: "유나는 저하고 같은 반이에요.", en: "Yuna is in the same class as me." },
+          { ko: "유나는 머리가 길어요.", en: "Yuna has long hair." },
+          { ko: "유나는 노래를 아주 잘해요.", en: "Yuna sings very well." },
+          { ko: "점심 시간에 우리는 같이 밥을 먹어요.", en: "At lunch time we eat together." },
+          { ko: "유나는 김밥을 좋아해요.", en: "Yuna likes gimbap." },
+          { ko: "저는 라면을 좋아해요.", en: "I like ramyeon." },
+          { ko: "우리는 매일 같이 놀아요.", en: "We play together every day." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "제 친구 유나 이야기예요.", en: "It is about my friend Yuna." },
+              { ko: "제 동생 유나 이야기예요.", en: "It is about my sister Yuna." },
+              { ko: "제 선생님 이야기예요.", en: "It is about my teacher." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 다시 읽어 보세요.", en: "Read the first line again." },
+            why: { ko: "첫 번째 줄에 있어요: '유나는 제 친구예요.'", en: "Line one says, \"Yuna is my friend.\"" } },
+          { skill: "Recall details",
+            q: { ko: "유나는 저하고 같은 반이에요?", en: "Is Yuna in the same class?" },
+            choices: [
+              { ko: "네, 같은 반이에요.", en: "Yes, the same class." },
+              { ko: "아니요, 다른 반이에요.", en: "No, a different class." },
+              { ko: "아니요, 다른 학교예요.", en: "No, a different school." }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄을 다시 읽어 보세요.", en: "Read the second line again." },
+            why: { ko: "두 번째 줄에 있어요: '유나는 저하고 같은 반이에요.'", en: "Line two says, \"Yuna is in the same class as me.\"" } },
+          { skill: "Recall details",
+            q: { ko: "유나의 머리가 어때요?", en: "What is Yuna's hair like?" },
+            choices: [
+              { ko: "길어요.", en: "It is long." },
+              { ko: "짧아요.", en: "It is short." },
+              { ko: "까만색이에요.", en: "It is black." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '유나는 머리가 길어요.'", en: "Line three says, \"Yuna has long hair.\"" } },
+          { skill: "Recall details",
+            q: { ko: "유나는 무엇을 잘해요?", en: "What is Yuna good at?" },
+            choices: [
+              { ko: "노래를 잘해요.", en: "She sings well." },
+              { ko: "요리를 잘해요.", en: "She cooks well." },
+              { ko: "그림을 잘해요.", en: "She draws well." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '유나는 노래를 아주 잘해요.'", en: "Line four says, \"Yuna sings very well.\"" } },
+          { skill: "Sequence",
+            q: { ko: "언제 같이 밥을 먹어요?", en: "When do they eat together?" },
+            choices: [
+              { ko: "점심 시간에 먹어요.", en: "At lunch time." },
+              { ko: "저녁 시간에 먹어요.", en: "At dinner time." },
+              { ko: "아침 시간에 먹어요.", en: "At breakfast time." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '점심 시간에 같이 밥을 먹어요.'", en: "Line five says they eat together at lunch time." } },
+          { skill: "Recall details",
+            q: { ko: "유나는 무슨 음식을 좋아해요?", en: "What food does Yuna like?" },
+            choices: [
+              { ko: "김밥을 좋아해요.", en: "She likes gimbap." },
+              { ko: "라면을 좋아해요.", en: "She likes ramyeon." },
+              { ko: "딸기를 좋아해요.", en: "She likes strawberries." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '유나는 김밥을 좋아해요.'", en: "Line six says, \"Yuna likes gimbap.\"" } },
+          { skill: "Recall details",
+            q: { ko: "'저'는 무슨 음식을 좋아해요?", en: "What food does the writer like?" },
+            choices: [
+              { ko: "라면을 좋아해요.", en: "Ramyeon." },
+              { ko: "김밥을 좋아해요.", en: "Gimbap." },
+              { ko: "우유를 좋아해요.", en: "Milk." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '저는 라면을 좋아해요.'", en: "Line seven says, \"I like ramyeon.\"" } },
+          { skill: "Recall details",
+            q: { ko: "두 사람은 얼마나 자주 놀아요?", en: "How often do the two of them play?" },
+            choices: [
+              { ko: "매일 놀아요.", en: "Every day." },
+              { ko: "가끔 놀아요.", en: "Sometimes." },
+              { ko: "주말에 놀아요.", en: "On weekends." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '우리는 매일 같이 놀아요.'", en: "The last line says, \"We play together every day.\"" } },
+          { skill: "Story elements",
+            q: { ko: "유나는 '저'에게 누구예요?", en: "Who is Yuna to the writer?" },
+            choices: [
+              { ko: "친구예요.", en: "A friend." },
+              { ko: "언니예요.", en: "An older sister." },
+              { ko: "선생님이에요.", en: "A teacher." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 보세요.", en: "Look at the first line." },
+            why: { ko: "'유나는 제 친구예요'라고 나와요.", en: "The story says, \"Yuna is my friend.\"" } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "제 친구 유나", en: "My Friend Yuna" },
+              { ko: "제 반 선생님", en: "My Class Teacher" },
+              { ko: "제 좋은 가방", en: "My Nice Bag" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "이야기가 처음부터 끝까지 유나에 대해 말해요.", en: "The story talks about Yuna from beginning to end." } }
+        ]
+      },
+      {
+        id: "gimbap",
+        skill: "Sequence",
+        title: { ko: "김밥을 만들어요", en: "Making Gimbap" },
+        purpose: { ko: "이야기를 읽고 김밥 만드는 순서를 찾아보세요.", en: "Read the story and follow the order of making gimbap." },
+        lines: [
+          { ko: "오늘 어머니하고 김밥을 만들어요.", en: "Today I make gimbap with my mother." },
+          { ko: "먼저 밥을 준비해요.", en: "First we prepare the rice." },
+          { ko: "그리고 김 위에 밥을 놓아요.", en: "Then we put the rice on the seaweed." },
+          { ko: "밥 위에 당근과 계란을 놓아요.", en: "We put carrot and egg on the rice." },
+          { ko: "김밥을 천천히 말아요.", en: "We roll the gimbap slowly." },
+          { ko: "칼로 김밥을 잘라요.", en: "We cut the gimbap with a knife." },
+          { ko: "접시에 김밥을 놓아요.", en: "We put the gimbap on a plate." },
+          { ko: "마지막에 우리는 같이 먹어요.", en: "At the end we eat together." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "김밥을 만드는 이야기예요.", en: "It is about making gimbap." },
+              { ko: "김밥을 사는 이야기예요.", en: "It is about buying gimbap." },
+              { ko: "라면을 만드는 이야기예요.", en: "It is about making ramyeon." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 다시 읽어 보세요.", en: "Read the first line again." },
+            why: { ko: "첫 번째 줄에 있어요: '어머니하고 김밥을 만들어요.'", en: "Line one says they make gimbap together." } },
+          { skill: "Story elements",
+            q: { ko: "누구하고 김밥을 만들어요?", en: "Who makes the gimbap with the writer?" },
+            choices: [
+              { ko: "어머니하고 만들어요.", en: "The mother." },
+              { ko: "아버지하고 만들어요.", en: "The father." },
+              { ko: "친구하고 만들어요.", en: "A friend." }
+            ], answer: 0,
+            hint: { ko: "첫 번째 줄을 다시 읽어 보세요.", en: "Read the first line again." },
+            why: { ko: "'오늘 어머니하고 김밥을 만들어요'라고 나와요.", en: "The story says, \"Today I make gimbap with my mother.\"" } },
+          { skill: "Sequence",
+            q: { ko: "제일 먼저 무엇을 해요?", en: "What do they do first?" },
+            choices: [
+              { ko: "밥을 준비해요.", en: "They prepare the rice." },
+              { ko: "김밥을 잘라요.", en: "They cut the gimbap." },
+              { ko: "접시에 놓아요.", en: "They put it on a plate." }
+            ], answer: 0,
+            hint: { ko: "'먼저'가 있는 줄을 찾아보세요.", en: "Find the line with the word 먼저 (first)." },
+            why: { ko: "두 번째 줄에 있어요: '먼저 밥을 준비해요.'", en: "Line two says, \"First we prepare the rice.\"" } },
+          { skill: "Recall details",
+            q: { ko: "김 위에 무엇을 놓아요?", en: "What goes on the seaweed?" },
+            choices: [
+              { ko: "밥을 놓아요.", en: "The rice." },
+              { ko: "칼을 놓아요.", en: "The knife." },
+              { ko: "접시를 놓아요.", en: "The plate." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '김 위에 밥을 놓아요.'", en: "Line three says, \"We put the rice on the seaweed.\"" } },
+          { skill: "Recall details",
+            q: { ko: "밥 위에 무엇을 놓아요?", en: "What goes on the rice?" },
+            choices: [
+              { ko: "당근과 계란을 놓아요.", en: "Carrot and egg." },
+              { ko: "사과와 딸기를 놓아요.", en: "Apple and strawberry." },
+              { ko: "우유와 라면을 놓아요.", en: "Milk and ramyeon." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '밥 위에 당근과 계란을 놓아요.'", en: "Line four says, \"We put carrot and egg on the rice.\"" } },
+          { skill: "Recall details",
+            q: { ko: "김밥을 어떻게 말아요?", en: "How do they roll the gimbap?" },
+            choices: [
+              { ko: "천천히 말아요.", en: "Slowly." },
+              { ko: "빨리 말아요.", en: "Quickly." },
+              { ko: "조용히 말아요.", en: "Quietly." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '김밥을 천천히 말아요.'", en: "Line five says, \"We roll the gimbap slowly.\"" } },
+          { skill: "Recall details",
+            q: { ko: "무엇으로 김밥을 잘라요?", en: "What do they cut the gimbap with?" },
+            choices: [
+              { ko: "칼로 잘라요.", en: "With a knife." },
+              { ko: "손으로 잘라요.", en: "With their hands." },
+              { ko: "접시로 잘라요.", en: "With a plate." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '칼로 김밥을 잘라요.'", en: "Line six says, \"We cut the gimbap with a knife.\"" } },
+          { skill: "Recall details",
+            q: { ko: "김밥을 어디에 놓아요?", en: "Where do they put the gimbap?" },
+            choices: [
+              { ko: "접시에 놓아요.", en: "On a plate." },
+              { ko: "가방에 놓아요.", en: "In a bag." },
+              { ko: "책상에 놓아요.", en: "On a desk." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '접시에 김밥을 놓아요.'", en: "Line seven says, \"We put the gimbap on a plate.\"" } },
+          { skill: "Sequence",
+            q: { ko: "마지막에 무엇을 해요?", en: "What do they do at the end?" },
+            choices: [
+              { ko: "같이 먹어요.", en: "They eat together." },
+              { ko: "같이 만들어요.", en: "They make it together." },
+              { ko: "같이 잘라요.", en: "They cut it together." }
+            ], answer: 0,
+            hint: { ko: "'마지막'이 있는 줄을 찾아보세요.", en: "Find the line with the word 마지막 (last)." },
+            why: { ko: "마지막 줄에 있어요: '마지막에 우리는 같이 먹어요.'", en: "The last line says, \"At the end we eat together.\"" } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "김밥 만들기", en: "Making Gimbap" },
+              { ko: "라면 만들기", en: "Making Ramyeon" },
+              { ko: "시장 가기", en: "Going to the Market" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "이야기는 김밥을 만드는 순서를 처음부터 끝까지 보여 줘요.", en: "The story shows every step of making gimbap." } }
+        ]
+      },
+      {
+        id: "doseogwan",
+        skill: "Recall details",
+        title: { ko: "도서관에서", en: "At the Library" },
+        purpose: { ko: "이야기를 읽고 도서관에서 하는 일을 찾아보세요.", en: "Read the story and find out what they do at the library." },
+        lines: [
+          { ko: "저는 도서관을 아주 좋아해요.", en: "I really like the library." },
+          { ko: "도서관은 학교 뒤에 있어요.", en: "The library is behind the school." },
+          { ko: "도서관 안은 조용해요.", en: "Inside the library it is quiet." },
+          { ko: "저는 이야기책을 읽어요.", en: "I read a story book." },
+          { ko: "동생은 그림책을 봐요.", en: "My younger sibling looks at a picture book." },
+          { ko: "우리는 큰 소리로 말하지 않아요.", en: "We do not talk in a loud voice." },
+          { ko: "네 시에 책을 두 권 빌려요.", en: "At four o'clock we borrow two books." },
+          { ko: "그리고 집에 가요.", en: "And then we go home." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "도서관에 간 이야기예요.", en: "It is about a trip to the library." },
+              { ko: "시장에 간 이야기예요.", en: "It is about a trip to the market." },
+              { ko: "공원에 간 이야기예요.", en: "It is about a trip to the park." }
+            ], answer: 0,
+            hint: { ko: "이야기 전체를 생각해 보세요.", en: "Think about the whole story." },
+            why: { ko: "모든 줄이 도서관 안에서 일어나요.", en: "Every line happens inside the library." } },
+          { skill: "Setting",
+            q: { ko: "도서관은 어디에 있어요?", en: "Where is the library?" },
+            choices: [
+              { ko: "학교 뒤에 있어요.", en: "Behind the school." },
+              { ko: "학교 앞에 있어요.", en: "In front of the school." },
+              { ko: "집 옆에 있어요.", en: "Next to the house." }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄을 다시 읽어 보세요.", en: "Read the second line again." },
+            why: { ko: "두 번째 줄에 있어요: '도서관은 학교 뒤에 있어요.'", en: "Line two says, \"The library is behind the school.\"" } },
+          { skill: "Recall details",
+            q: { ko: "도서관 안은 어때요?", en: "What is it like inside the library?" },
+            choices: [
+              { ko: "조용해요.", en: "It is quiet." },
+              { ko: "시끄러워요.", en: "It is noisy." },
+              { ko: "어두워요.", en: "It is dark." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '도서관 안은 조용해요.'", en: "Line three says, \"Inside the library it is quiet.\"" } },
+          { skill: "Recall details",
+            q: { ko: "'저'는 무슨 책을 읽어요?", en: "What kind of book does the writer read?" },
+            choices: [
+              { ko: "이야기책을 읽어요.", en: "A story book." },
+              { ko: "그림책을 읽어요.", en: "A picture book." },
+              { ko: "한국어책을 읽어요.", en: "A Korean book." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '저는 이야기책을 읽어요.'", en: "Line four says, \"I read a story book.\"" } },
+          { skill: "Recall details",
+            q: { ko: "동생은 무슨 책을 봐요?", en: "What kind of book does the younger sibling look at?" },
+            choices: [
+              { ko: "그림책을 봐요.", en: "A picture book." },
+              { ko: "이야기책을 봐요.", en: "A story book." },
+              { ko: "한국어책을 봐요.", en: "A Korean book." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '동생은 그림책을 봐요.'", en: "Line five says, \"My younger sibling looks at a picture book.\"" } },
+          { skill: "Recall details",
+            q: { ko: "두 사람은 무엇을 하지 않아요?", en: "What do the two of them not do?" },
+            choices: [
+              { ko: "큰 소리로 말하지 않아요.", en: "They do not talk loudly." },
+              { ko: "조용히 책을 읽지 않아요.", en: "They do not read quietly." },
+              { ko: "의자에 앉지 않아요.", en: "They do not sit on chairs." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '큰 소리로 말하지 않아요.'", en: "Line six says, \"We do not talk in a loud voice.\"" } },
+          { skill: "Recall details",
+            q: { ko: "몇 시에 책을 빌려요?", en: "What time do they borrow the books?" },
+            choices: [
+              { ko: "네 시에 빌려요.", en: "At four o'clock." },
+              { ko: "세 시에 빌려요.", en: "At three o'clock." },
+              { ko: "다섯 시에 빌려요.", en: "At five o'clock." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '네 시에 책을 두 권 빌려요.'", en: "Line seven says they borrow the books at four o'clock." } },
+          { skill: "Recall details",
+            q: { ko: "책을 몇 권 빌려요?", en: "How many books do they borrow?" },
+            choices: [
+              { ko: "두 권 빌려요.", en: "Two books." },
+              { ko: "세 권 빌려요.", en: "Three books." },
+              { ko: "네 권 빌려요.", en: "Four books." }
+            ], answer: 0,
+            hint: { ko: "'권'이 있는 줄을 찾아보세요.", en: "Find the line with the counter 권." },
+            why: { ko: "일곱 번째 줄에 '책을 두 권 빌려요'라고 나와요.", en: "Line seven says they borrow two books." } },
+          { skill: "Sequence",
+            q: { ko: "책을 빌린 다음에 어디에 가요?", en: "Where do they go after borrowing the books?" },
+            choices: [
+              { ko: "집에 가요.", en: "They go home." },
+              { ko: "학교에 가요.", en: "They go to school." },
+              { ko: "시장에 가요.", en: "They go to the market." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '그리고 집에 가요.'", en: "The last line says, \"And then we go home.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'조용하다'는 무슨 뜻이에요?", en: "What does 조용하다 mean?" },
+            choices: [
+              { ko: "소리가 작아요.", en: "The sound is small." },
+              { ko: "소리가 커요.", en: "The sound is loud." },
+              { ko: "사람이 많아요.", en: "There are many people." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄이 힌트예요.", en: "Line six is the clue." },
+            why: { ko: "큰 소리로 말하지 않는 곳이 조용한 곳이에요.", en: "A place where no one talks loudly is a quiet place." } }
+        ]
+      },
+      {
+        id: "kongi",
+        skill: "Character feelings",
+        title: { ko: "우리 강아지 콩이", en: "Kongi, Our Puppy" },
+        purpose: { ko: "이야기를 읽고 콩이가 어떤 강아지인지 알아보세요.", en: "Read the story and find out what kind of puppy Kongi is." },
+        lines: [
+          { ko: "우리 집에 강아지가 있어요.", en: "There is a puppy at our house." },
+          { ko: "강아지 이름은 콩이예요.", en: "The puppy's name is Kongi." },
+          { ko: "콩이는 아주 작아요.", en: "Kongi is very small." },
+          { ko: "콩이는 하얀색이에요.", en: "Kongi is white." },
+          { ko: "콩이는 공놀이를 좋아해요.", en: "Kongi likes playing with a ball." },
+          { ko: "저녁마다 저는 콩이하고 산책해요.", en: "Every evening I take a walk with Kongi." },
+          { ko: "콩이는 제 이야기를 잘 들어요.", en: "Kongi listens to my stories well." },
+          { ko: "콩이는 제일 좋은 친구예요.", en: "Kongi is my best friend." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 이야기는 무엇에 대한 이야기예요?", en: "What is this story about?" },
+            choices: [
+              { ko: "우리 강아지 이야기예요.", en: "It is about our puppy." },
+              { ko: "우리 고양이 이야기예요.", en: "It is about our cat." },
+              { ko: "우리 가족 이야기예요.", en: "It is about our family." }
+            ], answer: 0,
+            hint: { ko: "이야기 전체를 생각해 보세요.", en: "Think about the whole story." },
+            why: { ko: "모든 줄이 강아지 콩이에 대해 말해요.", en: "Every line is about the puppy, Kongi." } },
+          { skill: "Recall details",
+            q: { ko: "강아지 이름은 뭐예요?", en: "What is the puppy's name?" },
+            choices: [
+              { ko: "콩이예요.", en: "Kongi." },
+              { ko: "나비예요.", en: "Nabi." },
+              { ko: "유나예요.", en: "Yuna." }
+            ], answer: 0,
+            hint: { ko: "두 번째 줄을 다시 읽어 보세요.", en: "Read the second line again." },
+            why: { ko: "두 번째 줄에 있어요: '강아지 이름은 콩이예요.'", en: "Line two says, \"The puppy's name is Kongi.\"" } },
+          { skill: "Recall details",
+            q: { ko: "콩이는 어때요?", en: "What is Kongi like?" },
+            choices: [
+              { ko: "아주 작아요.", en: "Very small." },
+              { ko: "아주 커요.", en: "Very big." },
+              { ko: "조금 커요.", en: "A little big." }
+            ], answer: 0,
+            hint: { ko: "세 번째 줄을 다시 읽어 보세요.", en: "Read the third line again." },
+            why: { ko: "세 번째 줄에 있어요: '콩이는 아주 작아요.'", en: "Line three says, \"Kongi is very small.\"" } },
+          { skill: "Recall details",
+            q: { ko: "콩이는 무슨 색이에요?", en: "What colour is Kongi?" },
+            choices: [
+              { ko: "하얀색이에요.", en: "White." },
+              { ko: "까만색이에요.", en: "Black." },
+              { ko: "노란색이에요.", en: "Yellow." }
+            ], answer: 0,
+            hint: { ko: "네 번째 줄을 다시 읽어 보세요.", en: "Read the fourth line again." },
+            why: { ko: "네 번째 줄에 있어요: '콩이는 하얀색이에요.'", en: "Line four says, \"Kongi is white.\"" } },
+          { skill: "Recall details",
+            q: { ko: "콩이는 무엇을 좋아해요?", en: "What does Kongi like?" },
+            choices: [
+              { ko: "공놀이를 좋아해요.", en: "Playing with a ball." },
+              { ko: "그림책을 좋아해요.", en: "Picture books." },
+              { ko: "노래를 좋아해요.", en: "Songs." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 줄을 다시 읽어 보세요.", en: "Read the fifth line again." },
+            why: { ko: "다섯 번째 줄에 있어요: '콩이는 공놀이를 좋아해요.'", en: "Line five says, \"Kongi likes playing with a ball.\"" } },
+          { skill: "Sequence",
+            q: { ko: "언제 콩이하고 산책해요?", en: "When does the writer walk with Kongi?" },
+            choices: [
+              { ko: "저녁마다 산책해요.", en: "Every evening." },
+              { ko: "아침마다 산책해요.", en: "Every morning." },
+              { ko: "주말마다 산책해요.", en: "Every weekend." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 줄을 다시 읽어 보세요.", en: "Read the sixth line again." },
+            why: { ko: "여섯 번째 줄에 있어요: '저녁마다 콩이하고 산책해요.'", en: "Line six says the walk happens every evening." } },
+          { skill: "Recall details",
+            q: { ko: "콩이는 무엇을 잘해요?", en: "What is Kongi good at?" },
+            choices: [
+              { ko: "이야기를 잘 들어요.", en: "Listening to stories." },
+              { ko: "노래를 잘 들어요.", en: "Listening to songs." },
+              { ko: "그림을 잘 봐요.", en: "Looking at pictures." }
+            ], answer: 0,
+            hint: { ko: "일곱 번째 줄을 다시 읽어 보세요.", en: "Read the seventh line again." },
+            why: { ko: "일곱 번째 줄에 있어요: '콩이는 제 이야기를 잘 들어요.'", en: "Line seven says, \"Kongi listens to my stories well.\"" } },
+          { skill: "Character feelings",
+            q: { ko: "'저'에게 콩이는 누구예요?", en: "What is Kongi to the writer?" },
+            choices: [
+              { ko: "제일 좋은 친구예요.", en: "The best friend." },
+              { ko: "제일 좋은 동생이에요.", en: "The best younger sibling." },
+              { ko: "제일 좋은 선생님이에요.", en: "The best teacher." }
+            ], answer: 0,
+            hint: { ko: "마지막 줄을 다시 읽어 보세요.", en: "Read the last line again." },
+            why: { ko: "마지막 줄에 있어요: '콩이는 제일 좋은 친구예요.'", en: "The last line says, \"Kongi is my best friend.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'산책하다'는 무슨 뜻이에요?", en: "What does 산책하다 mean?" },
+            choices: [
+              { ko: "천천히 걸어요.", en: "To walk slowly." },
+              { ko: "빨리 달려요.", en: "To run fast." },
+              { ko: "조용히 자요.", en: "To sleep quietly." }
+            ], answer: 0,
+            hint: { ko: "저녁마다 콩이하고 밖에서 뭘 해요?", en: "Think about what you do outside with a dog each evening." },
+            why: { ko: "산책하다는 천천히 걸으면서 밖에 나가는 거예요.", en: "산책하다 means to go out and walk slowly." } },
+          { skill: "Best title",
+            q: { ko: "이 이야기의 제목으로 무엇이 좋아요?", en: "Which is the best title for this story?" },
+            choices: [
+              { ko: "제일 좋은 친구 콩이", en: "Kongi, My Best Friend" },
+              { ko: "제일 좋은 친구 유나", en: "Yuna, My Best Friend" },
+              { ko: "우리 집 고양이", en: "The Cat at Our House" }
+            ], answer: 0,
+            hint: { ko: "제목은 이야기 전체를 말해요.", en: "A title tells about the whole story." },
+            why: { ko: "이야기에 유나와 고양이는 나오지 않아요.", en: "Yuna and a cat never appear in this story." } }
+        ]
+      }
+    ];
+
+    /* -----------------------------------------------------------------------
+       Helpers
+    ----------------------------------------------------------------------- */
+    const LETTERS = ["A", "B", "C", "D", "E"];
+    const TIMER_CHOICES = {
+      total: [
+        { value: 180, label: "3 minutes" },
+        { value: 300, label: "5 minutes" },
+        { value: 480, label: "8 minutes" },
+        { value: 600, label: "10 minutes" },
+        { value: 900, label: "15 minutes" }
+      ],
+      perQuestion: [
+        { value: 20, label: "20 seconds" },
+        { value: 30, label: "30 seconds" },
+        { value: 45, label: "45 seconds" },
+        { value: 60, label: "60 seconds" },
+        { value: 90, label: "90 seconds" }
+      ]
+    };
+    const DEFAULT_LIMIT = { total: 600, perQuestion: 45 };
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+    function shuffled(list) {
+      const copy = list.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function clockText(seconds) {
+      const safe = Math.max(0, Math.round(seconds));
+      return Math.floor(safe / 60) + ":" + String(safe % 60).padStart(2, "0");
+    }
+    function plural(n, one, many) { return n + " " + (n === 1 ? one : many); }
+
+    /* Plain text of a { ko, en } pair in the requested script. */
+    function plain(pair, lang) {
+      if (!pair) return "";
+      if (lang === "en") return pair.en;
+      if (lang === "ro") return ReadingVocab.romanize(pair.ko);
+      return pair.ko;
+    }
+
+    const el = document.getElementById("readingExercise");
+    const $ = selector => el.querySelector(selector);
+    let highestZIndex = 1000;
+
+    /* -----------------------------------------------------------------------
+       Rendering text with vocabulary popovers
+
+       A { ko, en } pair is first cut into segments against the word bank, then
+       each segment is written out in the requested script. Romanization is
+       produced segment by segment with a carry flag so a dash still lands
+       between two syllables that sit either side of a segment edge: 학교에서
+       stays hak-gyo-e-seo even though 학교 is its own token.
+    ----------------------------------------------------------------------- */
+    function segmentsFor(pair, lang) {
+      const source = lang === "en" ? String(pair.en ?? "") : String(pair.ko ?? "");
+      const matches = lang === "en" ? ReadingVocab.scanEnglish(source) : ReadingVocab.scanKorean(source);
+      const segments = [];
+      let cursor = 0;
+      matches.forEach(match => {
+        if (match.start > cursor) segments.push({ text: source.slice(cursor, match.start), entry: null });
+        segments.push({ text: source.slice(match.start, match.end), entry: match.entry });
+        cursor = match.end;
+      });
+      if (cursor < source.length) segments.push({ text: source.slice(cursor), entry: null });
+      return segments;
+    }
+
+    function render(pair, lang, options) {
+      const withTokens = !options || options.tokens !== false;
+      const segments = segmentsFor(pair, lang);
+      let carry = false;
+      return segments.map(segment => {
+        let text = segment.text;
+        if (lang === "ro") {
+          const run = ReadingVocab.romanizeRun(text, carry);
+          text = run.text;
+          carry = run.endsInSyllable;
+        }
+        if (!segment.entry || !withTokens) return esc(text);
+        return '<span class="vocab-token" tabindex="0" role="button" data-word="' + esc(segment.entry.id)
+          + '" aria-label="Word help">' + esc(text) + popoverMarkup(segment.entry) + '</span>';
+      }).join("");
+    }
+
+    /* -----------------------------------------------------------------------
+       Popovers. Click to open, click again or press the close button to shut.
+       Nothing opens on hover.
+    ----------------------------------------------------------------------- */
+    /*
+      Opening a popover reveals nothing on its own. The word and its meaning
+      are Level 1, exactly as in the Bab lessons, and revealing any level is
+      what counts as assistance.
+    */
+    function popoverMarkup() {
+      const levels = ["Meaning", "How it is used", "Example"].map((label, index) =>
+        '<button class="hint-step" type="button" data-hint-level="' + (index + 1) + '">Level '
+        + (index + 1) + ' &middot; ' + label + '</button>'
+        + '<span class="hint-content" data-hint-content="' + (index + 1) + '"></span>').join("");
+
+      return '<span class="vocab-popover" role="dialog" aria-label="Optional hint levels">'
+        + '<span class="vocab-popover-heading"><strong>Optional hints</strong>'
+        + '<span style="display:flex;align-items:center;gap:8px;"><small>Nothing revealed yet</small>'
+        + '<button class="popover-close-btn" type="button" aria-label="Close">&times;</button></span></span>'
+        + '<span class="hint-levels">' + levels + '</span></span>';
+    }
+
+    function hintTextFor(entry, level, lang) {
+      /* Level 1 is the vocabulary card: the word in every script, its meaning,
+         and its part of speech. */
+      if (level === 1) {
+        return "<strong>" + esc(entry.ko) + "</strong>"
+          + "<br><span class=\"roman\">" + esc(ReadingVocab.romanize(entry.ko)) + "</span>"
+          + "<br>" + esc(entry.en) + " <em>(" + esc(entry.pos) + ")</em>";
+      }
+      if (level === 2) return "<strong>How it is used:</strong> " + esc(entry.usage);
+      const example = lang === "en" ? entry.exEn
+        : (lang === "ro" ? ReadingVocab.romanize(entry.exKo) : entry.exKo);
+      const gloss = lang === "en" ? "" : "<br><small>" + esc(entry.exEn) + "</small>";
+      return "<strong>Example:</strong> " + esc(example) + gloss;
+    }
+
+    function positionPopover(token) {
+      const popover = token.querySelector(".vocab-popover");
+      if (!popover) return;
+      requestAnimationFrame(() => {
+        const tokenRect = token.getBoundingClientRect();
+        const popRect = popover.getBoundingClientRect();
+        const margin = 12;
+        const gap = 10;
+        let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+        let top = tokenRect.top - popRect.height - gap;
+        if (top < margin) top = tokenRect.bottom + gap;
+        popover.style.left = Math.round(left) + "px";
+        popover.style.top = Math.round(top) + "px";
+        popover.style.setProperty("--arrow-left",
+          Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left)) + "px");
+      });
+    }
+
+    function bringToFront(token) {
+      const popover = token.querySelector(".vocab-popover");
+      if (!popover) return;
+      highestZIndex += 1;
+      popover.style.zIndex = String(highestZIndex);
+    }
+
+    function closeAllPopovers() {
+      document.querySelectorAll(".vocab-token.is-pinned").forEach(token => token.classList.remove("is-pinned"));
+    }
+
+    function bindTokens(container, onLookup) {
+      container.querySelectorAll(".vocab-token").forEach(token => {
+        const popover = token.querySelector(".vocab-popover");
+        const entry = ReadingVocab.get(token.dataset.word);
+        if (!popover || !entry) return;
+
+        popover.addEventListener("click", event => {
+          event.stopPropagation();
+          bringToFront(token);
+        });
+
+        popover.querySelector(".popover-close-btn").addEventListener("click", event => {
+          event.stopPropagation();
+          event.preventDefault();
+          token.classList.remove("is-pinned");
+        });
+
+        popover.querySelectorAll(".hint-step").forEach(button => {
+          button.addEventListener("click", event => {
+            event.stopPropagation();
+            const level = Number(button.dataset.hintLevel);
+            const content = button.nextElementSibling;
+            if (content && content.classList.contains("hint-content")) {
+              content.innerHTML = hintTextFor(entry, level, currentHintLang());
+              content.classList.add("is-open");
+            }
+            button.classList.add("is-open");
+            const note = popover.querySelector(".vocab-popover-heading small");
+            if (note) note.textContent = "Revealed hints count as assistance";
+            if (typeof onLookup === "function") onLookup(entry, level);
+          });
+        });
+
+        const toggle = event => {
+          if (event.target.closest(".vocab-popover")) return;
+          event.stopPropagation();
+          event.preventDefault();
+          if (token.classList.contains("is-pinned")) {
+            token.classList.remove("is-pinned");
+            return;
+          }
+          token.classList.add("is-pinned");
+          bringToFront(token);
+          positionPopover(token);
+        };
+        token.addEventListener("click", toggle);
+        token.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") toggle(event);
+          if (event.key === "Escape") token.classList.remove("is-pinned");
+        });
+      });
+    }
+
+    document.addEventListener("click", event => {
+      if (!event.target.closest(".vocab-token")) closeAllPopovers();
+    });
+    const repositionPinned = () => {
+      document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+        const rect = token.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+          token.classList.remove("is-pinned");
+          return;
+        }
+        positionPopover(token);
+      });
+    };
+    window.addEventListener("scroll", repositionPinned, { capture: true, passive: true });
+    window.addEventListener("resize", repositionPinned, { passive: true });
+
+    /* -----------------------------------------------------------------------
+       Exercise state
+    ----------------------------------------------------------------------- */
+    let state = null;
+
+    /* Popover markup is built during render, before state exists on the first
+       preview, so the hint language is read straight from the menu. */
+    function currentHintLang() {
+      return state ? state.settings.hintLang : $(".menu-hint-lang").value;
+    }
+
+    function readSettings() {
+      const mode = $(".menu-timer-mode").value;
+      return {
+        storyId: $(".menu-story").value,
+        storyLang: $(".menu-story-lang").value,
+        qaLang: $(".menu-qa-lang").value,
+        hintLang: $(".menu-hint-lang").value,
+        timed: $(".menu-timed").checked,
+        timerMode: mode,
+        timerLimit: Number($(".menu-timer-limit").value) || DEFAULT_LIMIT[mode]
+      };
+    }
+
+    function storyFor(storyId) {
+      if (storyId === "random") return STORIES[Math.floor(Math.random() * STORIES.length)];
+      return STORIES.find(item => item.id === storyId) || STORIES[0];
+    }
+
+    function buildState(settings) {
+      const story = storyFor(settings.storyId);
+      /* Choices are always reshuffled, so the position of the right answer is
+         never a tell and neither is the order they were written in. */
+      const questions = story.questions.map(question => {
+        const indexes = shuffled(question.choices.map((_, i) => i));
+        return {
+          source: question,
+          choices: indexes.map(i => question.choices[i]),
+          answer: indexes.indexOf(question.answer)
+        };
+      });
+
+      return {
+        settings,
+        story,
+        questions,
+        i: 0,
+        locked: false,
+        finished: false,
+        results: questions.map(() => null),
+        assist: questions.map(() => ({ hint: false, lookups: new Set() })),
+        lookedUpWords: new Set(),
+        startedAt: Date.now(),
+        elapsedMs: 0,
+        remaining: settings.timed ? settings.timerLimit : 0,
+        timerId: null
+      };
+    }
+
+    /* -----------------------------------------------------------------------
+       Timer
+    ----------------------------------------------------------------------- */
+    function stopTimer() {
+      if (state && state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function paintTimer() {
+      const chip = $(".timer-chip");
+      if (!state.settings.timed) {
+        chip.classList.add("hidden");
+        return;
+      }
+      chip.classList.remove("hidden");
+      $(".timer-value").textContent = clockText(state.remaining);
+      const low = state.settings.timerMode === "total" ? state.remaining <= 60 : state.remaining <= 10;
+      chip.classList.toggle("is-low", low);
+      chip.querySelector("small").textContent = state.settings.timerMode === "total" ? "Time left" : "This question";
+    }
+
+    function startTimer() {
+      stopTimer();
+      if (!state.settings.timed) return;
+      paintTimer();
+      state.timerId = setInterval(() => {
+        state.remaining -= 1;
+        if (state.remaining > 0) {
+          paintTimer();
+          return;
+        }
+        state.remaining = 0;
+        paintTimer();
+        stopTimer();
+        if (state.settings.timerMode === "total") {
+          finish("Time is up. The exercise stopped when the clock ran out.");
+        } else if (!state.locked && !state.finished) {
+          lockQuestion(-1, true);
+        }
+      }, 1000);
+    }
+
+    /* In whole-exercise mode the clock keeps running between questions. */
+    function resetQuestionTimer() {
+      if (!state.settings.timed) return;
+      if (state.settings.timerMode === "perQuestion") state.remaining = state.settings.timerLimit;
+      startTimer();
+    }
+
+    /* -----------------------------------------------------------------------
+       Live exercise
+    ----------------------------------------------------------------------- */
+    function noteLookup(entry) {
+      if (!state || state.finished) return;
+      state.lookedUpWords.add(entry.id);
+      state.assist[state.i].lookups.add(entry.id);
+      paintAssistStatus();
+    }
+
+    function paintAssistStatus() {
+      const assist = state.assist[state.i];
+      const bits = [];
+      if (assist.hint) bits.push("hint shown");
+      if (assist.lookups.size) bits.push(plural(assist.lookups.size, "word looked up", "words looked up"));
+      const status = $(".assistant-status");
+      if (!bits.length) {
+        status.textContent = "No help used on this question.";
+        return;
+      }
+      status.innerHTML = '<span class="assistance-used">Help used: ' + esc(bits.join(" · ")) + '</span>';
+    }
+
+    function answeredCount() { return state.results.filter(result => result !== null).length; }
+    function correctCount() { return state.results.filter(result => result && result.correct).length; }
+
+    function paintScore() {
+      const done = answeredCount();
+      $(".score").innerHTML = done
+        ? correctCount() + " / " + done + " correct<br><small>" + state.questions.length + " questions</small>"
+        : "Not started";
+    }
+
+    function paintStory() {
+      const story = state.story;
+      const lang = state.settings.storyLang;
+      $(".story-title").innerHTML = render(story.title, lang);
+      $(".story-skill").textContent = story.skill;
+      $(".story-purpose").innerHTML = render(story.purpose, lang);
+      const textEl = $(".story-text");
+      textEl.innerHTML = story.lines
+        .map(line => '<span class="story-line">' + render(line, lang) + '</span>')
+        .join("");
+      bindTokens($(".story-panel"), noteLookup);
+    }
+
+    function showQuestion() {
+      const item = state.questions[state.i];
+      const question = item.source;
+      const lang = state.settings.qaLang;
+      state.locked = false;
+
+      $(".count").textContent = "Question " + (state.i + 1) + " of " + state.questions.length;
+      $(".mode-label").textContent = question.skill;
+
+      const progress = $(".progress");
+      progress.firstElementChild.style.width = Math.round((state.i / state.questions.length) * 100) + "%";
+      progress.setAttribute("aria-valuemax", String(state.questions.length));
+      progress.setAttribute("aria-valuenow", String(state.i));
+
+      $(".prompt-label").textContent = question.skill;
+      const prompt = $(".prompt");
+      prompt.innerHTML = (state.i + 1) + ". " + render(question.q, lang);
+      bindTokens(prompt, noteLookup);
+
+      const list = $(".choice-list");
+      list.innerHTML = item.choices.map((choice, index) =>
+        '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
+        + '<span class="choice-letter">' + LETTERS[index] + '</span>'
+        + '<span class="choice-text">' + render(choice, lang) + '</span>'
+        + '</div>').join("");
+      bindTokens(list, noteLookup);
+      list.querySelectorAll(".choice").forEach(node => {
+        const pick = event => {
+          if (event.target.closest(".vocab-token")) return;
+          if (state.locked || state.finished) return;
+          lockQuestion(Number(node.dataset.choice), false);
+        };
+        node.addEventListener("click", pick);
+        node.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            pick(event);
+          }
+        });
+      });
+
+      $(".prompt-hint-legend").classList.toggle("is-visible", el.querySelector(".live .vocab-token") !== null);
+
+      const hintButton = $(".show-hint");
+      const hintBox = $(".question-hint");
+      hintBox.classList.remove("is-open");
+      hintBox.innerHTML = "";
+      hintButton.disabled = false;
+      hintButton.textContent = "Show hint";
+
+      const feedback = $(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $(".next").classList.add("hidden");
+      paintAssistStatus();
+      paintScore();
+      resetQuestionTimer();
+    }
+
+    function lockQuestion(chosen, ranOutOfTime) {
+      const item = state.questions[state.i];
+      const question = item.source;
+      const lang = state.settings.qaLang;
+      state.locked = true;
+      if (state.settings.timed && state.settings.timerMode === "perQuestion") stopTimer();
+
+      const correct = chosen === item.answer;
+      state.results[state.i] = {
+        chosen,
+        correct,
+        ranOutOfTime: Boolean(ranOutOfTime),
+        assisted: state.assist[state.i].hint || state.assist[state.i].lookups.size > 0
+      };
+
+      $(".choice-list").querySelectorAll(".choice").forEach(node => {
+        const index = Number(node.dataset.choice);
+        node.classList.add("is-locked");
+        node.setAttribute("aria-disabled", "true");
+        if (index === item.answer) node.classList.add("correct");
+        else if (index === chosen) node.classList.add("wrong");
+        else node.classList.add("faded");
+      });
+
+      const answerText = esc(plain(item.choices[item.answer], lang));
+      const why = esc(plain(question.why, lang));
+      const feedback = $(".feedback");
+      if (correct) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = "<strong>맞아요! That&#039;s right.</strong>" + why;
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = "<strong>"
+          + (ranOutOfTime ? "Time is up on this question." : "아니에요. Not quite.")
+          + "</strong>The answer is <em>" + answerText + "</em>. " + why;
+      }
+
+      $(".show-hint").disabled = true;
+      const next = $(".next");
+      next.classList.remove("hidden");
+      next.textContent = state.i + 1 >= state.questions.length ? "See my summary" : "Next question";
+
+      const progress = $(".progress");
+      progress.firstElementChild.style.width = Math.round(((state.i + 1) / state.questions.length) * 100) + "%";
+      progress.setAttribute("aria-valuenow", String(state.i + 1));
+      paintScore();
+    }
+
+    function goNext() {
+      closeAllPopovers();
+      if (state.i + 1 >= state.questions.length) {
+        finish("");
+        return;
+      }
+      state.i += 1;
+      showQuestion();
+      $(".prompt").scrollIntoView({ block: "center" });
+    }
+
+    /* -----------------------------------------------------------------------
+       Summary
+    ----------------------------------------------------------------------- */
+    function finish(note) {
+      stopTimer();
+      closeAllPopovers();
+      state.finished = true;
+      state.elapsedMs = Date.now() - state.startedAt;
+
+      const lang = state.settings.qaLang;
+      const total = state.questions.length;
+      const answered = answeredCount();
+      const right = correctCount();
+      const percent = total ? Math.round((right / total) * 100) : 0;
+      const helped = state.results.filter(result => result && result.assisted).length;
+
+      const skills = new Map();
+      state.questions.forEach((item, index) => {
+        const bucket = skills.get(item.source.skill) || { right: 0, total: 0 };
+        bucket.total += 1;
+        if (state.results[index] && state.results[index].correct) bucket.right += 1;
+        skills.set(item.source.skill, bucket);
+      });
+
+      const reviewHtml = state.questions.map((item, index) => {
+        const result = state.results[index];
+        const wrong = !result || !result.correct;
+        let yours = "<em>not reached</em>";
+        if (result) {
+          yours = result.chosen >= 0
+            ? esc(plain(item.choices[result.chosen], lang))
+            : "<em>no answer</em>";
+        }
+        return '<div class="review-item' + (wrong ? " is-wrong" : "") + '">'
+          + '<span class="review-tag">' + esc(item.source.skill) + '</span>'
+          + '<span class="review-q">' + (index + 1) + ". " + esc(plain(item.source.q, lang)) + '</span>'
+          + '<span class="review-line"><strong>Your answer:</strong> ' + yours + '</span>'
+          + '<span class="review-line"><strong>Correct answer:</strong> '
+          + esc(plain(item.choices[item.answer], lang)) + '</span>'
+          + '<span class="review-line">' + esc(plain(item.source.why, lang)) + '</span>'
+          + (result && result.assisted ? '<span class="review-line"><em>You used help on this one.</em></span>' : "")
+          + '</div>';
+      }).join("");
+
+      const words = [...state.lookedUpWords]
+        .map(id => ReadingVocab.get(id))
+        .filter(Boolean)
+        .sort((a, b) => a.ko.localeCompare(b.ko));
+      const wordsHtml = words.length
+        ? '<div class="word-list">' + words.map(entry =>
+            '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
+            + '<span class="word-ro">' + esc(ReadingVocab.romanize(entry.ko)) + '</span>'
+            + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
+        : "<p>You did not open any word popovers this time.</p>";
+
+      let timeLine;
+      if (!state.settings.timed) {
+        timeLine = clockText(state.elapsedMs / 1000) + " (untimed)";
+      } else if (state.settings.timerMode === "total") {
+        timeLine = clockText(state.elapsedMs / 1000) + " used of " + clockText(state.settings.timerLimit);
+      } else {
+        timeLine = clockText(state.elapsedMs / 1000) + " total · "
+          + clockText(state.settings.timerLimit) + " allowed per question";
+      }
+
+      let message;
+      if (percent === 100) message = "잘했어요! A perfect score. You read every line closely.";
+      else if (percent >= 80) message = "Strong reading. Look at the few you missed and find those lines again.";
+      else if (percent >= 50) message = "A good try. Read the story once more, then run it again.";
+      else message = "Take your time. Read the story out loud first, then answer. The hints point you to the right lines.";
+
+      $(".live").classList.add("hidden");
+      const finishEl = $(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = ''
+        + '<h4>Exercise complete</h4>'
+        + (note ? "<p><strong>" + esc(note) + "</strong></p>" : "")
+        + '<p>' + esc(plain(state.story.title, state.settings.storyLang)) + ' &mdash; ' + esc(message) + '</p>'
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Questions answered</small></div>'
+        + '<div class="summary-tile"><strong>' + helped + '</strong><small>Answered with help</small></div>'
+        + '<div class="summary-tile"><strong>' + state.lookedUpWords.size + '</strong><small>Words looked up</small></div>'
+        + '</div>'
+        + '<div class="info-card"><h4>Time</h4><p>' + esc(timeLine) + '</p></div>'
+        + '<div><h4>How you did by skill</h4><div class="skill-breakdown">'
+        + [...skills.entries()].map(([skill, bucket]) =>
+            '<div class="skill-row"><span>' + esc(skill) + '</span><span>'
+            + bucket.right + " / " + bucket.total + '</span></div>').join("")
+        + '</div></div>'
+        + '<div><h4>Question by question</h4><div class="review">' + reviewHtml + '</div></div>'
+        + '<div><h4>Words you looked up</h4>' + wordsHtml + '</div>'
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Try this story again</button>'
+        + '<button class="btn positive another" type="button">Pick another story</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      finishEl.querySelector(".again").addEventListener("click", () => {
+        begin({ ...state.settings, storyId: state.story.id });
+      });
+      finishEl.querySelector(".another").addEventListener("click", () => {
+        const others = STORIES.filter(story => story.id !== state.story.id);
+        const nextStory = others[Math.floor(Math.random() * others.length)];
+        begin({ ...state.settings, storyId: nextStory.id });
+      });
+      finishEl.querySelector(".change-setup").addEventListener("click", showMenu);
+      finishEl.scrollIntoView({ block: "start" });
+      paintScore();
+    }
+
+    /* -----------------------------------------------------------------------
+       Menu and word bank
+    ----------------------------------------------------------------------- */
+    function showMenu() {
+      stopTimer();
+      closeAllPopovers();
+      $(".live").classList.add("hidden");
+      $(".finish").classList.add("hidden");
+      $(".exercise-menu").classList.remove("hidden");
+      $(".exercise-menu").scrollIntoView({ block: "start" });
+    }
+
+    function begin(settings) {
+      state = buildState(settings);
+      $(".menu-story").value = state.story.id;
+      $(".exercise-menu").classList.add("hidden");
+      $(".finish").classList.add("hidden");
+      $(".live").classList.remove("hidden");
+      paintStory();
+      showQuestion();
+      $(".live").scrollIntoView({ block: "start" });
+    }
+
+    function fillTimerLimits() {
+      const mode = $(".menu-timer-mode").value;
+      $(".menu-timer-limit").innerHTML = TIMER_CHOICES[mode].map(option =>
+        '<option value="' + option.value + '"' + (option.value === DEFAULT_LIMIT[mode] ? " selected" : "")
+        + '>' + esc(option.label) + '</option>').join("");
+    }
+
+    function buildMenu() {
+      $(".menu-story").innerHTML = STORIES.map(story =>
+        '<option value="' + esc(story.id) + '">' + esc(story.title.ko) + " — " + esc(story.title.en) + '</option>'
+      ).join("") + '<option value="random">아무거나 — Surprise me</option>';
+      fillTimerLimits();
+
+      $(".menu-timed").addEventListener("change", event => {
+        $(".timed-fields").classList.toggle("hidden", !event.target.checked);
+      });
+      $(".menu-timer-mode").addEventListener("change", fillTimerLimits);
+
+      $(".begin").addEventListener("click", () => begin(readSettings()));
+
+      $(".preview-story").addEventListener("click", () => {
+        const settings = readSettings();
+        const story = storyFor(settings.storyId);
+        const box = $(".story-preview");
+        box.classList.remove("hidden");
+        box.innerHTML = '<div class="story-panel">'
+          + '<div class="story-panel-head"><h4>' + render(story.title, settings.storyLang) + '</h4>'
+          + '<span class="story-skill">' + esc(story.skill) + '</span></div>'
+          + '<p class="story-purpose">' + render(story.purpose, settings.storyLang) + '</p>'
+          + '<div class="story-text">'
+          + story.lines.map(line => '<span class="story-line">' + render(line, settings.storyLang) + '</span>').join("")
+          + '</div></div>';
+        bindTokens(box, null);
+        $(".menu-story").value = story.id;
+      });
+
+      $(".next").addEventListener("click", goNext);
+
+      $(".show-hint").addEventListener("click", () => {
+        if (!state || state.finished || state.locked) return;
+        const question = state.questions[state.i].source;
+        const lang = state.settings.hintLang;
+        const box = $(".question-hint");
+        box.innerHTML = "<strong>Hint:</strong> " + render(question.hint, lang, { tokens: false });
+        box.classList.add("is-open");
+        $(".show-hint").disabled = true;
+        $(".show-hint").textContent = "Hint shown";
+        state.assist[state.i].hint = true;
+        paintAssistStatus();
+      });
+
+      $(".end-early").addEventListener("click", () => {
+        if (!state || state.finished) return;
+        finish("You ended the exercise early. Questions you did not reach are not counted as correct.");
+      });
+    }
+
+    /* -----------------------------------------------------------------------
+       Word bank: grouped tables, blurring, and star ratings
+    ----------------------------------------------------------------------- */
+    const FAMILIARITY_KEY = "koreanReadingFamiliarity:v1";
+    const RATING_LABELS = ["Not rated", "Learning", "Developing", "Familiar"];
+    let familiarity = {};
+    try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
+    function ratingOf(id) { return Math.max(0, Math.min(3, Number(familiarity[id]) || 0)); }
+    function saveFamiliarity() {
+      try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
+    }
+
+    function buildWordBank() {
+      const host = document.getElementById("wordbankGroups");
+      const counter = document.getElementById("wordbankCount");
+      const search = document.getElementById("wordbankSearch");
+      const total = ReadingVocab.WORDS.length;
+
+      host.innerHTML = '<div class="vocab-category-stack">' + ReadingVocab.GROUPS.map(group => {
+        const words = ReadingVocab.WORDS
+          .filter(entry => entry.group === group.id)
+          .sort((a, b) => a.ko.localeCompare(b.ko, "ko"));
+        const rows = words.map(entry => {
+          const ro = ReadingVocab.romanize(entry.ko);
+          const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.pos + " " + group.label).toLowerCase();
+          return '<tr data-search="' + esc(haystack) + '">'
+            + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
+            + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
+            + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
+            + '<td>' + esc(entry.pos) + '</td>'
+            + '<td class="familiarity-cell">'
+            + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group" aria-label="Familiarity rating for ' + esc(entry.ko) + '">'
+            + [1, 2, 3].map(level => '<button class="familiarity-star" type="button" data-level="' + level
+                + '" aria-pressed="false" aria-label="Mark ' + level + ' of 3">★</button>').join("")
+            + '</div><span class="familiarity-label">Not rated</span></td></tr>';
+        }).join("");
+        return '<details class="vocab-category" data-group="' + esc(group.id) + '" open>'
+          + '<summary><span>' + esc(group.label)
+          + '<span class="vocab-category-count">' + plural(words.length, "word", "words") + '</span></span></summary>'
+          + '<div class="table-wrap"><table><thead><tr><th>English</th><th>Romanization</th><th>Korean</th>'
+          + '<th>Part of speech</th><th>Familiarity</th></tr></thead><tbody>' + rows + '</tbody></table></div></details>';
+      }).join("") + '</div>';
+
+      counter.textContent = plural(total, "word", "words");
+
+      /* Search hides rows and collapses groups that end up empty. */
+      search.addEventListener("input", () => {
+        const term = search.value.trim().toLowerCase();
+        let shown = 0;
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          let visible = 0;
+          section.querySelectorAll("tbody tr").forEach(row => {
+            const match = !term || row.dataset.search.includes(term);
+            row.hidden = !match;
+            if (match) visible += 1;
+          });
+          section.hidden = Boolean(term) && visible === 0;
+          if (term && visible) section.open = true;
+          shown += visible;
+        });
+        counter.textContent = term ? shown + " of " + total + " words" : plural(total, "word", "words");
+      });
+
+      /* Blur a whole column, then click a cell to peek at just that one. */
+      document.querySelectorAll("[data-blur-field]").forEach(button => {
+        button.addEventListener("click", () => {
+          const field = button.dataset.blurField;
+          const on = button.getAttribute("aria-pressed") !== "true";
+          button.setAttribute("aria-pressed", String(on));
+          host.querySelectorAll('[data-vocab-field="' + field + '"]').forEach(cell => {
+            cell.classList.toggle("is-blurred", on);
+            cell.classList.remove("is-peeking");
+          });
+        });
+      });
+
+      const peek = cell => {
+        if (!cell || !cell.classList.contains("is-blurred")) return;
+        cell.classList.toggle("is-peeking");
+      };
+      host.addEventListener("click", event => peek(event.target.closest("[data-vocab-field]")));
+      host.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const cell = event.target.closest("[data-vocab-field]");
+        if (!cell || !cell.classList.contains("is-blurred")) return;
+        event.preventDefault();
+        peek(cell);
+      });
+
+      const paintRating = (group, level) => {
+        const safe = Math.max(0, Math.min(3, Number(level) || 0));
+        group.dataset.level = String(safe);
+        group.querySelectorAll(".familiarity-star").forEach(button =>
+          button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
+        const label = group.parentElement.querySelector(".familiarity-label");
+        if (label) label.textContent = RATING_LABELS[safe];
+      };
+      host.querySelectorAll(".familiarity-stars").forEach(group => {
+        paintRating(group, ratingOf(group.dataset.wordId));
+        group.addEventListener("click", event => {
+          const button = event.target.closest(".familiarity-star");
+          if (!button) return;
+          const chosen = Number(button.dataset.level) || 0;
+          const next = Number(group.dataset.level) === chosen ? 0 : chosen;
+          if (next) familiarity[group.dataset.wordId] = next;
+          else delete familiarity[group.dataset.wordId];
+          saveFamiliarity();
+          paintRating(group, next);
+        });
+      });
+
+      repaintRatings = () => host.querySelectorAll(".familiarity-stars")
+        .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+    }
+    let repaintRatings = () => {};
+
+    /* -----------------------------------------------------------------------
+       Vocabulary test
+    ----------------------------------------------------------------------- */
+    const vEl = document.getElementById("vocabExercise");
+    const $v = selector => vEl.querySelector(selector);
+    let vocabState = null;
+
+    function wordIn(entry, lang) {
+      if (lang === "en") return entry.en;
+      if (lang === "ro") return ReadingVocab.romanize(entry.ko);
+      return entry.ko;
+    }
+
+    /* Typed answers are checked loosely: spacing and syllable dashes are
+       ignored, and an English gloss accepts any of its alternatives. */
+    function normalizeAnswer(text, lang) {
+      const value = String(text || "").trim().toLowerCase();
+      if (lang === "ko") return value.replace(/\s+/g, "");
+      if (lang === "ro") return value.replace(/[\s\-]+/g, "");
+      return value.replace(/[.!?]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function acceptedAnswers(entry, lang) {
+      if (lang === "ko") return [entry.ko];
+      if (lang === "ro") return [ReadingVocab.romanize(entry.ko)];
+      const parts = entry.en.split(/[,/]/)
+        .map(part => part.replace(/\([^)]*\)/g, "").trim())
+        .filter(Boolean);
+      const all = new Set([entry.en.replace(/\([^)]*\)/g, "").trim(), ...parts]);
+      [...all].forEach(item => {
+        const stripped = item.replace(/^(to|a|an|the)\s+/i, "").trim();
+        if (stripped) all.add(stripped);
+      });
+      return [...all];
+    }
+
+    function checkTyped(entry, lang, input) {
+      const given = normalizeAnswer(input, lang);
+      if (!given) return false;
+      return acceptedAnswers(entry, lang).some(answer => normalizeAnswer(answer, lang) === given);
+    }
+
+    function readVocabSettings() {
+      return {
+        groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
+        weakOnly: $v(".menu-weak").checked,
+        mode: $v(".menu-mode").value,
+        count: Math.max(1, Math.min(100, Number($v(".menu-count").value) || 15)),
+        promptLang: $v(".menu-prompt-lang").value,
+        answerLang: $v(".menu-answer-lang").value
+      };
+    }
+
+    function vocabPool(settings) {
+      const groups = new Set(settings.groups);
+      return ReadingVocab.WORDS.filter(entry => {
+        if (!groups.has(entry.group)) return false;
+        if (!settings.weakOnly) return true;
+        const rating = ratingOf(entry.id);
+        return rating === 1 || rating === 2;
+      });
+    }
+
+    function paintPoolNote() {
+      const settings = readVocabSettings();
+      const note = $v(".vocab-pool-note");
+      if (settings.promptLang === settings.answerLang) {
+        note.innerHTML = '<span class="assistance-used">Pick different scripts for the question and the answer.</span>';
+        return;
+      }
+      const size = vocabPool(settings).length;
+      note.textContent = size
+        ? plural(size, "word", "words") + " in your selection."
+        : "No words match your selection yet.";
+    }
+
+    function buildVocabTest() {
+      document.getElementById("vocabGroupGrid").innerHTML = ReadingVocab.GROUPS.map(group => {
+        const size = ReadingVocab.WORDS.filter(entry => entry.group === group.id).length;
+        return '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
+          + esc(group.id) + '" checked><span>' + esc(group.label)
+          + '<small>' + plural(size, "word", "words") + '</small></span></label>';
+      }).join("");
+
+      vEl.querySelector(".exercise-menu").addEventListener("change", paintPoolNote);
+      $v(".select-all").addEventListener("click", () => {
+        vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = true; });
+        paintPoolNote();
+      });
+      $v(".select-none").addEventListener("click", () => {
+        vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = false; });
+        paintPoolNote();
+      });
+      $v(".begin").addEventListener("click", startVocabTest);
+      $v(".next").addEventListener("click", nextVocabQuestion);
+      $v(".end-early").addEventListener("click", () => {
+        if (!vocabState || vocabState.finished) return;
+        finishVocabTest("You ended the test early.");
+      });
+      paintPoolNote();
+    }
+
+    function startVocabTest() {
+      const settings = readVocabSettings();
+      if (settings.promptLang === settings.answerLang) {
+        paintPoolNote();
+        return;
+      }
+      const pool = vocabPool(settings);
+      if (!pool.length) {
+        paintPoolNote();
+        return;
+      }
+      const picked = shuffled(pool).slice(0, Math.min(settings.count, pool.length));
+      vocabState = {
+        settings,
+        pool,
+        words: picked,
+        i: 0,
+        locked: false,
+        finished: false,
+        results: picked.map(() => null)
+      };
+      $v(".exercise-menu").classList.add("hidden");
+      $v(".finish").classList.add("hidden");
+      $v(".live").classList.remove("hidden");
+      $v(".vocab-direction").textContent = "Question in " + settings.promptLang.toUpperCase()
+        + " · answer in " + settings.answerLang.toUpperCase();
+      showVocabQuestion();
+      vEl.scrollIntoView({ block: "start" });
+    }
+
+    function paintVocabScore() {
+      const done = vocabState.results.filter(result => result !== null).length;
+      const right = vocabState.results.filter(result => result && result.correct).length;
+      $v(".score").innerHTML = done
+        ? right + " / " + done + " correct<br><small>" + vocabState.words.length + " words</small>"
+        : "Not started";
+    }
+
+    function showVocabQuestion() {
+      const settings = vocabState.settings;
+      const entry = vocabState.words[vocabState.i];
+      vocabState.locked = false;
+
+      $v(".count").textContent = "Word " + (vocabState.i + 1) + " of " + vocabState.words.length;
+      $v(".mode-label").textContent = entry.groupLabel;
+      const progress = $v(".progress");
+      progress.firstElementChild.style.width =
+        Math.round((vocabState.i / vocabState.words.length) * 100) + "%";
+      progress.setAttribute("aria-valuemax", String(vocabState.words.length));
+      progress.setAttribute("aria-valuenow", String(vocabState.i));
+
+      $v(".prompt-label").textContent = settings.mode === "mc"
+        ? "Choose the matching word"
+        : "Type the answer";
+      $v(".prompt").textContent = wordIn(entry, settings.promptLang);
+
+      const zone = $v(".zone");
+      if (settings.mode === "mc") {
+        const others = shuffled(vocabState.pool.filter(item => item.id !== entry.id)).slice(0, 3);
+        const options = shuffled([entry, ...others]);
+        vocabState.options = options;
+        zone.innerHTML = '<div class="choice-list">' + options.map((option, index) =>
+          '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
+          + '<span class="choice-letter">' + LETTERS[index] + '</span>'
+          + '<span class="choice-text">' + esc(wordIn(option, settings.answerLang)) + '</span></div>').join("")
+          + '</div>';
+        zone.querySelectorAll(".choice").forEach(node => {
+          const pick = () => {
+            if (vocabState.locked || vocabState.finished) return;
+            lockVocabQuestion(options[Number(node.dataset.choice)].id === entry.id,
+              wordIn(options[Number(node.dataset.choice)], settings.answerLang));
+          };
+          node.addEventListener("click", pick);
+          node.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); pick(); }
+          });
+        });
+      } else {
+        zone.innerHTML = '<div class="answer-row">'
+          + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
+          + 'placeholder="' + esc(settings.answerLang === "en" ? "English" : (settings.answerLang === "ro" ? "Romanization" : "한국어")) + '">'
+          + '<button class="btn primary submit" type="button">Check</button></div>';
+        const input = zone.querySelector(".answer-input");
+        const submit = () => {
+          if (vocabState.locked || vocabState.finished) return;
+          lockVocabQuestion(checkTyped(entry, settings.answerLang, input.value), input.value.trim());
+        };
+        zone.querySelector(".submit").addEventListener("click", submit);
+        input.addEventListener("keydown", event => {
+          if (event.key === "Enter") { event.preventDefault(); submit(); }
+        });
+        input.focus({ preventScroll: true });
+      }
+
+      const feedback = $v(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $v(".next").classList.add("hidden");
+      paintVocabScore();
+    }
+
+    function lockVocabQuestion(correct, given) {
+      const settings = vocabState.settings;
+      const entry = vocabState.words[vocabState.i];
+      vocabState.locked = true;
+      vocabState.results[vocabState.i] = { correct, given: given || "" };
+
+      if (settings.mode === "mc") {
+        $v(".zone").querySelectorAll(".choice").forEach((node, index) => {
+          node.classList.add("is-locked");
+          node.setAttribute("aria-disabled", "true");
+          const option = vocabState.options[index];
+          if (option.id === entry.id) node.classList.add("correct");
+          else if (wordIn(option, settings.answerLang) === given && !correct) node.classList.add("wrong");
+          else node.classList.add("faded");
+        });
+      } else {
+        const input = $v(".answer-input");
+        if (input) input.disabled = true;
+        const submit = $v(".submit");
+        if (submit) submit.disabled = true;
+      }
+
+      const full = esc(entry.ko) + " · " + esc(ReadingVocab.romanize(entry.ko)) + " · " + esc(entry.en);
+      const feedback = $v(".feedback");
+      feedback.className = "feedback " + (correct ? "good" : "bad");
+      feedback.innerHTML = (correct ? "<strong>맞아요!</strong>" : "<strong>아니에요.</strong>")
+        + (correct ? "" : "Answer: <em>" + esc(wordIn(entry, settings.answerLang)) + "</em>. ")
+        + full + "<br><small>" + esc(entry.usage) + "</small>";
+
+      const next = $v(".next");
+      next.classList.remove("hidden");
+      next.textContent = vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word";
+
+      const progress = $v(".progress");
+      progress.firstElementChild.style.width =
+        Math.round(((vocabState.i + 1) / vocabState.words.length) * 100) + "%";
+      progress.setAttribute("aria-valuenow", String(vocabState.i + 1));
+      paintVocabScore();
+    }
+
+    function nextVocabQuestion() {
+      if (vocabState.i + 1 >= vocabState.words.length) {
+        finishVocabTest("");
+        return;
+      }
+      vocabState.i += 1;
+      showVocabQuestion();
+    }
+
+    function finishVocabTest(note) {
+      vocabState.finished = true;
+      const total = vocabState.words.length;
+      const answered = vocabState.results.filter(result => result !== null).length;
+      const right = vocabState.results.filter(result => result && result.correct).length;
+      const percent = total ? Math.round((right / total) * 100) : 0;
+      const missed = vocabState.words.filter((entry, index) =>
+        !vocabState.results[index] || !vocabState.results[index].correct);
+
+      const missedHtml = missed.length
+        ? '<div class="word-list">' + missed.map(entry =>
+            '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
+            + '<span class="word-ro">' + esc(ReadingVocab.romanize(entry.ko)) + '</span>'
+            + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
+          + '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
+          + 'Rate these ' + missed.length + ' as Learning</button></div>'
+        : "<p>Nothing missed. 잘했어요!</p>";
+
+      $v(".live").classList.add("hidden");
+      const finishEl = $v(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = '<h4>Vocabulary test complete</h4>'
+        + (note ? "<p><strong>" + esc(note) + "</strong></p>" : "")
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Words answered</small></div>'
+        + '</div>'
+        + '<div><h4>Words to review</h4>' + missedHtml + '</div>'
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Test again</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      const markWeak = finishEl.querySelector(".mark-weak");
+      if (markWeak) {
+        markWeak.addEventListener("click", () => {
+          missed.forEach(entry => { familiarity[entry.id] = 1; });
+          saveFamiliarity();
+          repaintRatings();
+          markWeak.disabled = true;
+          markWeak.textContent = "Rated as Learning";
+        });
+      }
+      finishEl.querySelector(".again").addEventListener("click", startVocabTest);
+      finishEl.querySelector(".change-setup").addEventListener("click", () => {
+        $v(".live").classList.add("hidden");
+        $v(".finish").classList.add("hidden");
+        $v(".exercise-menu").classList.remove("hidden");
+        paintPoolNote();
+      });
+      paintVocabScore();
+    }
+
+    buildMenu();
+    buildWordBank();
+    buildVocabTest();
+  })();
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
+      });
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+    })();
+  </script>
+
+</body>
+</html>

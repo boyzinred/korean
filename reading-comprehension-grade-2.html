@@ -1,0 +1,3585 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Korean Reading Comprehension &middot; Grade 2</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --light-background: #28468A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #BCE0E6;
+  --light-primary-hover: #ADC6CB;
+  --light-secondary: #AD8FE6;
+  --light-secondary-soft: #8E7EBF;
+  --light-accent: #C74E33;
+  --light-accent-soft: #A24B36;
+  --light-muted: #A0E090;
+  --light-muted-strong: #99C588;
+  --light-blue-soft: #6375CF;
+  --light-border: #6674C8;
+  --light-subtle: #DEEAAE;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #F5F5F5;
+  --surface-text: #28468A;
+  --surface-muted: #E8ECF4;
+  --inverse: #20386E;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #EFF6FF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #111827;
+  --light-foreground: #F9FAFB;
+  --light-primary: #6CC2D0;
+  --light-primary-hover: #6CC0D0;
+  --light-secondary: #8B61DC;
+  --light-secondary-soft: #201933;
+  --light-accent: #E29D8D;
+  --light-accent-soft: #391B13;
+  --light-muted: #1F2937;
+  --light-muted-strong: #374151;
+  --light-blue-soft: #12193B;
+  --light-border: #374151;
+  --light-subtle: #CBD5E1;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #1F2937;
+  --surface-text: #F9FAFB;
+  --surface-muted: #111827;
+  --inverse: #0F172A;
+  --inverse-text: #F9FAFB;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.hidden { display: none !important; }
+
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero { color: var(--hero-heading); background: var(--background); }
+.hero-inner { padding: clamp(48px, 7vw, 82px); }
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.02em;
+}
+.hero p { max-width: 62ch; margin: 24px 0 0; color: var(--hero-text); font-size: 1.05rem; }
+
+.section { scroll-margin-top: 18px; border-bottom: 1px solid var(--border); }
+details.section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: #192B5D;
+  background: var(--secondary);
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  cursor: pointer;
+  list-style: none;
+}
+details.section:nth-of-type(2) > summary { background: var(--primary); }
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 4px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after { content: "Expand"; }
+.section-body {
+  display: grid;
+  gap: 22px;
+  padding: clamp(26px, 5vw, 64px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.info-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+html[data-theme="light"] .info-card { color: #F5F5F5; }
+.info-card h4 { margin: 0 0 8px; font-size: 1.15rem; }
+.info-card p { margin: 0; }
+
+.wordbank-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.wordbank-tools input { max-width: 320px; }
+.wordbank-count { font-size: .86rem; font-weight: 800; opacity: .78; }
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.blur-toggle:hover { transform: scale(1.04); }
+.blur-toggle[aria-pressed="true"] { color: #192B5D; background: var(--primary); }
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--inverse-text);
+  background: var(--inverse);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td .roman { opacity: .78; }
+
+.is-blurred .blur-target { filter: blur(7px); user-select: none; }
+.is-blurred { cursor: pointer; }
+.is-blurred.is-peeking .blur-target { filter: none; user-select: auto; }
+
+.vocab-category-stack { display: grid; gap: 14px; }
+.vocab-category {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-category > summary {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.vocab-category > summary::-webkit-details-marker { display: none; }
+.vocab-category > summary::after {
+  content: '−';
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+}
+.vocab-category:not([open]) > summary::after { content: '+'; }
+.vocab-category-count {
+  display: block;
+  margin-top: 2px;
+  color: var(--subtle);
+  font-size: .76rem;
+  font-weight: 700;
+}
+html[data-theme="light"] .vocab-category > summary .vocab-category-count { color: #FFFFFF; opacity: 1; }
+.vocab-category .table-wrap { border: 0; border-radius: 0; }
+.vocab-category table { min-width: 720px; }
+
+.familiarity-cell { min-width: 176px; }
+.familiarity-stars {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.3rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
+.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
+.familiarity-label { display: block; margin-top: 5px; font-size: .72rem; font-weight: 800; }
+
+.group-picker {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.group-picker legend {
+  padding: 0 8px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.group-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.answer-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.answer-input:focus { background: var(--surface); border-color: var(--primary); }
+.word-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.word-card { padding: 12px 14px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.word-card .word-ko { display: block; font-size: 1.1rem; font-weight: 800; }
+.word-card .word-ro { display: block; font-size: .8rem; font-weight: 700; opacity: .72; }
+.word-card .word-en { display: block; margin-top: 2px; font-size: .86rem; }
+
+.exercise {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy { padding: 24px 28px; }
+.exercise-kicker,
+.prompt-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p { margin: 10px 0 0; color: var(--subtle); }
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #192B5D;
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+  text-align: center;
+}
+.exercise-body { padding: clamp(24px, 4vw, 38px); }
+
+.exercise-menu { display: grid; gap: 20px; }
+.exercise-menu h4 { margin: 0; font-size: 1.45rem; }
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu-grid label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-grid label > * { width: 100%; height: 56px; min-width: 0; }
+.exercise-menu-grid .wide { grid-column: span 2; }
+.option-stack { display: grid; gap: 8px; }
+.exercise-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.exercise-option input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  padding: 0;
+}
+.exercise-option small { display: block; font-weight: 600; opacity: .74; }
+.timed-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.timed-fields label {
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+input, select {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus, select:focus { background: var(--surface); border-color: var(--primary); }
+input:disabled, select:disabled { color: var(--subtle); background: var(--muted-strong); cursor: not-allowed; }
+
+.btn {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled) { transform: scale(1.04); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn.primary { color: #192B5D; background: var(--primary); }
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn.positive { color: #192B5D; background: var(--secondary); }
+.btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
+.btn.warning { color: #FFFFFF; background: var(--accent); }
+.btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
+
+.runtime-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.timer-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.timer-chip.is-low { color: #FFFFFF; background: var(--accent); }
+.timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+.progress { height: 12px; overflow: hidden; background: var(--muted-strong); }
+.progress > div { height: 100%; background: var(--secondary); transition: width 200ms ease; }
+
+.story-panel {
+  margin: 20px 0;
+  padding: 22px;
+  background: var(--surface-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.story-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.story-panel-head h4 { margin: 0; font-size: 1.35rem; letter-spacing: -.01em; }
+.story-skill {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.story-purpose { margin: 0 0 14px; font-size: .92rem; font-weight: 700; opacity: .82; }
+.story-connect {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-left: 6px solid var(--secondary);
+  border-radius: var(--radius-md);
+  font-size: .9rem;
+  font-weight: 700;
+}
+.story-connect::before {
+  content: "생각해 보세요 · Make connections";
+  display: block;
+  margin-bottom: 4px;
+  font-size: .66rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+.story-text {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  font-size: clamp(1.1rem, 2vw, 1.32rem);
+  font-weight: 600;
+  line-height: 2;
+}
+.story-line { display: block; }
+
+.prompt {
+  margin: 8px 0 6px;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.8;
+}
+.prompt-hint-legend {
+  display: none;
+  margin: 0 0 16px;
+  font-size: .82rem;
+  font-weight: 800;
+  opacity: .76;
+}
+.prompt-hint-legend.is-visible { display: block; }
+
+.choice-list { display: grid; gap: 10px; }
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  line-height: 1.9;
+  text-align: left;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.choice:hover:not(.is-locked) { color: #192B5D; background: var(--primary); transform: scale(1.01); }
+.choice.is-locked { cursor: default; }
+.choice-letter {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .85rem;
+  font-weight: 800;
+}
+.choice-text { min-width: 0; }
+.choice.correct { color: #FFFFFF; background: var(--secondary); border-color: var(--secondary); }
+.choice.correct .choice-letter { color: #192B5D; }
+.choice.wrong { color: #FFFFFF; background: var(--accent); border-color: var(--accent); }
+.choice.wrong .choice-letter { color: #192B5D; }
+.choice.faded { opacity: .55; }
+
+.hint-row { display: grid; gap: 8px; margin: 16px 0; }
+.question-hint {
+  display: none;
+  padding: 14px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+.question-hint.is-open { display: block; }
+.assistant-status { margin: 0; font-size: .84rem; font-weight: 800; }
+.assistance-used {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  color: #192B5D;
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+}
+.feedback strong { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+.feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
+.feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
+html[data-theme="light"] .feedback { color: #FFFFFF; }
+.next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+.finish { display: grid; gap: 20px; }
+.finish h4 { margin: 0; font-size: 1.6rem; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+.summary-tile { padding: 16px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.summary-tile strong { display: block; font-size: 1.8rem; line-height: 1.1; }
+.summary-tile small {
+  display: block;
+  margin-top: 4px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .78;
+}
+.review { display: grid; gap: 10px; }
+.review-item {
+  padding: 14px 16px;
+  background: var(--surface-muted);
+  border-left: 8px solid var(--secondary);
+  border-radius: var(--radius-md);
+  font-size: .92rem;
+}
+.review-item.is-wrong { border-left-color: var(--accent); }
+.review-item .review-q { display: block; font-weight: 800; margin-bottom: 6px; }
+.review-item .review-line { display: block; opacity: .86; }
+.review-tag {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  background: var(--surface);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.skill-breakdown { display: grid; gap: 8px; }
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.finish-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.vocab-token {
+  position: relative;
+  display: inline-block;
+  border-bottom: 4px solid var(--accent);
+  border-radius: 2px;
+  cursor: pointer;
+  line-height: 1.08;
+  outline: none;
+}
+.vocab-token::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 7px;
+}
+.vocab-token:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; }
+.vocab-popover {
+  --arrow-left: 50%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  isolation: isolate;
+  width: min(340px, calc(100vw - 24px));
+  max-height: min(70vh, 520px);
+  display: none;
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 54px rgba(15,23,42,.38);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.42;
+  text-align: left;
+  white-space: normal;
+  cursor: default;
+}
+.vocab-popover::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left);
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
+}
+.vocab-token.is-pinned > .vocab-popover { display: grid; }
+.vocab-popover-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.vocab-popover-heading strong { font-size: .82rem; }
+.vocab-popover-heading small { opacity: .68; }
+.hint-content .roman { opacity: .75; }
+.hint-content em { opacity: .7; }
+.popover-close-btn {
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-text);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: var(--transition);
+}
+.popover-close-btn:hover { color: var(--accent); background: var(--surface-muted); }
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
+.hint-step {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-weight: 800;
+}
+.hint-step:hover, .hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
+.hint-step.is-open { color: #192B5D; background: var(--primary); border-color: var(--primary); }
+.hint-content {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: 7px;
+  padding: 10px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.42;
+}
+.hint-content.is-open { display: block; }
+
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
+.utility-button.top { background: var(--accent); }
+
+@media (max-width: 1000px) {
+  .exercise-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .exercise-menu-grid .wide { grid-column: span 2; }
+}
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner, .page-main { width: 100%; }
+  .header-inner { min-height: 60px; padding: 0 14px; }
+  .page-main { margin-top: 0; border-radius: 0; }
+  .hero-inner { padding: 48px 22px; }
+  details.section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after { width: 100%; }
+  .section-body, .exercise-body { padding: 22px; }
+  .exercise-menu-grid, .timed-fields { grid-template-columns: 1fr; }
+  .exercise-menu-grid .wide { grid-column: span 1; }
+  .btn { width: 100%; }
+  .btn.small { width: auto; }
+  .exercise-menu-actions .btn, .finish-actions .btn { width: 100%; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
+}
+
+  </style>
+</head>
+<body id="top">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">Korean Reading Comprehension &middot; Grade 2</p>
+        <h1 id="page-title">깊이 읽고 답해요</h1>
+        <p>Ten original grade 2 Korean passages &mdash; longer paragraphs, dialogue, past tense, a folk tale, a fable, and two nonfiction pieces. Each has ten multiple-choice questions with four answers, covering the main idea, the details, the characters, the setting, the order of events, cause and effect, and what is real versus make-believe. Read the passage and the questions in Hangul, in romanization, or in English, and click any underlined word for a three-level popover.</p>
+      </div>
+    </section>
+
+    <details class="section" id="wordbank" open>
+      <summary>Word bank</summary>
+      <div class="section-body">
+        <div class="info-card">
+          <h4>The grade 2 word list</h4>
+          <p>This list lives in <code>shared-vocab/reading-vocab-2.js</code> and holds only the new grade 2 vocabulary. The grade 1 words are loaded underneath it, so anything a passage reuses from the earlier level still opens a popover &mdash; it just does not clutter these tables or the test below. Romanization is generated character by character from the Hangul spelling.</p>
+        </div>
+        <div class="wordbank-tools">
+          <input id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, or English" aria-label="Search the word bank">
+          <button class="blur-toggle" type="button" data-blur-field="english" aria-pressed="false">Blur English</button>
+          <button class="blur-toggle" type="button" data-blur-field="romanization" aria-pressed="false">Blur Romanization</button>
+          <button class="blur-toggle" type="button" data-blur-field="korean" aria-pressed="false">Blur Korean</button>
+          <span class="wordbank-count" id="wordbankCount"></span>
+        </div>
+        <p class="wordbank-count">Blur a column to test yourself, then click any blurred cell to peek at it. Rate a word with the stars and the rating is remembered on this device.</p>
+        <div id="wordbankGroups"></div>
+
+        <article class="exercise" id="vocabExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Word bank</span>
+              <h3>Vocabulary test</h3>
+              <p>Test the groups you choose, in either direction.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="exercise-menu">
+              <h4>Test setup</h4>
+              <p>Pick the groups you want, choose how the question and the answer are written, then begin.</p>
+
+              <fieldset class="group-picker">
+                <legend>Word groups</legend>
+                <div class="group-grid" id="vocabGroupGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small select-all" type="button">Select all</button>
+                  <button class="btn secondary small select-none" type="button">Select none</button>
+                </div>
+                <label class="exercise-option" style="margin-top:12px;">
+                  <input class="menu-weak" type="checkbox">
+                  <span>Only words I rated ★ or ★★<small>Uses the star ratings from the tables above.</small></span>
+                </label>
+              </fieldset>
+
+              <div class="exercise-menu-grid">
+                <label>Mode
+                  <select class="menu-mode">
+                    <option value="mc">Multiple choice</option>
+                    <option value="typed">Typed</option>
+                  </select>
+                </label>
+                <label>Questions
+                  <input class="menu-count" type="number" min="1" max="100" value="15">
+                </label>
+                <label>Question shows
+                  <select class="menu-prompt-lang">
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Answer in
+                  <select class="menu-answer-lang">
+                    <option value="en">English</option>
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin vocabulary test</button>
+              </div>
+              <p class="assistant-status vocab-pool-note"></p>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <span class="wordbank-count vocab-direction"></span>
+                <button class="btn warning small end-early" type="button">End test early</button>
+              </div>
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Test progress" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+
+              <div class="zone"></div>
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">Next word</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+          </div>
+        </article>
+      </div>
+    </details>
+
+    <details class="section" id="exercise" open>
+      <summary>Story exercise</summary>
+      <div class="section-body">
+        <article class="exercise" id="readingExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Multiple choice</span>
+              <h3>Reading comprehension</h3>
+              <p>One passage, ten questions, four answers each.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+
+            <div class="exercise-menu">
+              <h4>Exercise setup</h4>
+              <p>Choose a story and the script you want each part shown in. The story stays on screen the whole time, and the hint popovers are always available.</p>
+
+              <div class="exercise-menu-grid">
+                <label class="wide">Story
+                  <select class="menu-story"></select>
+                </label>
+                <label>Story language
+                  <select class="menu-story-lang">
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Questions &amp; answers
+                  <select class="menu-qa-lang">
+                    <option value="ko">한국어 Korean</option>
+                    <option value="ro">Romanization</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Hints &amp; popovers
+                  <select class="menu-hint-lang">
+                    <option value="en">English</option>
+                    <option value="ro">Romanization</option>
+                    <option value="ko">한국어 Korean</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="option-stack">
+                <label class="exercise-option">
+                  <input class="menu-timed" type="checkbox">
+                  <span>Timed exercise<small>Adds a countdown clock while you answer.</small></span>
+                </label>
+
+                <div class="timed-fields hidden">
+                  <label>Timer style
+                    <select class="menu-timer-mode">
+                      <option value="total">Whole exercise</option>
+                      <option value="perQuestion">Each question</option>
+                    </select>
+                  </label>
+                  <label>Time limit
+                    <select class="menu-timer-limit"></select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin exercise</button>
+                <button class="btn secondary preview-story" type="button">Read the story first</button>
+              </div>
+
+              <section class="story-preview hidden" aria-live="polite"></section>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <div class="timer-chip hidden"><small>Time left</small><span class="timer-value">--:--</span></div>
+                <button class="btn warning small end-early" type="button">End exercise early</button>
+              </div>
+
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="story-panel">
+                <div class="story-panel-head">
+                  <h4 class="story-title"></h4>
+                  <span class="story-skill"></span>
+                </div>
+                <p class="story-purpose"></p>
+                <div class="story-text"></div>
+                <p class="story-connect"></p>
+              </div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+              <p class="prompt-hint-legend">Underlined words have help. Click a word to open its popover, then choose a level.</p>
+
+              <div class="choice-list"></div>
+
+              <div class="hint-row">
+                <div><button class="btn secondary small show-hint" type="button">Show hint</button></div>
+                <div class="question-hint" aria-live="polite"></div>
+                <p class="assistant-status">No help used on this question.</p>
+              </div>
+
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">Next question</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+
+          </div>
+        </article>
+      </div>
+    </details>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+
+  <script src="./shared-vocab/reading-vocab.js?v=3.0.0"></script>
+  <script src="./shared-vocab/reading-vocab-2.js?v=1.0.0"></script>
+  <script>
+  (() => {
+    "use strict";
+
+    /* -----------------------------------------------------------------------
+       STORIES
+       Ten original beginner-level Korean stories written for this page. Every
+       piece of text carries both a Hangul and an English version; romanization
+       is generated from the Hangul at render time, so nothing is stored twice.
+
+       Story fields
+         title / purpose  { ko, en }
+         lines            [{ ko, en }]  one sentence per line
+       Question fields
+         q        { ko, en }
+         choices  [{ ko, en }] three choices, deliberately written to the same
+                  length and shape so the correct one is never the odd one out
+         answer   index of the correct choice (the runtime always reshuffles,
+                  so the stored position never leaks the answer)
+         hint     { ko, en }  points at the line that holds the answer
+         why      { ko, en }  shown with the instant feedback
+         skill    the comprehension skill the question practises
+    ----------------------------------------------------------------------- */
+    const STORIES = [
+      {
+        id: "agisae",
+        skill: "Make connections",
+        title: { ko: "아기 새를 도와준 날", en: "The Day We Helped a Baby Bird" },
+        purpose: { ko: "내가 수아라면 어떻게 했을지 생각하면서 읽어 보세요.", en: "Read the passage. Think about what you would do if you were Sua." },
+        connect: { ko: "내가 동물을 도와준 때는 언제였어요?", en: "A time when I took care of an animal was ..." },
+        lines: [
+          { ko: "토요일 아침이었어요. 수아가 대문을 열었어요. 마당에 아주 작은 아기 새 한 마리가 있었어요.", en: "It was Saturday morning. Sua opened the front gate. In the yard there was one very small baby bird." },
+          { ko: "수아는 새를 가까이에서 보았어요. 새는 움직이지 않았어요. 그때 새가 입을 벌렸어요. \"엄마! 아빠!\" 수아가 소리쳤어요.", en: "Sua looked at the bird up close. The bird did not move. Just then the bird opened its beak. \"Mom! Dad!\" Sua shouted." },
+          { ko: "부모님이 마당으로 나왔어요. 아기 새는 이제 서 있었어요. \"둥지에서 떨어진 것 같구나. 동물 센터에 전화해 볼게.\" 아버지가 말했어요.", en: "Her parents came out to the yard. The baby bird was standing now. \"It seems to have fallen from its nest. I will call the animal centre,\" her father said." },
+          { ko: "잠시 후에 아버지가 돌아왔어요. \"우리가 잘했어. 새를 집 안으로 데려가지 않아서 다행이야. 어미 새가 가까이에서 기다리고 있을 거야.\"", en: "A moment later her father came back. \"We did the right thing. It is lucky we did not take the bird into the house. The mother bird is probably waiting nearby.\"" },
+          { ko: "세 사람은 집으로 들어가서 창밖을 보았어요. \"저기 봐! 어미 새야.\" 수아가 속삭였어요. 큰 새가 아기 새 옆으로 왔어요.", en: "The three of them went into the house and looked out the window. \"Look over there! It is the mother bird,\" Sua whispered. A big bird came over beside the baby bird." },
+          { ko: "잠시 후에 두 마리가 함께 나뭇가지로 날아갔어요. \"정말 다행이야!\" 수아는 아주 기뻤어요.", en: "A moment later the two of them flew away together to a tree branch. \"What a relief!\" Sua was very glad." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 글은 누구에 대한 이야기예요?", en: "Who is this passage about?" },
+            choices: [
+              { ko: "동물을 아끼는 가족", en: "a family who cares about animals" },
+              { ko: "새를 키우는 가족", en: "a family who raises birds" },
+              { ko: "전화를 자주 하는 아버지", en: "a father who often makes calls" },
+              { ko: "창밖을 보는 어머니", en: "a mother who looks out the window" }
+            ], answer: 0,
+            hint: { ko: "글 전체를 생각해 보세요.", en: "Think about the whole passage." },
+            why: { ko: "가족이 함께 아기 새를 걱정하고 도와줬어요.", en: "The whole family worries about the baby bird and helps it." } },
+          { skill: "Recall details",
+            q: { ko: "수아는 새가 살아 있는 것을 어떻게 알았어요?", en: "How does Sua know the bird is alive?" },
+            choices: [
+              { ko: "새가 입을 벌렸어요.", en: "It opened its beak." },
+              { ko: "새가 날개를 폈어요.", en: "It spread its wings." },
+              { ko: "새가 큰 소리를 냈어요.", en: "It made a loud sound." },
+              { ko: "새가 눈을 떴어요.", en: "It opened its eyes." }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "두 번째 문단에 있어요: '그때 새가 입을 벌렸어요.'", en: "Paragraph two says, \"Just then the bird opened its beak.\"" } },
+          { skill: "Setting",
+            q: { ko: "이 이야기는 어디에서 일어나요?", en: "Where does this passage take place?" },
+            choices: [
+              { ko: "수아의 집", en: "at Sua's home" },
+              { ko: "학교 운동장", en: "at the school field" },
+              { ko: "동물 센터", en: "at the animal centre" },
+              { ko: "큰 공원", en: "at a big park" }
+            ], answer: 0,
+            hint: { ko: "대문, 마당, 창밖을 찾아보세요.", en: "Look for the gate, the yard, and the window." },
+            why: { ko: "대문, 마당, 창밖은 모두 수아의 집이에요.", en: "The gate, the yard, and the window are all at Sua's house." } },
+          { skill: "Cause and effect",
+            q: { ko: "아버지는 왜 전화를 했어요?", en: "Why did the father make a call?" },
+            choices: [
+              { ko: "어떻게 해야 하는지 물으려고", en: "to ask what they should do" },
+              { ko: "어머니를 부르려고", en: "to call the mother over" },
+              { ko: "새를 팔려고", en: "to sell the bird" },
+              { ko: "친구를 초대하려고", en: "to invite a friend" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "아버지는 동물 센터에 전화해서 방법을 물었어요.", en: "The father called the animal centre to find out what to do." } },
+          { skill: "Cause and effect",
+            q: { ko: "새를 집 안으로 데려가지 않은 까닭은 무엇이에요?", en: "Why did they not take the bird into the house?" },
+            choices: [
+              { ko: "어미 새가 돌볼 수 있게 하려고", en: "so the mother bird could care for it" },
+              { ko: "집이 너무 좁아서", en: "because the house was too small" },
+              { ko: "새가 너무 시끄러워서", en: "because the bird was too noisy" },
+              { ko: "새를 무서워해서", en: "because they were afraid of the bird" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단에서 아버지의 말을 보세요.", en: "Look at what the father says in paragraph four." },
+            why: { ko: "어미 새가 가까이에서 기다리고 있었어요.", en: "The mother bird was waiting nearby." } },
+          { skill: "Character feelings",
+            q: { ko: "마지막에 수아의 기분은 어때요?", en: "At the end of the passage, Sua is ___." },
+            choices: [
+              { ko: "기뻤어요", en: "glad" },
+              { ko: "슬펐어요", en: "sad" },
+              { ko: "무서웠어요", en: "frightened" },
+              { ko: "걱정했어요", en: "worried" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "마지막 문단에 있어요: '수아는 아주 기뻤어요.'", en: "The last paragraph says Sua was very glad." } },
+          { skill: "Recall details",
+            q: { ko: "아기 새는 어디에서 떨어졌어요?", en: "Where did the baby bird fall from?" },
+            choices: [
+              { ko: "둥지에서", en: "from its nest" },
+              { ko: "나뭇가지에서", en: "from a branch" },
+              { ko: "대문에서", en: "from the gate" },
+              { ko: "창문에서", en: "from the window" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "아버지가 '둥지에서 떨어진 것 같구나'라고 말했어요.", en: "The father says it seems to have fallen from its nest." } },
+          { skill: "Sequence",
+            q: { ko: "두 새는 마지막에 어디로 갔어요?", en: "Where did the two birds go at the end?" },
+            choices: [
+              { ko: "나뭇가지로", en: "to a tree branch" },
+              { ko: "집 안으로", en: "into the house" },
+              { ko: "동물 센터로", en: "to the animal centre" },
+              { ko: "마당으로", en: "into the yard" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "두 마리가 함께 나뭇가지로 날아갔어요.", en: "The two of them flew away together to a branch." } },
+          { skill: "Vocabulary",
+            q: { ko: "'둥지'는 무슨 뜻이에요?", en: "What does 둥지 mean?" },
+            choices: [
+              { ko: "새가 사는 집", en: "the home a bird lives in" },
+              { ko: "새가 먹는 밥", en: "the food a bird eats" },
+              { ko: "새의 날개", en: "the wing of a bird" },
+              { ko: "새의 소리", en: "the sound a bird makes" }
+            ], answer: 0,
+            hint: { ko: "아기 새가 어디에서 떨어졌어요?", en: "Where did the baby bird fall from?" },
+            why: { ko: "둥지는 새가 알을 낳고 사는 집이에요.", en: "A 둥지 is the nest a bird lives in." } },
+          { skill: "Best title",
+            q: { ko: "이 글의 제목으로 알맞은 것은 무엇이에요?", en: "Which is the best title for this passage?" },
+            choices: [
+              { ko: "아기 새를 도와준 날", en: "The Day We Helped a Baby Bird" },
+              { ko: "우리 집 강아지", en: "The Puppy at Our House" },
+              { ko: "눈 오는 아침", en: "A Snowy Morning" },
+              { ko: "제주도 여행", en: "A Trip to Jeju" }
+            ], answer: 0,
+            hint: { ko: "제목은 글 전체를 말해요.", en: "A title tells about the whole passage." },
+            why: { ko: "글 전체가 아기 새를 도와준 하루예요.", en: "The whole passage is one day spent helping a baby bird." } }
+        ]
+      },
+      {
+        id: "nunonachim",
+        skill: "Make connections",
+        title: { ko: "눈 오는 아침", en: "A Snowy Morning" },
+        purpose: { ko: "눈이 오면 어떤 기분일지 생각하면서 읽어 보세요.", en: "Read the passage. Think about how you would feel if it snowed." },
+        connect: { ko: "내가 지호처럼 신났던 때는 언제였어요?", en: "A time when I felt excited like Jiho was ..." },
+        lines: [
+          { ko: "\"모두 일어나! 밤새 눈이 왔어!\" 지호가 큰 소리로 말했어요. 지호의 얼굴에 웃음이 퍼졌어요.", en: "\"Wake up, everyone! It snowed all night!\" Jiho called loudly. A smile spread across Jiho's face." },
+          { ko: "지호는 대문을 열었어요. 찬 바람이 따뜻한 방으로 들어왔어요. 창밖 세상은 하얗고 조용했어요. 마당의 자전거도 하얗게 변했어요. 나무들은 하얀 모자를 쓴 것 같았어요. 온 세상이 반짝였어요.", en: "Jiho opened the front gate. Cold air rushed into the warm room. The world outside the window was white and quiet. Even the bicycle in the yard had turned white. The trees looked as if they were wearing white hats. The whole world sparkled." },
+          { ko: "지호가 외투와 장갑을 챙길 때 동생이 뛰어왔어요. \"눈이다!\" 동생이 소리쳤어요. \"내 목도리 어디 있어?\"", en: "As Jiho was getting his coat and gloves, his younger brother ran in. \"Snow!\" his brother shouted. \"Where is my scarf?\"" },
+          { ko: "\"아침 먹으러 곧 돌아와.\" 어머니가 말했어요.", en: "\"Come back soon for breakfast,\" their mother said." },
+          { ko: "두 아이가 집에 돌아왔을 때 식탁 위에 따뜻한 국이 있었어요. 아이들은 외투를 문 옆에 놓고 앉았어요.", en: "When the two boys came back into the house, there was warm soup on the table. They dropped their coats by the door and sat down." },
+          { ko: "\"고마워요, 엄마!\" 지호가 말했어요. \"썰매 탈 곳을 찾았어요!\" \"이따가 눈사람도 만들 거예요!\" 동생이 말했어요. 어머니가 웃으며 말했어요. \"눈 오는 날만큼 좋은 날은 없지.\"", en: "\"Thanks, Mom!\" Jiho said. \"We found a place to sled!\" \"We are going to make a snowman later too!\" his brother said. Their mother laughed and said, \"There is nothing like a snowy day.\"" }
+        ],
+        questions: [
+          { skill: "Best title",
+            q: { ko: "이 글의 제목으로 알맞은 것은 무엇이에요?", en: "What is the best title for this passage?" },
+            choices: [
+              { ko: "눈 오는 아침", en: "A Snowy Morning" },
+              { ko: "모자를 쓴 나무", en: "Trees with Hats" },
+              { ko: "잃어버린 목도리", en: "The Lost Scarf" },
+              { ko: "따뜻한 국", en: "The Warm Soup" }
+            ], answer: 0,
+            hint: { ko: "제목은 글 전체를 말해요.", en: "A title tells about the whole passage." },
+            why: { ko: "글 전체가 눈이 온 아침의 이야기예요.", en: "The whole passage is about the morning it snowed." } },
+          { skill: "Story elements",
+            q: { ko: "지호에 대해 알맞은 것은 무엇이에요?", en: "Which one is true about Jiho?" },
+            choices: [
+              { ko: "눈을 아주 좋아해요.", en: "He likes snow very much." },
+              { ko: "동생보다 나이가 적어요.", en: "He is younger than his brother." },
+              { ko: "새 썰매를 사고 싶어해요.", en: "He wants to buy a new sled." },
+              { ko: "동생하고 자주 싸워요.", en: "He often fights with his brother." }
+            ], answer: 0,
+            hint: { ko: "지호가 아침에 무엇을 했는지 보세요.", en: "Look at what Jiho does first thing in the morning." },
+            why: { ko: "지호는 웃으면서 모두를 깨우고 밖으로 나갔어요.", en: "Jiho smiles, wakes everyone up, and rushes outside." } },
+          { skill: "Setting",
+            q: { ko: "이 이야기는 어디에서 일어나요?", en: "Where does this passage take place?" },
+            choices: [
+              { ko: "지호가 사는 집", en: "where Jiho lives" },
+              { ko: "지호의 학교", en: "at Jiho's school" },
+              { ko: "할머니 댁", en: "at his grandmother's house" },
+              { ko: "학교 도서관", en: "at the school library" }
+            ], answer: 0,
+            hint: { ko: "대문, 마당, 식탁이 나와요.", en: "The gate, the yard, and the dining table appear." },
+            why: { ko: "모든 일이 지호의 집과 마당에서 일어나요.", en: "Everything happens at Jiho's house and yard." } },
+          { skill: "Real or make-believe",
+            q: { ko: "다음 중 상상인 것은 무엇이에요?", en: "Which of these is make-believe?" },
+            choices: [
+              { ko: "나무가 하얀 모자를 쓴 것", en: "trees wearing white hats" },
+              { ko: "아이가 장갑을 끼는 것", en: "a boy putting on gloves" },
+              { ko: "어머니가 국을 준비하는 것", en: "a mother making soup" },
+              { ko: "아이들이 눈사람을 만드는 것", en: "children making a snowman" }
+            ], answer: 0,
+            hint: { ko: "나무가 정말 모자를 쓸 수 있어요?", en: "Can a tree really wear a hat?" },
+            why: { ko: "나무는 모자를 쓸 수 없어요. 눈이 쌓인 모습을 그렇게 말한 거예요.", en: "Trees cannot wear hats; that is a picture for snow piled on them." } },
+          { skill: "Recall details",
+            q: { ko: "눈은 언제 왔어요?", en: "When did the snow fall?" },
+            choices: [
+              { ko: "밤새 왔어요.", en: "overnight" },
+              { ko: "아침에 왔어요.", en: "in the morning" },
+              { ko: "저녁에 왔어요.", en: "in the evening" },
+              { ko: "점심때 왔어요.", en: "around noon" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "지호가 '밤새 눈이 왔어'라고 말했어요.", en: "Jiho says it snowed all night." } },
+          { skill: "Recall details",
+            q: { ko: "동생은 무엇을 찾았어요?", en: "What was the younger brother looking for?" },
+            choices: [
+              { ko: "목도리", en: "his scarf" },
+              { ko: "장갑", en: "his gloves" },
+              { ko: "썰매", en: "his sled" },
+              { ko: "외투", en: "his coat" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "동생이 '내 목도리 어디 있어?'라고 물었어요.", en: "His brother asks, \"Where is my scarf?\"" } },
+          { skill: "Recall details",
+            q: { ko: "집에 돌아왔을 때 식탁 위에 무엇이 있었어요?", en: "What was on the table when they came back?" },
+            choices: [
+              { ko: "따뜻한 국", en: "warm soup" },
+              { ko: "떡", en: "rice cakes" },
+              { ko: "김치", en: "kimchi" },
+              { ko: "귤", en: "tangerines" }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 문단을 다시 읽어 보세요.", en: "Read the fifth paragraph again." },
+            why: { ko: "다섯 번째 문단에 '식탁 위에 따뜻한 국이 있었어요'라고 나와요.", en: "Paragraph five says there was warm soup on the table." } },
+          { skill: "Cause and effect",
+            q: { ko: "어머니는 아이들에게 무엇을 하라고 했어요?", en: "What did their mother tell the boys to do?" },
+            choices: [
+              { ko: "곧 돌아와서 아침을 먹으라고 했어요.", en: "to come back soon and eat breakfast" },
+              { ko: "눈사람을 만들라고 했어요.", en: "to make a snowman" },
+              { ko: "썰매를 타라고 했어요.", en: "to go sledding" },
+              { ko: "목도리를 찾으라고 했어요.", en: "to find the scarf" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "어머니가 '아침 먹으러 곧 돌아와'라고 말했어요.", en: "Their mother says, \"Come back soon for breakfast.\"" } },
+          { skill: "Vocabulary",
+            q: { ko: "'반짝이다'는 무슨 뜻이에요?", en: "What does 반짝이다 mean?" },
+            choices: [
+              { ko: "빛이 나다", en: "to shine and sparkle" },
+              { ko: "소리가 나다", en: "to make a sound" },
+              { ko: "아주 춥다", en: "to be very cold" },
+              { ko: "천천히 움직이다", en: "to move slowly" }
+            ], answer: 0,
+            hint: { ko: "눈 위에 햇빛이 비치면 어떻게 보여요?", en: "How does snow look when the sun hits it?" },
+            why: { ko: "반짝이다는 빛이 나는 모습을 말해요.", en: "반짝이다 describes something glittering with light." } },
+          { skill: "Character feelings",
+            q: { ko: "두 아이의 기분은 어때요?", en: "How do the two boys feel?" },
+            choices: [
+              { ko: "신났어요", en: "excited" },
+              { ko: "걱정했어요", en: "worried" },
+              { ko: "슬펐어요", en: "sad" },
+              { ko: "무서웠어요", en: "frightened" }
+            ], answer: 0,
+            hint: { ko: "아이들이 무슨 말을 했는지 보세요.", en: "Look at what the boys say." },
+            why: { ko: "웃고 소리치고 썰매와 눈사람 계획을 세워요.", en: "They smile, shout, and plan sledding and a snowman." } }
+        ]
+      },
+      {
+        id: "sejong",
+        skill: "Nonfiction",
+        title: { ko: "세종대왕과 한글", en: "King Sejong and Hangeul" },
+        purpose: { ko: "글자가 없으면 어떨지 생각하면서 읽어 보세요.", en: "Read the passage. Think about what life would be like without letters." },
+        connect: { ko: "내가 새로 배운 글자나 말은 무엇이에요?", en: "A new set of letters or words I learned was ..." },
+        lines: [
+          { ko: "옛날에 한국 사람들은 한자를 썼어요. 한자는 아주 어려웠어요. 그래서 많은 백성이 글을 읽지 못했어요.", en: "Long ago Korean people wrote with Chinese characters. The characters were very difficult. So many of the common people could not read." },
+          { ko: "세종은 조선의 네 번째 임금이었어요. 세종은 백성을 많이 생각했어요. '백성이 쉽게 배울 수 있는 글자가 필요해.' 세종은 이렇게 생각했어요.", en: "Sejong was the fourth king of Joseon. He thought about the common people a great deal. \"The people need letters they can learn easily,\" he thought." },
+          { ko: "세종은 학자들과 함께 새 글자를 만들었어요. 1443년에 그 글자가 완성되었어요. 이름은 훈민정음이었어요. 훈민정음은 '백성을 가르치는 바른 소리'라는 뜻이에요.", en: "Sejong created new letters together with his scholars. The letters were completed in 1443. Their name was Hunminjeongeum. Hunminjeongeum means \"the correct sounds for teaching the people.\"" },
+          { ko: "새 글자는 배우기 아주 쉬웠어요. 그래서 백성들도 며칠 만에 글을 읽고 쓸 수 있었어요.", en: "The new letters were very easy to learn. Because of that, even ordinary people could read and write within a few days." },
+          { ko: "오늘날 우리는 이 글자를 한글이라고 불러요. 한국 사람들은 지금도 한글을 사용해요. 10월 9일은 한글날이에요. 세종대왕은 정말 훌륭한 임금이었어요.", en: "Today we call these letters Hangeul. Korean people still use Hangeul now. October 9th is Hangeul Day. King Sejong was truly a great king." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 글은 무엇에 대한 글이에요?", en: "What is this passage about?" },
+            choices: [
+              { ko: "세종대왕과 한글", en: "King Sejong and Hangeul" },
+              { ko: "조선의 전쟁", en: "the wars of Joseon" },
+              { ko: "한자를 쓰는 방법", en: "how to write Chinese characters" },
+              { ko: "학자들의 생활", en: "the daily life of scholars" }
+            ], answer: 0,
+            hint: { ko: "글 전체를 생각해 보세요.", en: "Think about the whole passage." },
+            why: { ko: "글 전체가 세종이 한글을 만든 이야기예요.", en: "The whole passage is about Sejong creating Hangeul." } },
+          { skill: "Cause and effect",
+            q: { ko: "옛날에 백성들이 글을 읽지 못한 까닭은 무엇이에요?", en: "Why could the common people not read long ago?" },
+            choices: [
+              { ko: "한자가 너무 어려웠기 때문이에요.", en: "because the characters were too difficult" },
+              { ko: "학교가 하나도 없었기 때문이에요.", en: "because there were no schools at all" },
+              { ko: "책이 아주 비쌌기 때문이에요.", en: "because books were very expensive" },
+              { ko: "시간이 전혀 없었기 때문이에요.", en: "because they had no time at all" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "첫 문단에 '한자는 아주 어려웠어요'라고 나와요.", en: "Paragraph one says the characters were very difficult." } },
+          { skill: "Story elements",
+            q: { ko: "세종은 누구였어요?", en: "Who was Sejong?" },
+            choices: [
+              { ko: "조선의 임금", en: "a king of Joseon" },
+              { ko: "유명한 학자", en: "a famous scholar" },
+              { ko: "백성의 선생님", en: "a teacher of the people" },
+              { ko: "중국에서 온 손님", en: "a visitor from China" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "두 번째 문단에 '조선의 네 번째 임금'이라고 나와요.", en: "Paragraph two says he was the fourth king of Joseon." } },
+          { skill: "Recall details",
+            q: { ko: "새 글자의 처음 이름은 무엇이었어요?", en: "What was the first name of the new letters?" },
+            choices: [
+              { ko: "훈민정음", en: "Hunminjeongeum" },
+              { ko: "한글", en: "Hangeul" },
+              { ko: "한자", en: "Hanja" },
+              { ko: "한글날", en: "Hangeul Day" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "세 번째 문단에 '이름은 훈민정음이었어요'라고 나와요.", en: "Paragraph three says the name was Hunminjeongeum." } },
+          { skill: "Vocabulary",
+            q: { ko: "'훈민정음'은 무슨 뜻이에요?", en: "What does Hunminjeongeum mean?" },
+            choices: [
+              { ko: "백성을 가르치는 바른 소리", en: "the correct sounds for teaching the people" },
+              { ko: "임금만 쓰는 특별한 글자", en: "special letters only a king uses" },
+              { ko: "아주 어렵고 오래된 글자", en: "very difficult and very old letters" },
+              { ko: "학자들이 모은 책 이름", en: "the name of a book scholars collected" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단 마지막 문장을 보세요.", en: "Look at the last sentence of paragraph three." },
+            why: { ko: "글에 그 뜻이 그대로 나와 있어요.", en: "The passage gives the meaning directly." } },
+          { skill: "Recall details",
+            q: { ko: "새 글자는 언제 완성되었어요?", en: "When were the new letters completed?" },
+            choices: [
+              { ko: "1443년에", en: "in 1443" },
+              { ko: "1943년에", en: "in 1943" },
+              { ko: "10월 9일에", en: "on October 9th" },
+              { ko: "오늘날에", en: "in modern times" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단에서 연도를 찾아보세요.", en: "Find the year in paragraph three." },
+            why: { ko: "'1443년에 그 글자가 완성되었어요'라고 나와요.", en: "The passage says the letters were completed in 1443." } },
+          { skill: "Cause and effect",
+            q: { ko: "새 글자의 좋은 점은 무엇이었어요?", en: "What was good about the new letters?" },
+            choices: [
+              { ko: "배우기가 아주 쉬웠어요.", en: "They were very easy to learn." },
+              { ko: "글자가 아주 아름다웠어요.", en: "They were very beautiful." },
+              { ko: "한자하고 모양이 같았어요.", en: "They looked just like Chinese characters." },
+              { ko: "학자만 쓸 수 있었어요.", en: "Only scholars could use them." }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "백성들도 며칠 만에 읽고 쓸 수 있었어요.", en: "Even ordinary people could read and write within days." } },
+          { skill: "Recall details",
+            q: { ko: "한글날은 언제예요?", en: "When is Hangeul Day?" },
+            choices: [
+              { ko: "10월 9일", en: "October 9th" },
+              { ko: "10월 19일", en: "October 19th" },
+              { ko: "1월 9일", en: "January 9th" },
+              { ko: "9월 10일", en: "September 10th" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "마지막 문단에 '10월 9일은 한글날이에요'라고 나와요.", en: "The last paragraph says October 9th is Hangeul Day." } },
+          { skill: "Real or make-believe",
+            q: { ko: "이 글은 사실이에요, 상상이에요?", en: "Is this passage fact or make-believe?" },
+            choices: [
+              { ko: "사실이에요.", en: "It is fact." },
+              { ko: "상상이에요.", en: "It is make-believe." },
+              { ko: "옛날이야기예요.", en: "It is a folk tale." },
+              { ko: "노래예요.", en: "It is a song." }
+            ], answer: 0,
+            hint: { ko: "진짜 있었던 사람과 날짜가 나와요.", en: "It names a real person and real dates." },
+            why: { ko: "세종대왕과 한글은 진짜 역사예요.", en: "King Sejong and Hangeul are real history." } },
+          { skill: "Inference",
+            q: { ko: "세종대왕에 대해 알맞은 것은 무엇이에요?", en: "Which one is true about King Sejong?" },
+            choices: [
+              { ko: "백성을 생각한 훌륭한 임금이에요.", en: "He was a great king who thought of his people." },
+              { ko: "전쟁을 아주 좋아한 임금이에요.", en: "He was a king who loved war." },
+              { ko: "글자를 싫어한 임금이에요.", en: "He was a king who disliked letters." },
+              { ko: "중국에서 온 학자예요.", en: "He was a scholar from China." }
+            ], answer: 0,
+            hint: { ko: "세종이 왜 글자를 만들었는지 생각해 보세요.", en: "Think about why Sejong made the letters." },
+            why: { ko: "백성이 쉽게 배우도록 글자를 만들어 줬어요.", en: "He made the letters so ordinary people could learn easily." } }
+        ]
+      },
+      {
+        id: "haewadal",
+        skill: "Folk tale",
+        title: { ko: "해와 달이 된 오누이", en: "The Brother and Sister Who Became the Sun and Moon" },
+        purpose: { ko: "내가 아는 다른 옛날이야기와 비교하면서 읽어 보세요.", en: "Read the passage. Think about how it is like other folk tales you know." },
+        connect: { ko: "내가 아는 다른 옛날이야기는 무엇이에요?", en: "Another folk tale I know is ..." },
+        lines: [
+          { ko: "옛날 옛날에 어머니와 오누이가 살았어요. 어머니는 시장에서 떡을 팔았어요.", en: "Long, long ago a mother lived with her son and daughter. The mother sold rice cakes at the market." },
+          { ko: "어느 날 저녁, 어머니가 집에 오는 길에 호랑이를 만났어요. 호랑이가 말했어요. \"떡 하나 주면 안 잡아먹지.\" 어머니는 떡을 주었어요. 하지만 호랑이는 계속 따라왔어요.", en: "One evening, on her way home, the mother met a tiger. The tiger said, \"Give me one rice cake and I will not eat you.\" The mother gave him a rice cake. But the tiger kept following her." },
+          { ko: "호랑이는 어머니의 옷을 입고 집으로 갔어요. \"얘들아, 엄마다. 문을 열어라.\" 오누이는 문틈으로 손을 보았어요. 그 손에는 털이 있었어요.", en: "The tiger put on the mother's clothes and went to the house. \"Children, it is Mother. Open the door.\" The brother and sister looked at the hand through the crack in the door. The hand had fur on it." },
+          { ko: "\"저건 엄마가 아니야!\" 오누이는 뒷문으로 도망가서 큰 나무 위로 올라갔어요. 호랑이도 나무 위로 올라오기 시작했어요.", en: "\"That is not Mother!\" The two ran away through the back door and climbed a big tree. The tiger began to climb the tree too." },
+          { ko: "오누이는 하늘을 보고 빌었어요. \"하늘님, 저희를 살려 주세요.\" 그때 하늘에서 굵은 동아줄이 내려왔어요. 오누이는 동아줄을 잡고 하늘로 올라갔어요.", en: "The children looked up at the sky and prayed. \"Heaven, please save us.\" Just then a thick rope came down from the sky. They took hold of the rope and rose into the sky." },
+          { ko: "오빠는 해가 되고 동생은 달이 되었어요. 그래서 지금도 하늘에는 해와 달이 있어요.", en: "The brother became the sun and the sister became the moon. That is why the sun and the moon are in the sky even now." }
+        ],
+        questions: [
+          { skill: "Story elements",
+            q: { ko: "이 글은 어떤 종류의 글이에요?", en: "What kind of writing is this passage?" },
+            choices: [
+              { ko: "옛날이야기", en: "a folk tale" },
+              { ko: "사실을 알려 주는 글", en: "a factual report" },
+              { ko: "편지", en: "a letter" },
+              { ko: "일기", en: "a diary entry" }
+            ], answer: 0,
+            hint: { ko: "글이 어떻게 시작해요?", en: "Look at how the passage begins." },
+            why: { ko: "'옛날 옛날에'로 시작하는 옛날이야기예요.", en: "It begins with \"Long, long ago,\" the opening of a folk tale." } },
+          { skill: "Recall details",
+            q: { ko: "호랑이는 어머니에게 무엇을 달라고 했어요?", en: "What did the tiger ask the mother for?" },
+            choices: [
+              { ko: "떡", en: "a rice cake" },
+              { ko: "옷", en: "her clothes" },
+              { ko: "돈", en: "money" },
+              { ko: "김치", en: "kimchi" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "호랑이가 '떡 하나 주면 안 잡아먹지'라고 했어요.", en: "The tiger says, \"Give me one rice cake and I will not eat you.\"" } },
+          { skill: "Inference",
+            q: { ko: "오누이는 어떻게 호랑이인 것을 알았어요?", en: "How did the children know it was the tiger?" },
+            choices: [
+              { ko: "손에 털이 있어서", en: "because the hand had fur on it" },
+              { ko: "목소리가 아주 커서", en: "because the voice was very loud" },
+              { ko: "옷이 달라서", en: "because the clothes were different" },
+              { ko: "문을 세게 두드려서", en: "because it knocked hard on the door" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단 마지막 문장을 보세요.", en: "Look at the last sentence of paragraph three." },
+            why: { ko: "문틈으로 본 손에 털이 있었어요.", en: "The hand they saw through the crack had fur on it." } },
+          { skill: "Sequence",
+            q: { ko: "오누이는 어디로 도망갔어요?", en: "Where did the children run to?" },
+            choices: [
+              { ko: "큰 나무 위로", en: "up a big tree" },
+              { ko: "시장으로", en: "to the market" },
+              { ko: "산 아래로", en: "down the mountain" },
+              { ko: "이웃집으로", en: "to a neighbour's house" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "뒷문으로 도망가서 큰 나무 위로 올라갔어요.", en: "They ran out the back door and climbed a big tree." } },
+          { skill: "Recall details",
+            q: { ko: "하늘에서 무엇이 내려왔어요?", en: "What came down from the sky?" },
+            choices: [
+              { ko: "굵은 동아줄", en: "a thick rope" },
+              { ko: "큰 비", en: "heavy rain" },
+              { ko: "하얀 눈", en: "white snow" },
+              { ko: "긴 사다리", en: "a long ladder" }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 문단을 다시 읽어 보세요.", en: "Read the fifth paragraph again." },
+            why: { ko: "하늘에서 굵은 동아줄이 내려왔어요.", en: "A thick rope came down from the sky." } },
+          { skill: "Recall details",
+            q: { ko: "오빠와 동생은 무엇이 되었어요?", en: "What did the brother and sister become?" },
+            choices: [
+              { ko: "해와 달", en: "the sun and the moon" },
+              { ko: "별과 구름", en: "a star and a cloud" },
+              { ko: "산과 바다", en: "a mountain and the sea" },
+              { ko: "나무와 꽃", en: "a tree and a flower" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "오빠는 해가 되고 동생은 달이 되었어요.", en: "The brother became the sun and the sister the moon." } },
+          { skill: "Real or make-believe",
+            q: { ko: "이 이야기에서 상상인 것은 무엇이에요?", en: "Which of these is make-believe?" },
+            choices: [
+              { ko: "하늘에서 동아줄이 내려온 것", en: "a rope coming down from the sky" },
+              { ko: "어머니가 떡을 판 것", en: "a mother selling rice cakes" },
+              { ko: "아이들이 나무에 올라간 것", en: "children climbing a tree" },
+              { ko: "호랑이가 산에 사는 것", en: "a tiger living on a mountain" }
+            ], answer: 0,
+            hint: { ko: "진짜로 일어날 수 없는 일을 찾아보세요.", en: "Look for the thing that could not really happen." },
+            why: { ko: "하늘에서 동아줄이 내려오는 일은 진짜로 없어요.", en: "A rope coming down from the sky cannot really happen." } },
+          { skill: "Cause and effect",
+            q: { ko: "호랑이는 왜 어머니의 옷을 입었어요?", en: "Why did the tiger put on the mother's clothes?" },
+            choices: [
+              { ko: "오누이를 속이려고", en: "to trick the children" },
+              { ko: "날씨가 추워서", en: "because the weather was cold" },
+              { ko: "옷이 예뻐서", en: "because the clothes were pretty" },
+              { ko: "시장에 가려고", en: "to go to the market" }
+            ], answer: 0,
+            hint: { ko: "호랑이가 문 앞에서 무슨 말을 했어요?", en: "What did the tiger say at the door?" },
+            why: { ko: "호랑이는 엄마인 척하면서 문을 열게 하려고 했어요.", en: "The tiger pretended to be their mother so they would open the door." } },
+          { skill: "Setting",
+            q: { ko: "이 이야기는 언제 일어나요?", en: "When does this passage take place?" },
+            choices: [
+              { ko: "아주 옛날에", en: "long ago" },
+              { ko: "어제", en: "yesterday" },
+              { ko: "작년에", en: "last year" },
+              { ko: "오늘날에", en: "in modern times" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문장을 보세요.", en: "Look at the first sentence." },
+            why: { ko: "'옛날 옛날에'로 시작해요.", en: "It begins with \"Long, long ago.\"" } },
+          { skill: "Main idea",
+            q: { ko: "이 이야기가 설명하는 것은 무엇이에요?", en: "What does this story explain?" },
+            choices: [
+              { ko: "해와 달이 생긴 까닭", en: "how the sun and moon came to be" },
+              { ko: "떡을 만드는 방법", en: "how to make rice cakes" },
+              { ko: "호랑이가 사는 곳", en: "where tigers live" },
+              { ko: "시장에 가는 길", en: "the way to the market" }
+            ], answer: 0,
+            hint: { ko: "마지막 문장을 보세요.", en: "Look at the last sentence." },
+            why: { ko: "'그래서 지금도 하늘에는 해와 달이 있어요'로 끝나요.", en: "It ends by explaining why the sun and moon are in the sky." } }
+        ]
+      },
+      {
+        id: "kimjang",
+        skill: "Sequence",
+        title: { ko: "김치를 담그는 날", en: "The Day We Make Kimchi" },
+        purpose: { ko: "가족과 함께 음식을 만든 때를 생각하면서 읽어 보세요.", en: "Read the passage. Think about a time you made food with your family." },
+        connect: { ko: "내가 가족과 함께 만든 음식은 무엇이에요?", en: "A food I made together with my family was ..." },
+        lines: [
+          { ko: "해마다 겨울이 오기 전에 우리 가족은 김치를 담가요. 이것을 김장이라고 해요.", en: "Every year before winter comes, our family makes kimchi. This is called gimjang." },
+          { ko: "토요일 아침, 할머니께서 큰 배추를 스무 포기 사 오셨어요. 우리는 배추를 반으로 자르고 소금물에 담갔어요. \"배추가 부드러워질 때까지 기다려야 해.\" 할머니께서 말씀하셨어요.", en: "On Saturday morning, my grandmother brought home twenty heads of napa cabbage. We cut the cabbage in half and soaked it in salt water. \"We have to wait until the cabbage goes soft,\" my grandmother said." },
+          { ko: "몇 시간 후에 우리는 양념을 만들었어요. 고춧가루, 마늘, 생강을 함께 섞었어요. 양념은 아주 빨갛고 매웠어요.", en: "A few hours later we made the seasoning. We mixed chilli powder, garlic, and ginger together. The seasoning was very red and very spicy." },
+          { ko: "그다음에 배추 잎 사이사이에 양념을 발랐어요. 제 손도 빨갛게 변했어요. 저는 김치 한 조각을 먹어 보았어요. 맵지만 정말 맛있었어요.", en: "After that we spread the seasoning between the cabbage leaves. My hands turned red too. I tasted one piece of the kimchi. It was spicy, but really delicious." },
+          { ko: "우리는 김치를 큰 항아리에 넣었어요. \"이 김치를 겨울 내내 먹을 거야.\" 어머니께서 웃으며 말씀하셨어요. 김치는 우리 가족에게 가장 중요한 반찬이에요.", en: "We put the kimchi into a big clay jar. \"We will eat this kimchi all winter long,\" my mother said with a smile. Kimchi is the most important side dish for our family." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 글은 무엇에 대한 글이에요?", en: "What is this passage about?" },
+            choices: [
+              { ko: "가족이 김치를 담그는 날", en: "the day a family makes kimchi" },
+              { ko: "시장에서 배추를 파는 날", en: "a day selling cabbage at the market" },
+              { ko: "겨울에 여행을 가는 날", en: "a day taking a winter trip" },
+              { ko: "할머니의 생신 잔치", en: "a grandmother's birthday party" }
+            ], answer: 0,
+            hint: { ko: "글 전체를 생각해 보세요.", en: "Think about the whole passage." },
+            why: { ko: "처음부터 끝까지 김치를 만드는 하루예요.", en: "From start to finish it is one day of making kimchi." } },
+          { skill: "Recall details",
+            q: { ko: "김장은 언제 해요?", en: "When does the family do gimjang?" },
+            choices: [
+              { ko: "겨울이 오기 전에", en: "before winter comes" },
+              { ko: "봄이 시작될 때", en: "when spring starts" },
+              { ko: "여름 한가운데", en: "in the middle of summer" },
+              { ko: "겨울이 끝난 후에", en: "after winter ends" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "'해마다 겨울이 오기 전에'라고 나와요.", en: "The passage says every year before winter comes." } },
+          { skill: "Cause and effect",
+            q: { ko: "배추를 소금물에 담그는 까닭은 무엇이에요?", en: "Why do they soak the cabbage in salt water?" },
+            choices: [
+              { ko: "배추를 부드럽게 하려고", en: "to make the cabbage soft" },
+              { ko: "배추를 빨갛게 하려고", en: "to make the cabbage red" },
+              { ko: "배추를 맵게 하려고", en: "to make the cabbage spicy" },
+              { ko: "배추를 차갑게 하려고", en: "to make the cabbage cold" }
+            ], answer: 0,
+            hint: { ko: "할머니의 말씀을 다시 읽어 보세요.", en: "Read the grandmother's words again." },
+            why: { ko: "할머니께서 '배추가 부드러워질 때까지 기다려야 해'라고 하셨어요.", en: "Grandmother says they must wait until the cabbage goes soft." } },
+          { skill: "Recall details",
+            q: { ko: "양념에 들어가지 않은 것은 무엇이에요?", en: "Which one is NOT in the seasoning?" },
+            choices: [
+              { ko: "설탕", en: "sugar" },
+              { ko: "고춧가루", en: "chilli powder" },
+              { ko: "마늘", en: "garlic" },
+              { ko: "생강", en: "ginger" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단의 재료를 하나씩 보세요.", en: "Check the ingredients in paragraph three one by one." },
+            why: { ko: "글에는 고춧가루, 마늘, 생강만 나와요.", en: "The passage lists only chilli powder, garlic, and ginger." } },
+          { skill: "Recall details",
+            q: { ko: "양념은 어떤 맛이었어요?", en: "What did the seasoning taste like?" },
+            choices: [
+              { ko: "아주 매웠어요.", en: "It was very spicy." },
+              { ko: "아주 달았어요.", en: "It was very sweet." },
+              { ko: "아주 짰어요.", en: "It was very salty." },
+              { ko: "아무 맛도 없었어요.", en: "It had no taste at all." }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단 마지막 문장을 보세요.", en: "Look at the last sentence of paragraph three." },
+            why: { ko: "'양념은 아주 빨갛고 매웠어요'라고 나와요.", en: "The passage says the seasoning was very red and spicy." } },
+          { skill: "Sequence",
+            q: { ko: "김치를 어디에 넣었어요?", en: "Where did they put the kimchi?" },
+            choices: [
+              { ko: "큰 항아리", en: "a big clay jar" },
+              { ko: "작은 접시", en: "a small plate" },
+              { ko: "종이 가방", en: "a paper bag" },
+              { ko: "유리 컵", en: "a glass cup" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "'김치를 큰 항아리에 넣었어요'라고 나와요.", en: "The passage says they put the kimchi in a big clay jar." } },
+          { skill: "Vocabulary",
+            q: { ko: "'반찬'은 무슨 뜻이에요?", en: "What does 반찬 mean?" },
+            choices: [
+              { ko: "밥과 같이 먹는 음식", en: "a dish eaten together with rice" },
+              { ko: "밥을 담는 그릇", en: "a bowl that holds rice" },
+              { ko: "요리를 하는 사람", en: "a person who cooks" },
+              { ko: "음식을 파는 곳", en: "a place that sells food" }
+            ], answer: 0,
+            hint: { ko: "김치를 밥하고 같이 먹어요.", en: "Kimchi is eaten alongside rice." },
+            why: { ko: "반찬은 밥과 함께 먹는 음식이에요.", en: "반찬 is a side dish eaten with rice." } },
+          { skill: "Cause and effect",
+            q: { ko: "글쓴이의 손은 왜 빨갛게 변했어요?", en: "Why did the writer's hands turn red?" },
+            choices: [
+              { ko: "빨간 양념을 발라서", en: "from spreading the red seasoning" },
+              { ko: "날씨가 아주 추워서", en: "because the weather was very cold" },
+              { ko: "물이 너무 뜨거워서", en: "because the water was too hot" },
+              { ko: "배추를 많이 잘라서", en: "from cutting so much cabbage" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "빨간 양념을 배추에 바르다가 손도 빨개졌어요.", en: "The hands turned red while spreading the red seasoning." } },
+          { skill: "Recall details",
+            q: { ko: "할머니께서 사 오신 배추는 몇 포기예요?", en: "How many heads of cabbage did the grandmother buy?" },
+            choices: [
+              { ko: "스무 포기", en: "twenty" },
+              { ko: "열 포기", en: "ten" },
+              { ko: "두 포기", en: "two" },
+              { ko: "백 포기", en: "a hundred" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "'큰 배추를 스무 포기 사 오셨어요'라고 나와요.", en: "The passage says she brought home twenty heads." } },
+          { skill: "Inference",
+            q: { ko: "이 가족에게 김치는 어떤 음식이에요?", en: "What is kimchi to this family?" },
+            choices: [
+              { ko: "가장 중요한 반찬이에요.", en: "their most important side dish" },
+              { ko: "가끔 먹는 간식이에요.", en: "an occasional snack" },
+              { ko: "손님에게만 주는 음식이에요.", en: "food served only to guests" },
+              { ko: "여름에만 먹는 음식이에요.", en: "food eaten only in summer" }
+            ], answer: 0,
+            hint: { ko: "마지막 문장을 보세요.", en: "Look at the last sentence." },
+            why: { ko: "'김치는 우리 가족에게 가장 중요한 반찬이에요'라고 끝나요.", en: "The passage ends by calling it the family's most important side dish." } }
+        ]
+      },
+      {
+        id: "undonghoe",
+        skill: "Make connections",
+        title: { ko: "우리 반 운동회", en: "Our Class Sports Day" },
+        purpose: { ko: "내가 힘들어도 포기하지 않은 때를 생각하면서 읽어 보세요.", en: "Read the passage. Think about a time you kept going when it was hard." },
+        connect: { ko: "내가 포기하지 않고 끝까지 한 일은 무엇이에요?", en: "A time when I kept going and did not give up was ..." },
+        lines: [
+          { ko: "오늘은 우리 학교 운동회 날이었어요. 아침부터 하늘이 아주 맑았어요. 운동장에 학생들이 모두 모였어요.", en: "Today was our school sports day. The sky was very clear from the morning. All the students gathered on the field." },
+          { ko: "마지막 경기는 이어달리기였어요. 저는 우리 반의 마지막 주자였어요. 손에 땀이 났어요.", en: "The last event was the relay race. I was the last runner for our class. My hands were sweating." },
+          { ko: "\"준비, 시작!\" 선생님께서 소리치셨어요. 친구들이 차례로 달렸어요. 제 차례가 되었을 때 우리 반은 삼 등이었어요.", en: "\"Ready, go!\" the teacher shouted. My classmates ran one after another. When my turn came, our class was in third place." },
+          { ko: "저는 열심히 달렸어요. 그런데 갑자기 발이 미끄러져서 넘어졌어요. 무릎이 아팠어요. 잠시 아무 소리도 들리지 않았어요.", en: "I ran as hard as I could. But suddenly my foot slipped and I fell over. My knee hurt. For a moment I could not hear anything at all." },
+          { ko: "그때 친구들의 목소리가 들렸어요. \"지호야, 일어나! 할 수 있어!\" 저는 다시 일어서서 달렸어요.", en: "Just then I heard my friends' voices. \"Jiho, get up! You can do it!\" I stood back up and ran." },
+          { ko: "우리 반은 삼 등으로 들어왔어요. 하지만 친구들이 저를 안아 주었어요. \"포기하지 않아서 멋있었어!\" 저는 상을 받지 못했지만 아주 자랑스러웠어요.", en: "Our class finished in third place. But my friends hugged me. \"You were great because you did not give up!\" I did not get a prize, but I felt very proud." }
+        ],
+        questions: [
+          { skill: "Story elements",
+            q: { ko: "이 글의 주인공은 누구예요?", en: "Who is the main character of this passage?" },
+            choices: [
+              { ko: "지호", en: "Jiho" },
+              { ko: "선생님", en: "the teacher" },
+              { ko: "지호의 동생", en: "Jiho's younger brother" },
+              { ko: "지호의 어머니", en: "Jiho's mother" }
+            ], answer: 0,
+            hint: { ko: "친구들이 누구의 이름을 불렀어요?", en: "Whose name do the friends call out?" },
+            why: { ko: "친구들이 '지호야, 일어나!'라고 불렀어요.", en: "The friends call out, \"Jiho, get up!\"" } },
+          { skill: "Recall details",
+            q: { ko: "마지막 경기는 무엇이었어요?", en: "What was the last event?" },
+            choices: [
+              { ko: "이어달리기", en: "the relay race" },
+              { ko: "줄다리기", en: "tug of war" },
+              { ko: "공 던지기", en: "ball throwing" },
+              { ko: "노래 부르기", en: "a singing contest" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "'마지막 경기는 이어달리기였어요'라고 나와요.", en: "The passage says the last event was the relay race." } },
+          { skill: "Cause and effect",
+            q: { ko: "지호는 왜 넘어졌어요?", en: "Why did Jiho fall over?" },
+            choices: [
+              { ko: "발이 미끄러져서", en: "because his foot slipped" },
+              { ko: "친구가 밀어서", en: "because a friend pushed him" },
+              { ko: "신발이 너무 커서", en: "because his shoes were too big" },
+              { ko: "무릎이 먼저 아파서", en: "because his knee already hurt" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "'갑자기 발이 미끄러져서 넘어졌어요'라고 나와요.", en: "The passage says his foot suddenly slipped." } },
+          { skill: "Sequence",
+            q: { ko: "넘어진 후에 지호는 어떻게 했어요?", en: "What did Jiho do after he fell?" },
+            choices: [
+              { ko: "다시 일어서서 달렸어요.", en: "He got back up and ran." },
+              { ko: "경기를 그만두었어요.", en: "He quit the race." },
+              { ko: "울면서 앉아 있었어요.", en: "He sat and cried." },
+              { ko: "선생님께 갔어요.", en: "He went to the teacher." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 문단을 다시 읽어 보세요.", en: "Read the fifth paragraph again." },
+            why: { ko: "'저는 다시 일어서서 달렸어요'라고 나와요.", en: "The passage says he stood back up and ran." } },
+          { skill: "Story elements",
+            q: { ko: "친구들은 무엇을 했어요?", en: "What did his friends do?" },
+            choices: [
+              { ko: "지호를 응원했어요.", en: "They cheered for Jiho." },
+              { ko: "지호를 놀렸어요.", en: "They made fun of Jiho." },
+              { ko: "조용히 보고만 있었어요.", en: "They watched in silence." },
+              { ko: "먼저 집에 갔어요.", en: "They went home early." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 문단에서 친구들의 말을 보세요.", en: "Look at what the friends say in paragraph five." },
+            why: { ko: "친구들이 '할 수 있어!'라고 외쳤어요.", en: "The friends shout, \"You can do it!\"" } },
+          { skill: "Recall details",
+            q: { ko: "우리 반은 몇 등을 했어요?", en: "What place did the class finish in?" },
+            choices: [
+              { ko: "삼 등", en: "third" },
+              { ko: "일 등", en: "first" },
+              { ko: "이 등", en: "second" },
+              { ko: "사 등", en: "fourth" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "'우리 반은 삼 등으로 들어왔어요'라고 나와요.", en: "The passage says the class finished third." } },
+          { skill: "Character feelings",
+            q: { ko: "마지막에 지호의 기분은 어때요?", en: "At the end of the passage, Jiho feels ___." },
+            choices: [
+              { ko: "자랑스러웠어요", en: "proud" },
+              { ko: "부끄러웠어요", en: "embarrassed" },
+              { ko: "화가 났어요", en: "angry" },
+              { ko: "아무 느낌도 없었어요", en: "nothing at all" }
+            ], answer: 0,
+            hint: { ko: "마지막 문장을 보세요.", en: "Look at the last sentence." },
+            why: { ko: "'상을 받지 못했지만 아주 자랑스러웠어요'라고 끝나요.", en: "He did not win a prize but felt very proud." } },
+          { skill: "Inference",
+            q: { ko: "이 글이 주는 교훈은 무엇이에요?", en: "What lesson does this passage give?" },
+            choices: [
+              { ko: "포기하지 않는 것이 중요해요.", en: "Not giving up is what matters." },
+              { ko: "일 등이 제일 중요해요.", en: "Coming first is what matters most." },
+              { ko: "빨리 달려야만 해요.", en: "You must always run fast." },
+              { ko: "운동회는 너무 힘들어요.", en: "Sports day is too tiring." }
+            ], answer: 0,
+            hint: { ko: "친구들이 지호를 왜 칭찬했어요?", en: "Why did the friends praise Jiho?" },
+            why: { ko: "친구들이 '포기하지 않아서 멋있었어'라고 했어요.", en: "The friends say he was great because he did not give up." } },
+          { skill: "Vocabulary",
+            q: { ko: "'응원하다'는 무슨 뜻이에요?", en: "What does 응원하다 mean?" },
+            choices: [
+              { ko: "힘내라고 소리쳐 주다", en: "to shout encouragement to someone" },
+              { ko: "같이 달려 주다", en: "to run alongside someone" },
+              { ko: "상을 주다", en: "to give someone a prize" },
+              { ko: "조용히 기다리다", en: "to wait quietly" }
+            ], answer: 0,
+            hint: { ko: "친구들이 지호에게 무슨 말을 했어요?", en: "What did the friends call out to Jiho?" },
+            why: { ko: "응원하다는 힘내라고 외쳐 주는 거예요.", en: "응원하다 means calling out encouragement." } },
+          { skill: "Setting",
+            q: { ko: "이 이야기는 어디에서 일어나요?", en: "Where does this passage take place?" },
+            choices: [
+              { ko: "학교 운동장", en: "on the school field" },
+              { ko: "교실 안", en: "inside a classroom" },
+              { ko: "집 마당", en: "in a house yard" },
+              { ko: "큰 공원", en: "in a big park" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "'운동장에 학생들이 모두 모였어요'라고 나와요.", en: "The passage says all the students gathered on the field." } }
+        ]
+      },
+      {
+        id: "chaek",
+        skill: "Sequence",
+        title: { ko: "잃어버린 도서관 책", en: "The Lost Library Book" },
+        purpose: { ko: "무엇을 잃어버렸던 때를 생각하면서 읽어 보세요.", en: "Read the passage. Think about a time you lost something." },
+        connect: { ko: "내가 무엇을 잃어버렸다가 찾은 때는 언제였어요?", en: "A time when I lost something and then found it was ..." },
+        lines: [
+          { ko: "지난주 금요일에 저는 도서관에서 책을 두 권 빌렸어요. 하나는 우주에 대한 책이었어요.", en: "Last Friday I borrowed two books from the library. One of them was a book about space." },
+          { ko: "월요일 아침, 책을 돌려주려고 가방을 열었어요. 그런데 우주 책이 없었어요. 저는 걱정이 되었어요.", en: "On Monday morning I opened my bag to return the books. But the space book was not there. I began to worry." },
+          { ko: "저는 방을 찾아보았어요. 책장에도 없었어요. 서랍에도 없었어요. 침대 밑에도 없었어요. 어머니께서도 같이 찾아 주셨어요.", en: "I searched my room. It was not on the bookshelf. It was not in the drawer. It was not under the bed. My mother helped me look too." },
+          { ko: "\"어디에서 마지막으로 읽었니?\" 어머니께서 물으셨어요. 저는 잠시 생각했어요. 갑자기 기억이 났어요. 금요일 오후에 교실에서 읽었어요!", en: "\"Where did you read it last?\" my mother asked. I thought for a moment. Suddenly I remembered. I had read it in the classroom on Friday afternoon!" },
+          { ko: "다음 날 아침, 저는 학교에 일찍 갔어요. 사물함을 열었어요. 우주 책이 거기에 있었어요!", en: "The next morning I went to school early. I opened my locker. The space book was right there!" },
+          { ko: "저는 점심시간에 책을 도서관에 돌려주었어요. \"조금 늦었지만 찾아서 다행이야.\" 사서 선생님께서 웃으며 말씀하셨어요.", en: "At lunchtime I returned the book to the library. \"It is a little late, but I am glad you found it,\" the librarian said with a smile." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "지호는 무엇을 잃어버렸어요?", en: "What did the writer lose?" },
+            choices: [
+              { ko: "도서관에서 빌린 책", en: "a book borrowed from the library" },
+              { ko: "학교 가방", en: "a school bag" },
+              { ko: "사물함 열쇠", en: "a locker key" },
+              { ko: "필통과 연필", en: "a pencil case and pencils" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "가방을 열었는데 우주 책이 없었어요.", en: "The space book was missing from the bag." } },
+          { skill: "Recall details",
+            q: { ko: "책을 몇 권 빌렸어요?", en: "How many books were borrowed?" },
+            choices: [
+              { ko: "두 권", en: "two" },
+              { ko: "한 권", en: "one" },
+              { ko: "세 권", en: "three" },
+              { ko: "네 권", en: "four" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "'책을 두 권 빌렸어요'라고 나와요.", en: "The passage says two books were borrowed." } },
+          { skill: "Recall details",
+            q: { ko: "잃어버린 책은 무엇에 대한 책이었어요?", en: "What was the lost book about?" },
+            choices: [
+              { ko: "우주", en: "space" },
+              { ko: "동물", en: "animals" },
+              { ko: "요리", en: "cooking" },
+              { ko: "역사", en: "history" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단 마지막 문장을 보세요.", en: "Look at the last sentence of paragraph one." },
+            why: { ko: "'하나는 우주에 대한 책이었어요'라고 나와요.", en: "The passage says one was a book about space." } },
+          { skill: "Sequence",
+            q: { ko: "지호는 어디를 먼저 찾아보았어요?", en: "Where did the writer look first?" },
+            choices: [
+              { ko: "자기 방", en: "in his own room" },
+              { ko: "교실", en: "in the classroom" },
+              { ko: "도서관", en: "at the library" },
+              { ko: "학교 사물함", en: "in the school locker" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "먼저 방의 책장, 서랍, 침대 밑을 찾았어요.", en: "He first searched the shelf, drawer, and under the bed in his room." } },
+          { skill: "Story elements",
+            q: { ko: "누가 같이 찾아 주었어요?", en: "Who helped him look?" },
+            choices: [
+              { ko: "어머니", en: "his mother" },
+              { ko: "아버지", en: "his father" },
+              { ko: "동생", en: "his younger sibling" },
+              { ko: "친구", en: "his friend" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단 마지막 문장을 보세요.", en: "Look at the last sentence of paragraph three." },
+            why: { ko: "'어머니께서도 같이 찾아 주셨어요'라고 나와요.", en: "The passage says his mother helped him look." } },
+          { skill: "Recall details",
+            q: { ko: "책은 결국 어디에 있었어요?", en: "Where was the book in the end?" },
+            choices: [
+              { ko: "학교 사물함 안에", en: "in the school locker" },
+              { ko: "방 책장에", en: "on the bookshelf" },
+              { ko: "책상 서랍에", en: "in the desk drawer" },
+              { ko: "침대 밑에", en: "under the bed" }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 문단을 다시 읽어 보세요.", en: "Read the fifth paragraph again." },
+            why: { ko: "사물함을 열었더니 우주 책이 있었어요.", en: "He opened his locker and the space book was there." } },
+          { skill: "Cause and effect",
+            q: { ko: "지호는 책이 어디 있는지 어떻게 알았어요?", en: "How did he work out where the book was?" },
+            choices: [
+              { ko: "마지막으로 읽은 곳을 기억해서", en: "by remembering where he last read it" },
+              { ko: "친구가 알려 줘서", en: "because a friend told him" },
+              { ko: "어머니가 먼저 찾아서", en: "because his mother found it first" },
+              { ko: "사서 선생님이 전화해서", en: "because the librarian phoned" }
+            ], answer: 0,
+            hint: { ko: "어머니의 질문이 힌트예요.", en: "His mother's question is the clue." },
+            why: { ko: "어머니의 질문 덕분에 교실에서 읽은 것을 기억했어요.", en: "His mother's question made him remember reading it in the classroom." } },
+          { skill: "Character feelings",
+            q: { ko: "사서 선생님의 반응은 어땠어요?", en: "How did the librarian react?" },
+            choices: [
+              { ko: "다행이라고 웃으며 말했어요.", en: "She smiled and said she was glad." },
+              { ko: "많이 화를 냈어요.", en: "She got very angry." },
+              { ko: "아무 말도 하지 않았어요.", en: "She said nothing at all." },
+              { ko: "책을 다시 빌려주지 않았어요.", en: "She refused to lend books again." }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "'찾아서 다행이야'라고 웃으며 말씀하셨어요.", en: "She smiled and said she was glad he found it." } },
+          { skill: "Vocabulary",
+            q: { ko: "'걱정하다'는 무슨 뜻이에요?", en: "What does 걱정하다 mean?" },
+            choices: [
+              { ko: "마음이 편하지 않다", en: "to feel uneasy in your mind" },
+              { ko: "아주 기뻐하다", en: "to feel very glad" },
+              { ko: "크게 웃다", en: "to laugh loudly" },
+              { ko: "빨리 달리다", en: "to run quickly" }
+            ], answer: 0,
+            hint: { ko: "책이 없을 때 지호의 마음은 어땠어요?", en: "How did he feel when the book was missing?" },
+            why: { ko: "걱정하다는 마음이 불안한 거예요.", en: "걱정하다 means to feel anxious." } },
+          { skill: "Best title",
+            q: { ko: "이 글의 제목으로 알맞은 것은 무엇이에요?", en: "Which is the best title for this passage?" },
+            choices: [
+              { ko: "잃어버린 도서관 책", en: "The Lost Library Book" },
+              { ko: "우주로 가는 여행", en: "A Trip into Space" },
+              { ko: "우리 반 운동회", en: "Our Class Sports Day" },
+              { ko: "눈 오는 아침", en: "A Snowy Morning" }
+            ], answer: 0,
+            hint: { ko: "제목은 글 전체를 말해요.", en: "A title tells about the whole passage." },
+            why: { ko: "글 전체가 책을 잃어버리고 찾는 이야기예요.", en: "The whole passage is about losing and finding the book." } }
+        ]
+      },
+      {
+        id: "jajeongeo",
+        skill: "Make connections",
+        title: { ko: "첫 자전거", en: "My First Bicycle" },
+        purpose: { ko: "새로운 것을 배울 때의 기분을 생각하면서 읽어 보세요.", en: "Read the passage. Think about how it feels to learn something new." },
+        connect: { ko: "내가 처음으로 배운 어려운 일은 무엇이에요?", en: "A hard thing I learned to do for the first time was ..." },
+        lines: [
+          { ko: "제 아홉 번째 생일에 아버지께서 파란 자전거를 사 주셨어요. 저는 아주 기뻤어요. 하지만 저는 자전거를 탈 줄 몰랐어요.", en: "For my ninth birthday my father bought me a blue bicycle. I was very glad. But I did not know how to ride." },
+          { ko: "토요일 아침에 아버지와 공원에 갔어요. 아버지께서 뒤에서 자전거를 잡아 주셨어요. \"앞을 봐. 뒤를 보지 마.\" 아버지께서 말씀하셨어요.", en: "On Saturday morning I went to the park with my father. He held the bicycle from behind. \"Look ahead. Do not look back,\" he said." },
+          { ko: "처음에는 무서웠어요. 저는 세 번 넘어졌어요. 무릎이 아팠어요. 저는 그만하고 싶었어요.", en: "At first I was scared. I fell over three times. My knee hurt. I wanted to stop." },
+          { ko: "\"오늘은 여기까지 하자.\" 아버지께서 말씀하셨어요. 하지만 저는 고개를 저었어요. \"한 번만 더 해 볼래요.\"", en: "\"Let us stop here for today,\" my father said. But I shook my head. \"I want to try just one more time.\"" },
+          { ko: "저는 다시 자전거에 올랐어요. 아버지께서 뒤를 잡아 주셨어요. 저는 앞을 보고 천천히 페달을 밟았어요.", en: "I got back on the bicycle. My father held the back. I looked ahead and slowly pushed the pedals." },
+          { ko: "잠시 후에 뒤를 돌아보았어요. 아버지는 멀리 서 계셨어요. 저는 혼자 타고 있었어요! 저는 드디어 자전거를 탈 수 있게 되었어요.", en: "A moment later I looked back. My father was standing far away. I was riding by myself! At last I could ride a bicycle." }
+        ],
+        questions: [
+          { skill: "Recall details",
+            q: { ko: "글쓴이는 언제 자전거를 받았어요?", en: "When did the writer get the bicycle?" },
+            choices: [
+              { ko: "아홉 번째 생일에", en: "on his ninth birthday" },
+              { ko: "열 번째 생일에", en: "on his tenth birthday" },
+              { ko: "운동회 날에", en: "on sports day" },
+              { ko: "설날에", en: "on New Year's Day" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "'제 아홉 번째 생일에'라고 나와요.", en: "The passage says it was his ninth birthday." } },
+          { skill: "Recall details",
+            q: { ko: "자전거는 무슨 색이에요?", en: "What colour is the bicycle?" },
+            choices: [
+              { ko: "파란색", en: "blue" },
+              { ko: "빨간색", en: "red" },
+              { ko: "노란색", en: "yellow" },
+              { ko: "하얀색", en: "white" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문장을 보세요.", en: "Look at the first sentence." },
+            why: { ko: "'파란 자전거를 사 주셨어요'라고 나와요.", en: "The passage says his father bought a blue bicycle." } },
+          { skill: "Setting",
+            q: { ko: "두 사람은 어디에서 연습했어요?", en: "Where did the two of them practise?" },
+            choices: [
+              { ko: "공원", en: "at the park" },
+              { ko: "학교 운동장", en: "on the school field" },
+              { ko: "집 마당", en: "in the house yard" },
+              { ko: "도서관 앞", en: "in front of the library" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "'아버지와 공원에 갔어요'라고 나와요.", en: "The passage says they went to the park." } },
+          { skill: "Recall details",
+            q: { ko: "아버지의 조언은 무엇이었어요?", en: "What advice did the father give?" },
+            choices: [
+              { ko: "앞을 보라고 했어요.", en: "to look ahead" },
+              { ko: "아주 빨리 달리라고 했어요.", en: "to ride very fast" },
+              { ko: "뒤를 보라고 했어요.", en: "to look behind" },
+              { ko: "천천히 걸으라고 했어요.", en: "to walk slowly" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단에서 아버지의 말을 보세요.", en: "Look at the father's words in paragraph two." },
+            why: { ko: "'앞을 봐. 뒤를 보지 마.'라고 말씀하셨어요.", en: "He says, \"Look ahead. Do not look back.\"" } },
+          { skill: "Recall details",
+            q: { ko: "글쓴이는 몇 번 넘어졌어요?", en: "How many times did the writer fall?" },
+            choices: [
+              { ko: "세 번", en: "three times" },
+              { ko: "한 번", en: "once" },
+              { ko: "두 번", en: "twice" },
+              { ko: "네 번", en: "four times" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "'저는 세 번 넘어졌어요'라고 나와요.", en: "The passage says he fell over three times." } },
+          { skill: "Sequence",
+            q: { ko: "아버지께서 그만하자고 하셨을 때 글쓴이는 어떻게 했어요?", en: "What did the writer do when his father said to stop?" },
+            choices: [
+              { ko: "한 번만 더 해 보겠다고 했어요.", en: "He asked to try one more time." },
+              { ko: "바로 집에 갔어요.", en: "He went straight home." },
+              { ko: "울기 시작했어요.", en: "He started to cry." },
+              { ko: "자전거를 두고 갔어요.", en: "He left the bicycle behind." }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "'한 번만 더 해 볼래요'라고 말했어요.", en: "He says, \"I want to try just one more time.\"" } },
+          { skill: "Inference",
+            q: { ko: "글쓴이는 혼자 타는 것을 어떻게 알았어요?", en: "How did the writer realise he was riding alone?" },
+            choices: [
+              { ko: "뒤를 돌아보니 아버지가 멀리 계셨어요.", en: "He looked back and his father was far away." },
+              { ko: "아버지께서 말씀해 주셨어요.", en: "His father told him." },
+              { ko: "넘어지지 않아서 알았어요.", en: "He knew because he did not fall." },
+              { ko: "사람들이 박수를 쳐서 알았어요.", en: "He knew because people clapped." }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "뒤를 돌아보니 아버지가 멀리 서 계셨어요.", en: "He looked back and saw his father standing far away." } },
+          { skill: "Inference",
+            q: { ko: "이 글의 교훈은 무엇이에요?", en: "What is the lesson of this passage?" },
+            choices: [
+              { ko: "포기하지 않으면 할 수 있어요.", en: "If you do not give up, you can do it." },
+              { ko: "자전거는 아주 위험해요.", en: "Bicycles are very dangerous." },
+              { ko: "생일 선물은 비싸야 해요.", en: "Birthday presents should be expensive." },
+              { ko: "아버지는 힘이 아주 세요.", en: "Fathers are very strong." }
+            ], answer: 0,
+            hint: { ko: "글쓴이가 그만두고 싶었을 때 어떻게 했어요?", en: "What did he do when he wanted to stop?" },
+            why: { ko: "그만하고 싶었지만 한 번 더 해서 성공했어요.", en: "He wanted to quit but tried once more and succeeded." } },
+          { skill: "Vocabulary",
+            q: { ko: "'드디어'는 무슨 뜻이에요?", en: "What does 드디어 mean?" },
+            choices: [
+              { ko: "오래 기다린 후에 마침내", en: "at last, after a long wait" },
+              { ko: "아주 빠르게", en: "very quickly" },
+              { ko: "가끔 한 번씩", en: "once in a while" },
+              { ko: "조금 천천히", en: "a little slowly" }
+            ], answer: 0,
+            hint: { ko: "글쓴이가 언제 이 말을 썼어요?", en: "When does the writer use this word?" },
+            why: { ko: "여러 번 넘어진 후에 성공했을 때 썼어요.", en: "He uses it when he finally succeeds after many falls." } },
+          { skill: "Character feelings",
+            q: { ko: "마지막에 글쓴이의 기분은 어때요?", en: "At the end, the writer feels ___." },
+            choices: [
+              { ko: "자랑스러웠어요", en: "proud" },
+              { ko: "무서웠어요", en: "frightened" },
+              { ko: "슬펐어요", en: "sad" },
+              { ko: "화가 났어요", en: "angry" }
+            ], answer: 0,
+            hint: { ko: "마지막 문장을 보세요.", en: "Look at the last sentence." },
+            why: { ko: "드디어 혼자 탈 수 있게 되어서 뿌듯했어요.", en: "He was proud because at last he could ride alone." } }
+        ]
+      },
+      {
+        id: "tokkigeobugi",
+        skill: "Fable",
+        title: { ko: "토끼와 거북이", en: "The Rabbit and the Tortoise" },
+        purpose: { ko: "이 이야기가 주는 교훈을 생각하면서 읽어 보세요.", en: "Read the passage. Think about the lesson this story teaches." },
+        connect: { ko: "내가 꾸준히 해서 잘하게 된 것은 무엇이에요?", en: "Something I got good at by keeping at it was ..." },
+        lines: [
+          { ko: "옛날에 아주 빠른 토끼가 있었어요. 토끼는 자기가 제일 빠르다고 자랑했어요.", en: "Long ago there was a very fast rabbit. The rabbit boasted that he was the fastest of all." },
+          { ko: "\"나보다 빠른 동물은 없어!\" 토끼가 말했어요. 그때 느린 거북이가 말했어요. \"나하고 내기 할래?\" 동물들이 모두 웃었어요.", en: "\"No animal is faster than me!\" said the rabbit. Just then the slow tortoise said, \"Will you race me?\" All the animals laughed." },
+          { ko: "다음 날 아침에 경주가 시작되었어요. 토끼는 아주 빨리 달렸어요. 거북이는 천천히, 하지만 꾸준히 걸었어요.", en: "The next morning the race began. The rabbit ran very fast. The tortoise walked slowly, but steadily." },
+          { ko: "토끼는 뒤를 돌아보았어요. 거북이가 보이지 않았어요. \"시간이 많아. 조금 쉬어야지.\" 토끼는 나무 밑에서 낮잠을 잤어요.", en: "The rabbit looked back. The tortoise was nowhere in sight. \"I have plenty of time. I will rest a little.\" The rabbit took a nap under a tree." },
+          { ko: "거북이는 쉬지 않았어요. 거북이는 토끼 옆을 조용히 지나갔어요. 그리고 계속 걸었어요.", en: "The tortoise did not rest. He passed quietly by the sleeping rabbit. And he kept on walking." },
+          { ko: "토끼가 눈을 떴을 때 해가 낮아져 있었어요. 토끼는 놀라서 달렸어요. 하지만 거북이가 벌써 먼저 도착해 있었어요.", en: "When the rabbit opened his eyes, the sun was already low. The rabbit ran in alarm. But the tortoise had already arrived first." },
+          { ko: "\"천천히 가도 꾸준히 가는 사람이 이겨요.\" 거북이가 웃으며 말했어요.", en: "\"The one who keeps going steadily wins, even if he is slow,\" the tortoise said with a smile." }
+        ],
+        questions: [
+          { skill: "Inference",
+            q: { ko: "이 이야기의 교훈은 무엇이에요?", en: "What is the moral of this story?" },
+            choices: [
+              { ko: "꾸준히 하는 것이 중요해요.", en: "Keeping at it steadily is what matters." },
+              { ko: "빠른 것이 제일 좋아요.", en: "Being fast is always best." },
+              { ko: "낮잠은 몸에 좋아요.", en: "Naps are good for you." },
+              { ko: "내기는 하면 안 돼요.", en: "You should never make a bet." }
+            ], answer: 0,
+            hint: { ko: "거북이의 마지막 말을 보세요.", en: "Look at the tortoise's last words." },
+            why: { ko: "거북이가 '꾸준히 가는 사람이 이겨요'라고 말했어요.", en: "The tortoise says the one who keeps going steadily wins." } },
+          { skill: "Story elements",
+            q: { ko: "토끼는 어떤 동물이었어요?", en: "What kind of animal was the rabbit?" },
+            choices: [
+              { ko: "빠르지만 자랑을 많이 해요.", en: "fast, but very boastful" },
+              { ko: "느리고 아주 조용해요.", en: "slow and very quiet" },
+              { ko: "착하고 부지런해요.", en: "kind and hard-working" },
+              { ko: "작고 겁이 많아요.", en: "small and easily scared" }
+            ], answer: 0,
+            hint: { ko: "첫 번째와 두 번째 문단을 보세요.", en: "Look at paragraphs one and two." },
+            why: { ko: "토끼는 빨랐지만 자기가 제일 빠르다고 자랑했어요.", en: "The rabbit was fast but boasted of being the fastest." } },
+          { skill: "Recall details",
+            q: { ko: "누가 내기를 하자고 했어요?", en: "Who suggested the race?" },
+            choices: [
+              { ko: "거북이", en: "the tortoise" },
+              { ko: "토끼", en: "the rabbit" },
+              { ko: "다른 동물들", en: "the other animals" },
+              { ko: "아무도 하지 않았어요", en: "no one did" }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "거북이가 '나하고 내기 할래?'라고 말했어요.", en: "The tortoise says, \"Will you race me?\"" } },
+          { skill: "Sequence",
+            q: { ko: "경주 중에 토끼는 무엇을 했어요?", en: "What did the rabbit do during the race?" },
+            choices: [
+              { ko: "나무 밑에서 낮잠을 잤어요.", en: "He took a nap under a tree." },
+              { ko: "물을 마시러 갔어요.", en: "He went to get a drink." },
+              { ko: "친구를 만났어요.", en: "He met a friend." },
+              { ko: "길을 잃었어요.", en: "He got lost." }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "'토끼는 나무 밑에서 낮잠을 잤어요'라고 나와요.", en: "The passage says the rabbit napped under a tree." } },
+          { skill: "Recall details",
+            q: { ko: "거북이는 경주 중에 무엇을 했어요?", en: "What did the tortoise do during the race?" },
+            choices: [
+              { ko: "쉬지 않고 계속 걸었어요.", en: "He kept walking without resting." },
+              { ko: "토끼를 깨웠어요.", en: "He woke the rabbit up." },
+              { ko: "잠깐 쉬었어요.", en: "He rested for a while." },
+              { ko: "아주 빨리 달렸어요.", en: "He ran very fast." }
+            ], answer: 0,
+            hint: { ko: "다섯 번째 문단을 다시 읽어 보세요.", en: "Read the fifth paragraph again." },
+            why: { ko: "'거북이는 쉬지 않았어요'라고 나와요.", en: "The passage says the tortoise did not rest." } },
+          { skill: "Recall details",
+            q: { ko: "누가 이겼어요?", en: "Who won?" },
+            choices: [
+              { ko: "거북이", en: "the tortoise" },
+              { ko: "토끼", en: "the rabbit" },
+              { ko: "둘 다 같이 들어왔어요", en: "they finished together" },
+              { ko: "아무도 끝내지 못했어요", en: "neither one finished" }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 문단을 다시 읽어 보세요.", en: "Read the sixth paragraph again." },
+            why: { ko: "'거북이가 벌써 먼저 도착해 있었어요'라고 나와요.", en: "The passage says the tortoise had already arrived first." } },
+          { skill: "Sequence",
+            q: { ko: "토끼가 눈을 떴을 때 어떻게 되었어요?", en: "What had happened when the rabbit woke up?" },
+            choices: [
+              { ko: "해가 이미 낮아져 있었어요.", en: "The sun was already low." },
+              { ko: "비가 오고 있었어요.", en: "It was raining." },
+              { ko: "거북이가 옆에 있었어요.", en: "The tortoise was beside him." },
+              { ko: "동물들이 모두 사라졌어요.", en: "All the animals had gone." }
+            ], answer: 0,
+            hint: { ko: "여섯 번째 문단 첫 문장을 보세요.", en: "Look at the first sentence of paragraph six." },
+            why: { ko: "'해가 낮아져 있었어요'는 시간이 많이 지났다는 뜻이에요.", en: "The low sun shows a lot of time had passed." } },
+          { skill: "Cause and effect",
+            q: { ko: "토끼가 진 까닭은 무엇이에요?", en: "Why did the rabbit lose?" },
+            choices: [
+              { ko: "경주 중에 잠을 자서", en: "because he slept during the race" },
+              { ko: "다리를 다쳐서", en: "because he hurt his leg" },
+              { ko: "길을 잘못 가서", en: "because he took the wrong road" },
+              { ko: "거북이가 더 빨라서", en: "because the tortoise was faster" }
+            ], answer: 0,
+            hint: { ko: "토끼가 쉬는 동안 무슨 일이 있었어요?", en: "What happened while the rabbit was resting?" },
+            why: { ko: "토끼가 자는 동안 거북이가 지나갔어요.", en: "While the rabbit slept, the tortoise passed him." } },
+          { skill: "Real or make-believe",
+            q: { ko: "이 이야기는 사실이에요, 상상이에요?", en: "Is this story fact or make-believe?" },
+            choices: [
+              { ko: "상상이에요.", en: "It is make-believe." },
+              { ko: "사실이에요.", en: "It is fact." },
+              { ko: "뉴스예요.", en: "It is a news report." },
+              { ko: "편지예요.", en: "It is a letter." }
+            ], answer: 0,
+            hint: { ko: "동물이 말을 할 수 있어요?", en: "Can animals really talk?" },
+            why: { ko: "동물이 말을 하고 내기를 하니까 상상이에요.", en: "The animals talk and make a bet, so it is make-believe." } },
+          { skill: "Vocabulary",
+            q: { ko: "'꾸준히'는 무슨 뜻이에요?", en: "What does 꾸준히 mean?" },
+            choices: [
+              { ko: "멈추지 않고 계속", en: "steadily, without stopping" },
+              { ko: "아주 빠르게", en: "very quickly" },
+              { ko: "가끔 한 번씩", en: "once in a while" },
+              { ko: "아주 조용하게", en: "very quietly" }
+            ], answer: 0,
+            hint: { ko: "거북이가 어떻게 걸었어요?", en: "How did the tortoise walk?" },
+            why: { ko: "거북이는 천천히, 하지만 멈추지 않고 걸었어요.", en: "The tortoise walked slowly but never stopped." } }
+        ]
+      },
+      {
+        id: "jeju",
+        skill: "Nonfiction",
+        title: { ko: "제주도 여행", en: "A Trip to Jeju Island" },
+        purpose: { ko: "내가 가 본 특별한 곳을 생각하면서 읽어 보세요.", en: "Read the passage. Think about a special place you have visited." },
+        connect: { ko: "내가 가 본 가장 특별한 곳은 어디예요?", en: "The most special place I have visited was ..." },
+        lines: [
+          { ko: "지난여름에 우리 가족은 제주도에 갔어요. 제주도는 한국에서 가장 큰 섬이에요. 우리는 비행기를 타고 한 시간 만에 도착했어요.", en: "Last summer our family went to Jeju Island. Jeju is the largest island in Korea. We took a plane and arrived in just one hour." },
+          { ko: "첫날에 우리는 바다에 갔어요. 제주도의 바다는 아주 파랗고 깨끗했어요. 저는 바닷가에서 예쁜 돌을 주웠어요. 아버지께서 사진을 많이 찍으셨어요.", en: "On the first day we went to the sea. The sea at Jeju was very blue and clean. I picked up pretty stones on the shore. My father took a lot of photographs." },
+          { ko: "둘째 날에는 한라산에 올랐어요. 한라산은 한국에서 제일 높은 산이에요. 산길은 힘들었어요. 하지만 위에서 본 풍경은 정말 아름다웠어요.", en: "On the second day we climbed Hallasan. Hallasan is the highest mountain in Korea. The mountain path was tiring. But the view from the top was truly beautiful." },
+          { ko: "셋째 날에 우리는 귤 농장에 갔어요. 제주도는 귤로 유명해요. 저는 나무에서 귤을 직접 땄어요. 귤은 아주 달고 맛있었어요.", en: "On the third day we went to a tangerine farm. Jeju is famous for tangerines. I picked tangerines straight from the tree. They were very sweet and delicious." },
+          { ko: "집에 돌아오는 비행기 안에서 저는 사진을 다시 보았어요. 아주 특별한 여행이었어요. 내년에 또 가고 싶어요.", en: "On the plane home I looked at the photographs again. It was a very special trip. I want to go again next year." }
+        ],
+        questions: [
+          { skill: "Main idea",
+            q: { ko: "이 글은 무엇에 대한 글이에요?", en: "What is this passage about?" },
+            choices: [
+              { ko: "가족의 제주도 여행", en: "a family trip to Jeju Island" },
+              { ko: "비행기를 타는 방법", en: "how to travel by plane" },
+              { ko: "귤 농장에서 하는 일", en: "the work done on a tangerine farm" },
+              { ko: "한라산의 역사", en: "the history of Hallasan" }
+            ], answer: 0,
+            hint: { ko: "글 전체를 생각해 보세요.", en: "Think about the whole passage." },
+            why: { ko: "삼 일 동안의 가족 여행 이야기예요.", en: "It is the story of a three-day family trip." } },
+          { skill: "Recall details",
+            q: { ko: "제주도까지 어떻게 갔어요?", en: "How did they travel to Jeju?" },
+            choices: [
+              { ko: "비행기로", en: "by plane" },
+              { ko: "배로", en: "by boat" },
+              { ko: "버스로", en: "by bus" },
+              { ko: "기차로", en: "by train" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단을 다시 읽어 보세요.", en: "Read the first paragraph again." },
+            why: { ko: "'비행기를 타고 한 시간 만에 도착했어요'라고 나와요.", en: "The passage says they arrived by plane in one hour." } },
+          { skill: "Recall details",
+            q: { ko: "제주도는 어떤 곳이에요?", en: "What kind of place is Jeju?" },
+            choices: [
+              { ko: "한국에서 가장 큰 섬", en: "the largest island in Korea" },
+              { ko: "한국에서 가장 큰 도시", en: "the largest city in Korea" },
+              { ko: "한국에서 가장 높은 산", en: "the highest mountain in Korea" },
+              { ko: "한국에서 가장 오래된 마을", en: "the oldest village in Korea" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문단 두 번째 문장을 보세요.", en: "Look at the second sentence of paragraph one." },
+            why: { ko: "'제주도는 한국에서 가장 큰 섬이에요'라고 나와요.", en: "The passage says Jeju is Korea's largest island." } },
+          { skill: "Sequence",
+            q: { ko: "첫날에 무엇을 했어요?", en: "What did they do on the first day?" },
+            choices: [
+              { ko: "바다에 갔어요.", en: "They went to the sea." },
+              { ko: "산에 올랐어요.", en: "They climbed the mountain." },
+              { ko: "귤을 땄어요.", en: "They picked tangerines." },
+              { ko: "사진을 정리했어요.", en: "They sorted the photos." }
+            ], answer: 0,
+            hint: { ko: "두 번째 문단을 다시 읽어 보세요.", en: "Read the second paragraph again." },
+            why: { ko: "'첫날에 우리는 바다에 갔어요'라고 나와요.", en: "The passage says on the first day they went to the sea." } },
+          { skill: "Recall details",
+            q: { ko: "한라산에 대해 알맞은 것은 무엇이에요?", en: "Which one is true about Hallasan?" },
+            choices: [
+              { ko: "한국에서 제일 높은 산이에요.", en: "It is the highest mountain in Korea." },
+              { ko: "제주도에서 두 번째로 높아요.", en: "It is the second highest on Jeju." },
+              { ko: "아주 낮고 오르기 쉬워요.", en: "It is very low and easy to climb." },
+              { ko: "바다 옆의 작은 언덕이에요.", en: "It is a small hill beside the sea." }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단을 다시 읽어 보세요.", en: "Read the third paragraph again." },
+            why: { ko: "'한라산은 한국에서 제일 높은 산이에요'라고 나와요.", en: "The passage says Hallasan is Korea's highest mountain." } },
+          { skill: "Sequence",
+            q: { ko: "셋째 날에 어디에 갔어요?", en: "Where did they go on the third day?" },
+            choices: [
+              { ko: "귤 농장", en: "a tangerine farm" },
+              { ko: "바다", en: "the sea" },
+              { ko: "한라산", en: "Hallasan" },
+              { ko: "공항", en: "the airport" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "'셋째 날에 우리는 귤 농장에 갔어요'라고 나와요.", en: "The passage says on the third day they went to a tangerine farm." } },
+          { skill: "Recall details",
+            q: { ko: "제주도는 무엇으로 유명해요?", en: "What is Jeju famous for?" },
+            choices: [
+              { ko: "귤", en: "tangerines" },
+              { ko: "사과", en: "apples" },
+              { ko: "딸기", en: "strawberries" },
+              { ko: "배추", en: "cabbage" }
+            ], answer: 0,
+            hint: { ko: "네 번째 문단을 다시 읽어 보세요.", en: "Read the fourth paragraph again." },
+            why: { ko: "'제주도는 귤로 유명해요'라고 나와요.", en: "The passage says Jeju is famous for tangerines." } },
+          { skill: "Cause and effect",
+            q: { ko: "산에 오르는 것은 어땠어요?", en: "What was climbing the mountain like?" },
+            choices: [
+              { ko: "힘들었지만 풍경이 아름다웠어요.", en: "tiring, but the view was beautiful" },
+              { ko: "쉽고 아주 재미있었어요.", en: "easy and great fun" },
+              { ko: "무섭고 위험했어요.", en: "frightening and dangerous" },
+              { ko: "지루하고 아주 길었어요.", en: "boring and very long" }
+            ], answer: 0,
+            hint: { ko: "세 번째 문단의 마지막 두 문장을 보세요.", en: "Look at the last two sentences of paragraph three." },
+            why: { ko: "'산길은 힘들었어요. 하지만 풍경은 아름다웠어요.'", en: "The path was tiring, but the view was beautiful." } },
+          { skill: "Character feelings",
+            q: { ko: "글쓴이는 이 여행을 어떻게 생각해요?", en: "How does the writer feel about the trip?" },
+            choices: [
+              { ko: "아주 특별했다고 생각해요.", en: "that it was very special" },
+              { ko: "조금 힘들었다고 생각해요.", en: "that it was rather tiring" },
+              { ko: "다시 가고 싶지 않아요.", en: "that he does not want to return" },
+              { ko: "별로 재미없었다고 생각해요.", en: "that it was not much fun" }
+            ], answer: 0,
+            hint: { ko: "마지막 문단을 다시 읽어 보세요.", en: "Read the last paragraph again." },
+            why: { ko: "'아주 특별한 여행이었어요. 내년에 또 가고 싶어요.'", en: "It was a very special trip and he wants to go again." } },
+          { skill: "Setting",
+            q: { ko: "이 여행은 언제였어요?", en: "When was this trip?" },
+            choices: [
+              { ko: "지난여름", en: "last summer" },
+              { ko: "지난겨울", en: "last winter" },
+              { ko: "올해 봄", en: "this spring" },
+              { ko: "내년 여름", en: "next summer" }
+            ], answer: 0,
+            hint: { ko: "첫 번째 문장을 보세요.", en: "Look at the first sentence." },
+            why: { ko: "'지난여름에 우리 가족은 제주도에 갔어요'라고 시작해요.", en: "The passage opens with \"Last summer our family went to Jeju.\"" } }
+        ]
+      }
+    ];
+
+    /* -----------------------------------------------------------------------
+       Helpers
+    ----------------------------------------------------------------------- */
+    const LETTERS = ["A", "B", "C", "D", "E"];
+    const TIMER_CHOICES = {
+      total: [
+        { value: 180, label: "3 minutes" },
+        { value: 300, label: "5 minutes" },
+        { value: 480, label: "8 minutes" },
+        { value: 600, label: "10 minutes" },
+        { value: 900, label: "15 minutes" }
+      ],
+      perQuestion: [
+        { value: 20, label: "20 seconds" },
+        { value: 30, label: "30 seconds" },
+        { value: 45, label: "45 seconds" },
+        { value: 60, label: "60 seconds" },
+        { value: 90, label: "90 seconds" }
+      ]
+    };
+    const DEFAULT_LIMIT = { total: 600, perQuestion: 45 };
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+    function shuffled(list) {
+      const copy = list.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function clockText(seconds) {
+      const safe = Math.max(0, Math.round(seconds));
+      return Math.floor(safe / 60) + ":" + String(safe % 60).padStart(2, "0");
+    }
+    function plural(n, one, many) { return n + " " + (n === 1 ? one : many); }
+
+    /* Plain text of a { ko, en } pair in the requested script. */
+    function plain(pair, lang) {
+      if (!pair) return "";
+      if (lang === "en") return pair.en;
+      if (lang === "ro") return BANK.romanize(pair.ko);
+      return pair.ko;
+    }
+
+    /* Grade 2 bank: its own words for the tables and the test, plus the grade 1
+       words underneath so anything a passage reuses still opens a popover. */
+    const BANK = window.ReadingVocab2;
+
+    const el = document.getElementById("readingExercise");
+    const $ = selector => el.querySelector(selector);
+    let highestZIndex = 1000;
+
+    /* -----------------------------------------------------------------------
+       Rendering text with vocabulary popovers
+
+       A { ko, en } pair is first cut into segments against the word bank, then
+       each segment is written out in the requested script. Romanization is
+       produced segment by segment with a carry flag so a dash still lands
+       between two syllables that sit either side of a segment edge: 학교에서
+       stays hak-gyo-e-seo even though 학교 is its own token.
+    ----------------------------------------------------------------------- */
+    function segmentsFor(pair, lang) {
+      const source = lang === "en" ? String(pair.en ?? "") : String(pair.ko ?? "");
+      const matches = lang === "en" ? BANK.scanEnglish(source) : BANK.scanKorean(source);
+      const segments = [];
+      let cursor = 0;
+      matches.forEach(match => {
+        if (match.start > cursor) segments.push({ text: source.slice(cursor, match.start), entry: null });
+        segments.push({ text: source.slice(match.start, match.end), entry: match.entry });
+        cursor = match.end;
+      });
+      if (cursor < source.length) segments.push({ text: source.slice(cursor), entry: null });
+      return segments;
+    }
+
+    function render(pair, lang, options) {
+      const withTokens = !options || options.tokens !== false;
+      const segments = segmentsFor(pair, lang);
+      let carry = false;
+      return segments.map(segment => {
+        let text = segment.text;
+        if (lang === "ro") {
+          const run = BANK.romanizeRun(text, carry);
+          text = run.text;
+          carry = run.endsInSyllable;
+        }
+        if (!segment.entry || !withTokens) return esc(text);
+        return '<span class="vocab-token" tabindex="0" role="button" data-word="' + esc(segment.entry.id)
+          + '" aria-label="Word help">' + esc(text) + popoverMarkup(segment.entry) + '</span>';
+      }).join("");
+    }
+
+    /* -----------------------------------------------------------------------
+       Popovers. Click to open, click again or press the close button to shut.
+       Nothing opens on hover.
+    ----------------------------------------------------------------------- */
+    /*
+      Opening a popover reveals nothing on its own. The word and its meaning
+      are Level 1, exactly as in the Bab lessons, and revealing any level is
+      what counts as assistance.
+    */
+    function popoverMarkup() {
+      const levels = ["Meaning", "How it is used", "Example"].map((label, index) =>
+        '<button class="hint-step" type="button" data-hint-level="' + (index + 1) + '">Level '
+        + (index + 1) + ' &middot; ' + label + '</button>'
+        + '<span class="hint-content" data-hint-content="' + (index + 1) + '"></span>').join("");
+
+      return '<span class="vocab-popover" role="dialog" aria-label="Optional hint levels">'
+        + '<span class="vocab-popover-heading"><strong>Optional hints</strong>'
+        + '<span style="display:flex;align-items:center;gap:8px;"><small>Nothing revealed yet</small>'
+        + '<button class="popover-close-btn" type="button" aria-label="Close">&times;</button></span></span>'
+        + '<span class="hint-levels">' + levels + '</span></span>';
+    }
+
+    function hintTextFor(entry, level, lang) {
+      /* Level 1 is the vocabulary card: the word in every script, its meaning,
+         and its part of speech. */
+      if (level === 1) {
+        return "<strong>" + esc(entry.ko) + "</strong>"
+          + "<br><span class=\"roman\">" + esc(BANK.romanize(entry.ko)) + "</span>"
+          + "<br>" + esc(entry.en) + " <em>(" + esc(entry.pos) + ")</em>";
+      }
+      if (level === 2) return "<strong>How it is used:</strong> " + esc(entry.usage);
+      const example = lang === "en" ? entry.exEn
+        : (lang === "ro" ? BANK.romanize(entry.exKo) : entry.exKo);
+      const gloss = lang === "en" ? "" : "<br><small>" + esc(entry.exEn) + "</small>";
+      return "<strong>Example:</strong> " + esc(example) + gloss;
+    }
+
+    function positionPopover(token) {
+      const popover = token.querySelector(".vocab-popover");
+      if (!popover) return;
+      requestAnimationFrame(() => {
+        const tokenRect = token.getBoundingClientRect();
+        const popRect = popover.getBoundingClientRect();
+        const margin = 12;
+        const gap = 10;
+        let left = tokenRect.left + tokenRect.width / 2 - popRect.width / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+        let top = tokenRect.top - popRect.height - gap;
+        if (top < margin) top = tokenRect.bottom + gap;
+        popover.style.left = Math.round(left) + "px";
+        popover.style.top = Math.round(top) + "px";
+        popover.style.setProperty("--arrow-left",
+          Math.max(16, Math.min(popRect.width - 16, tokenRect.left + tokenRect.width / 2 - left)) + "px");
+      });
+    }
+
+    function bringToFront(token) {
+      const popover = token.querySelector(".vocab-popover");
+      if (!popover) return;
+      highestZIndex += 1;
+      popover.style.zIndex = String(highestZIndex);
+    }
+
+    function closeAllPopovers() {
+      document.querySelectorAll(".vocab-token.is-pinned").forEach(token => token.classList.remove("is-pinned"));
+    }
+
+    function bindTokens(container, onLookup) {
+      container.querySelectorAll(".vocab-token").forEach(token => {
+        const popover = token.querySelector(".vocab-popover");
+        const entry = BANK.get(token.dataset.word);
+        if (!popover || !entry) return;
+
+        popover.addEventListener("click", event => {
+          event.stopPropagation();
+          bringToFront(token);
+        });
+
+        popover.querySelector(".popover-close-btn").addEventListener("click", event => {
+          event.stopPropagation();
+          event.preventDefault();
+          token.classList.remove("is-pinned");
+        });
+
+        popover.querySelectorAll(".hint-step").forEach(button => {
+          button.addEventListener("click", event => {
+            event.stopPropagation();
+            const level = Number(button.dataset.hintLevel);
+            const content = button.nextElementSibling;
+            if (content && content.classList.contains("hint-content")) {
+              content.innerHTML = hintTextFor(entry, level, currentHintLang());
+              content.classList.add("is-open");
+            }
+            button.classList.add("is-open");
+            const note = popover.querySelector(".vocab-popover-heading small");
+            if (note) note.textContent = "Revealed hints count as assistance";
+            if (typeof onLookup === "function") onLookup(entry, level);
+          });
+        });
+
+        const toggle = event => {
+          if (event.target.closest(".vocab-popover")) return;
+          event.stopPropagation();
+          event.preventDefault();
+          if (token.classList.contains("is-pinned")) {
+            token.classList.remove("is-pinned");
+            return;
+          }
+          token.classList.add("is-pinned");
+          bringToFront(token);
+          positionPopover(token);
+        };
+        token.addEventListener("click", toggle);
+        token.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") toggle(event);
+          if (event.key === "Escape") token.classList.remove("is-pinned");
+        });
+      });
+    }
+
+    document.addEventListener("click", event => {
+      if (!event.target.closest(".vocab-token")) closeAllPopovers();
+    });
+    const repositionPinned = () => {
+      document.querySelectorAll(".vocab-token.is-pinned").forEach(token => {
+        const rect = token.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+          token.classList.remove("is-pinned");
+          return;
+        }
+        positionPopover(token);
+      });
+    };
+    window.addEventListener("scroll", repositionPinned, { capture: true, passive: true });
+    window.addEventListener("resize", repositionPinned, { passive: true });
+
+    /* -----------------------------------------------------------------------
+       Exercise state
+    ----------------------------------------------------------------------- */
+    let state = null;
+
+    /* Popover markup is built during render, before state exists on the first
+       preview, so the hint language is read straight from the menu. */
+    function currentHintLang() {
+      return state ? state.settings.hintLang : $(".menu-hint-lang").value;
+    }
+
+    function readSettings() {
+      const mode = $(".menu-timer-mode").value;
+      return {
+        storyId: $(".menu-story").value,
+        storyLang: $(".menu-story-lang").value,
+        qaLang: $(".menu-qa-lang").value,
+        hintLang: $(".menu-hint-lang").value,
+        timed: $(".menu-timed").checked,
+        timerMode: mode,
+        timerLimit: Number($(".menu-timer-limit").value) || DEFAULT_LIMIT[mode]
+      };
+    }
+
+    function storyFor(storyId) {
+      if (storyId === "random") return STORIES[Math.floor(Math.random() * STORIES.length)];
+      return STORIES.find(item => item.id === storyId) || STORIES[0];
+    }
+
+    function buildState(settings) {
+      const story = storyFor(settings.storyId);
+      /* Choices are always reshuffled, so the position of the right answer is
+         never a tell and neither is the order they were written in. */
+      const questions = story.questions.map(question => {
+        const indexes = shuffled(question.choices.map((_, i) => i));
+        return {
+          source: question,
+          choices: indexes.map(i => question.choices[i]),
+          answer: indexes.indexOf(question.answer)
+        };
+      });
+
+      return {
+        settings,
+        story,
+        questions,
+        i: 0,
+        locked: false,
+        finished: false,
+        results: questions.map(() => null),
+        assist: questions.map(() => ({ hint: false, lookups: new Set() })),
+        lookedUpWords: new Set(),
+        startedAt: Date.now(),
+        elapsedMs: 0,
+        remaining: settings.timed ? settings.timerLimit : 0,
+        timerId: null
+      };
+    }
+
+    /* -----------------------------------------------------------------------
+       Timer
+    ----------------------------------------------------------------------- */
+    function stopTimer() {
+      if (state && state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function paintTimer() {
+      const chip = $(".timer-chip");
+      if (!state.settings.timed) {
+        chip.classList.add("hidden");
+        return;
+      }
+      chip.classList.remove("hidden");
+      $(".timer-value").textContent = clockText(state.remaining);
+      const low = state.settings.timerMode === "total" ? state.remaining <= 60 : state.remaining <= 10;
+      chip.classList.toggle("is-low", low);
+      chip.querySelector("small").textContent = state.settings.timerMode === "total" ? "Time left" : "This question";
+    }
+
+    function startTimer() {
+      stopTimer();
+      if (!state.settings.timed) return;
+      paintTimer();
+      state.timerId = setInterval(() => {
+        state.remaining -= 1;
+        if (state.remaining > 0) {
+          paintTimer();
+          return;
+        }
+        state.remaining = 0;
+        paintTimer();
+        stopTimer();
+        if (state.settings.timerMode === "total") {
+          finish("Time is up. The exercise stopped when the clock ran out.");
+        } else if (!state.locked && !state.finished) {
+          lockQuestion(-1, true);
+        }
+      }, 1000);
+    }
+
+    /* In whole-exercise mode the clock keeps running between questions. */
+    function resetQuestionTimer() {
+      if (!state.settings.timed) return;
+      if (state.settings.timerMode === "perQuestion") state.remaining = state.settings.timerLimit;
+      startTimer();
+    }
+
+    /* -----------------------------------------------------------------------
+       Live exercise
+    ----------------------------------------------------------------------- */
+    function noteLookup(entry) {
+      if (!state || state.finished) return;
+      state.lookedUpWords.add(entry.id);
+      state.assist[state.i].lookups.add(entry.id);
+      paintAssistStatus();
+    }
+
+    function paintAssistStatus() {
+      const assist = state.assist[state.i];
+      const bits = [];
+      if (assist.hint) bits.push("hint shown");
+      if (assist.lookups.size) bits.push(plural(assist.lookups.size, "word looked up", "words looked up"));
+      const status = $(".assistant-status");
+      if (!bits.length) {
+        status.textContent = "No help used on this question.";
+        return;
+      }
+      status.innerHTML = '<span class="assistance-used">Help used: ' + esc(bits.join(" · ")) + '</span>';
+    }
+
+    function answeredCount() { return state.results.filter(result => result !== null).length; }
+    function correctCount() { return state.results.filter(result => result && result.correct).length; }
+
+    function paintScore() {
+      const done = answeredCount();
+      $(".score").innerHTML = done
+        ? correctCount() + " / " + done + " correct<br><small>" + state.questions.length + " questions</small>"
+        : "Not started";
+    }
+
+    function paintStory() {
+      const story = state.story;
+      const lang = state.settings.storyLang;
+      $(".story-title").innerHTML = render(story.title, lang);
+      $(".story-skill").textContent = story.skill;
+      $(".story-purpose").innerHTML = render(story.purpose, lang);
+      $(".story-connect").innerHTML = render(story.connect, lang);
+      const textEl = $(".story-text");
+      textEl.innerHTML = story.lines
+        .map(line => '<span class="story-line">' + render(line, lang) + '</span>')
+        .join("");
+      bindTokens($(".story-panel"), noteLookup);
+    }
+
+    function showQuestion() {
+      const item = state.questions[state.i];
+      const question = item.source;
+      const lang = state.settings.qaLang;
+      state.locked = false;
+
+      $(".count").textContent = "Question " + (state.i + 1) + " of " + state.questions.length;
+      $(".mode-label").textContent = question.skill;
+
+      const progress = $(".progress");
+      progress.firstElementChild.style.width = Math.round((state.i / state.questions.length) * 100) + "%";
+      progress.setAttribute("aria-valuemax", String(state.questions.length));
+      progress.setAttribute("aria-valuenow", String(state.i));
+
+      $(".prompt-label").textContent = question.skill;
+      const prompt = $(".prompt");
+      prompt.innerHTML = (state.i + 1) + ". " + render(question.q, lang);
+      bindTokens(prompt, noteLookup);
+
+      const list = $(".choice-list");
+      list.innerHTML = item.choices.map((choice, index) =>
+        '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
+        + '<span class="choice-letter">' + LETTERS[index] + '</span>'
+        + '<span class="choice-text">' + render(choice, lang) + '</span>'
+        + '</div>').join("");
+      bindTokens(list, noteLookup);
+      list.querySelectorAll(".choice").forEach(node => {
+        const pick = event => {
+          if (event.target.closest(".vocab-token")) return;
+          if (state.locked || state.finished) return;
+          lockQuestion(Number(node.dataset.choice), false);
+        };
+        node.addEventListener("click", pick);
+        node.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            pick(event);
+          }
+        });
+      });
+
+      $(".prompt-hint-legend").classList.toggle("is-visible", el.querySelector(".live .vocab-token") !== null);
+
+      const hintButton = $(".show-hint");
+      const hintBox = $(".question-hint");
+      hintBox.classList.remove("is-open");
+      hintBox.innerHTML = "";
+      hintButton.disabled = false;
+      hintButton.textContent = "Show hint";
+
+      const feedback = $(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $(".next").classList.add("hidden");
+      paintAssistStatus();
+      paintScore();
+      resetQuestionTimer();
+    }
+
+    function lockQuestion(chosen, ranOutOfTime) {
+      const item = state.questions[state.i];
+      const question = item.source;
+      const lang = state.settings.qaLang;
+      state.locked = true;
+      if (state.settings.timed && state.settings.timerMode === "perQuestion") stopTimer();
+
+      const correct = chosen === item.answer;
+      state.results[state.i] = {
+        chosen,
+        correct,
+        ranOutOfTime: Boolean(ranOutOfTime),
+        assisted: state.assist[state.i].hint || state.assist[state.i].lookups.size > 0
+      };
+
+      $(".choice-list").querySelectorAll(".choice").forEach(node => {
+        const index = Number(node.dataset.choice);
+        node.classList.add("is-locked");
+        node.setAttribute("aria-disabled", "true");
+        if (index === item.answer) node.classList.add("correct");
+        else if (index === chosen) node.classList.add("wrong");
+        else node.classList.add("faded");
+      });
+
+      const answerText = esc(plain(item.choices[item.answer], lang));
+      const why = esc(plain(question.why, lang));
+      const feedback = $(".feedback");
+      if (correct) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = "<strong>맞아요! That&#039;s right.</strong>" + why;
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = "<strong>"
+          + (ranOutOfTime ? "Time is up on this question." : "아니에요. Not quite.")
+          + "</strong>The answer is <em>" + answerText + "</em>. " + why;
+      }
+
+      $(".show-hint").disabled = true;
+      const next = $(".next");
+      next.classList.remove("hidden");
+      next.textContent = state.i + 1 >= state.questions.length ? "See my summary" : "Next question";
+
+      const progress = $(".progress");
+      progress.firstElementChild.style.width = Math.round(((state.i + 1) / state.questions.length) * 100) + "%";
+      progress.setAttribute("aria-valuenow", String(state.i + 1));
+      paintScore();
+    }
+
+    function goNext() {
+      closeAllPopovers();
+      if (state.i + 1 >= state.questions.length) {
+        finish("");
+        return;
+      }
+      state.i += 1;
+      showQuestion();
+      $(".prompt").scrollIntoView({ block: "center" });
+    }
+
+    /* -----------------------------------------------------------------------
+       Summary
+    ----------------------------------------------------------------------- */
+    function finish(note) {
+      stopTimer();
+      closeAllPopovers();
+      state.finished = true;
+      state.elapsedMs = Date.now() - state.startedAt;
+
+      const lang = state.settings.qaLang;
+      const total = state.questions.length;
+      const answered = answeredCount();
+      const right = correctCount();
+      const percent = total ? Math.round((right / total) * 100) : 0;
+      const helped = state.results.filter(result => result && result.assisted).length;
+
+      const skills = new Map();
+      state.questions.forEach((item, index) => {
+        const bucket = skills.get(item.source.skill) || { right: 0, total: 0 };
+        bucket.total += 1;
+        if (state.results[index] && state.results[index].correct) bucket.right += 1;
+        skills.set(item.source.skill, bucket);
+      });
+
+      const reviewHtml = state.questions.map((item, index) => {
+        const result = state.results[index];
+        const wrong = !result || !result.correct;
+        let yours = "<em>not reached</em>";
+        if (result) {
+          yours = result.chosen >= 0
+            ? esc(plain(item.choices[result.chosen], lang))
+            : "<em>no answer</em>";
+        }
+        return '<div class="review-item' + (wrong ? " is-wrong" : "") + '">'
+          + '<span class="review-tag">' + esc(item.source.skill) + '</span>'
+          + '<span class="review-q">' + (index + 1) + ". " + esc(plain(item.source.q, lang)) + '</span>'
+          + '<span class="review-line"><strong>Your answer:</strong> ' + yours + '</span>'
+          + '<span class="review-line"><strong>Correct answer:</strong> '
+          + esc(plain(item.choices[item.answer], lang)) + '</span>'
+          + '<span class="review-line">' + esc(plain(item.source.why, lang)) + '</span>'
+          + (result && result.assisted ? '<span class="review-line"><em>You used help on this one.</em></span>' : "")
+          + '</div>';
+      }).join("");
+
+      const words = [...state.lookedUpWords]
+        .map(id => BANK.get(id))
+        .filter(Boolean)
+        .sort((a, b) => a.ko.localeCompare(b.ko));
+      const wordsHtml = words.length
+        ? '<div class="word-list">' + words.map(entry =>
+            '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
+            + '<span class="word-ro">' + esc(BANK.romanize(entry.ko)) + '</span>'
+            + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
+        : "<p>You did not open any word popovers this time.</p>";
+
+      let timeLine;
+      if (!state.settings.timed) {
+        timeLine = clockText(state.elapsedMs / 1000) + " (untimed)";
+      } else if (state.settings.timerMode === "total") {
+        timeLine = clockText(state.elapsedMs / 1000) + " used of " + clockText(state.settings.timerLimit);
+      } else {
+        timeLine = clockText(state.elapsedMs / 1000) + " total · "
+          + clockText(state.settings.timerLimit) + " allowed per question";
+      }
+
+      let message;
+      if (percent === 100) message = "잘했어요! A perfect score. You read every line closely.";
+      else if (percent >= 80) message = "Strong reading. Look at the few you missed and find those lines again.";
+      else if (percent >= 50) message = "A good try. Read the story once more, then run it again.";
+      else message = "Take your time. Read the story out loud first, then answer. The hints point you to the right lines.";
+
+      $(".live").classList.add("hidden");
+      const finishEl = $(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = ''
+        + '<h4>Exercise complete</h4>'
+        + (note ? "<p><strong>" + esc(note) + "</strong></p>" : "")
+        + '<p>' + esc(plain(state.story.title, state.settings.storyLang)) + ' &mdash; ' + esc(message) + '</p>'
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Questions answered</small></div>'
+        + '<div class="summary-tile"><strong>' + helped + '</strong><small>Answered with help</small></div>'
+        + '<div class="summary-tile"><strong>' + state.lookedUpWords.size + '</strong><small>Words looked up</small></div>'
+        + '</div>'
+        + '<div class="info-card"><h4>Time</h4><p>' + esc(timeLine) + '</p></div>'
+        + '<div><h4>How you did by skill</h4><div class="skill-breakdown">'
+        + [...skills.entries()].map(([skill, bucket]) =>
+            '<div class="skill-row"><span>' + esc(skill) + '</span><span>'
+            + bucket.right + " / " + bucket.total + '</span></div>').join("")
+        + '</div></div>'
+        + '<div><h4>Question by question</h4><div class="review">' + reviewHtml + '</div></div>'
+        + '<div><h4>Words you looked up</h4>' + wordsHtml + '</div>'
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Try this story again</button>'
+        + '<button class="btn positive another" type="button">Pick another story</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      finishEl.querySelector(".again").addEventListener("click", () => {
+        begin({ ...state.settings, storyId: state.story.id });
+      });
+      finishEl.querySelector(".another").addEventListener("click", () => {
+        const others = STORIES.filter(story => story.id !== state.story.id);
+        const nextStory = others[Math.floor(Math.random() * others.length)];
+        begin({ ...state.settings, storyId: nextStory.id });
+      });
+      finishEl.querySelector(".change-setup").addEventListener("click", showMenu);
+      finishEl.scrollIntoView({ block: "start" });
+      paintScore();
+    }
+
+    /* -----------------------------------------------------------------------
+       Menu and word bank
+    ----------------------------------------------------------------------- */
+    function showMenu() {
+      stopTimer();
+      closeAllPopovers();
+      $(".live").classList.add("hidden");
+      $(".finish").classList.add("hidden");
+      $(".exercise-menu").classList.remove("hidden");
+      $(".exercise-menu").scrollIntoView({ block: "start" });
+    }
+
+    function begin(settings) {
+      state = buildState(settings);
+      $(".menu-story").value = state.story.id;
+      $(".exercise-menu").classList.add("hidden");
+      $(".finish").classList.add("hidden");
+      $(".live").classList.remove("hidden");
+      paintStory();
+      showQuestion();
+      $(".live").scrollIntoView({ block: "start" });
+    }
+
+    function fillTimerLimits() {
+      const mode = $(".menu-timer-mode").value;
+      $(".menu-timer-limit").innerHTML = TIMER_CHOICES[mode].map(option =>
+        '<option value="' + option.value + '"' + (option.value === DEFAULT_LIMIT[mode] ? " selected" : "")
+        + '>' + esc(option.label) + '</option>').join("");
+    }
+
+    function buildMenu() {
+      $(".menu-story").innerHTML = STORIES.map(story =>
+        '<option value="' + esc(story.id) + '">' + esc(story.title.ko) + " — " + esc(story.title.en) + '</option>'
+      ).join("") + '<option value="random">아무거나 — Surprise me</option>';
+      fillTimerLimits();
+
+      $(".menu-timed").addEventListener("change", event => {
+        $(".timed-fields").classList.toggle("hidden", !event.target.checked);
+      });
+      $(".menu-timer-mode").addEventListener("change", fillTimerLimits);
+
+      $(".begin").addEventListener("click", () => begin(readSettings()));
+
+      $(".preview-story").addEventListener("click", () => {
+        const settings = readSettings();
+        const story = storyFor(settings.storyId);
+        const box = $(".story-preview");
+        box.classList.remove("hidden");
+        box.innerHTML = '<div class="story-panel">'
+          + '<div class="story-panel-head"><h4>' + render(story.title, settings.storyLang) + '</h4>'
+          + '<span class="story-skill">' + esc(story.skill) + '</span></div>'
+          + '<p class="story-purpose">' + render(story.purpose, settings.storyLang) + '</p>'
+          + '<div class="story-text">'
+          + story.lines.map(line => '<span class="story-line">' + render(line, settings.storyLang) + '</span>').join("")
+          + '</div><p class="story-connect">' + render(story.connect, settings.storyLang) + '</p></div>';
+        bindTokens(box, null);
+        $(".menu-story").value = story.id;
+      });
+
+      $(".next").addEventListener("click", goNext);
+
+      $(".show-hint").addEventListener("click", () => {
+        if (!state || state.finished || state.locked) return;
+        const question = state.questions[state.i].source;
+        const lang = state.settings.hintLang;
+        const box = $(".question-hint");
+        box.innerHTML = "<strong>Hint:</strong> " + render(question.hint, lang, { tokens: false });
+        box.classList.add("is-open");
+        $(".show-hint").disabled = true;
+        $(".show-hint").textContent = "Hint shown";
+        state.assist[state.i].hint = true;
+        paintAssistStatus();
+      });
+
+      $(".end-early").addEventListener("click", () => {
+        if (!state || state.finished) return;
+        finish("You ended the exercise early. Questions you did not reach are not counted as correct.");
+      });
+    }
+
+    /* -----------------------------------------------------------------------
+       Word bank: grouped tables, blurring, and star ratings
+    ----------------------------------------------------------------------- */
+    const FAMILIARITY_KEY = "koreanReadingFamiliarity:g2:v1";
+    const RATING_LABELS = ["Not rated", "Learning", "Developing", "Familiar"];
+    let familiarity = {};
+    try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
+    function ratingOf(id) { return Math.max(0, Math.min(3, Number(familiarity[id]) || 0)); }
+    function saveFamiliarity() {
+      try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
+    }
+
+    function buildWordBank() {
+      const host = document.getElementById("wordbankGroups");
+      const counter = document.getElementById("wordbankCount");
+      const search = document.getElementById("wordbankSearch");
+      /* The bank also carries the grade 1 words so passages stay clickable,
+         but only the grade 2 groups are displayed, so count those. */
+      const groupIds = new Set(BANK.GROUPS.map(group => group.id));
+      const total = BANK.WORDS.filter(entry => groupIds.has(entry.group)).length;
+
+      host.innerHTML = '<div class="vocab-category-stack">' + BANK.GROUPS.map(group => {
+        const words = BANK.WORDS
+          .filter(entry => entry.group === group.id)
+          .sort((a, b) => a.ko.localeCompare(b.ko, "ko"));
+        const rows = words.map(entry => {
+          const ro = BANK.romanize(entry.ko);
+          const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.pos + " " + group.label).toLowerCase();
+          return '<tr data-search="' + esc(haystack) + '">'
+            + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
+            + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
+            + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
+            + '<td>' + esc(entry.pos) + '</td>'
+            + '<td class="familiarity-cell">'
+            + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group" aria-label="Familiarity rating for ' + esc(entry.ko) + '">'
+            + [1, 2, 3].map(level => '<button class="familiarity-star" type="button" data-level="' + level
+                + '" aria-pressed="false" aria-label="Mark ' + level + ' of 3">★</button>').join("")
+            + '</div><span class="familiarity-label">Not rated</span></td></tr>';
+        }).join("");
+        return '<details class="vocab-category" data-group="' + esc(group.id) + '" open>'
+          + '<summary><span>' + esc(group.label)
+          + '<span class="vocab-category-count">' + plural(words.length, "word", "words") + '</span></span></summary>'
+          + '<div class="table-wrap"><table><thead><tr><th>English</th><th>Romanization</th><th>Korean</th>'
+          + '<th>Part of speech</th><th>Familiarity</th></tr></thead><tbody>' + rows + '</tbody></table></div></details>';
+      }).join("") + '</div>';
+
+      counter.textContent = plural(total, "word", "words");
+
+      /* Search hides rows and collapses groups that end up empty. */
+      search.addEventListener("input", () => {
+        const term = search.value.trim().toLowerCase();
+        let shown = 0;
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          let visible = 0;
+          section.querySelectorAll("tbody tr").forEach(row => {
+            const match = !term || row.dataset.search.includes(term);
+            row.hidden = !match;
+            if (match) visible += 1;
+          });
+          section.hidden = Boolean(term) && visible === 0;
+          if (term && visible) section.open = true;
+          shown += visible;
+        });
+        counter.textContent = term ? shown + " of " + total + " words" : plural(total, "word", "words");
+      });
+
+      /* Blur a whole column, then click a cell to peek at just that one. */
+      document.querySelectorAll("[data-blur-field]").forEach(button => {
+        button.addEventListener("click", () => {
+          const field = button.dataset.blurField;
+          const on = button.getAttribute("aria-pressed") !== "true";
+          button.setAttribute("aria-pressed", String(on));
+          host.querySelectorAll('[data-vocab-field="' + field + '"]').forEach(cell => {
+            cell.classList.toggle("is-blurred", on);
+            cell.classList.remove("is-peeking");
+          });
+        });
+      });
+
+      const peek = cell => {
+        if (!cell || !cell.classList.contains("is-blurred")) return;
+        cell.classList.toggle("is-peeking");
+      };
+      host.addEventListener("click", event => peek(event.target.closest("[data-vocab-field]")));
+      host.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const cell = event.target.closest("[data-vocab-field]");
+        if (!cell || !cell.classList.contains("is-blurred")) return;
+        event.preventDefault();
+        peek(cell);
+      });
+
+      const paintRating = (group, level) => {
+        const safe = Math.max(0, Math.min(3, Number(level) || 0));
+        group.dataset.level = String(safe);
+        group.querySelectorAll(".familiarity-star").forEach(button =>
+          button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
+        const label = group.parentElement.querySelector(".familiarity-label");
+        if (label) label.textContent = RATING_LABELS[safe];
+      };
+      host.querySelectorAll(".familiarity-stars").forEach(group => {
+        paintRating(group, ratingOf(group.dataset.wordId));
+        group.addEventListener("click", event => {
+          const button = event.target.closest(".familiarity-star");
+          if (!button) return;
+          const chosen = Number(button.dataset.level) || 0;
+          const next = Number(group.dataset.level) === chosen ? 0 : chosen;
+          if (next) familiarity[group.dataset.wordId] = next;
+          else delete familiarity[group.dataset.wordId];
+          saveFamiliarity();
+          paintRating(group, next);
+        });
+      });
+
+      repaintRatings = () => host.querySelectorAll(".familiarity-stars")
+        .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+    }
+    let repaintRatings = () => {};
+
+    /* -----------------------------------------------------------------------
+       Vocabulary test
+    ----------------------------------------------------------------------- */
+    const vEl = document.getElementById("vocabExercise");
+    const $v = selector => vEl.querySelector(selector);
+    let vocabState = null;
+
+    function wordIn(entry, lang) {
+      if (lang === "en") return entry.en;
+      if (lang === "ro") return BANK.romanize(entry.ko);
+      return entry.ko;
+    }
+
+    /* Typed answers are checked loosely: spacing and syllable dashes are
+       ignored, and an English gloss accepts any of its alternatives. */
+    function normalizeAnswer(text, lang) {
+      const value = String(text || "").trim().toLowerCase();
+      if (lang === "ko") return value.replace(/\s+/g, "");
+      if (lang === "ro") return value.replace(/[\s\-]+/g, "");
+      return value.replace(/[.!?]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function acceptedAnswers(entry, lang) {
+      if (lang === "ko") return [entry.ko];
+      if (lang === "ro") return [BANK.romanize(entry.ko)];
+      const parts = entry.en.split(/[,/]/)
+        .map(part => part.replace(/\([^)]*\)/g, "").trim())
+        .filter(Boolean);
+      const all = new Set([entry.en.replace(/\([^)]*\)/g, "").trim(), ...parts]);
+      [...all].forEach(item => {
+        const stripped = item.replace(/^(to|a|an|the)\s+/i, "").trim();
+        if (stripped) all.add(stripped);
+      });
+      return [...all];
+    }
+
+    function checkTyped(entry, lang, input) {
+      const given = normalizeAnswer(input, lang);
+      if (!given) return false;
+      return acceptedAnswers(entry, lang).some(answer => normalizeAnswer(answer, lang) === given);
+    }
+
+    function readVocabSettings() {
+      return {
+        groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
+        weakOnly: $v(".menu-weak").checked,
+        mode: $v(".menu-mode").value,
+        count: Math.max(1, Math.min(100, Number($v(".menu-count").value) || 15)),
+        promptLang: $v(".menu-prompt-lang").value,
+        answerLang: $v(".menu-answer-lang").value
+      };
+    }
+
+    function vocabPool(settings) {
+      const groups = new Set(settings.groups);
+      return BANK.WORDS.filter(entry => {
+        if (!groups.has(entry.group)) return false;
+        if (!settings.weakOnly) return true;
+        const rating = ratingOf(entry.id);
+        return rating === 1 || rating === 2;
+      });
+    }
+
+    function paintPoolNote() {
+      const settings = readVocabSettings();
+      const note = $v(".vocab-pool-note");
+      if (settings.promptLang === settings.answerLang) {
+        note.innerHTML = '<span class="assistance-used">Pick different scripts for the question and the answer.</span>';
+        return;
+      }
+      const size = vocabPool(settings).length;
+      note.textContent = size
+        ? plural(size, "word", "words") + " in your selection."
+        : "No words match your selection yet.";
+    }
+
+    function buildVocabTest() {
+      document.getElementById("vocabGroupGrid").innerHTML = BANK.GROUPS.map(group => {
+        const size = BANK.WORDS.filter(entry => entry.group === group.id).length;
+        return '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
+          + esc(group.id) + '" checked><span>' + esc(group.label)
+          + '<small>' + plural(size, "word", "words") + '</small></span></label>';
+      }).join("");
+
+      vEl.querySelector(".exercise-menu").addEventListener("change", paintPoolNote);
+      $v(".select-all").addEventListener("click", () => {
+        vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = true; });
+        paintPoolNote();
+      });
+      $v(".select-none").addEventListener("click", () => {
+        vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = false; });
+        paintPoolNote();
+      });
+      $v(".begin").addEventListener("click", startVocabTest);
+      $v(".next").addEventListener("click", nextVocabQuestion);
+      $v(".end-early").addEventListener("click", () => {
+        if (!vocabState || vocabState.finished) return;
+        finishVocabTest("You ended the test early.");
+      });
+      paintPoolNote();
+    }
+
+    function startVocabTest() {
+      const settings = readVocabSettings();
+      if (settings.promptLang === settings.answerLang) {
+        paintPoolNote();
+        return;
+      }
+      const pool = vocabPool(settings);
+      if (!pool.length) {
+        paintPoolNote();
+        return;
+      }
+      const picked = shuffled(pool).slice(0, Math.min(settings.count, pool.length));
+      vocabState = {
+        settings,
+        pool,
+        words: picked,
+        i: 0,
+        locked: false,
+        finished: false,
+        results: picked.map(() => null)
+      };
+      $v(".exercise-menu").classList.add("hidden");
+      $v(".finish").classList.add("hidden");
+      $v(".live").classList.remove("hidden");
+      $v(".vocab-direction").textContent = "Question in " + settings.promptLang.toUpperCase()
+        + " · answer in " + settings.answerLang.toUpperCase();
+      showVocabQuestion();
+      vEl.scrollIntoView({ block: "start" });
+    }
+
+    function paintVocabScore() {
+      const done = vocabState.results.filter(result => result !== null).length;
+      const right = vocabState.results.filter(result => result && result.correct).length;
+      $v(".score").innerHTML = done
+        ? right + " / " + done + " correct<br><small>" + vocabState.words.length + " words</small>"
+        : "Not started";
+    }
+
+    function showVocabQuestion() {
+      const settings = vocabState.settings;
+      const entry = vocabState.words[vocabState.i];
+      vocabState.locked = false;
+
+      $v(".count").textContent = "Word " + (vocabState.i + 1) + " of " + vocabState.words.length;
+      $v(".mode-label").textContent = entry.groupLabel;
+      const progress = $v(".progress");
+      progress.firstElementChild.style.width =
+        Math.round((vocabState.i / vocabState.words.length) * 100) + "%";
+      progress.setAttribute("aria-valuemax", String(vocabState.words.length));
+      progress.setAttribute("aria-valuenow", String(vocabState.i));
+
+      $v(".prompt-label").textContent = settings.mode === "mc"
+        ? "Choose the matching word"
+        : "Type the answer";
+      $v(".prompt").textContent = wordIn(entry, settings.promptLang);
+
+      const zone = $v(".zone");
+      if (settings.mode === "mc") {
+        const others = shuffled(vocabState.pool.filter(item => item.id !== entry.id)).slice(0, 3);
+        const options = shuffled([entry, ...others]);
+        vocabState.options = options;
+        zone.innerHTML = '<div class="choice-list">' + options.map((option, index) =>
+          '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
+          + '<span class="choice-letter">' + LETTERS[index] + '</span>'
+          + '<span class="choice-text">' + esc(wordIn(option, settings.answerLang)) + '</span></div>').join("")
+          + '</div>';
+        zone.querySelectorAll(".choice").forEach(node => {
+          const pick = () => {
+            if (vocabState.locked || vocabState.finished) return;
+            lockVocabQuestion(options[Number(node.dataset.choice)].id === entry.id,
+              wordIn(options[Number(node.dataset.choice)], settings.answerLang));
+          };
+          node.addEventListener("click", pick);
+          node.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); pick(); }
+          });
+        });
+      } else {
+        zone.innerHTML = '<div class="answer-row">'
+          + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
+          + 'placeholder="' + esc(settings.answerLang === "en" ? "English" : (settings.answerLang === "ro" ? "Romanization" : "한국어")) + '">'
+          + '<button class="btn primary submit" type="button">Check</button></div>';
+        const input = zone.querySelector(".answer-input");
+        const submit = () => {
+          if (vocabState.locked || vocabState.finished) return;
+          lockVocabQuestion(checkTyped(entry, settings.answerLang, input.value), input.value.trim());
+        };
+        zone.querySelector(".submit").addEventListener("click", submit);
+        input.addEventListener("keydown", event => {
+          if (event.key === "Enter") { event.preventDefault(); submit(); }
+        });
+        input.focus({ preventScroll: true });
+      }
+
+      const feedback = $v(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $v(".next").classList.add("hidden");
+      paintVocabScore();
+    }
+
+    function lockVocabQuestion(correct, given) {
+      const settings = vocabState.settings;
+      const entry = vocabState.words[vocabState.i];
+      vocabState.locked = true;
+      vocabState.results[vocabState.i] = { correct, given: given || "" };
+
+      if (settings.mode === "mc") {
+        $v(".zone").querySelectorAll(".choice").forEach((node, index) => {
+          node.classList.add("is-locked");
+          node.setAttribute("aria-disabled", "true");
+          const option = vocabState.options[index];
+          if (option.id === entry.id) node.classList.add("correct");
+          else if (wordIn(option, settings.answerLang) === given && !correct) node.classList.add("wrong");
+          else node.classList.add("faded");
+        });
+      } else {
+        const input = $v(".answer-input");
+        if (input) input.disabled = true;
+        const submit = $v(".submit");
+        if (submit) submit.disabled = true;
+      }
+
+      const full = esc(entry.ko) + " · " + esc(BANK.romanize(entry.ko)) + " · " + esc(entry.en);
+      const feedback = $v(".feedback");
+      feedback.className = "feedback " + (correct ? "good" : "bad");
+      feedback.innerHTML = (correct ? "<strong>맞아요!</strong>" : "<strong>아니에요.</strong>")
+        + (correct ? "" : "Answer: <em>" + esc(wordIn(entry, settings.answerLang)) + "</em>. ")
+        + full + "<br><small>" + esc(entry.usage) + "</small>";
+
+      const next = $v(".next");
+      next.classList.remove("hidden");
+      next.textContent = vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word";
+
+      const progress = $v(".progress");
+      progress.firstElementChild.style.width =
+        Math.round(((vocabState.i + 1) / vocabState.words.length) * 100) + "%";
+      progress.setAttribute("aria-valuenow", String(vocabState.i + 1));
+      paintVocabScore();
+    }
+
+    function nextVocabQuestion() {
+      if (vocabState.i + 1 >= vocabState.words.length) {
+        finishVocabTest("");
+        return;
+      }
+      vocabState.i += 1;
+      showVocabQuestion();
+    }
+
+    function finishVocabTest(note) {
+      vocabState.finished = true;
+      const total = vocabState.words.length;
+      const answered = vocabState.results.filter(result => result !== null).length;
+      const right = vocabState.results.filter(result => result && result.correct).length;
+      const percent = total ? Math.round((right / total) * 100) : 0;
+      const missed = vocabState.words.filter((entry, index) =>
+        !vocabState.results[index] || !vocabState.results[index].correct);
+
+      const missedHtml = missed.length
+        ? '<div class="word-list">' + missed.map(entry =>
+            '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
+            + '<span class="word-ro">' + esc(BANK.romanize(entry.ko)) + '</span>'
+            + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
+          + '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
+          + 'Rate these ' + missed.length + ' as Learning</button></div>'
+        : "<p>Nothing missed. 잘했어요!</p>";
+
+      $v(".live").classList.add("hidden");
+      const finishEl = $v(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = '<h4>Vocabulary test complete</h4>'
+        + (note ? "<p><strong>" + esc(note) + "</strong></p>" : "")
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Words answered</small></div>'
+        + '</div>'
+        + '<div><h4>Words to review</h4>' + missedHtml + '</div>'
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Test again</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      const markWeak = finishEl.querySelector(".mark-weak");
+      if (markWeak) {
+        markWeak.addEventListener("click", () => {
+          missed.forEach(entry => { familiarity[entry.id] = 1; });
+          saveFamiliarity();
+          repaintRatings();
+          markWeak.disabled = true;
+          markWeak.textContent = "Rated as Learning";
+        });
+      }
+      finishEl.querySelector(".again").addEventListener("click", startVocabTest);
+      finishEl.querySelector(".change-setup").addEventListener("click", () => {
+        $v(".live").classList.add("hidden");
+        $v(".finish").classList.add("hidden");
+        $v(".exercise-menu").classList.remove("hidden");
+        paintPoolNote();
+      });
+      paintVocabScore();
+    }
+
+    buildMenu();
+    buildWordBank();
+    buildVocabTest();
+  })();
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
+      });
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+    })();
+  </script>
+
+</body>
+</html>
