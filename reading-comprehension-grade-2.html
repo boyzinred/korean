@@ -933,6 +933,35 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 .utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
 .utility-button.top { background: var(--accent); }
 
+/* Quick section navigation */
+.toc-card { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover { color: var(--foreground); background: var(--blue-soft); border-color: var(--primary); }
+.exercise, .vocab-category { scroll-margin-top: 18px; }
+
 @media (max-width: 1000px) {
   .exercise-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .exercise-menu-grid .wide { grid-column: span 2; }
@@ -946,6 +975,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .header-inner { min-height: 60px; padding: 0 14px; }
   .page-main { margin-top: 0; border-radius: 0; }
   .hero-inner { padding: 48px 22px; }
+  .toc-card { overflow-x: auto; }
+  .toc-grid { width: max-content; flex-wrap: nowrap; }
   details.section > summary {
     min-height: 0;
     align-items: stretch;
@@ -986,6 +1017,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         <p>Ten original grade 2 Korean passages &mdash; longer paragraphs, dialogue, past tense, a folk tale, a fable, and two nonfiction pieces. Each has ten multiple-choice questions with four answers, covering the main idea, the details, the characters, the setting, the order of events, cause and effect, and what is real versus make-believe. Read the passage and the questions in Hangul, in romanization, or in English, and click any underlined word for a three-level popover.</p>
       </div>
     </section>
+
+    <nav class="toc-card" aria-label="Page sections">
+      <span class="toc-label">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid">
+        <a class="toc-link" href="#wordbank">Word bank</a>
+        <a class="toc-link" href="#vocabExercise">Vocabulary test</a>
+        <a class="toc-link" href="#exercise">Story exercise</a>
+        <a class="toc-link" href="#readingExercise">Reading comprehension</a>
+      </div>
+    </nav>
 
     <details class="section" id="wordbank" open>
       <summary>Word bank</summary>
@@ -3577,6 +3618,20 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       });
       media.addEventListener?.("change", event => {
         if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+    })();
+  </script>
+
+  <script>
+    /* Quick navigation: open every collapsed section the target sits inside. */
+    (function () {
+      document.querySelectorAll(".toc-link").forEach(link => {
+        link.addEventListener("click", () => {
+          const target = document.querySelector(link.getAttribute("href"));
+          for (let node = target; node; node = node.parentElement) {
+            if (node.tagName === "DETAILS") node.open = true;
+          }
+        });
       });
     })();
   </script>
