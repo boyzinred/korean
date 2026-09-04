@@ -941,7 +941,86 @@ html[data-theme=light] .personalized-word .roman {
   border: 0;
   border-radius: 0;
 }
-.vocab-category table { min-width: 760px; }
+.vocab-category table { min-width: 820px; }
+.vocab-pos-korean {
+  margin-left: 8px;
+  font-size: .82rem;
+  font-weight: 700;
+  opacity: .85;
+}
+.vocab-pos-note {
+  margin: 0;
+  padding: 12px 18px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
+  font-size: .86rem;
+  font-weight: 600;
+}
+/* Per-word usage notes: a toggle in the first column opens the row below it. */
+.vocab-note-head { width: 56px; }
+.vocab-note-cell {
+  width: 56px;
+  padding-right: 0;
+  vertical-align: middle;
+}
+.vocab-note-toggle {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #192B5D;
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: var(--transition);
+}
+.vocab-note-toggle:hover { background: var(--primary-hover); }
+.vocab-note-row > td {
+  padding: 0 16px 16px;
+  background: var(--surface);
+}
+.word-note {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-muted);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+.word-note-usage {
+  margin: 0;
+  font-size: .92rem;
+  font-weight: 600;
+}
+.word-note-example {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.word-note-example p { margin: 0; }
+.word-note-ko {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.word-note-en { font-weight: 700; }
+.word-note-form {
+  margin-top: 4px !important;
+  font-size: .84rem;
+  font-weight: 600;
+  opacity: .85;
+}
+html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
+@media (max-width: 720px) {
+  .vocab-category table { min-width: 700px; }
+}
 .familiarity-cell { min-width: 11rem; }
 .familiarity-stars {
   display: inline-flex;
@@ -1176,10 +1255,10 @@ html[data-theme=light] .personalized-word .roman {
         Lesson vocabulary
        </span>
        <h3>
-        One visible vocabulary bank
+        Grouped by part of speech
        </h3>
        <p>
-        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here.
+        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here. Words are grouped by part of speech, following the Korean divisions where they differ from English — descriptive verbs, 관형사 determiners, counters, and particles each keep their own group. Open the ＋ beside a word for a usage note and an example sentence showing how it is conjugated or marked.
        </p>
       </article>
       <article class="guide-card">
@@ -1240,6 +1319,7 @@ html[data-theme=light] .personalized-word .roman {
    </a>
   </div>
   <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script>
    (() => {
     "use strict";
@@ -3204,16 +3284,32 @@ html[data-theme=light] .personalized-word .roman {
         document.getElementById("heroDesc").textContent = LESSON.description;
         document.getElementById("tocGrid").innerHTML = `<a class="toc-link" href="#vocabulary">Vocabulary</a>` + LESSON.sections.map(s => `<a class="toc-link" href="#${esc(s.id)}">${esc(s.title)}</a>`).join("");
 
+        // The bank is grouped by part of speech (Korean-adjusted: descriptive
+        // verbs, 관형사 determiners, counters, and particles keep their own
+        // groups). The semantic category still rides along in the search text.
         const grouped = new Map();
         LESSON.vocab.forEach((v, index) => {
-            const category = v.category || "Other";
-            if (!grouped.has(category)) grouped.set(category, []);
-            grouped.get(category).push({ ...v, index });
+            const group = KoreanWordNotes.groupFor(v);
+            if (!grouped.has(group.id)) grouped.set(group.id, { group, items: [] });
+            grouped.get(group.id).items.push({ ...v, index });
         });
-        document.getElementById("vocabCategorySections").innerHTML = `<div class="vocab-category-stack">${[...grouped.entries()].map(([category, items]) => `<details class="vocab-category" data-category="${esc(category)}" open><summary><span>${esc(labelName(category))}<span class="vocab-category-count">${items.length} words</span></span></summary><div class="table-wrap"><table><thead><tr><th>English</th><th>Romanization</th><th>Korean</th><th>Familiarity</th></tr></thead><tbody>${items.map(v => {
+        const posGroups = [...grouped.values()].sort((a, b) =>
+            KoreanWordNotes.groupRank(a.group.id) - KoreanWordNotes.groupRank(b.group.id) || a.group.label.localeCompare(b.group.label));
+        document.getElementById("vocabCategorySections").innerHTML = `<div class="vocab-category-stack">${posGroups.map(({ group, items }) => `<details class="vocab-category" data-pos-group="${esc(group.id)}" open><summary><span>${esc(group.label)}${group.korean ? ` <span class="vocab-pos-korean">${esc(group.korean)}</span>` : ""}<span class="vocab-category-count">${items.length} words</span></span></summary>${group.note ? `<p class="vocab-pos-note">${esc(group.note)}</p>` : ""}<div class="table-wrap"><table><thead><tr><th class="vocab-note-head"><span class="sr-only">Usage notes</span></th><th>English</th><th>Romanization</th><th>Korean</th><th>Familiarity</th></tr></thead><tbody>${items.map(v => {
             const r = romanizeKorean(v.korean);
             const wordKey = `${LESSON.title}:${v.index}:${v.korean}`;
-            return `<tr data-search="${esc(`${v.english} ${r} ${v.korean} ${category} ${labelName(category)}`.toLowerCase())}"><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td class="familiarity-cell"><div class="familiarity-stars" data-word-key="${esc(wordKey)}" data-level="0" role="group" aria-label="Familiarity rating for ${esc(v.korean)}"><button class="familiarity-star" type="button" data-level="1" aria-label="Mark 1 star: learning" aria-pressed="false">★</button><button class="familiarity-star" type="button" data-level="2" aria-label="Mark 2 stars: developing" aria-pressed="false">★</button><button class="familiarity-star" type="button" data-level="3" aria-label="Mark 3 stars: familiar" aria-pressed="false">★</button></div><span class="familiarity-label">Not rated</span></td></tr>`;
+            const category = v.category || "Other";
+            const note = KoreanWordNotes.get(v);
+            const noteId = `word-note-${group.id}-${v.index}`;
+            const searchText = `${v.english} ${r} ${v.korean} ${category} ${labelName(category)} ${group.label} ${group.korean}`;
+            const toggle = note
+                ? `<button class="vocab-note-toggle" type="button" aria-expanded="false" aria-controls="${esc(noteId)}" aria-label="Show usage notes for ${esc(v.korean)}"><span aria-hidden="true">＋</span></button>`
+                : "";
+            const row = `<tr class="vocab-word-row" data-search="${esc(searchText.toLowerCase())}"><td class="vocab-note-cell">${toggle}</td><td data-vocab-field="english" tabindex="0"><span class="blur-target">${esc(v.english)}</span></td><td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">${esc(r)}</span></td><td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>${esc(v.korean)}</strong></span></td><td class="familiarity-cell"><div class="familiarity-stars" data-word-key="${esc(wordKey)}" data-level="0" role="group" aria-label="Familiarity rating for ${esc(v.korean)}"><button class="familiarity-star" type="button" data-level="1" aria-label="Mark 1 star: learning" aria-pressed="false">★</button><button class="familiarity-star" type="button" data-level="2" aria-label="Mark 2 stars: developing" aria-pressed="false">★</button><button class="familiarity-star" type="button" data-level="3" aria-label="Mark 3 stars: familiar" aria-pressed="false">★</button></div><span class="familiarity-label">Not rated</span></td></tr>`;
+            if (!note) return row;
+            const example = note.example;
+            const noteBody = `<div class="word-note"><p class="word-note-usage">${esc(note.note)}</p>${example ? `<div class="word-note-example"><span class="rule-label">Example</span><p class="word-note-ko">${esc(example.ko)}</p><p class="roman">${esc(romanizeKorean(example.ko))}</p><p class="word-note-en">${esc(example.en)}</p>${example.form ? `<p class="word-note-form"><strong>Form:</strong> ${esc(example.form)}</p>` : ""}</div>` : ""}</div>`;
+            return `${row}<tr class="vocab-note-row" id="${esc(noteId)}" hidden><td colspan="5">${noteBody}</td></tr>`;
         }).join("")}</tbody></table></div></details>`).join("")}</div>`;
 
         document.getElementById("vocabExercises").innerHTML = exerciseTemplate("vocabulary", "Vocabulary Translation Practice", "Translate lesson vocabulary in either direction. This is not a reproduction of the workbook questions.", 20);
@@ -3228,10 +3324,17 @@ html[data-theme=light] .personalized-word .roman {
             const term = search.value.trim().toLowerCase();
             document.querySelectorAll("#vocabCategorySections .vocab-category").forEach(section => {
                 let visible = 0;
-                section.querySelectorAll("tbody tr").forEach(row => {
+                section.querySelectorAll("tbody tr.vocab-word-row").forEach(row => {
                     const match = !term || row.dataset.search.includes(term);
                     row.hidden = !match;
                     if (match) visible++;
+                    // The note row travels with its word row, and stays closed
+                    // unless the learner opened it.
+                    const noteRow = row.nextElementSibling;
+                    if (noteRow?.classList.contains("vocab-note-row")) {
+                        const open = row.querySelector(".vocab-note-toggle")?.getAttribute("aria-expanded") === "true";
+                        noteRow.hidden = !match || !open;
+                    }
                 });
                 section.hidden = Boolean(term) && visible === 0;
                 if (term && visible) section.open = true;
@@ -3254,6 +3357,16 @@ html[data-theme=light] .personalized-word .roman {
         const vocabSections = document.getElementById("vocabCategorySections");
         if (vocabSections) {
             vocabSections.addEventListener("click", event => {
+                const noteToggle = event.target.closest(".vocab-note-toggle");
+                if (noteToggle) {
+                    const noteRow = document.getElementById(noteToggle.getAttribute("aria-controls"));
+                    const open = noteToggle.getAttribute("aria-expanded") !== "true";
+                    noteToggle.setAttribute("aria-expanded", String(open));
+                    noteToggle.querySelector("span").textContent = open ? "−" : "＋";
+                    noteToggle.setAttribute("aria-label", `${open ? "Hide" : "Show"} usage notes for ${noteToggle.closest("tr").querySelector('[data-vocab-field="korean"] strong').textContent}`);
+                    if (noteRow) noteRow.hidden = !open;
+                    return;
+                }
                 const cell = event.target.closest("[data-vocab-field]");
                 if (cell) togglePeek(cell);
             });
