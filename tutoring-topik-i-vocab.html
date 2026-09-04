@@ -1196,12 +1196,20 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
       });
     });
 
+    // Quizzes drill the same part-of-speech groups the reference tables above
+    // are organised into, so picking what to practise matches the bank. The
+    // themed SECTIONS remain the underlying word list.
+    const POS_SECTIONS = referenceGroups().map(({ group, items }) => ({
+      id: `pos-${group.id}`,
+      title: group.korean ? `${group.label} (${group.korean})` : group.label,
+      items
+    }));
     const ALL_WORDS_SECTION = {
       id: "all-words",
       title: "All Words Together",
-      items: SECTIONS.flatMap(section => section.items)
+      items: POS_SECTIONS.flatMap(section => section.items)
     };
-    const QUIZ_SECTIONS = [...SECTIONS, ALL_WORDS_SECTION];
+    const QUIZ_SECTIONS = [...POS_SECTIONS, ALL_WORDS_SECTION];
     const MODES = [
       { key: "english", label: "English" },
       { key: "romanization", label: "Romanization" },
@@ -1315,8 +1323,8 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
 
     // The reference bank is grouped by part of speech (Korean-adjusted:
     // descriptive verbs, 관형사 determiners, counters, and collocations keep
-    // their own groups). The themed SECTIONS still drive the quizzes below,
-    // and their word keys are reused so familiarity ratings survive.
+    // their own groups). The themed SECTIONS are only the underlying word
+    // list now; their word keys are reused so familiarity ratings survive.
     function referenceGroups() {
       const groups = new Map();
       const seen = new Set();
@@ -1851,7 +1859,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
   function selectedMasterSection() {
     const checked = [...document.querySelectorAll('#menu-all-words .master-section-option input:checked')]
       .map(input => input.value);
-    const chosen = SECTIONS.filter(section => checked.includes(section.id));
+    const chosen = POS_SECTIONS.filter(section => checked.includes(section.id));
     return {
       id: "all-words",
       title: "All Words Together",
@@ -2114,9 +2122,9 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
 
     const masterSectionPicker = section.id === "all-words" ? `
       <fieldset class="master-section-picker">
-        <legend>Sections included in master quiz</legend>
+        <legend>Parts of speech included in master quiz</legend>
         <div class="master-section-grid">
-          ${SECTIONS.map(sourceSection => `
+          ${POS_SECTIONS.map(sourceSection => `
             <label class="master-section-option">
               <input type="checkbox" value="${esc(sourceSection.id)}" checked>
               <span>${esc(sourceSection.title)} <span class="small">${sourceSection.items.length} words</span></span>
@@ -2127,7 +2135,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
           <button class="btn secondary" type="button" id="master-select-all">Select all</button>
           <button class="btn secondary" type="button" id="master-clear-all">Clear all</button>
         </div>
-        <p class="menu-error hidden" id="menu-section-error-all-words">Choose at least one section.</p>
+        <p class="menu-error hidden" id="menu-section-error-all-words">Choose at least one part of speech.</p>
       </fieldset>` : "";
 
     menu.innerHTML = `
@@ -2165,7 +2173,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
 
       const syncMasterCount = () => {
         const selectedIds = sectionInputs.filter(input => input.checked).map(input => input.value);
-        const total = SECTIONS.filter(s => selectedIds.includes(s.id)).reduce((sum, s) => sum + s.items.length, 0);
+        const total = POS_SECTIONS.filter(s => selectedIds.includes(s.id)).reduce((sum, s) => sum + s.items.length, 0);
         wordsLabel.textContent = String(total);
         syncCountNote();
         document.getElementById("menu-section-error-all-words")?.classList.toggle("hidden", total > 0);

@@ -1773,15 +1773,6 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     });
     const SOURCE_LABELS = new Map(VOCAB_SOURCES.map(source => [source.id, source.id === BAB_ID ? `${source.label} (this lesson)` : source.label]));
     const DEFAULT_SOURCES = [BAB_ID];
-    const POS_LABELS = Object.freeze({
-        "noun": "Common nouns", "proper noun": "Proper nouns", "pronoun": "Pronouns",
-        "dependent noun": "Dependent nouns", "noun/adverb": "Nouns / adverbs",
-        "noun/numeral": "Nouns / numerals", "noun phrase": "Noun phrases",
-        "expression": "Expressions", "phrase": "Phrases", "interjection": "Interjections",
-        "adverb": "Adverbs", "verb": "Verbs", "adjective": "Adjectives",
-        "determiner": "Determiners", "determiner/pronoun": "Determiners / pronouns",
-        "conjunction": "Conjunctions", "numeral": "Numerals"
-    });
     const CONFIG_BY_KIND = Object.freeze({
         vocabulary: { parts: null, labels: null, description: "Any shared word type" },
         demonstratives: { parts: ["noun","proper noun","noun phrase"], labels: null, description: "Nouns identified with 이건, 그건, or 저건" },
@@ -1852,11 +1843,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
         });
         return counts;
     }
-    const groupKey = entry => `${entry.partOfSpeech}::${entry.category}`;
+    const groupKey = entry => `${KoreanWordNotes.groupIdFor(entry)}::${entry.category}`;
     // The Vocabulary Translation Practice is limited to this lesson's own bank,
-    // so its checkboxes are the bank categories themselves rather than
-    // part-of-speech/category pairs.
-    const bankGroupKey = entry => entry.category;
+    // so its checkboxes are the bank's part-of-speech groups themselves rather
+    // than group/category pairs.
+    const bankGroupKey = entry => KoreanWordNotes.groupIdFor(entry);
     const groupKeyFor = key => key === "vocabulary" ? bankGroupKey : groupKey;
     function cleanEnglish(entry) { return String(entry?.english || "").split("/")[0].trim(); }
     function nounEnglish(entry) { return cleanEnglish(entry).replace(/^the\s+/i, ""); }
@@ -2129,13 +2120,14 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     function bankPickerTemplate(key) {
         const grouped = new Map();
         compatibleVocab(key, DEFAULT_SOURCES).forEach(entry => {
-            if (!grouped.has(entry.category)) grouped.set(entry.category, []);
-            grouped.get(entry.category).push(entry);
+            const group = KoreanWordNotes.groupFor(entry);
+            if (!grouped.has(group.id)) grouped.set(group.id, { group, entries: [] });
+            grouped.get(group.id).entries.push(entry);
         });
-        const total = [...grouped.values()].reduce((sum, entries) => sum + entries.length, 0);
-        const options = [...grouped.entries()].sort(([a], [b]) => labelName(a).localeCompare(labelName(b))).map(([category, entries]) =>
-            `<label class="vocab-leaf-option" data-vocab-group-option="${esc(category)}"><input class="vocab-leaf" type="checkbox" value="${esc(category)}" checked><span>${esc(labelName(category))}<small data-group-count="${esc(category)}">${entries.length} words</small></span></label>`).join("");
-        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend><details class="vocab-tree" open><summary><span>Lesson vocabulary categories</span><span>${total} words in this lesson's bank</span></summary><div class="vocab-tree-body"><p class="vocab-source-note">This exercise only tests the words listed in this lesson's vocabulary bank above.</p><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all categories</button><button class="btn secondary vocab-clear-all" type="button">Clear all categories</button></div><div class="vocab-leaf-grid">${options}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
+        const total = [...grouped.values()].reduce((sum, item) => sum + item.entries.length, 0);
+        const options = [...grouped.values()].sort((a, b) => KoreanWordNotes.groupRank(a.group.id) - KoreanWordNotes.groupRank(b.group.id) || a.group.label.localeCompare(b.group.label)).map(({ group, entries }) =>
+            `<label class="vocab-leaf-option" data-vocab-group-option="${esc(group.id)}"><input class="vocab-leaf" type="checkbox" value="${esc(group.id)}" checked><span>${esc(group.label)}${group.korean ? ` <span class="vocab-pos-korean">${esc(group.korean)}</span>` : ""}<small data-group-count="${esc(group.id)}">${entries.length} words</small></span></label>`).join("");
+        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend><details class="vocab-tree" open><summary><span>Lesson vocabulary by part of speech</span><span>${total} words in this lesson's bank</span></summary><div class="vocab-tree-body"><p class="vocab-source-note">This exercise only tests the words listed in this lesson's vocabulary bank above.</p><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all word types</button><button class="btn secondary vocab-clear-all" type="button">Clear all word types</button></div><div class="vocab-leaf-grid">${options}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
     }
     function vocabPickerTemplate(key) {
         if (key === "vocabulary") return bankPickerTemplate(key);
@@ -2144,18 +2136,19 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
         const counts = sourceCounts(key);
         const grouped = new Map();
         relevant.forEach(entry => {
-            if (!grouped.has(entry.partOfSpeech)) grouped.set(entry.partOfSpeech, new Map());
-            const categoryMap = grouped.get(entry.partOfSpeech);
+            const group = KoreanWordNotes.groupFor(entry);
+            if (!grouped.has(group.id)) grouped.set(group.id, { group, categories: new Map() });
+            const categoryMap = grouped.get(group.id).categories;
             if (!categoryMap.has(entry.category)) categoryMap.set(entry.category, []);
             categoryMap.get(entry.category).push(entry);
         });
-        const typeGroups = [...grouped.entries()].sort(([a], [b]) => (POS_LABELS[a] || a).localeCompare(POS_LABELS[b] || b)).map(([part, categories]) => {
+        const typeGroups = [...grouped.values()].sort((a, b) => KoreanWordNotes.groupRank(a.group.id) - KoreanWordNotes.groupRank(b.group.id) || a.group.label.localeCompare(b.group.label)).map(({ group, categories }) => {
             const total = [...categories.values()].reduce((sum, entries) => sum + entries.length, 0);
             const leaves = [...categories.entries()].sort(([a], [b]) => labelName(a).localeCompare(labelName(b))).map(([category, entries]) => {
-                const keyValue = `${part}::${category}`;
+                const keyValue = `${group.id}::${category}`;
                 return `<label class="vocab-leaf-option" data-vocab-group-option="${esc(keyValue)}"><input class="vocab-leaf" type="checkbox" value="${esc(keyValue)}" checked><span>${esc(labelName(category))}<small data-group-count="${esc(keyValue)}">${entries.length} words</small></span></label>`;
             }).join("");
-            return `<details class="vocab-type-group" data-part="${esc(part)}" open><summary><span>${esc(POS_LABELS[part] || part)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc((POS_LABELS[part] || part).toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
+            return `<details class="vocab-type-group" data-part="${esc(group.id)}" open><summary><span>${esc(group.label)}${group.korean ? ` <span class="vocab-pos-korean">${esc(group.korean)}</span>` : ""} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body"><label class="vocab-parent-option"><input class="vocab-type-toggle" type="checkbox" checked><span>Include all ${esc(group.label.toLowerCase())}</span></label><div class="vocab-leaf-grid">${leaves}</div></div></details>`;
         }).join("");
         const sourceGroups = KoreanVocab.SOURCE_GROUPS.slice().sort((a, b) => SOURCE_GROUP_ORDER.indexOf(a.id) - SOURCE_GROUP_ORDER.indexOf(b.id)).map(group => {
             const groupSources = VOCAB_SOURCES.filter(source => source.group === group.id && (counts.get(source.id) || 0) > 0);
@@ -2166,7 +2159,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
             return `<details class="vocab-type-group vocab-source-group" data-source-group="${esc(group.id)}"${open ? " open" : ""}><summary><span>${esc(group.label)} <span class="vocab-category-count">${total} words</span></span></summary><div class="vocab-type-body">${groupSources.length > 1 ? `<label class="vocab-parent-option"><input class="vocab-source-group-toggle" type="checkbox"><span>Select every source in this group</span></label>` : ""}<div class="vocab-leaf-grid">${options}</div></div></details>`;
         }).join("");
         const sourceTree = `<details class="vocab-tree vocab-source-tree" open><summary><span>Vocabulary sources</span><span class="vocab-source-headline">one source per word</span></summary><div class="vocab-tree-body"><p class="vocab-source-note">A word that appears in several places is counted once, under this Bab first, then the TOPIK vocabulary lists, then the other Bab lessons, then the practice tests.</p><div class="vocab-tree-actions"><button class="btn secondary vocab-source-reset" type="button">Only this Bab</button><button class="btn secondary vocab-source-all" type="button">Select all sources</button><button class="btn secondary vocab-source-none" type="button">Clear all sources</button></div><div class="vocab-type-list">${sourceGroups}</div></div></details>`;
-        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend>${sourceTree}<details class="vocab-tree" open><summary><span>Word types and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${typeGroups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
+        return `<fieldset class="vocab-picker" data-exercise-key="${esc(key)}"><legend>Vocabulary to include</legend>${sourceTree}<details class="vocab-tree" open><summary><span>Parts of speech and categories</span><span>${esc(config.description)}</span></summary><div class="vocab-tree-body"><div class="vocab-tree-actions"><button class="btn secondary vocab-select-all" type="button">Select all groups</button><button class="btn secondary vocab-clear-all" type="button">Clear all groups</button></div><div class="vocab-type-list">${typeGroups}</div></div></details><p class="vocab-selection-summary"><span class="vocab-selected-count">0</span> words currently selected.</p><p class="menu-error hidden vocab-pool-error"></p></fieldset>`;
     }
     function exerciseTemplate(key, title, description, defaultCount = 20) {
         const setupText = key === "vocabulary"
