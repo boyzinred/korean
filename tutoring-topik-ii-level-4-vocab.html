@@ -736,6 +736,85 @@ th {
   outline: 3px solid var(--primary);
   outline-offset: -4px;
 }
+/* Part-of-speech group headers and per-word usage notes */
+.pos-korean {
+  margin-left: 8px;
+  font-size: .82rem;
+  font-weight: 700;
+  opacity: .85;
+}
+.pos-note {
+  margin: 0;
+  padding: 12px 18px;
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
+}
+.word-note-head { width: 3.5rem; }
+.word-note-cell {
+  width: 3.5rem;
+  padding-right: 0;
+  vertical-align: middle;
+}
+.word-note-toggle {
+  width: 2.125rem;
+  height: 2.125rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--surface);
+  background: var(--accent);
+  border: 0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+.word-note-toggle:hover { opacity: .85; }
+.word-note-row > td { padding: 0 1rem 1rem; }
+.word-note {
+  display: grid;
+  gap: .75rem;
+  padding: .875rem 1rem;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+}
+.word-note-usage {
+  margin: 0;
+  font-size: .92rem;
+  font-weight: 600;
+}
+.word-note-example {
+  display: grid;
+  gap: .25rem;
+  padding: .75rem .875rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.word-note-example p { margin: 0; }
+.word-note-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+.word-note-ko {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.word-note-en { font-weight: 700; }
+.word-note-form {
+  font-size: .84rem;
+  font-weight: 600;
+  opacity: .85;
+}
 .familiarity-cell { min-width: 11.875rem; }
 .familiarity-stars {
   display: inline-flex;
@@ -1005,6 +1084,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
     <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
   </div>
 
+  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script>
 
     const SECTIONS = [{"id":"society-daily-life","title":"Society and Daily Life","items":[{"korean":"환경","romanization":"hoan-gyeong","meaning":"environment"},{"korean":"문제","romanization":"mun-je","meaning":"problem"},{"korean":"변화","romanization":"byeon-hoa","meaning":"change"},{"korean":"문화","romanization":"mun-hoa","meaning":"culture"},{"korean":"전통","romanization":"jeon-tong","meaning":"tradition"},{"korean":"습관","romanization":"seup-goan","meaning":"habit"},{"korean":"경험","romanization":"gyeong-heom","meaning":"experience"},{"korean":"기회","romanization":"gi-hoi","meaning":"opportunity"},{"korean":"관심","romanization":"goan-sim","meaning":"interest"},{"korean":"영향","romanization":"yeong-hyang","meaning":"influence"}]},{"id":"education-school","title":"Education and School","items":[{"korean":"교육","romanization":"gyo-yuk","meaning":"education"},{"korean":"지식","romanization":"ji-sik","meaning":"knowledge"},{"korean":"시험","romanization":"si-heom","meaning":"exam"},{"korean":"성적","romanization":"seong-jeok","meaning":"grade"},{"korean":"발표","romanization":"bal-pyo","meaning":"presentation"},{"korean":"과제","romanization":"goa-je","meaning":"assignment"},{"korean":"전공","romanization":"jeon-gong","meaning":"major"},{"korean":"강의","romanization":"gang-eui","meaning":"lecture"},{"korean":"연구","romanization":"yeon-gu","meaning":"research"},{"korean":"실력","romanization":"sil-ryeok","meaning":"ability / skill"}]},{"id":"work-economy","title":"Work and Economy","items":[{"korean":"직업","romanization":"jik-eop","meaning":"occupation"},{"korean":"회사","romanization":"hoi-sa","meaning":"company"},{"korean":"취업","romanization":"chui-eop","meaning":"employment"},{"korean":"면접","romanization":"myeon-jeop","meaning":"interview"},{"korean":"월급","romanization":"ueol-geup","meaning":"salary"},{"korean":"경제","romanization":"gyeong-je","meaning":"economy"},{"korean":"소비","romanization":"so-bi","meaning":"consumption"},{"korean":"저축","romanization":"jeo-chuk","meaning":"saving"},{"korean":"가격","romanization":"ga-gyeok","meaning":"price"},{"korean":"비용","romanization":"bi-yong","meaning":"cost"}]},{"id":"feelings-personality","title":"Feelings and Personality","items":[{"korean":"걱정","romanization":"geok-jeong","meaning":"worry"},{"korean":"고민","romanization":"go-min","meaning":"concern"},{"korean":"만족","romanization":"man-jok","meaning":"satisfaction"},{"korean":"불만","romanization":"bul-man","meaning":"dissatisfaction"},{"korean":"스트레스","romanization":"seu-teu-re-seu","meaning":"stress"},{"korean":"자신감","romanization":"ja-sin-gam","meaning":"confidence"},{"korean":"성격","romanization":"seong-gyeok","meaning":"personality"},{"korean":"태도","romanization":"tae-do","meaning":"attitude"},{"korean":"노력","romanization":"no-ryeok","meaning":"effort"},{"korean":"책임감","romanization":"chaek-im-gam","meaning":"responsibility"}]},{"id":"health","title":"Health","items":[{"korean":"건강","romanization":"geon-gang","meaning":"health"},{"korean":"운동","romanization":"un-dong","meaning":"exercise"},{"korean":"식습관","romanization":"sik-seup-goan","meaning":"eating habits"},{"korean":"영양","romanization":"yeong-yang","meaning":"nutrition"},{"korean":"질병","romanization":"jil-byeong","meaning":"disease"},{"korean":"치료","romanization":"chi-ryo","meaning":"treatment"},{"korean":"예방","romanization":"ye-bang","meaning":"prevention"},{"korean":"수면","romanization":"su-myeon","meaning":"sleep"},{"korean":"피로","romanization":"pi-ro","meaning":"fatigue"},{"korean":"체력","romanization":"che-ryeok","meaning":"physical strength"}]},{"id":"nature-environment","title":"Nature and Environment","items":[{"korean":"자연","romanization":"ja-yeon","meaning":"nature"},{"korean":"오염","romanization":"o-yeom","meaning":"pollution"},{"korean":"쓰레기","romanization":"sseu-re-gi","meaning":"trash"},{"korean":"재활용","romanization":"jae-hoal-yong","meaning":"recycling"},{"korean":"자원","romanization":"ja-ueon","meaning":"resource"},{"korean":"에너지","romanization":"e-neo-ji","meaning":"energy"},{"korean":"기후","romanization":"gi-hu","meaning":"climate"},{"korean":"지구","romanization":"ji-gu","meaning":"Earth"},{"korean":"보호","romanization":"bo-ho","meaning":"protection"},{"korean":"해결","romanization":"hae-gyeol","meaning":"solution"}]},{"id":"frequent-verbs","title":"Frequently Used Verbs","items":[{"korean":"증가하다","romanization":"jeung-ga-ha-da","meaning":"increase"},{"korean":"감소하다","romanization":"gam-so-ha-da","meaning":"decrease"},{"korean":"발전하다","romanization":"bal-jeon-ha-da","meaning":"develop"},{"korean":"개선하다","romanization":"gae-seon-ha-da","meaning":"improve"},{"korean":"해결하다","romanization":"hae-gyeol-ha-da","meaning":"solve"},{"korean":"예방하다","romanization":"ye-bang-ha-da","meaning":"prevent"},{"korean":"비교하다","romanization":"bi-gyo-ha-da","meaning":"compare"},{"korean":"선택하다","romanization":"seon-taek-ha-da","meaning":"choose"},{"korean":"참여하다","romanization":"cham-yeo-ha-da","meaning":"participate"},{"korean":"주장하다","romanization":"ju-jang-ha-da","meaning":"claim"}]},{"id":"frequent-adjectives","title":"Frequently Used Adjectives","items":[{"korean":"심각하다","romanization":"sim-gak-ha-da","meaning":"serious"},{"korean":"복잡하다","romanization":"bok-jap-ha-da","meaning":"complicated"},{"korean":"편리하다","romanization":"pyeon-ri-ha-da","meaning":"convenient"},{"korean":"불편하다","romanization":"bul-pyeon-ha-da","meaning":"inconvenient"},{"korean":"다양하다","romanization":"da-yang-ha-da","meaning":"various"},{"korean":"중요하다","romanization":"jung-yo-ha-da","meaning":"important"},{"korean":"필요하다","romanization":"pil-yo-ha-da","meaning":"necessary"},{"korean":"효과적이다","romanization":"hyo-goa-jeok-i-da","meaning":"effective"},{"korean":"긍정적이다","romanization":"geung-jeong-jeok-i-da","meaning":"positive"},{"korean":"부정적이다","romanization":"bu-jeong-jeok-i-da","meaning":"negative"}]},{"id":"common-expressions","title":"Common Expressions","items":[{"korean":"~에 관심이 있다","romanization":"~e goan-sim-i iss-da","meaning":"be interested in"},{"korean":"~에 영향을 주다","romanization":"~e yeong-hyang-eul ju-da","meaning":"have an influence on"},{"korean":"~이/가 필요하다","romanization":"~i/ga pil-yo-ha-da","meaning":"be necessary"},{"korean":"~을/를 줄이다","romanization":"~eul/reul jul-i-da","meaning":"reduce"},{"korean":"~을/를 늘리다","romanization":"~eul/reul neul-ri-da","meaning":"increase"},{"korean":"~을/를 해결하다","romanization":"~eul/reul hae-gyeol-ha-da","meaning":"solve"},{"korean":"~을/를 예방하다","romanization":"~eul/reul ye-bang-ha-da","meaning":"prevent"},{"korean":"~에 참여하다","romanization":"~e cham-yeo-ha-da","meaning":"participate in"},{"korean":"~을/를 경험하다","romanization":"~eul/reul gyeong-heom-ha-da","meaning":"experience"},{"korean":"~을/를 실천하다","romanization":"~eul/reul sil-cheon-ha-da","meaning":"put into practice"}]}];
@@ -1157,20 +1237,43 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
       `;
     }
 
+    // The reference bank is grouped by part of speech (Korean-adjusted:
+    // descriptive verbs, 관형사 determiners, counters, and collocations keep
+    // their own groups). The themed SECTIONS still drive the quizzes below,
+    // and their word keys are reused so familiarity ratings survive.
+    function referenceGroups() {
+      const groups = new Map();
+      const seen = new Set();
+      SECTIONS.forEach(section => {
+        section.items.forEach((item, itemIndex) => {
+          if (seen.has(item.korean)) return;
+          seen.add(item.korean);
+          const group = KoreanWordNotes.groupForKorean(item.korean);
+          if (!groups.has(group.id)) groups.set(group.id, { group, items: [] });
+          groups.get(group.id).items.push({ ...item, sourceSectionId: section.id, sourceSectionTitle: section.title, sourceIndex: itemIndex });
+        });
+      });
+      return [...groups.values()].sort((a, b) =>
+        KoreanWordNotes.groupRank(a.group.id) - KoreanWordNotes.groupRank(b.group.id) || a.group.label.localeCompare(b.group.label));
+    }
+
     function renderReference() {
       const container = document.getElementById("referenceTables");
-      container.innerHTML = SECTIONS.map(section => `
-        <details class="ref-section" data-section-id="${esc(section.id)}" open>
+      const themeNotes = SECTIONS.filter(section => section.notes?.length);
+      container.innerHTML = `
+        ${themeNotes.length ? `
+          <div class="note-card" style="margin-bottom: 16px;">
+            <h3>Notes from the word lists</h3>
+            <ul>${themeNotes.flatMap(section => section.notes.map(note => `<li><strong>${esc(section.title)}:</strong> ${esc(note)}</li>`)).join("")}</ul>
+          </div>
+        ` : ""}
+        ${referenceGroups().map(({ group, items }) => `
+        <details class="ref-section" data-section-id="pos-${esc(group.id)}" open>
           <summary>
-            <span>${esc(section.title)}</span>
-            <span class="small">${section.items.length} words</span>
+            <span>${esc(group.label)}${group.korean ? ` <span class="pos-korean">${esc(group.korean)}</span>` : ""}</span>
+            <span class="small">${items.length} words</span>
           </summary>
-          ${section.notes ? `
-            <div class="note-card" style="margin: 14px;">
-              <h3>Notes</h3>
-              <ul>${section.notes.map(note => `<li>${esc(note)}</li>`).join("")}</ul>
-            </div>
-          ` : ""}
+          ${group.note ? `<p class="pos-note">${esc(group.note)}</p>` : ""}
           <div class="vocab-tools" aria-label="Vocabulary visibility controls">
             <span class="vocab-tools__label">Study controls · click a blurred cell to peek</span>
             <button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur English</button>
@@ -1181,6 +1284,7 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
             <table>
               <thead>
                 <tr>
+                  <th class="word-note-head"><span class="sr-only">Usage notes</span></th>
                   <th>English</th>
                   <th>Romanization</th>
                   <th>Korean</th>
@@ -1188,10 +1292,15 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
                 </tr>
               </thead>
               <tbody>
-                ${section.items.map((item, itemIndex) => {
-                  const wordKey = `${section.id}:${itemIndex}:${item.korean}`;
-                  return `
-                  <tr>
+                ${items.map(item => {
+                  // Word keys stay tied to the original themed section so saved
+                  // familiarity ratings are not orphaned by the regrouping.
+                  const wordKey = `${item.sourceSectionId}:${item.sourceIndex}:${item.korean}`;
+                  const note = KoreanWordNotes.noteForKorean(item.korean);
+                  const noteId = `word-note-${group.id}-${item.sourceSectionId}-${item.sourceIndex}`;
+                  const row = `
+                  <tr class="vocab-word-row">
+                    <td class="word-note-cell">${note ? `<button class="word-note-toggle" type="button" aria-expanded="false" aria-controls="${esc(noteId)}" aria-label="Show usage notes for ${esc(item.korean)}"><span aria-hidden="true">＋</span></button>` : ""}</td>
                     <td data-vocab-field="meaning" tabindex="0"><span class="blur-target">${esc(item.meaning)}</span></td>
                     <td data-vocab-field="romanization" tabindex="0"><span class="blur-target"><span class="roman">${esc(item.romanization)}</span>${item.romanization_alts ? `<span class="small">Also accepted: ${esc(item.romanization_alts.join(", "))}</span>` : ""}</span></td>
                     <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<span class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</span>` : ""}</span></td>
@@ -1204,12 +1313,31 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
                       <span class="familiarity-label">Not rated</span>
                     </td>
                   </tr>`;
+                  if (!note) return row;
+                  const example = note.example;
+                  return `${row}
+                  <tr class="word-note-row" id="${esc(noteId)}" hidden>
+                    <td colspan="5">
+                      <div class="word-note">
+                        <p class="word-note-usage">${esc(note.note)}</p>
+                        ${example ? `
+                          <div class="word-note-example">
+                            <span class="word-note-label">Example · from ${esc(item.sourceSectionTitle)}</span>
+                            <p class="word-note-ko">${esc(example.ko)}</p>
+                            <p class="roman">${esc(KoreanWordNotes.romanize(example.ko))}</p>
+                            <p class="word-note-en">${esc(example.en)}</p>
+                            ${example.form ? `<p class="word-note-form"><strong>Form:</strong> ${esc(example.form)}</p>` : ""}
+                          </div>
+                        ` : ""}
+                      </div>
+                    </td>
+                  </tr>`;
                 }).join("")}
               </tbody>
             </table>
           </div>
         </details>
-      `).join("");
+      `).join("")}`;
     }
 
     function renderModeButtons(sectionId, type, activeMode) {
@@ -1575,6 +1703,20 @@ html[data-theme="light"] .finish-card { color: #FFFFFF; }
             saveObject(BLUR_KEY, blurState);
             section.querySelectorAll(`[data-vocab-field="${field}"]`).forEach(cell => cell.classList.remove("peek"));
             applyBlur(section, field, enabled);
+          });
+        });
+
+        // Usage-note dropdowns: the toggle sits in the first column and opens
+        // the note row directly beneath its word row.
+        section.querySelectorAll(".word-note-toggle").forEach(toggle => {
+          toggle.addEventListener("click", () => {
+            const noteRow = document.getElementById(toggle.getAttribute("aria-controls"));
+            const open = toggle.getAttribute("aria-expanded") !== "true";
+            const korean = toggle.closest("tr").querySelector('[data-vocab-field="korean"] .hangul').textContent;
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.querySelector("span").textContent = open ? "−" : "＋";
+            toggle.setAttribute("aria-label", `${open ? "Hide" : "Show"} usage notes for ${korean}`);
+            if (noteRow) noteRow.hidden = !open;
           });
         });
 
