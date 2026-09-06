@@ -1280,6 +1280,16 @@ th {
   border-radius: var(--radius-md);
 }
 .ref-filter:focus { border-color: var(--primary); outline: none; }
+.ref-modes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ref-modes__label {
+  margin-right: 2px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .8;
+}
+.ref-toolbar .mode-btn { min-height: 42px; padding: 0 14px; font-size: .82rem; }
 .pos-note { margin: 0; padding: 14px 20px; font-size: .82rem; opacity: .85; }
 .pos-korean { opacity: .8; font-weight: 700; }
 .word-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
@@ -1324,7 +1334,7 @@ th {
     </nav>
 
     <details class="block" id="reference">
-      <summary><span>The Word Bank &mdash; All 2000, by Part of Speech</span></summary>
+      <summary><span>The Word Bank &mdash; All 2000, by <span id="refModeLabel">Part of Speech</span></span></summary>
       <div class="block-inner">
         <div class="guide-grid">
           <article class="guide-card">
@@ -1644,26 +1654,63 @@ th {
     }
 
     // ------------------------------------------------------------ reference
-    function referenceGroups() {
-      return USED_POS.map(group => ({ group, items: BANK.filter(w => w.partOfSpeech === group.id) }))
-        .sort((a, b) => POS_RANK.get(a.group.id) - POS_RANK.get(b.group.id));
+    // The bank groups two ways. Part of speech is the reference view; study day
+    // is the drilling view, where one section holds exactly today's batch, so
+    // the blur toggles hide nothing but the words being worked on.
+    const REF_MODE_KEY = "topik2000RefModeV1";
+    const REF_MODE_LABELS = { pos: "Part of Speech", day: "Study Day" };
+    const REF_MODES = ["pos", "day"];
+
+    function posGroups() {
+      return USED_POS.slice()
+        .sort((a, b) => POS_RANK.get(a.id) - POS_RANK.get(b.id))
+        .map(group => ({
+          sectionId: `pos-${group.id}`,
+          title: `${esc(group.label)} <span class="pos-korean">${esc(group.korean)}</span>`,
+          note: group.note,
+          items: BANK.filter(w => w.partOfSpeech === group.id)
+        }));
     }
 
-    const REF_GROUPS = referenceGroups();
+    function dayGroups() {
+      const perDay = new Map(DAYS.map(day => [day, []]));
+      BANK.forEach(word => perDay.get(word.day)?.push(word));
+      return DAYS.map(day => ({
+        sectionId: `day-${day}`,
+        title: `Day ${esc(day)}`,
+        note: `Batch ${day} of ${DAYS.length}, in learning order. Blur a column to quiz just this day, then rate each word.`,
+        items: perDay.get(day)
+      }));
+    }
+
+    // Blur is saved per section id, so every day remembers its own state.
+    let refMode = (() => {
+      try { const saved = localStorage.getItem(REF_MODE_KEY); return REF_MODES.includes(saved) ? saved : "pos"; }
+      catch (_) { return "pos"; }
+    })();
+    const REF_GROUP_BY_ID = new Map();
 
     function renderReference() {
       const container = document.getElementById("referenceTables");
+      const groups = refMode === "day" ? dayGroups() : posGroups();
+      REF_GROUP_BY_ID.clear();
+      groups.forEach(group => REF_GROUP_BY_ID.set(group.sectionId, group));
+      const lastColumn = refMode === "day" ? "Part of speech" : "Day";
       container.innerHTML = `
         <div class="ref-toolbar">
+          <div class="ref-modes" role="group" aria-label="Group the word bank by">
+            <span class="ref-modes__label">Group by</span>
+            ${REF_MODES.map(mode => `<button class="mode-btn${mode === refMode ? " active" : ""}" type="button" data-ref-mode="${mode}" aria-pressed="${mode === refMode}">${REF_MODE_LABELS[mode]}</button>`).join("")}
+          </div>
           <input class="ref-filter" id="refFilter" type="search" placeholder="Search English, romanization, or Hangul…" aria-label="Search the word bank">
           <button class="btn secondary" type="button" id="refExpand">Open all</button>
           <button class="btn secondary" type="button" id="refCollapse">Close all</button>
         </div>
-        ${REF_GROUPS.map(({ group, items }) => `
-          <details class="ref-section" data-section-id="pos-${esc(group.id)}" data-pos="${esc(group.id)}">
+        ${groups.map(group => `
+          <details class="ref-section" data-section-id="${esc(group.sectionId)}">
             <summary>
-              <span>${esc(group.label)} <span class="pos-korean">${esc(group.korean)}</span></span>
-              <span class="small">${items.length} words</span>
+              <span>${group.title}</span>
+              <span class="small">${group.items.length} words</span>
             </summary>
             <p class="pos-note">${esc(group.note)}</p>
             <div class="ref-toolbar">
@@ -1672,8 +1719,8 @@ th {
               <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
             </div>
             <div class="table-wrap"><table>
-              <thead><tr><th>English</th><th>Romanization</th><th>Korean</th><th>Day</th><th>Familiarity</th></tr></thead>
-              <tbody data-rows-for="${esc(group.id)}"></tbody>
+              <thead><tr><th>English</th><th>Romanization</th><th>Korean</th><th>${lastColumn}</th><th>Familiarity</th></tr></thead>
+              <tbody></tbody>
             </table></div>
           </details>
         `).join("")}`;
@@ -1682,14 +1729,17 @@ th {
         section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
         restoreBlur(section);
       });
+      const modeLabel = document.getElementById("refModeLabel");
+      if (modeLabel) modeLabel.textContent = REF_MODE_LABELS[refMode];
       attachReferenceListeners();
     }
 
     function fillRows(section) {
       const body = section.querySelector("tbody");
       if (body.dataset.filled === "true") return;
-      const pos = section.dataset.pos;
-      body.innerHTML = BANK.filter(w => w.partOfSpeech === pos).map(item => {
+      const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+      if (!group) return;
+      body.innerHTML = group.items.map(item => {
         const level = familiarity[item.id] || 0;
         return `
         <tr data-search="${esc((item.meaning + " " + item.romanization + " " + item.korean).toLowerCase())}">
@@ -1697,7 +1747,7 @@ th {
             <span class="word-tags"><span class="word-tag">${esc(TOPIC_LABELS[item.topic] || item.topic)}</span><span class="word-tag">Level ${esc(item.level)}</span></span></td>
           <td data-vocab-field="romanization" tabindex="0"><span class="blur-target"><span class="roman">${esc(item.romanization)}</span></span></td>
           <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<span class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</span>` : ""}</span></td>
-          <td>${esc(item.day)}</td>
+          <td>${refMode === "day" ? esc((POS_BY_ID.get(item.partOfSpeech) || {}).label || item.partOfSpeech) : esc(item.day)}</td>
           <td class="familiarity-cell">
             <span class="familiarity-stars" data-word-key="${esc(item.id)}" data-level="${level}" role="group" aria-label="Familiarity for ${esc(item.korean)}">
               ${[1, 2, 3].map(n => `<button class="familiarity-star" type="button" data-level="${n}" aria-pressed="${n <= level}" aria-label="${n} star"><span aria-hidden="true">★</span></button>`).join("")}
@@ -1741,11 +1791,34 @@ th {
       }
     }
 
-    // Delegated, because the bank renders 2000 rows with three stars each.
+    // Delegated, because the bank renders 2000 rows with three stars each, and
+    // attached once: switching the grouping replaces the container's markup.
+    let referenceListenersAttached = false;
     function attachReferenceListeners() {
+      if (referenceListenersAttached) return;
+      referenceListenersAttached = true;
       const container = document.getElementById("referenceTables");
 
       container.addEventListener("click", event => {
+        const modeButton = event.target.closest("[data-ref-mode]");
+        if (modeButton) {
+          if (modeButton.dataset.refMode !== refMode) {
+            refMode = modeButton.dataset.refMode;
+            try { localStorage.setItem(REF_MODE_KEY, refMode); } catch (_) {}
+            renderReference();
+          }
+          return;
+        }
+
+        if (event.target.closest("#refExpand")) {
+          container.querySelectorAll(".ref-section").forEach(section => { section.open = true; fillRows(section); });
+          return;
+        }
+        if (event.target.closest("#refCollapse")) {
+          container.querySelectorAll(".ref-section").forEach(section => { section.open = false; });
+          return;
+        }
+
         const star = event.target.closest(".familiarity-star");
         if (star) {
           const group = star.closest(".familiarity-stars");
@@ -1786,15 +1859,9 @@ th {
         }
       });
 
-      document.getElementById("refExpand").addEventListener("click", () => {
-        container.querySelectorAll(".ref-section").forEach(section => { section.open = true; fillRows(section); });
-      });
-      document.getElementById("refCollapse").addEventListener("click", () => {
-        container.querySelectorAll(".ref-section").forEach(section => { section.open = false; });
-      });
-
       let filterTimer = null;
-      document.getElementById("refFilter").addEventListener("input", event => {
+      container.addEventListener("input", event => {
+        if (!event.target.matches("#refFilter")) return;
         clearTimeout(filterTimer);
         const query = event.target.value.trim().toLowerCase();
         filterTimer = setTimeout(() => applyFilter(query), 160);
@@ -1804,8 +1871,10 @@ th {
     function applyFilter(query) {
       const container = document.getElementById("referenceTables");
       container.querySelectorAll(".ref-section").forEach(section => {
+        const total = (REF_GROUP_BY_ID.get(section.dataset.sectionId) || { items: [] }).items.length;
         if (!query) {
           section.querySelectorAll("tbody tr").forEach(row => { row.hidden = false; });
+          section.querySelector("summary .small").textContent = `${total} words`;
           section.open = false;
           return;
         }
@@ -1817,7 +1886,7 @@ th {
           if (match) hits++;
         });
         section.open = hits > 0;
-        section.querySelector("summary .small").textContent = `${hits} of ${BANK.filter(w => w.partOfSpeech === section.dataset.pos).length} words`;
+        section.querySelector("summary .small").textContent = `${hits} of ${total} words`;
       });
     }
 
@@ -2214,13 +2283,11 @@ th {
     }
 
     // ------------------------------------------------------------ quiz engine
-    // One quiz runs at a time; starting another resets the shared state.
-    const state = {
-      exerciseId: null, pool: [], questions: [], index: 0, score: 0,
-      answered: false, results: [], currentAttempts: [], currentHadWrong: false,
-      retryCurrent: false, finished: false, repeatWrong: false,
-      questionMode: "korean", answerMode: "english", timer: null, label: ""
-    };
+    // Every exercise keeps its own run, so starting one leaves the others
+    // exactly where they were — same question, same score, same clock. An
+    // exercise has no entry here until it is started, and loses it when it
+    // goes back to setup.
+    const STATES = new Map();
 
     function menuMarkup(exercise) {
       const id = exercise.id;
@@ -2372,7 +2439,8 @@ th {
         if (!form) return;
         event.preventDefault();
         const id = form.dataset.exercise;
-        if (state.answered) return;
+        const state = STATES.get(id);
+        if (!state || state.answered) return;
         answer(id, document.getElementById(`input-${id}`).value);
       });
     }
@@ -2385,17 +2453,21 @@ th {
     }
 
     function showSetup(exerciseId) {
-      clearTimer();
+      const state = STATES.get(exerciseId);
+      if (state) {
+        clearTimer(state);
+        state.finished = true;
+        STATES.delete(exerciseId);
+      }
       document.getElementById(`menu-${exerciseId}`).classList.remove("hidden");
       document.getElementById(`quiz-card-${exerciseId}`).classList.add("hidden");
       showPhase(exerciseId, "live");
-      if (state.exerciseId === exerciseId) state.finished = true;
       refreshCount(exerciseId);
     }
 
-    function clearTimer() {
-      if (state.timer) clearInterval(state.timer);
-      state.timer = null;
+    function clearTimer(state) {
+      if (state && state.timer) clearInterval(state.timer);
+      if (state) state.timer = null;
     }
 
     function startQuiz(exerciseId) {
@@ -2418,16 +2490,9 @@ th {
       const questionMode = document.getElementById(`menu-question-${exerciseId}`).value;
       const answerMode = document.getElementById(`menu-answer-${exerciseId}`).value;
 
-      clearTimer();
-      // Only one quiz runs at a time, so any other exercise still showing a
-      // runner from an abandoned attempt goes back to its setup form.
-      EXERCISES.filter(other => other.id !== exerciseId).forEach(other => {
-        document.getElementById(`menu-${other.id}`).classList.remove("hidden");
-        document.getElementById(`quiz-card-${other.id}`).classList.add("hidden");
-        showPhase(other.id, "live");
-      });
-
-      Object.assign(state, {
+      // Only this exercise's previous run is discarded; the others keep theirs.
+      clearTimer(STATES.get(exerciseId));
+      const state = {
         exerciseId,
         pool: words,
         questions: spacedOrder(pool, word => questionKeys(word, questionMode, answerMode)),
@@ -2442,8 +2507,10 @@ th {
         repeatWrong: document.getElementById(`menu-repeat-${exerciseId}`).checked,
         questionMode,
         answerMode,
+        timer: null,
         label: `${exercise.title} · ${words.length} words`
-      });
+      };
+      STATES.set(exerciseId, state);
 
       document.getElementById(`menu-${exerciseId}`).classList.add("hidden");
       document.getElementById(`quiz-card-${exerciseId}`).classList.remove("hidden");
@@ -2470,7 +2537,8 @@ th {
     }
 
     function showQuestion(exerciseId, isRetry = false) {
-      if (state.finished || !state.questions.length) return;
+      const state = STATES.get(exerciseId);
+      if (!state || state.finished || !state.questions.length) return;
       const item = state.questions[state.index];
       state.answered = false;
       if (!isRetry) {
@@ -2527,7 +2595,7 @@ th {
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
     }
 
-    function pushResult(item, userAnswer, correct, masteredAfterRetry) {
+    function pushResult(state, item, userAnswer, correct, masteredAfterRetry) {
       state.results.push({
         id: item.id,
         item,
@@ -2542,7 +2610,8 @@ th {
     }
 
     function answer(exerciseId, userAnswer) {
-      if (state.answered || state.finished) return;
+      const state = STATES.get(exerciseId);
+      if (!state || state.answered || state.finished) return;
       const item = state.questions[state.index];
       const correct = isCorrect(state.pool, item, state.questionMode, state.answerMode, userAnswer);
       const feedback = document.getElementById(`feedback-${exerciseId}`);
@@ -2553,7 +2622,7 @@ th {
         if (!state.currentHadWrong) state.score += 1;
         feedback.className = "feedback good";
         feedback.innerHTML = `${state.currentHadWrong ? "Correct on retry." : "Correct."} <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>`;
-        pushResult(item, userAnswer, !state.currentHadWrong, state.currentHadWrong);
+        pushResult(state, item, userAnswer, !state.currentHadWrong, state.currentHadWrong);
         recordResult(item, !state.currentHadWrong);
         state.retryCurrent = false;
       } else {
@@ -2563,7 +2632,7 @@ th {
         if (state.repeatWrong) {
           state.retryCurrent = true;
         } else {
-          pushResult(item, userAnswer, false, false);
+          pushResult(state, item, userAnswer, false, false);
           recordResult(item, false);
           state.retryCurrent = false;
         }
@@ -2582,6 +2651,8 @@ th {
     }
 
     function advance(exerciseId) {
+      const state = STATES.get(exerciseId);
+      if (!state) return;
       if (state.retryCurrent) { showQuestion(exerciseId, true); return; }
       if (state.index >= state.questions.length - 1) { finish(exerciseId, "Completed"); return; }
       state.index += 1;
@@ -2589,16 +2660,17 @@ th {
     }
 
     function finish(exerciseId, reason) {
-      if (state.finished) return;
+      const state = STATES.get(exerciseId);
+      if (!state || state.finished) return;
       // A word still mid-retry when the timer runs out counts as missed.
       if (state.retryCurrent && state.currentAttempts.length) {
         const item = state.questions[state.index];
-        pushResult(item, state.currentAttempts[state.currentAttempts.length - 1].userAnswer, false, false);
+        pushResult(state, item, state.currentAttempts[state.currentAttempts.length - 1].userAnswer, false, false);
         recordResult(item, false);
         state.retryCurrent = false;
       }
       state.finished = true;
-      clearTimer();
+      clearTimer(state);
       saveObject(PROGRESS_KEY, progress);
 
       const answered = state.results.length;
@@ -2619,7 +2691,7 @@ th {
         ? `First-try score <strong>${state.score} / ${answered}</strong><span class="finish-sub">${answered} of ${state.questions.length} questions completed · ${modeLabel(state.questionMode)} → ${modeLabel(state.answerMode)}</span>`
         : "No questions were answered.";
 
-      renderExport(exerciseId);
+      renderExport(exerciseId, state);
       document.getElementById(`review-${exerciseId}`).innerHTML = answered ? `
         <h3>Review</h3>
         ${state.results.map((result, i) => {
@@ -2638,7 +2710,7 @@ th {
 
     // Anything missed outright or only got right on a retry, deduplicated, in
     // the same english / romanization / korean format Exercise 3 reads.
-    function missedWords() {
+    function missedWords(state) {
       const seen = new Set();
       return state.results
         .filter(result => !result.correct || result.masteredAfterRetry)
@@ -2646,8 +2718,8 @@ th {
         .map(result => result.item);
     }
 
-    function exportMarkdown() {
-      const words = missedWords();
+    function exportMarkdown(state) {
+      const words = missedWords(state);
       const exercise = EXERCISES.find(e => e.id === state.exerciseId);
       const header = [
         `# Missed words — ${exercise ? exercise.title : "Exercise"} — ${new Date().toISOString().slice(0, 10)}`,
@@ -2657,13 +2729,13 @@ th {
       return header.concat(words.map(fullEntry)).join("\n") + "\n";
     }
 
-    function renderExport(exerciseId) {
+    function renderExport(exerciseId, state) {
       const block = document.getElementById(`export-${exerciseId}`);
-      const words = missedWords();
+      const words = missedWords(state);
       block.classList.toggle("hidden", words.length === 0);
       if (!words.length) return;
       block.querySelector(".export-head h4").textContent = `${words.length} word${words.length === 1 ? "" : "s"} to review`;
-      document.getElementById(`export-text-${exerciseId}`).value = exportMarkdown();
+      document.getElementById(`export-text-${exerciseId}`).value = exportMarkdown(state);
     }
 
     function copyExport(button) {
