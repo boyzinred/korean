@@ -1553,31 +1553,49 @@ th {
       return MODES.find(m => m.key === mode)?.label || mode;
     }
 
-    // Deals the pool out so the same word is not asked twice in a row when a
-    // multiplier repeats it.
-    function spacedOrder(items, keyOf) {
+    // Every way a question can look like the one before it: the same word, the
+    // same prompt on screen (이 is a numeral, a determiner and a particle), or
+    // the same expected answer.
+    function questionKeys(item, qMode, aMode) {
+      return [
+        `w:${normalizeKorean(item.korean)}`,
+        `q:${normalizeByMode(displayValue(item, qMode), qMode)}`,
+        `a:${normalizeByMode(itemAnswerDisplay(item, aMode), aMode)}`
+      ];
+    }
+
+    // Deals the pool out in a random order that keeps look-alike questions
+    // apart — a repeat from the multiplier, a second bank entry for the same
+    // word, or two words that share a prompt or an answer.
+    function spacedOrder(items, keysOf) {
       const buckets = new Map();
       items.forEach(item => {
-        const key = keyOf(item);
-        if (!buckets.has(key)) buckets.set(key, []);
-        buckets.get(key).push(item);
+        const keys = keysOf(item);
+        const id = keys[0];
+        if (!buckets.has(id)) buckets.set(id, { keys, items: [] });
+        buckets.get(id).items.push(item);
       });
-      const keys = [...buckets.keys()];
-      const maxGap = Math.max(0, Math.min(keys.length - 1, 4));
+      let ids = shuffle([...buckets.keys()]);
+      const maxGap = Math.max(0, Math.min(ids.length - 1, 4));
       const out = [], recent = [];
       while (out.length < items.length) {
         let picked = null;
+        // Widest gap first, then relax it until something is dealable; gap 0
+        // has no window, so the loop always finds a pick.
         for (let gap = maxGap; gap >= 0 && picked === null; gap--) {
-          const window = gap > 0 ? recent.slice(-gap) : [];
-          const available = keys.filter(key => buckets.get(key).length && !window.includes(key));
+          const blocked = new Set(gap > 0 ? recent.slice(-gap).flat() : []);
+          const available = ids.filter(id => !buckets.get(id).keys.some(key => blocked.has(key)));
           if (!available.length) continue;
-          const most = Math.max(...available.map(key => buckets.get(key).length));
-          const best = available.filter(key => buckets.get(key).length === most);
+          const most = Math.max(...available.map(id => buckets.get(id).items.length));
+          const best = available.filter(id => buckets.get(id).items.length === most);
           picked = best[Math.floor(Math.random() * best.length)];
         }
         if (picked === null) break;
-        out.push(buckets.get(picked).shift());
-        recent.push(picked);
+        const bucket = buckets.get(picked);
+        out.push(bucket.items.shift());
+        recent.push(bucket.keys);
+        // Emptied buckets drop out, so the search stays fast on a 2000-word run.
+        if (!bucket.items.length) ids = ids.filter(id => id !== picked);
       }
       return out;
     }
@@ -2382,17 +2400,23 @@ th {
 
     function startQuiz(exerciseId) {
       const exercise = EXERCISES.find(e => e.id === exerciseId);
-      let words = exercise.select();
+      // Shuffled up front, so a run never follows the order the words were
+      // listed, pasted, or sorted in — and the cap takes a random slice.
+      let words = shuffle(exercise.select());
       const error = document.getElementById(`menu-error-${exerciseId}`);
       if (!words.length) { error.classList.remove("hidden"); return; }
       error.classList.add("hidden");
 
       const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`).value) || 0);
-      if (cap > 0 && words.length > cap) words = shuffle(words).slice(0, cap);
+      if (cap > 0 && words.length > cap) words = words.slice(0, cap);
 
       const multiplier = Math.max(1, Number(document.getElementById(`menu-multiplier-${exerciseId}`).value) || 1);
       const pool = [];
       for (let round = 0; round < multiplier; round++) words.forEach(word => pool.push(word));
+
+      // The modes decide what a question looks like, so the ordering needs them.
+      const questionMode = document.getElementById(`menu-question-${exerciseId}`).value;
+      const answerMode = document.getElementById(`menu-answer-${exerciseId}`).value;
 
       clearTimer();
       // Only one quiz runs at a time, so any other exercise still showing a
@@ -2406,7 +2430,7 @@ th {
       Object.assign(state, {
         exerciseId,
         pool: words,
-        questions: spacedOrder(pool, word => word.id),
+        questions: spacedOrder(pool, word => questionKeys(word, questionMode, answerMode)),
         index: 0,
         score: 0,
         answered: false,
@@ -2416,8 +2440,8 @@ th {
         retryCurrent: false,
         finished: false,
         repeatWrong: document.getElementById(`menu-repeat-${exerciseId}`).checked,
-        questionMode: document.getElementById(`menu-question-${exerciseId}`).value,
-        answerMode: document.getElementById(`menu-answer-${exerciseId}`).value,
+        questionMode,
+        answerMode,
         label: `${exercise.title} · ${words.length} words`
       });
 
