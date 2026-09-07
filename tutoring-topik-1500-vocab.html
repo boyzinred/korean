@@ -15,7 +15,7 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TOPIK 2000 Vocabulary</title>
+  <title>TOPIK II Level 3 Vocabulary</title>
   <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
@@ -1104,7 +1104,7 @@ th {
 }
 
 
-/* ---------------------------------------------------------------- 2000-word additions */
+/* ------------------------------------------------------------- word-bank additions */
 
 /* Stat strip under the page title. */
 .stat-strip {
@@ -1165,22 +1165,6 @@ th {
 .option input { width: 1.1rem; height: 1.1rem; margin: 0; flex: none; accent-color: var(--secondary); }
 .option .option-count { margin-left: auto; opacity: .7; font-size: .72rem; font-variant-numeric: tabular-nums; }
 
-/* Free-text paste box for the custom exercise. */
-.paste-box {
-  width: 100%;
-  min-height: 220px;
-  padding: 14px;
-  color: var(--surface-text);
-  background: var(--surface-muted);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: .82rem;
-  line-height: 1.6;
-  resize: vertical;
-}
-.paste-box:focus { background: var(--surface); border-color: var(--primary); outline: none; }
-
 /* The missed-words export block on the finish card. */
 .export-block { margin-top: 20px; }
 .export-head {
@@ -1224,40 +1208,6 @@ th {
   font-weight: 800;
 }
 .menu-summary.empty { color: var(--accent); }
-
-/* Live read-back of the pasted list under the column-mapping controls. */
-.preview-label {
-  margin-bottom: 8px;
-  font-size: .72rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  opacity: .75;
-}
-.preview-row {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
-  gap: 12px;
-  padding: 6px 0;
-  border-top: 1px solid var(--border);
-  font-weight: 700;
-}
-.preview-row > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.preview-problem {
-  margin-top: 8px;
-  color: var(--accent);
-  font-size: .78rem;
-  font-weight: 700;
-}
-.preview-problem code {
-  padding: 1px 5px;
-  background: var(--surface);
-  border-radius: 4px;
-  font-size: .74rem;
-}
-
-@media (max-width: 680px) {
-  .preview-row { grid-template-columns: 1fr; gap: 2px; }
-}
 
 /* Reference tables: sticky header and a search box, since the bank is long. */
 .ref-section table { min-width: 760px; }
@@ -1322,8 +1272,8 @@ th {
   <main class="page-main">
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-inner">
-        <span class="hero-kicker">TOPIK I &middot; Levels 1 and 2</span>
-        <h1 id="page-title">2000 Word Vocabulary Bank</h1>
+        <span class="hero-kicker">TOPIK II &middot; Level 3</span>
+        <h1 id="page-title">1500 Word Vocabulary Bank</h1>
         <div class="stat-strip" id="statStrip"></div>
       </div>
     </section>
@@ -1334,7 +1284,7 @@ th {
     </nav>
 
     <details class="block" id="reference">
-      <summary><span>The Word Bank &mdash; All 2000, by <span id="refModeLabel">Part of Speech</span></span></summary>
+      <summary><span>The Word Bank &mdash; All 1500, by <span id="refModeLabel">Part of Speech</span></span></summary>
       <div class="block-inner">
         <div class="guide-grid">
           <article class="guide-card">
@@ -1362,7 +1312,7 @@ th {
     <a class="utility-button top" href="#top" aria-label="Back to top">&uarr;</a>
   </div>
 
-  <script src="./shared-vocab/topik-vocab-2000.js?v=1.0.0"></script>
+  <script src="./shared-vocab/topik-vocab-1500.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -1449,12 +1399,6 @@ th {
         romanization: romanizeKorean(word.korean),
         romanization_alts: (word.korean_alts || []).map(romanizeKorean)
       });
-    });
-
-    const BANK_BY_KOREAN = new Map();
-    BANK.forEach(word => {
-      if (!BANK_BY_KOREAN.has(word.korean)) BANK_BY_KOREAN.set(word.korean, []);
-      BANK_BY_KOREAN.get(word.korean).push(word);
     });
 
     const DAYS = [...new Set(BANK.map(w => w.day))].sort((a, b) => a - b);
@@ -1604,7 +1548,7 @@ th {
         const bucket = buckets.get(picked);
         out.push(bucket.items.shift());
         recent.push(bucket.keys);
-        // Emptied buckets drop out, so the search stays fast on a 2000-word run.
+        // Emptied buckets drop out, so the search stays fast on a 1500-word run.
         if (!bucket.items.length) ids = ids.filter(id => id !== picked);
       }
       return out;
@@ -1620,8 +1564,8 @@ th {
     }
 
     // ------------------------------------------------------ progress storage
-    // { words: { id: { m: misses, s: seen, t: last ISO date } } }
-    const PROGRESS_KEY = "topik2000ProgressV1";
+    // Keys keep their old names so familiarity stars and blur settings survive
+    // the bank dropping from 2000 words to the 1500 intermediate ones.
     const FAMILIARITY_KEY = "topik2000FamiliarityV1";
     const BLUR_KEY = "topik2000BlurV1";
 
@@ -1633,25 +1577,8 @@ th {
       try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
     }
 
-    const progress = loadObject(PROGRESS_KEY);
-    if (!progress.words) progress.words = {};
     const familiarity = loadObject(FAMILIARITY_KEY);
     const blurState = loadObject(BLUR_KEY);
-
-    function recordResult(item, correct) {
-      if (!item.id || item.custom) return;
-      const entry = progress.words[item.id] || { m: 0, s: 0, t: "" };
-      entry.s += 1;
-      if (!correct) entry.m += 1;
-      entry.t = new Date().toISOString().slice(0, 10);
-      progress.words[item.id] = entry;
-    }
-
-    function weakWords() {
-      return BANK
-        .filter(word => (progress.words[word.id]?.m || 0) > 0)
-        .sort((a, b) => (progress.words[b.id].m - progress.words[a.id].m) || (a.day - b.day));
-    }
 
     // ------------------------------------------------------------ reference
     // The bank groups two ways. Part of speech is the reference view; study day
@@ -1725,7 +1652,7 @@ th {
           </details>
         `).join("")}`;
       container.querySelectorAll(".ref-section").forEach(section => {
-        // 2000 rows are built the first time a group is opened, not on load.
+        // 1500 rows are built the first time a group is opened, not on load.
         section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
         restoreBlur(section);
       });
@@ -1791,7 +1718,7 @@ th {
       }
     }
 
-    // Delegated, because the bank renders 2000 rows with three stars each, and
+    // Delegated, because the bank renders 1500 rows with three stars each, and
     // attached once: switching the grouping replaces the container's markup.
     let referenceListenersAttached = false;
     function attachReferenceListeners() {
@@ -1901,20 +1828,13 @@ th {
           ${pickerBlock("categories", "pos", "Parts of speech", USED_POS.map(group =>
             ({ value: group.id, label: group.label, count: countBy("partOfSpeech", group.id) })), true)}
           ${pickerBlock("categories", "topic", "Topics", TOPICS.map(topic =>
-            ({ value: topic, label: TOPIC_LABELS[topic] || topic, count: countBy("topic", topic) })), true)}
-          <div class="picker">
-            <span class="control-label">TOPIK level</span>
-            <div class="option-grid">
-              ${[1, 2].map(level => `<label class="option"><input type="checkbox" data-group="categories-level" value="${level}" checked><span>Level ${level}</span><span class="option-count">${countBy("level", level)}</span></label>`).join("")}
-            </div>
-          </div>`,
+            ({ value: topic, label: TOPIC_LABELS[topic] || topic, count: countBy("topic", topic) })), true)}`,
         select: () => {
           const pos = checkedValues("categories-pos");
           const topics = checkedValues("categories-topic");
-          const levels = checkedValues("categories-level").map(Number);
-          return BANK.filter(w => pos.includes(w.partOfSpeech) && topics.includes(w.topic) && levels.includes(w.level));
+          return BANK.filter(w => pos.includes(w.partOfSpeech) && topics.includes(w.topic));
         },
-        emptyMessage: "Check at least one part of speech, one topic, and one level."
+        emptyMessage: "Check at least one part of speech and one topic."
       },
       {
         id: "days",
@@ -1955,100 +1875,6 @@ th {
             refreshCount("days");
           });
         }
-      },
-      {
-        id: "custom",
-        kicker: "Exercise 3",
-        title: "Paste Your Own List",
-        blurb: "Paste a word list from anywhere, then tell the page how to read it: which character separates the columns, and what each column holds. Bullets, numbering, and lines starting with # are ignored, so a missed-words export pastes in as-is.",
-        picker: () => `
-          <div class="picker">
-            <div class="picker-head">
-              <span class="control-label">Your word list</span>
-              <div class="picker-actions">
-                <button class="btn secondary" type="button" id="custom-clear">Clear</button>
-              </div>
-            </div>
-            <textarea class="paste-box" id="custom-input" spellcheck="false" placeholder="to be absurd, preposterous / hoang-dang-ha-da / 황당하다&#10;to steal / hum-chi-da / 훔치다&#10;ventilation / 환기"></textarea>
-          </div>
-          <div class="picker">
-            <span class="control-label">How to read the columns</span>
-            <div class="exercise-menu-grid">
-              <label>Column separator<select id="custom-sep">
-                ${SEPARATORS.map(sep => `<option value="${esc(sep.key)}">${esc(sep.label)}</option>`).join("")}
-              </select></label>
-              <label>Other separator<small class="menu-count-note">Used when the separator is set to Other</small><input id="custom-sep-other" type="text" maxlength="4" value="" placeholder="e.g. =" disabled></label>
-              ${[1, 2, 3].map(n => `
-                <label>Column ${n}<select id="custom-col${n}" disabled>
-                  ${COLUMN_FIELDS.map(field => `<option value="${esc(field.key)}"${field.key === CUSTOM_DEFAULT_COLUMNS[n - 1] ? " selected" : ""}>${esc(field.label)}</option>`).join("")}
-                </select></label>`).join("")}
-            </div>
-            <div class="menu-summary" id="custom-preview"></div>
-          </div>`,
-        select: () => parsedCustom().words,
-        emptyMessage: "Paste at least one line containing a Korean word.",
-        onRender: () => {
-          const input = document.getElementById("custom-input");
-          input.addEventListener("input", () => refreshCount("custom"));
-          document.getElementById("custom-clear").addEventListener("click", () => {
-            input.value = "";
-            refreshCount("custom");
-          });
-          // Auto-detect reads the columns itself, so the mapping controls only
-          // come alive once a separator is chosen by hand.
-          const separator = document.getElementById("custom-sep");
-          const syncMappingControls = () => {
-            const manual = separator.value !== "auto";
-            [1, 2, 3].forEach(n => { document.getElementById(`custom-col${n}`).disabled = !manual; });
-            document.getElementById("custom-sep-other").disabled = separator.value !== "other";
-          };
-          separator.addEventListener("change", syncMappingControls);
-          syncMappingControls();
-        },
-        beforeCount: () => renderCustomPreview(),
-        countNote: () => {
-          const parsed = parsedCustom();
-          const notes = [];
-          if (parsed.skipped.length) notes.push(`${parsed.skipped.length} line${parsed.skipped.length === 1 ? "" : "s"} skipped`);
-          if (parsed.romanMismatches) notes.push(`${parsed.romanMismatches} pasted romanization${parsed.romanMismatches === 1 ? "" : "s"} replaced`);
-          return notes.length ? ` · ${notes.join(" · ")}` : "";
-        }
-      },
-      {
-        id: "weak",
-        kicker: "Exercise 4",
-        title: "Words You Have Missed",
-        blurb: "Built automatically from every exercise you finish on this device, hardest first. This is the list to run before starting a new day.",
-        picker: () => `
-          <div class="picker">
-            <div class="picker-head">
-              <span class="control-label">Missed-word pool</span>
-              <div class="picker-actions">
-                <button class="btn warning" type="button" id="weak-reset">Reset all miss counts</button>
-              </div>
-            </div>
-            <div class="menu-summary" id="weak-summary"></div>
-          </div>`,
-        select: () => weakWords(),
-        emptyMessage: "Nothing here yet — finish an exercise and any word you miss lands in this list.",
-        onRender: () => {
-          document.getElementById("weak-reset").addEventListener("click", () => {
-            if (!confirm("Clear the miss count for every word? Familiarity stars are not affected.")) return;
-            progress.words = {};
-            saveObject(PROGRESS_KEY, progress);
-            refreshCount("weak");
-          });
-        },
-        beforeCount: () => {
-          const words = weakWords();
-          const summary = document.getElementById("weak-summary");
-          if (!summary) return;
-          const top = words.slice(0, 8).map(w => `${w.korean} (${progress.words[w.id].m}×)`).join(" · ");
-          summary.classList.toggle("empty", !words.length);
-          summary.textContent = words.length
-            ? `${words.length} words missed at least once. Hardest: ${top}`
-            : "No missed words recorded yet.";
-        }
       }
     ];
 
@@ -2076,210 +1902,6 @@ th {
 
     function checkedValues(group) {
       return [...document.querySelectorAll(`input[data-group="${group}"]:checked`)].map(input => input.value);
-    }
-
-    // ------------------------------------------------------- custom list parsing
-    const HANGUL = /[가-힣]/;
-
-    const SEPARATORS = [
-      { key: "auto", label: "Auto-detect", value: null },
-      { key: "slash", label: "Slash  /", value: "/" },
-      { key: "comma", label: "Comma  ,", value: "," },
-      { key: "tab", label: "Tab", value: "\t" },
-      { key: "pipe", label: "Pipe  |", value: "|" },
-      { key: "semicolon", label: "Semicolon  ;", value: ";" },
-      { key: "colon", label: "Colon  :", value: ":" },
-      { key: "dash", label: "Dash  -", value: "-" },
-      { key: "equals", label: "Equals  =", value: "=" },
-      { key: "other", label: "Other…", value: null }
-    ];
-    const SEPARATOR_BY_KEY = new Map(SEPARATORS.map(sep => [sep.key, sep]));
-
-    const COLUMN_FIELDS = [
-      { key: "english", label: "English" },
-      { key: "romanization", label: "Romanization" },
-      { key: "korean", label: "Korean" },
-      { key: "ignore", label: "Ignore this column" },
-      { key: "none", label: "Not present" }
-    ];
-    const CUSTOM_DEFAULT_COLUMNS = ["english", "romanization", "korean"];
-
-    function customOptions() {
-      const separatorSelect = document.getElementById("custom-sep");
-      if (!separatorSelect) return { mode: "auto", separator: null, columns: [] };
-      const key = separatorSelect.value;
-      if (key === "auto") return { mode: "auto", separator: null, columns: [] };
-      const separator = key === "other"
-        ? (document.getElementById("custom-sep-other").value || "")
-        : SEPARATOR_BY_KEY.get(key).value;
-      const columns = [1, 2, 3].map(n => document.getElementById(`custom-col${n}`).value);
-      return { mode: "manual", separator, columns };
-    }
-
-    // Parsing runs on every keystroke and on every count refresh, so the
-    // result is memoised against the text and the column settings.
-    let customCache = { key: null, value: null };
-    function parsedCustom() {
-      const input = document.getElementById("custom-input");
-      if (!input) return { words: [], skipped: [], romanMismatches: 0, error: "" };
-      const options = customOptions();
-      const key = JSON.stringify([input.value, options]);
-      if (customCache.key !== key) customCache = { key, value: parseCustom(input.value, options) };
-      return customCache.value;
-    }
-
-    // Strips list markup a pasted line may carry. Returns "" for lines that
-    // are structure rather than content.
-    function cleanLine(raw) {
-      let line = raw.trim();
-      if (!line) return "";
-      if (/^(#|>|<!--|```)/.test(line)) return "";
-      return line.replace(/^[-*+]\s+/, "").replace(/^\d+[.)]\s+/, "").replace(/^[`*_]+|[`*_]+$/g, "").trim();
-    }
-
-    // Auto-detect reads fields from the right — korean last, then romanization
-    // if it matches what the romanizer produces — because an English gloss may
-    // itself contain a slash ("snow / eye").
-    function autoFields(line) {
-      const parts = line.split("/").map(part => part.trim());
-      const korean = parts[parts.length - 1];
-      let rest = parts.slice(0, -1);
-      if (rest.length >= 2 && normalizeRomanization(rest[rest.length - 1]) === normalizeRomanization(romanizeKorean(korean))) {
-        rest = rest.slice(0, -1);
-      }
-      return { korean, meaning: rest.join(" / ").trim(), romanization: "" };
-    }
-
-    // Manual mode maps columns positionally. Only English can hold the
-    // separator character, so any extra columns are folded back into it.
-    function mappedFields(line, options) {
-      const active = options.columns.filter(column => column !== "none");
-      const parts = line.split(options.separator).map(part => part.trim());
-      if (parts.length < active.length) {
-        return { error: `expected ${active.length} columns, found ${parts.length}` };
-      }
-      const fields = { korean: "", meaning: "", romanization: "" };
-      const extra = parts.length - active.length;
-      const englishAt = active.indexOf("english");
-      if (extra > 0 && englishAt === -1) {
-        return { error: `expected ${active.length} columns, found ${parts.length}` };
-      }
-      active.forEach((column, i) => {
-        let value;
-        if (extra <= 0 || i < englishAt) value = parts[i];
-        else if (i === englishAt) value = parts.slice(i, i + 1 + extra).join(`${options.separator} `).trim();
-        else value = parts[i + extra];
-        if (column === "english") fields.meaning = value;
-        else if (column === "korean") fields.korean = value;
-        else if (column === "romanization") fields.romanization = value;
-      });
-      return fields;
-    }
-
-    function mappingError(options) {
-      if (options.mode !== "manual") return "";
-      if (!options.separator) return "Type the character that separates your columns.";
-      const active = options.columns.filter(column => column !== "none");
-      if (!active.length) return "Set at least one column.";
-      const koreanCount = active.filter(column => column === "korean").length;
-      if (koreanCount === 0) return "One column has to be Korean — that is the word being practised.";
-      if (koreanCount > 1) return "Only one column can be Korean.";
-      if (active.filter(column => column === "english").length > 1) return "Only one column can be English.";
-      if (active.filter(column => column === "romanization").length > 1) return "Only one column can be Romanization.";
-      return "";
-    }
-
-    function parseCustom(text, options) {
-      const opts = options || { mode: "auto", separator: null, columns: [] };
-      const error = mappingError(opts);
-      if (error) return { words: [], skipped: [], romanMismatches: 0, error };
-
-      const words = [], skipped = [], seen = new Set();
-      let romanMismatches = 0;
-
-      String(text || "").split(/\r?\n/).forEach((raw, index) => {
-        const line = cleanLine(raw);
-        if (!line) return;
-        const skip = why => skipped.push({ line: index + 1, text: raw, why });
-
-        if (opts.mode === "auto" && !HANGUL.test(line)) { skip("no Korean on the line"); return; }
-
-        const fields = opts.mode === "manual" ? mappedFields(line, opts) : autoFields(line);
-        if (fields.error) { skip(fields.error); return; }
-
-        const korean = fields.korean;
-        if (!korean || !HANGUL.test(korean)) { skip("the Korean column has no Hangul"); return; }
-        const meaning = fields.meaning;
-
-        // The generated romanization always wins, so a pasted one that follows
-        // a different system does not turn into a wrong answer.
-        if (fields.romanization && normalizeRomanization(fields.romanization) !== normalizeRomanization(romanizeKorean(korean))) {
-          romanMismatches++;
-        }
-
-        // A word already in the bank keeps its id, part of speech and day, so
-        // a pasted review list still feeds the missed-word pool.
-        const known = BANK_BY_KOREAN.get(korean) || [];
-        let item = null;
-        if (known.length === 1) item = known[0];
-        else if (known.length > 1) {
-          item = known.find(candidate => normalizeEnglish(candidate.meaning) === normalizeEnglish(meaning))
-            || known.find(candidate => meaning && normalizeEnglish(candidate.meaning).includes(normalizeEnglish(meaning)))
-            || known[0];
-        }
-        if (!item) {
-          if (!meaning) { skip("no English meaning, and the word is not in the bank"); return; }
-          item = {
-            id: `custom:${korean}`,
-            korean,
-            meaning,
-            romanization: romanizeKorean(korean),
-            romanization_alts: [],
-            partOfSpeech: "",
-            topic: "",
-            level: 0,
-            day: 0,
-            custom: true
-          };
-        }
-        if (seen.has(item.id)) return;
-        seen.add(item.id);
-        words.push(item);
-      });
-      return { words, skipped, romanMismatches, error: "" };
-    }
-
-    // Shows how the current settings actually read the pasted text, so a wrong
-    // separator or column order is obvious before the exercise starts.
-    function renderCustomPreview() {
-      const target = document.getElementById("custom-preview");
-      if (!target) return;
-      const parsed = parsedCustom();
-
-      if (parsed.error) {
-        target.classList.add("empty");
-        target.textContent = parsed.error;
-        return;
-      }
-      if (!parsed.words.length) {
-        target.classList.add("empty");
-        target.textContent = parsed.skipped.length
-          ? `No usable lines. First problem — line ${parsed.skipped[0].line}: ${parsed.skipped[0].why}`
-          : "Paste a list above to see how it will be read.";
-        return;
-      }
-
-      target.classList.remove("empty");
-      const rows = parsed.words.slice(0, 3).map(word =>
-        `<div class="preview-row"><span>${esc(word.meaning)}</span><span class="roman">${esc(word.romanization)}</span><span class="hangul">${esc(word.korean)}</span></div>`).join("");
-      const problems = parsed.skipped.slice(0, 2)
-        .map(entry => `<div class="preview-problem">Line ${entry.line} skipped — ${esc(entry.why)}: <code>${esc(entry.text.trim().slice(0, 60))}</code></div>`).join("");
-      target.innerHTML = `
-        <div class="preview-label">Reading the first ${Math.min(3, parsed.words.length)} of ${parsed.words.length} words as</div>
-        ${rows}
-        ${problems}
-        ${parsed.skipped.length > 2 ? `<div class="preview-problem">…and ${parsed.skipped.length - 2} more skipped lines</div>` : ""}
-        ${parsed.romanMismatches ? `<div class="preview-problem">${parsed.romanMismatches} pasted romanization${parsed.romanMismatches === 1 ? "" : "s"} did not match this page's system and ${parsed.romanMismatches === 1 ? "was" : "were"} regenerated.</div>` : ""}`;
     }
 
     // ------------------------------------------------------------ quiz engine
@@ -2350,7 +1972,7 @@ th {
                   <div class="export-actions">
                     <button class="btn secondary" type="button" data-copy="${id}">Copy</button>
                     <button class="btn secondary" type="button" data-download="${id}">Download .md</button>
-                    <button class="btn positive" type="button" data-send="${id}">Send to Exercise 3</button>
+                    <button class="btn positive" type="button" data-send="${id}">Send to paste practice</button>
                   </div>
                 </div>
                 <textarea class="export-text" id="export-text-${id}" spellcheck="false" readonly></textarea>
@@ -2431,7 +2053,7 @@ th {
         const download = event.target.closest("[data-download]");
         if (download) { downloadExport(download.dataset.download); return; }
         const send = event.target.closest("[data-send]");
-        if (send) { sendToCustom(send.dataset.send); return; }
+        if (send) { sendToPastePractice(send.dataset.send); return; }
       });
 
       container.addEventListener("submit", event => {
@@ -2623,7 +2245,6 @@ th {
         feedback.className = "feedback good";
         feedback.innerHTML = `${state.currentHadWrong ? "Correct on retry." : "Correct."} <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>`;
         pushResult(state, item, userAnswer, !state.currentHadWrong, state.currentHadWrong);
-        recordResult(item, !state.currentHadWrong);
         state.retryCurrent = false;
       } else {
         state.currentHadWrong = true;
@@ -2633,7 +2254,6 @@ th {
           state.retryCurrent = true;
         } else {
           pushResult(state, item, userAnswer, false, false);
-          recordResult(item, false);
           state.retryCurrent = false;
         }
       }
@@ -2666,12 +2286,10 @@ th {
       if (state.retryCurrent && state.currentAttempts.length) {
         const item = state.questions[state.index];
         pushResult(state, item, state.currentAttempts[state.currentAttempts.length - 1].userAnswer, false, false);
-        recordResult(item, false);
         state.retryCurrent = false;
       }
       state.finished = true;
       clearTimer(state);
-      saveObject(PROGRESS_KEY, progress);
 
       const answered = state.results.length;
       const percent = answered ? Math.round((state.score / answered) * 100) : 0;
@@ -2704,12 +2322,11 @@ th {
             </div>`;
         }).join("")}` : "";
 
-      refreshCount("weak");
       document.getElementById(`quiz-card-${exerciseId}`).scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     // Anything missed outright or only got right on a retry, deduplicated, in
-    // the same english / romanization / korean format Exercise 3 reads.
+    // the same english / romanization / korean format the paste exercise reads.
     function missedWords(state) {
       const seen = new Set();
       return state.results
@@ -2761,28 +2378,23 @@ th {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    function sendToCustom(exerciseId) {
-      const input = document.getElementById("custom-input");
-      const existing = input.value.trim();
-      input.value = (existing ? existing + "\n\n" : "") + document.getElementById(`export-text-${exerciseId}`).value;
-      // The export is always english / romanization / korean, so a mapping
-      // left over from an earlier paste would misread it.
-      const separator = document.getElementById("custom-sep");
-      separator.value = "auto";
-      separator.dispatchEvent(new Event("change", { bubbles: true }));
-      refreshCount("custom");
-      document.getElementById("exercise-custom").open = true;
-      showSetup("custom");
-      document.getElementById("exercise-custom").scrollIntoView({ behavior: "smooth", block: "start" });
+    // The paste exercise is its own page, so the export is parked under a key
+    // that page reads once on load.
+    const HANDOFF_KEY = "koreanCustomListHandoffV1";
+
+    function sendToPastePractice(exerciseId) {
+      try {
+        localStorage.setItem(HANDOFF_KEY, document.getElementById(`export-text-${exerciseId}`).value);
+      } catch (_) {}
+      window.location.href = "./custom-word-list-practice.html";
     }
 
     // ------------------------------------------------------------------ page
     function renderStats() {
-      const level1 = countBy("level", 1), level2 = countBy("level", 2);
       document.getElementById("statStrip").innerHTML = `
         <span class="stat-chip"><strong>${BANK.length}</strong> words</span>
         <span class="stat-chip"><strong>${DAYS.length}</strong> days × ${BANK.length / DAYS.length}</span>
-        <span class="stat-chip"><strong>${level1}</strong> level 1 · <strong>${level2}</strong> level 2</span>
+        <span class="stat-chip">TOPIK II <strong>level 3</strong></span>
         <span class="stat-chip"><strong>${USED_POS.length}</strong> parts of speech</span>
         <span class="stat-chip"><strong>${TOPICS.length}</strong> topics</span>`;
     }

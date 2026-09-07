@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { WORDS } = require('/Users/tprimandaru/Documents/nerd/vibe/korean/shared-vocab/topik-vocab-2000.js');
+const { WORDS } = require('/Users/tprimandaru/Documents/nerd/vibe/korean/shared-vocab/topik-vocab-1500.js');
 
 const esc = s => String(s)
   .replace(/\\/g, '\\textbackslash{}')
@@ -60,9 +60,9 @@ const tex = `\\documentclass[10pt]{article}
 
 \\begin{document}
 
-{\\Large\\bfseries\\color{rule}TOPIK I -- 2000 Words by Study Day}\\par
+{\\Large\\bfseries\\color{rule}TOPIK II Level 3 -- 1500 Words by Study Day}\\par
 \\vspace{2pt}
-{\\footnotesize\\color{gloss}40 days, 50 words a day. Each day carries the same mix of parts of speech.}\\par
+{\\footnotesize\\color{gloss}30 days, 50 words a day. Each day carries the same mix of parts of speech.}\\par
 \\vspace{7pt}
 
 \\fontsize{7.6}{9.3}\\selectfont
