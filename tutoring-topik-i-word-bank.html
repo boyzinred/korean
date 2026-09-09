@@ -449,7 +449,8 @@ textarea:disabled,
 .restart-top-btn,
 .mode-btn,
 .choice,
-.blur-toggle {
+.blur-toggle,
+.notes-toggle {
   min-height: 56px;
   padding: 0 18px;
   border: 0;
@@ -462,7 +463,8 @@ textarea:disabled,
 .secondary-btn:hover:not(:disabled),
 .mode-btn:hover:not(:disabled),
 .choice:hover:not(:disabled),
-.blur-toggle:hover:not(:disabled) {
+.blur-toggle:hover:not(:disabled),
+.notes-toggle:hover:not(:disabled) {
   transform: scale(1.04);
 }
 .primary-btn,
@@ -481,12 +483,14 @@ textarea:disabled,
 .btn.secondary,
 .restart-top-btn,
 .mode-btn,
-.blur-toggle {
+.blur-toggle,
+.notes-toggle {
   color: var(--surface-text);
   background: var(--surface-muted);
 }
 .mode-btn.active,
-.blur-toggle[aria-pressed="true"] {
+.blur-toggle[aria-pressed="true"],
+.notes-toggle[aria-pressed="true"] {
   color: #192B5D;
   background: var(--primary);
 }
@@ -605,7 +609,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .restart-top-btn,
   .mode-btn,
   .choice,
-  .blur-toggle { width: 100%; }
+  .blur-toggle,
+  .notes-toggle { width: 100%; }
   .utility-controls { right: 10px; bottom: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -712,7 +717,8 @@ th {
   letter-spacing: .1em;
   text-transform: uppercase;
 }
-.blur-toggle { min-height: 42px; }
+.blur-toggle,
+.notes-toggle { min-height: 42px; }
 .blur-target {
   display: inline-block;
   transition: filter 180ms ease, opacity 180ms ease;
@@ -839,7 +845,9 @@ th {
 }
 .vocab-note-toggle:hover { background: var(--primary-hover); }
 .vocab-note-row > td {
-  padding: 0 16px 16px;
+  /* Equal top and bottom padding, so the note sits centred in its own row
+     instead of being pushed up against the word row above it. */
+  padding: 16px;
   background: var(--surface);
 }
 .word-note {
@@ -1485,14 +1493,24 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
     // survive. Homographs (이 as numeral, determiner and particle) differ by
     // part of speech; the few that collide even then get a numeric suffix.
     const idSeen = new Map();
+    // Auxiliary verbs are glossed as the pattern they form ("-고 있다: to be
+    // doing"), because the bare stem means nothing on its own. The table reads
+    // the pattern in the Korean column and plain English in the English one;
+    // quizzes keep using korean/meaning, so answers stay the bare stem.
+    const PATTERN_GLOSS = /^(-\S+(?:\s+\S+)?)\s*:\s*(.+)$/;
     const BANK = RAW.map(word => {
       const base = `${word.korean}:${word.partOfSpeech}`;
       const n = (idSeen.get(base) || 0) + 1;
       idSeen.set(base, n);
+      const pattern = PATTERN_GLOSS.exec(word.meaning);
+      const shownKorean = pattern ? pattern[1] : word.korean;
       return Object.assign({}, word, {
         id: n === 1 ? base : `${base}:${n}`,
         romanization: romanizeKorean(word.korean),
-        romanization_alts: (word.korean_alts || []).map(romanizeKorean)
+        romanization_alts: (word.korean_alts || []).map(romanizeKorean),
+        shownKorean,
+        shownMeaning: pattern ? pattern[2] : word.meaning,
+        shownRomanization: romanizeKorean(shownKorean)
       });
     });
 
@@ -1761,6 +1779,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
               <button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur English</button>
               <button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>
               <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
+              <button class="notes-toggle" type="button" aria-pressed="false">Open all notes</button>
             </div>
             <div class="table-wrap"><table>
               <thead><tr><th class="vocab-note-head"><span class="sr-only">Usage notes</span></th><th>English</th><th>Romanization</th><th>Korean</th><th>${lastColumn}</th><th>Familiarity</th></tr></thead>
@@ -1791,12 +1810,12 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           ? `<button class="vocab-note-toggle" type="button" aria-expanded="false" aria-controls="${esc(noteId)}" aria-label="Show usage notes for ${esc(item.korean)}"><span aria-hidden="true">＋</span></button>`
           : "";
         const row = `
-        <tr data-search="${esc((item.meaning + " " + item.romanization + " " + item.korean).toLowerCase())}">
+        <tr data-search="${esc((item.meaning + " " + item.shownMeaning + " " + item.romanization + " " + item.shownRomanization + " " + item.korean + " " + item.shownKorean).toLowerCase())}">
           <td class="vocab-note-cell">${toggle}</td>
-          <td data-vocab-field="meaning" tabindex="0"><span class="blur-target">${esc(item.meaning)}</span>
+          <td data-vocab-field="meaning" tabindex="0"><span class="blur-target">${esc(item.shownMeaning)}</span>
             <span class="word-tags"><span class="word-tag">${esc(TOPIC_LABELS[item.topic] || item.topic)}</span><span class="word-tag">Level ${esc(item.level)}</span></span></td>
-          <td data-vocab-field="romanization" tabindex="0"><span class="blur-target"><span class="roman">${esc(item.romanization)}</span></span></td>
-          <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><span class="hangul">${esc(item.korean)}</span>${item.korean_alts ? `<span class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</span>` : ""}</span></td>
+          <td data-vocab-field="romanization" tabindex="0"><span class="blur-target"><span class="roman">${esc(item.shownRomanization)}</span></span></td>
+          <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><span class="hangul">${esc(item.shownKorean)}</span>${item.korean_alts ? `<span class="small">Also accepted: ${esc(item.korean_alts.join(", "))}</span>` : ""}</span></td>
           <td>${refMode === "day" ? esc((POS_BY_ID.get(item.partOfSpeech) || {}).label || item.partOfSpeech) : esc(item.day)}</td>
           <td class="familiarity-cell">
             <span class="familiarity-stars" data-word-key="${esc(item.id)}" data-level="${level}" role="group" aria-label="Familiarity for ${esc(item.korean)}">
@@ -1812,6 +1831,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       }).join("");
       body.dataset.filled = "true";
       paintAllRatings(body);
+      syncNotesToggle(section);
     }
 
     const LEVEL_LABELS = ["Not rated", "1 star · Learning", "2 stars · Developing", "3 stars · Familiar"];
@@ -1828,6 +1848,30 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
 
     function paintAllRatings(scope) {
       scope.querySelectorAll(".familiarity-stars").forEach(group => paintRating(group, familiarity[group.dataset.wordKey] || 0));
+    }
+
+    // One switch per section for the usage notes, so a whole day can be read
+    // with its notes open instead of clicking fifty plus signs.
+    function setAllNotes(section, open) {
+      section.querySelectorAll(".vocab-note-toggle").forEach(button => {
+        const noteRow = document.getElementById(button.getAttribute("aria-controls"));
+        // A word hidden by the search filter keeps its note hidden too.
+        const shown = open && !button.closest("tr").hidden;
+        button.setAttribute("aria-expanded", String(shown));
+        button.querySelector("span").textContent = shown ? "−" : "＋";
+        if (noteRow) noteRow.hidden = !shown;
+      });
+      syncNotesToggle(section);
+    }
+
+    function syncNotesToggle(section) {
+      const button = section.querySelector(".notes-toggle");
+      if (!button) return;
+      const toggles = [...section.querySelectorAll(".vocab-note-toggle")];
+      const anyOpen = toggles.some(toggle => toggle.getAttribute("aria-expanded") === "true");
+      button.setAttribute("aria-pressed", String(anyOpen));
+      button.textContent = anyOpen ? "Close all notes" : "Open all notes";
+      button.disabled = toggles.length === 0 && section.querySelector("tbody").dataset.filled === "true";
     }
 
     function restoreBlur(section) {
@@ -1873,6 +1917,14 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           return;
         }
 
+        const notesAll = event.target.closest(".notes-toggle");
+        if (notesAll) {
+          const section = notesAll.closest(".ref-section");
+          fillRows(section); // rows are lazy, so build them before opening
+          setAllNotes(section, notesAll.getAttribute("aria-pressed") !== "true");
+          return;
+        }
+
         const noteToggle = event.target.closest(".vocab-note-toggle");
         if (noteToggle) {
           const noteRow = document.getElementById(noteToggle.getAttribute("aria-controls"));
@@ -1880,6 +1932,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           noteToggle.setAttribute("aria-expanded", String(open));
           noteToggle.querySelector("span").textContent = open ? "−" : "＋";
           if (noteRow) noteRow.hidden = !open;
+          syncNotesToggle(noteToggle.closest(".ref-section"));
           return;
         }
 
@@ -1945,6 +1998,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
             button.querySelector("span").textContent = "＋";
           });
           section.querySelector("summary .small").textContent = `${total} words`;
+          syncNotesToggle(section);
           section.open = false;
           return;
         }
@@ -1964,6 +2018,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         });
         section.open = hits > 0;
         section.querySelector("summary .small").textContent = `${hits} of ${total} words`;
+        syncNotesToggle(section);
       });
     }
 
