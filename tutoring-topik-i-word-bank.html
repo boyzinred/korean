@@ -1085,6 +1085,17 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
   text-transform: none;
   opacity: .78;
 }
+.lang-pick { display: grid; gap: 7px; align-content: start; }
+.lang-pick .menu-count-note { margin-bottom: 1px; }
+/* The answer language is what the learner has to produce, so the live card
+   states it next to the prompt rather than leaving it to the placeholder. */
+.answer-mode-note {
+  font-size: .78rem;
+  font-weight: 700;
+  opacity: .85;
+  margin: -6px 0 12px;
+}
+.answer-mode-note strong { color: var(--primary); }
 .exercise-menu-actions {
   display: flex;
   gap: 10px;
@@ -1224,6 +1235,20 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
   gap: 8px;
 }
 .option-grid.days { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+/* Language options sit in a narrow half-width menu cell, so they wrap as
+   content-sized chips instead of being forced into fixed-width columns. */
+.option-grid.langs {
+  display: flex;
+  flex-wrap: wrap;
+  grid-template-columns: none;
+}
+.option-grid.langs .option {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 9px 11px;
+  font-size: .76rem;
+}
+.option-grid.langs .option span { min-width: 0; overflow-wrap: anywhere; }
 .option {
   display: flex;
   align-items: center;
@@ -1374,8 +1399,8 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           <article class="guide-card">
             <h3>Days 1&ndash;27 &mdash; Learn</h3>
             <p>Every study day is <strong>two separate runs</strong> of Exercise 2. Do not put them in one selection: mixing 50 unfamiliar words into 200 familiar ones hides how the new batch actually went.</p>
-            <p><strong>Run 1, the new batch.</strong> Tick today's day only. Question language <em>Korean</em>, answer <em>English</em>. Leave &ldquo;Retry a word until it is right&rdquo; on. 50 words.</p>
-            <p><strong>Run 2, the review.</strong> Tick four boxes &mdash; the days <strong>1, 3, 7 and 16 back</strong> &mdash; and leave today's unticked. Question language <em>English</em>, answer <em>Korean</em>, because recall is the direction that fails first. Set <em>Word limit</em> to 60 so a ~200 word pool becomes a random 60, and put 15 in <em>Timer in minutes</em>.</p>
+            <p><strong>Run 1, the new batch.</strong> Tick today's day only. Tick <em>Korean</em> for the question language and <em>English</em> for the answer. Leave &ldquo;Retry a word until it is right&rdquo; on. 50 words.</p>
+            <p><strong>Run 2, the review.</strong> Tick four boxes &mdash; the days <strong>1, 3, 7 and 16 back</strong> &mdash; and leave today's unticked. Tick <em>English</em> for the question language and <em>Korean</em> for the answer, because recall is the direction that fails first. (Tick more than one box on either side and the run mixes directions, telling you on every question which language to answer in.) Set <em>Word limit</em> to 60 so a ~200 word pool becomes a random 60, and put 15 in <em>Timer in minutes</em>.</p>
             <p>On day 20 that is: run 1 = day 20; run 2 = days 19, 17, 13 and 4. Early on there is nothing 16 back, so tick only the boxes that exist.</p>
           </article>
           <article class="guide-card">
@@ -1638,6 +1663,12 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
 
     function fullEntry(item) {
       return `${item.meaning} / ${item.romanization} / ${item.korean}`;
+    }
+
+    // A mixed run has no single direction, so the summary lists what was ticked.
+    function directionLabel(state) {
+      const side = modes => modes.map(modeLabel).join(" / ");
+      return `${side(state.questionModes)} → ${side(state.answerModes)}`;
     }
 
     function modeLabel(mode) {
@@ -2116,6 +2147,30 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
     // goes back to setup.
     const STATES = new Map();
 
+    // Tick more than one language on either side and the run mixes the pairs,
+    // drawing a fresh question/answer direction for every question.
+    function langBlock(exerciseId, kind, label, defaultKey) {
+      const group = `${exerciseId}-${kind}`;
+      return `
+        <div class="lang-pick">
+          <span class="control-label">${esc(label)}</span>
+          <small class="menu-count-note">Tick more than one to mix</small>
+          <div class="option-grid langs">
+            ${MODES.map(mode => `
+              <label class="option">
+                <input type="checkbox" data-group="${group}" value="${mode.key}"${mode.key === defaultKey ? " checked" : ""}>
+                <span>${mode.label}</span>
+              </label>`).join("")}
+          </div>
+        </div>`;
+    }
+
+    // Every direction the ticked boxes allow, minus the ones that would ask a
+    // word in the same language it wants back.
+    function modePairs(qModes, aModes) {
+      return qModes.flatMap(q => aModes.filter(a => a !== q).map(a => ({ q, a })));
+    }
+
     function menuMarkup(exercise) {
       const id = exercise.id;
       return `
@@ -2124,8 +2179,8 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           <p>${esc(exercise.blurb)}</p>
           ${exercise.picker()}
           <div class="exercise-menu-grid">
-            <label>Question language<select id="menu-question-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "korean" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
-            <label>Answer language<select id="menu-answer-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "english" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
+            ${langBlock(id, "qlang", "Question language", "korean")}
+            ${langBlock(id, "alang", "Answer language", "english")}
             <label>Repetitions<select id="menu-multiplier-${id}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}× each word</option>`).join("")}</select></label>
             <label>Word limit<small class="menu-count-note">0 keeps every selected word</small><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
             <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
@@ -2160,6 +2215,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
               <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progress-${id}"></div></div>
               <div class="prompt-label" id="prompt-label-${id}"></div>
               <p class="prompt" id="prompt-${id}"></p>
+              <p class="answer-mode-note" id="answer-mode-${id}"></p>
               <form class="answer-form" data-exercise="${id}">
                 <input class="answer-input" id="input-${id}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer">
                 <button class="primary-btn" id="check-${id}" type="submit">Check</button>
@@ -2313,16 +2369,29 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       const pool = [];
       for (let round = 0; round < multiplier; round++) words.forEach(word => pool.push(word));
 
-      // The modes decide what a question looks like, so the ordering needs them.
-      const questionMode = document.getElementById(`menu-question-${exerciseId}`).value;
-      const answerMode = document.getElementById(`menu-answer-${exerciseId}`).value;
+      // The modes decide what a question looks like, so the ordering needs
+      // them: each copy of a word is tagged with its own direction first, and
+      // the spacing pass then keeps identical-looking questions apart.
+      const questionModes = checkedValues(`${exerciseId}-qlang`);
+      const answerModes = checkedValues(`${exerciseId}-alang`);
+      const pairs = modePairs(questionModes, answerModes);
+      if (!pairs.length) {
+        error.textContent = "Pick a question language and a different answer language.";
+        error.classList.remove("hidden");
+        return;
+      }
+      error.textContent = exercise.emptyMessage;
+      const tagged = pool.map(word => {
+        const pair = pairs[Math.floor(Math.random() * pairs.length)];
+        return { ...word, questionMode: pair.q, answerMode: pair.a };
+      });
 
       // Only this exercise's previous run is discarded; the others keep theirs.
       clearTimer(STATES.get(exerciseId));
       const state = {
         exerciseId,
         pool: words,
-        questions: spacedOrder(pool, word => questionKeys(word, questionMode, answerMode)),
+        questions: spacedOrder(tagged, word => questionKeys(word, word.questionMode, word.answerMode)),
         index: 0,
         score: 0,
         answered: false,
@@ -2332,8 +2401,10 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         retryCurrent: false,
         finished: false,
         repeatWrong: document.getElementById(`menu-repeat-${exerciseId}`).checked,
-        questionMode,
-        answerMode,
+        questionModes,
+        answerModes,
+        questionMode: pairs[0].q,
+        answerMode: pairs[0].a,
         timer: null,
         label: `${exercise.title} · ${words.length} words`
       };
@@ -2367,6 +2438,9 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       const state = STATES.get(exerciseId);
       if (!state || state.finished || !state.questions.length) return;
       const item = state.questions[state.index];
+      // Mixed runs change direction question by question.
+      state.questionMode = item.questionMode;
+      state.answerMode = item.answerMode;
       state.answered = false;
       if (!isRetry) {
         state.currentAttempts = [];
@@ -2383,13 +2457,15 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       bar.parentElement.setAttribute("aria-valuenow", String(Math.round(percent)));
       document.getElementById(`prompt-label-${exerciseId}`).textContent = modeLabel(state.questionMode);
       document.getElementById(`prompt-${exerciseId}`).textContent = displayValue(item, state.questionMode);
+      document.getElementById(`answer-mode-${exerciseId}`).innerHTML =
+        `Answer in <strong>${esc(modeLabel(state.answerMode))}</strong>`;
 
       const input = document.getElementById(`input-${exerciseId}`);
       input.value = "";
       input.readOnly = false;
       input.placeholder = state.answerMode === "romanization"
-        ? "Type with dashes (Space = dash, double Space = space)"
-        : "Type your answer";
+        ? "Answer in romanization — dashes (Space = dash, double Space = space)"
+        : `Answer in ${modeLabel(state.answerMode).toLowerCase()}`;
       // In romanization mode the space bar types the syllable dash, since that
       // is what separates syllables; pressing it twice gives a real space.
       input.onkeydown = event => {
@@ -2511,7 +2587,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         reason === "Completed" ? "Exercise complete" : reason;
       document.getElementById(`score-${exerciseId}`).textContent = answered ? `${percent}%` : "—";
       document.getElementById(`final-score-${exerciseId}`).innerHTML = answered
-        ? `First-try score <strong>${state.score} / ${answered}</strong><span class="finish-sub">${answered} of ${state.questions.length} questions completed · ${modeLabel(state.questionMode)} → ${modeLabel(state.answerMode)}</span>`
+        ? `First-try score <strong>${state.score} / ${answered}</strong><span class="finish-sub">${answered} of ${state.questions.length} questions completed · ${directionLabel(state)}</span>`
         : "No questions were answered.";
 
       renderExport(exerciseId, state);
@@ -2545,7 +2621,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       const exercise = EXERCISES.find(e => e.id === state.exerciseId);
       const header = [
         `# Missed words — ${exercise ? exercise.title : "Exercise"} — ${new Date().toISOString().slice(0, 10)}`,
-        `# ${modeLabel(state.questionMode)} → ${modeLabel(state.answerMode)} · ${words.length} of ${state.pool.length} words · scored ${state.score}/${state.results.length}`,
+        `# ${directionLabel(state)} · ${words.length} of ${state.pool.length} words · scored ${state.score}/${state.results.length}`,
         ""
       ];
       return header.concat(words.map(fullEntry)).join("\n") + "\n";
