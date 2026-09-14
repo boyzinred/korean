@@ -450,7 +450,8 @@ textarea:disabled,
 .mode-btn,
 .choice,
 .blur-toggle,
-.notes-toggle {
+.notes-toggle,
+.expr-toggle {
   min-height: 56px;
   padding: 0 18px;
   border: 0;
@@ -464,7 +465,8 @@ textarea:disabled,
 .mode-btn:hover:not(:disabled),
 .choice:hover:not(:disabled),
 .blur-toggle:hover:not(:disabled),
-.notes-toggle:hover:not(:disabled) {
+.notes-toggle:hover:not(:disabled),
+.expr-toggle:hover:not(:disabled) {
   transform: scale(1.04);
 }
 .primary-btn,
@@ -484,13 +486,15 @@ textarea:disabled,
 .restart-top-btn,
 .mode-btn,
 .blur-toggle,
-.notes-toggle {
+.notes-toggle,
+.expr-toggle {
   color: var(--surface-text);
   background: var(--surface-muted);
 }
 .mode-btn.active,
 .blur-toggle[aria-pressed="true"],
-.notes-toggle[aria-pressed="true"] {
+.notes-toggle[aria-pressed="true"],
+.expr-toggle[aria-pressed="true"] {
   color: #192B5D;
   background: var(--primary);
 }
@@ -610,7 +614,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .mode-btn,
   .choice,
   .blur-toggle,
-  .notes-toggle { width: 100%; }
+  .notes-toggle,
+  .expr-toggle { width: 100%; }
   .utility-controls { right: 10px; bottom: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -692,6 +697,11 @@ th {
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+html[data-theme='dark'] th {
+  /* --muted is a near-black in dark mode, so the light-mode ink disappears. */
+  color: var(--surface-text);
+  background: var(--muted-strong);
+}
 .roman {
   color: var(--primary);
   font-weight: 800;
@@ -717,24 +727,47 @@ th {
   letter-spacing: .1em;
   text-transform: uppercase;
 }
+/* Compact enough that a section's five toggles sit on one line. */
 .blur-toggle,
-.notes-toggle { min-height: 42px; }
+.notes-toggle,
+.expr-toggle {
+  min-height: 34px;
+  padding: 0 11px;
+  font-size: .72rem;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
 .blur-target {
   display: inline-block;
   transition: filter 180ms ease, opacity 180ms ease;
 }
+/* Hidden cells collapse to one fixed-width bar, so the blur gives away
+   neither the letters nor how long the word is. */
+.ref-section.blur-meaning [data-vocab-field="meaning"],
+.ref-section.blur-romanization [data-vocab-field="romanization"],
+.ref-section.blur-korean [data-vocab-field="korean"] {
+  overflow: hidden;
+}
+.ref-section.blur-meaning [data-vocab-field="meaning"]:not(.peek) .blur-target,
+.ref-section.blur-romanization [data-vocab-field="romanization"]:not(.peek) .blur-target,
+.ref-section.blur-korean [data-vocab-field="korean"]:not(.peek) .blur-target {
+  display: block;
+  width: 6rem;
+  height: 1.4rem;
+  overflow: hidden;
+  color: transparent;
+  background: var(--muted-strong);
+  border-radius: var(--radius-md);
+  text-indent: -9999px;
+}
 .ref-section.blur-meaning [data-vocab-field="meaning"] .blur-target,
 .ref-section.blur-romanization [data-vocab-field="romanization"] .blur-target,
 .ref-section.blur-korean [data-vocab-field="korean"] .blur-target {
-  filter: blur(6px);
-  opacity: .72;
   user-select: none;
 }
 .ref-section.blur-meaning [data-vocab-field="meaning"].peek .blur-target,
 .ref-section.blur-romanization [data-vocab-field="romanization"].peek .blur-target,
 .ref-section.blur-korean [data-vocab-field="korean"].peek .blur-target {
-  filter: none;
-  opacity: 1;
   user-select: text;
 }
 [data-vocab-field] { cursor: pointer; }
@@ -897,9 +930,11 @@ th {
   letter-spacing: .1em;
   text-transform: uppercase;
 }
-html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1; }
+/* In light mode the primary is a pale cyan — fine on the dark page ground,
+   unreadable on the white table. Romanization gets the deep blue instead. */
+html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
-.familiarity-cell { min-width: 11.875rem; }
+.familiarity-cell { min-width: 7rem; }
 .familiarity-stars {
   display: inline-flex;
   gap: .1875rem;
@@ -921,15 +956,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
   line-height: 1;
 }
 .familiarity-star:hover { transform: scale(1.12); }
-.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
-.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
-.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
-.familiarity-label {
-  display: block;
-  margin-top: 5px;
-  font-size: .72rem;
-  font-weight: 800;
-}
+.familiarity-stars[data-level="1"] .familiarity-star { color: var(--accent); }
 
 .section-meta {
   margin: 0 0 20px;
@@ -1329,6 +1356,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
   padding: 14px 20px;
   background: var(--surface-muted);
 }
+.ref-section .ref-toolbar { gap: 6px; padding: 10px 20px; }
 .ref-filter {
   min-height: 42px;
   flex: 1 1 220px;
@@ -1366,6 +1394,38 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
   .option-grid { grid-template-columns: 1fr; }
   .option-grid.days { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
 }
+
+/* Expressions: the sentences a word is used in, nested under its row. They
+   are their own block — set back from the word, on their own ground, behind a
+   rail in the star colour they are rated with. */
+.expr-row td,
+.expr-row + .vocab-note-row td {
+  background: var(--surface-muted);
+  border-bottom: 1px dashed var(--border);
+}
+.expr-row td:first-child,
+.expr-row + .vocab-note-row td {
+  border-left: 4px solid var(--secondary);
+}
+.expr-row td:first-child { padding-left: 26px; }
+.expr-row + .vocab-note-row td { padding-left: 52px; }
+.expr-row td:nth-child(2) { position: relative; padding-left: 52px; }
+.expr-row td:nth-child(2)::before {
+  content: "\21B3";
+  position: absolute;
+  left: 26px;
+  opacity: .55;
+  font-weight: 800;
+}
+.expr-row .hangul { font-size: 1.05rem; }
+/* A second star colour, so a word's own rating never reads as a sentence's. */
+.familiarity-stars.expr[data-level="1"] .familiarity-star { color: var(--secondary); }
+.ref-section.hide-expressions .expr-row,
+.ref-section.hide-expressions .expr-row + .vocab-note-row { display: none; }
+/* The register variants, shown only where they differ from the polite form. */
+.register-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); margin-top: 10px; }
+.register-row { display: grid; gap: 4px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.register-row p { margin: 0; }
 </style>
 </head>
 <body id="top">
@@ -1413,6 +1473,13 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
             <p>Two weeks is the shortest tail worth running: it is what gives the words you met on day 27 a fortnight-wide gap before the exam. Ending at day 41 leaves about two and a half weeks of slack in a two-month run.</p>
           </article>
           <article class="guide-card">
+            <h3>Expressions</h3>
+            <p>A word that has sentences written for it carries them <strong>nested under its row</strong>, marked &#8627;. Each one has its own star, in a second colour, and its own <strong>&#65291;</strong> for the small print &mdash; why the sentence is put that way, and the register versions where they differ. A word's star and a sentence's star are separate ratings.</p>
+            <p><em>Hide expressions</em> in a section's toolbar collapses a day back to plain vocabulary. Both exercises carry a <strong>What to test</strong> box: words, expressions, or both. Expressions start unticked, so the routine above is unchanged until you ask for them.</p>
+            <p>&#48152;&#47568; casual and &#54633;&#49452;&#52404; formal versions are listed only where the whole utterance changes (&#50504;&#45397;&#55176; &#44032;&#49464;&#50836; / &#51096; &#44032;), not where an ending alone does. All of them are accepted as answers.</p>
+            <p>Every one of the 1358 words carries three, so any day or category can be drilled as sentences.</p>
+          </article>
+          <article class="guide-card">
             <h3>Romanization Rules</h3>
             <p>Every Hangul character is transcribed with the strict key below. Syllables are separated by dashes, while spaces remain between separate Korean words, such as <strong>an-nyeong-ha-se-yo</strong>.</p>
             <p>For &#12593;, &#12599;, &#12601;, and &#12610;, the first form is used at the beginning of a syllable and the second form at the end. Romanization checking removes dashes internally, so answers are accepted with or without syllable dashes.</p>
@@ -1440,6 +1507,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
   <script src="./shared-vocab/topik-vocab-topik-i.js?v=1.0.0"></script>
   <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
+  <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -1520,8 +1588,9 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
     const idSeen = new Map();
     // Auxiliary verbs are glossed as the pattern they form ("-고 있다: to be
     // doing"), because the bare stem means nothing on its own. The table reads
-    // the pattern in the Korean column and plain English in the English one;
-    // quizzes keep using korean/meaning, so answers stay the bare stem.
+    // the pattern in the Korean column and plain English in the English one,
+    // and quizzes do the same: an English prompt never leaks the Hangul, and
+    // the expected Korean is the whole pattern (the bare stem is still taken).
     const PATTERN_GLOSS = /^(-\S+(?:\s+\S+)?)\s*:\s*(.+)$/;
     const BANK = RAW.map(word => {
       const base = `${word.korean}:${word.partOfSpeech}`;
@@ -1530,6 +1599,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       const pattern = PATTERN_GLOSS.exec(word.meaning);
       const shownKorean = pattern ? pattern[1] : word.korean;
       return Object.assign({}, word, {
+        kind: "word",
         id: n === 1 ? base : `${base}:${n}`,
         romanization: romanizeKorean(word.korean),
         romanization_alts: (word.korean_alts || []).map(romanizeKorean),
@@ -1538,6 +1608,70 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         shownRomanization: romanizeKorean(shownKorean)
       });
     });
+
+    // ----------------------------------------------------------- expressions
+    // Two or three whole sentences per word, from topik-i-expressions.js. They
+    // hang off the word they are built on: the table nests them under its row,
+    // and the exercises treat them as a second pool that can be ticked on or
+    // off beside the words themselves.
+    //
+    // Keys there are "korean|partOfSpeech"; where the bank holds two entries
+    // that collide even then, the sentences go to the first of them.
+    const EXPR_BY_WORD = (window.TopikIExpressions && window.TopikIExpressions.BY_WORD) || {};
+
+    // Only the registers that are genuinely a different utterance are stored —
+    // 안녕히 가세요 / 잘 가, not a 요 dropped off the end.
+    const REGISTERS = [
+      { key: "casual", label: "\ubc18\ub9d0", english: "casual" },
+      { key: "korean", label: "\ud574\uc694\uccb4", english: "polite" },
+      { key: "formal", label: "\ud569\uc1fc\uccb4", english: "formal" }
+    ];
+
+    const EXPRESSIONS = [];
+    const exprSeen = new Set();
+    BANK.forEach(word => {
+      const key = `${word.korean}|${word.partOfSpeech}`;
+      if (exprSeen.has(key)) return;
+      const list = EXPR_BY_WORD[key];
+      if (!list || !list.length) return;
+      exprSeen.add(key);
+      word.expressions = list.map((expression, index) => {
+        const alts = [expression.casual, expression.formal].filter(Boolean);
+        const romanization = romanizeKorean(expression.ko);
+        // The quiz engine reads shownKorean / shownMeaning / shownRomanization.
+        // A sentence hides nothing behind a gloss, so the shown fields are the
+        // fields.
+        const item = {
+          kind: "expression",
+          id: `${word.id}#${index}`,
+          word,
+          korean: expression.ko,
+          meaning: expression.en,
+          romanization,
+          korean_alts: alts,
+          romanization_alts: alts.map(romanizeKorean),
+          shownKorean: expression.ko,
+          shownMeaning: expression.en,
+          shownRomanization: romanization,
+          exprNote: expression.note || "",
+          casual: expression.casual || "",
+          formal: expression.formal || "",
+          partOfSpeech: word.partOfSpeech,
+          topic: word.topic,
+          level: word.level,
+          day: word.day
+        };
+        EXPRESSIONS.push(item);
+        return item;
+      });
+    });
+
+    // Everything a run can draw on. Which halves are in play is a checkbox.
+    const POOL = BANK.concat(EXPRESSIONS);
+    const KINDS = [
+      { value: "word", label: "Vocabulary words" },
+      { value: "expression", label: "Expressions" }
+    ];
 
     // A note has to match the part of speech, not just the spelling: 이 is four
     // separate rows here (tooth, this one, this, two) and the shared note file
@@ -1602,7 +1736,9 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
     }
 
     function normalizeKorean(text) {
-      return String(text ?? "").replace(/\s+/g, "").trim();
+      // Sentence punctuation goes as well as spacing: an expression is stored
+      // with its full stop, and nobody types one.
+      return String(text ?? "").replace(/[\s.,!?~\u2026\u00b7\u2018\u2019\u201C\u201D"']/g, "").trim();
     }
 
     // "to be excellent, outstanding" accepts the whole gloss or any one piece,
@@ -1614,7 +1750,12 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         .flatMap(part => part.split(","))
         .map(s => s.trim())
         .filter(Boolean);
-      return [...new Set([exact, ...pieces])];
+      // "Goodbye, to someone leaving" keeps its bracketed half optional:
+      // "Hello. (on the phone)" is accepted as plain "hello".
+      const bare = [exact, ...pieces]
+        .map(part => part.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim())
+        .filter(Boolean);
+      return [...new Set([exact, ...pieces, ...bare])];
     }
 
     const MODES = [
@@ -1624,15 +1765,15 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
     ];
 
     function displayValue(item, mode) {
-      if (mode === "english") return item.meaning;
-      if (mode === "romanization") return item.romanization;
-      return item.korean;
+      if (mode === "english") return item.shownMeaning;
+      if (mode === "romanization") return item.shownRomanization;
+      return item.shownKorean;
     }
 
     function answerValues(item, mode) {
-      if (mode === "english") return splitMeaning(item.meaning);
-      if (mode === "romanization") return [...new Set([item.romanization, ...(item.romanization_alts || [])])];
-      return [...new Set([item.korean, ...(item.korean_alts || [])])];
+      if (mode === "english") return [...new Set([...splitMeaning(item.shownMeaning), ...splitMeaning(item.meaning)])];
+      if (mode === "romanization") return [...new Set([item.shownRomanization, item.romanization, ...(item.romanization_alts || [])])];
+      return [...new Set([item.shownKorean, item.korean, ...(item.korean_alts || [])])];
     }
 
     function normalizeByMode(value, mode) {
@@ -1658,11 +1799,11 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
 
     function itemAnswerDisplay(item, mode) {
       const values = answerValues(item, mode);
-      return mode === "english" ? item.meaning : values[0];
+      return mode === "english" ? item.shownMeaning : values[0];
     }
 
     function fullEntry(item) {
-      return `${item.meaning} / ${item.romanization} / ${item.korean}`;
+      return `${item.shownMeaning} / ${item.shownRomanization} / ${item.shownKorean}`;
     }
 
     // A mixed run has no single direction, so the summary lists what was ticked.
@@ -1811,6 +1952,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
               <button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>
               <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
               <button class="notes-toggle" type="button" aria-pressed="false">Open all notes</button>
+              <button class="expr-toggle" type="button" aria-pressed="false">Hide expressions</button>
             </div>
             <div class="table-wrap"><table>
               <thead><tr><th class="vocab-note-head"><span class="sr-only">Usage notes</span></th><th>English</th><th>Romanization</th><th>Korean</th><th>${lastColumn}</th><th>Familiarity</th></tr></thead>
@@ -1834,7 +1976,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
       if (!group) return;
       body.innerHTML = group.items.map(item => {
-        const level = familiarity[item.id] || 0;
+        const level = Math.min(1, familiarity[item.id] || 0);
         const note = noteFor(item);
         const noteId = `word-note-${section.dataset.sectionId}-${slug(item.id)}`;
         const toggle = note
@@ -1850,31 +1992,68 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           <td>${refMode === "day" ? esc((POS_BY_ID.get(item.partOfSpeech) || {}).label || item.partOfSpeech) : esc(item.day)}</td>
           <td class="familiarity-cell">
             <span class="familiarity-stars" data-word-key="${esc(item.id)}" data-level="${level}" role="group" aria-label="Familiarity for ${esc(item.korean)}">
-              ${[1, 2, 3].map(n => `<button class="familiarity-star" type="button" data-level="${n}" aria-pressed="${n <= level}" aria-label="${n} star"><span aria-hidden="true">★</span></button>`).join("")}
+              ${[1].map(n => `<button class="familiarity-star" type="button" data-level="${n}" aria-pressed="${n <= level}" aria-label="Mark as familiar"><span aria-hidden="true">★</span></button>`).join("")}
             </span>
-            <span class="familiarity-label"></span>
           </td>
         </tr>`;
-        if (!note) return row;
+        const expressionRows = (item.expressions || []).map(expression =>
+          expressionRow(section, expression)).join("");
+        if (!note) return row + expressionRows;
         const example = note.example;
         const body = `<div class="word-note"><p class="word-note-usage">${esc(note.note)}</p>${example ? `<div class="word-note-example"><span class="word-note-label">Example</span><p class="word-note-ko">${esc(example.ko)}</p><p class="roman">${esc(romanizeKorean(example.ko))}</p><p class="word-note-en">${esc(example.en)}</p>${example.form ? `<p class="word-note-form"><strong>Form:</strong> ${esc(example.form)}</p>` : ""}</div>` : ""}</div>`;
-        return `${row}<tr class="vocab-note-row" id="${esc(noteId)}" hidden><td colspan="6">${body}</td></tr>`;
+        return `${row}<tr class="vocab-note-row" id="${esc(noteId)}" hidden><td colspan="6">${body}</td></tr>${expressionRows}`;
       }).join("");
       body.dataset.filled = "true";
       paintAllRatings(body);
       syncNotesToggle(section);
     }
 
-    const LEVEL_LABELS = ["Not rated", "1 star · Learning", "2 stars · Developing", "3 stars · Familiar"];
+    // One sentence, nested under the word it is built on. It carries its own
+    // star, in its own colour, and its own ＋ for the small print: why the
+    // sentence is put this way, and the register versions where they differ.
+    function expressionRow(section, item) {
+      const level = Math.min(1, familiarity[item.id] || 0);
+      const noteId = `expr-note-${section.dataset.sectionId}-${slug(item.id)}`;
+      const registers = REGISTERS.filter(register => item[register.key]);
+      const hasNote = Boolean(item.exprNote) || registers.length > 1;
+      const search = [item.meaning, item.romanization, item.korean, item.casual, item.formal,
+        item.word.shownMeaning, item.word.shownKorean, item.word.shownRomanization].join(" ").toLowerCase();
+      const toggle = hasNote
+        ? `<button class="vocab-note-toggle" type="button" aria-expanded="false" aria-controls="${esc(noteId)}" aria-label="Show notes for ${esc(item.korean)}"><span aria-hidden="true">＋</span></button>`
+        : "";
+      const row = `
+        <tr class="expr-row" data-kind="expression" data-search="${esc(search)}">
+          <td class="vocab-note-cell">${toggle}</td>
+          <td data-vocab-field="meaning" tabindex="0"><span class="blur-target">${esc(item.meaning)}</span></td>
+          <td data-vocab-field="romanization" tabindex="0"><span class="blur-target"><span class="roman">${esc(item.romanization)}</span></span></td>
+          <td data-vocab-field="korean" tabindex="0"><span class="blur-target"><span class="hangul">${esc(item.korean)}</span></span></td>
+          <td><span class="word-tag">expression</span></td>
+          <td class="familiarity-cell">
+            <span class="familiarity-stars expr" data-word-key="${esc(item.id)}" data-level="${level}" role="group" aria-label="Familiarity for ${esc(item.korean)}">
+              <button class="familiarity-star" type="button" data-level="1" aria-pressed="${level >= 1}" aria-label="Mark as familiar"><span aria-hidden="true">★</span></button>
+            </span>
+          </td>
+        </tr>`;
+      if (!hasNote) return row;
+      const registerBlock = registers.length > 1 ? `
+        <div class="register-grid">${registers.map(register => `
+          <div class="register-row">
+            <span class="word-note-label">${esc(register.label)} ${esc(register.english)}</span>
+            <p class="word-note-ko">${esc(item[register.key])}</p>
+            <p class="roman">${esc(romanizeKorean(item[register.key]))}</p>
+          </div>`).join("")}</div>` : "";
+      const body = `<div class="word-note">${item.exprNote ? `<p class="word-note-usage">${esc(item.exprNote)}</p>` : ""}${registerBlock}</div>`;
+      return `${row}<tr class="vocab-note-row" id="${esc(noteId)}" hidden><td colspan="6">${body}</td></tr>`;
+    }
 
     function paintRating(group, level) {
-      const safe = Math.max(0, Math.min(3, Number(level) || 0));
+      // Clamped to 0/1: ratings saved back when the scale had three stars
+      // still load, and any of them counts as familiar.
+      const safe = Math.min(1, Math.max(0, Number(level) || 0));
       group.dataset.level = String(safe);
       group.querySelectorAll(".familiarity-star").forEach((button, index) => {
         button.setAttribute("aria-pressed", String(index < safe));
       });
-      const label = group.parentElement.querySelector(".familiarity-label");
-      if (label) label.textContent = LEVEL_LABELS[safe];
     }
 
     function paintAllRatings(scope) {
@@ -1908,6 +2087,18 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
     function restoreBlur(section) {
       const saved = blurState[section.dataset.sectionId] || {};
       ["meaning", "romanization", "korean"].forEach(field => applyBlur(section, field, Boolean(saved[field])));
+      applyExpressions(section, saved.expressions !== false);
+    }
+
+    // Expressions are on by default; a section can be collapsed back to plain
+    // vocabulary, and remembers that the same way it remembers a blur.
+    function applyExpressions(section, shown) {
+      section.classList.toggle("hide-expressions", !shown);
+      const button = section.querySelector(".expr-toggle");
+      if (button) {
+        button.setAttribute("aria-pressed", String(!shown));
+        button.textContent = shown ? "Hide expressions" : "Show expressions";
+      }
     }
 
     function applyBlur(section, field, enabled) {
@@ -1920,7 +2111,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       }
     }
 
-    // Delegated, because the bank renders every row with three stars each, and
+    // Delegated, because the bank renders a star on every row, and
     // attached once: switching the grouping replaces the container's markup.
     let referenceListenersAttached = false;
     function attachReferenceListeners() {
@@ -1976,6 +2167,17 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           else delete familiarity[group.dataset.wordKey];
           saveObject(FAMILIARITY_KEY, familiarity);
           paintRating(group, next);
+          return;
+        }
+
+        const exprButton = event.target.closest(".expr-toggle");
+        if (exprButton) {
+          const section = exprButton.closest(".ref-section");
+          const shown = section.classList.contains("hide-expressions");
+          blurState[section.dataset.sectionId] = blurState[section.dataset.sectionId] || {};
+          blurState[section.dataset.sectionId].expressions = shown;
+          saveObject(BLUR_KEY, blurState);
+          applyExpressions(section, shown);
           return;
         }
 
@@ -2035,10 +2237,15 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         }
         fillRows(section); // searching needs every row present
         let hits = 0;
+        let wordMatched = false;
         section.querySelectorAll("tbody tr:not(.vocab-note-row)").forEach(row => {
-          const match = row.dataset.search.includes(query);
+          const expression = row.classList.contains("expr-row");
+          // An expression stays with its word: search a headword and its
+          // sentences come with it, search a sentence and it stands alone.
+          if (!expression) wordMatched = row.dataset.search.includes(query);
+          const match = row.dataset.search.includes(query) || (expression && wordMatched);
           row.hidden = !match;
-          if (match) hits++;
+          if (match && !expression) hits++;
           // The note row travels with its word, and stays closed unless it was
           // already open.
           const noteRow = row.nextElementSibling;
@@ -2059,18 +2266,20 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         id: "categories",
         kicker: "Exercise 1",
         title: "By Category",
-        blurb: "Pick any mix of parts of speech and topics. A word is included when it matches at least one checked part of speech and at least one checked topic.",
+        blurb: "Pick any mix of parts of speech and topics, and whether you are being tested on the words, the expressions built on them, or both. An item is included when it matches at least one checked part of speech and at least one checked topic.",
         picker: () => `
+          ${kindBlock("categories")}
           ${pickerBlock("categories", "pos", "Parts of speech", USED_POS.map(group =>
-            ({ value: group.id, label: group.label, count: countBy("partOfSpeech", group.id) })), true)}
+            ({ value: group.id, label: group.label, count: countBy("partOfSpeech", group.id) })), true, "partOfSpeech")}
           ${pickerBlock("categories", "topic", "Topics", TOPICS.map(topic =>
-            ({ value: topic, label: TOPIC_LABELS[topic] || topic, count: countBy("topic", topic) })), true)}`,
+            ({ value: topic, label: TOPIC_LABELS[topic] || topic, count: countBy("topic", topic) })), true, "topic")}`,
         select: () => {
           const pos = checkedValues("categories-pos");
           const topics = checkedValues("categories-topic");
-          return BANK.filter(w => pos.includes(w.partOfSpeech) && topics.includes(w.topic));
+          return kindPool("categories").filter(w => pos.includes(w.partOfSpeech) && topics.includes(w.topic));
         },
-        emptyMessage: "Check at least one part of speech and one topic."
+        emptyMessage: "Check at least one part of speech, one topic, and one of words or expressions.",
+        beforeCount: () => refreshOptionCounts("categories")
       },
       {
         id: "days",
@@ -2078,6 +2287,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         title: "By Study Day",
         blurb: `The bank is split into ${DAYS.length} days of ${BANK.length / DAYS.length} words, in learning order. Check one day for today's batch, or a range to review everything so far.`,
         picker: () => `
+          ${kindBlock("days")}
           <div class="picker">
             <div class="picker-head">
               <span class="control-label">Study days</span>
@@ -2097,9 +2307,10 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
           </div>`,
         select: () => {
           const days = checkedValues("days-day").map(Number);
-          return BANK.filter(w => days.includes(w.day));
+          return kindPool("days").filter(w => days.includes(w.day));
         },
-        emptyMessage: "Check at least one study day.",
+        emptyMessage: "Check at least one study day, and one of words or expressions.",
+        beforeCount: () => refreshOptionCounts("days"),
         onRender: () => {
           document.getElementById("days-apply-range").addEventListener("click", () => {
             const from = Number(document.getElementById("days-from").value) || 1;
@@ -2114,7 +2325,44 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       }
     ];
 
-    function pickerBlock(exerciseId, kind, label, options, allChecked) {
+    // Words, sentences, or both. Unticked by default for expressions, so an
+    // existing routine keeps drilling exactly what it drilled before.
+    function kindBlock(exerciseId) {
+      const group = `${exerciseId}-kind`;
+      return `
+        <div class="picker">
+          <div class="picker-head">
+            <span class="control-label">What to test</span>
+          </div>
+          <div class="option-grid">
+            ${KINDS.map(kind => `
+              <label class="option">
+                <input type="checkbox" data-group="${group}" value="${kind.value}"${kind.value === "word" ? " checked" : ""}>
+                <span>${esc(kind.label)}</span>
+                <span class="option-count" data-count-field="kind" data-count-value="${kind.value}">${POOL.filter(item => item.kind === kind.value).length}</span>
+              </label>`).join("")}
+          </div>
+        </div>`;
+    }
+
+    // What a run may draw on before the category or day filters narrow it.
+    function kindPool(exerciseId) {
+      const kinds = checkedValues(`${exerciseId}-kind`);
+      return POOL.filter(item => kinds.includes(item.kind));
+    }
+
+    // The counts beside each checkbox are of the ticked kinds, so switching
+    // expressions on renumbers every part of speech and topic.
+    function refreshOptionCounts(exerciseId) {
+      const pool = kindPool(exerciseId);
+      document.querySelectorAll(`#menu-${exerciseId} [data-count-field]`).forEach(span => {
+        const field = span.dataset.countField;
+        if (field === "kind") return;
+        span.textContent = String(pool.filter(item => item[field] === span.dataset.countValue).length);
+      });
+    }
+
+    function pickerBlock(exerciseId, kind, label, options, allChecked, countField) {
       const group = `${exerciseId}-${kind}`;
       return `
         <div class="picker">
@@ -2130,7 +2378,7 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
               <label class="option">
                 <input type="checkbox" data-group="${group}" value="${esc(option.value)}"${allChecked ? " checked" : ""}>
                 <span>${esc(option.label)}</span>
-                <span class="option-count">${option.count}</span>
+                <span class="option-count"${countField ? ` data-count-field="${countField}" data-count-value="${esc(option.value)}"` : ""}>${option.count}</span>
               </label>`).join("")}
           </div>
         </div>`;
@@ -2276,8 +2524,8 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
       const note = exercise.countNote ? exercise.countNote() : "";
       target.classList.toggle("empty", used === 0);
       target.textContent = used === 0
-        ? `No words selected${note}`
-        : `${used} word${used === 1 ? "" : "s"} selected · ${used * multiplier} question${used * multiplier === 1 ? "" : "s"}${cap > 0 && words.length > cap ? ` · sampled from ${words.length}` : ""}${note}`;
+        ? `Nothing selected${note}`
+        : `${used} item${used === 1 ? "" : "s"} selected · ${used * multiplier} question${used * multiplier === 1 ? "" : "s"}${cap > 0 && words.length > cap ? ` · sampled from ${words.length}` : ""}${note}`;
     }
 
     function attachExerciseListeners() {
@@ -2685,7 +2933,8 @@ html[data-theme="light"] .word-note-example .roman { color: #28468A; opacity: 1;
         <span class="stat-chip"><strong>${DAYS.length}</strong> days × ${dayRangeLabel()}</span>
         <span class="stat-chip">TOPIK I <strong>levels 1-2</strong></span>
         <span class="stat-chip"><strong>${USED_POS.length}</strong> parts of speech</span>
-        <span class="stat-chip"><strong>${TOPICS.length}</strong> topics</span>`;
+        <span class="stat-chip"><strong>${TOPICS.length}</strong> topics</span>
+        <span class="stat-chip"><strong>${EXPRESSIONS.length}</strong> expressions</span>`;
     }
 
     function renderTOC() {

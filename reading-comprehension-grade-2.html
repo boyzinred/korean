@@ -357,7 +357,129 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 .vocab-category .table-wrap { border: 0; border-radius: 0; }
 .vocab-category table { min-width: 720px; }
 
-.familiarity-cell { min-width: 176px; }
+/* The word bank toolbar: how the same words are regrouped, and the search that
+   runs across every group at once. */
+.ref-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.ref-modes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.ref-modes__label {
+  padding: 0 8px;
+  color: var(--surface-text);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.mode-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.mode-btn:hover { transform: scale(1.04); }
+.mode-btn.active { color: #192B5D; background: var(--primary); }
+.ref-filter { flex: 1 1 240px; max-width: 380px; }
+.section-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 18px 18px;
+}
+.section-toolbar .blur-toggle { min-height: 44px; font-size: .84rem; }
+.group-note {
+  margin: 10px 18px 12px;
+  font-size: .86rem;
+  font-weight: 600;
+  opacity: .8;
+}
+
+/* The ＋ on a row opens that word's small print underneath it: how the word
+   behaves, and one model sentence in all three scripts. */
+.vocab-note-head, .vocab-note-cell { width: 54px; padding-right: 0; }
+.vocab-note-toggle {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.vocab-note-toggle:hover { transform: scale(1.08); }
+.vocab-note-toggle[aria-expanded="true"] { color: #192B5D; background: var(--primary); }
+.vocab-note-row > td {
+  padding: 2px 54px 20px;
+  background: var(--surface-muted);
+}
+.word-note { display: grid; gap: 10px; }
+/* The example box spends 4px on its coloured rail and 14px on padding before
+   its text starts, so the plain paragraphs take the same 18px and every line
+   in a note begins on one left edge. */
+.word-note-usage, .word-note-tags { padding-left: 18px; }
+.word-note-usage { margin: 0; font-weight: 600; }
+.word-note-example {
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--secondary);
+  border-radius: var(--radius-md);
+}
+.word-note-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+.word-note-example p { margin: 0; }
+.word-note-ko { font-weight: 800; }
+.word-note-en { opacity: .82; }
+.word-note-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.word-tag {
+  padding: 3px 9px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+}
+.grammar-form { font-size: 1.05rem; letter-spacing: .01em; }
+.story-quote { border-left-color: var(--muted-strong); }
+.word-note-rule {
+  height: 0;
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px dashed var(--border);
+}
+
+.vocab-category tbody tr.is-hidden { display: none; }
+.vocab-category.is-hidden { display: none; }
+
+.familiarity-cell { min-width: 88px; }
 .familiarity-stars {
   display: inline-flex;
   gap: 3px;
@@ -378,10 +500,13 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   font-size: 1.3rem;
 }
 .familiarity-star:hover { transform: scale(1.12); }
-.familiarity-stars[data-level="1"] .familiarity-star:nth-child(-n+1) { color: var(--accent); }
-.familiarity-stars[data-level="2"] .familiarity-star:nth-child(-n+2) { color: var(--primary); }
-.familiarity-stars[data-level="3"] .familiarity-star:nth-child(-n+3) { color: var(--secondary); }
-.familiarity-label { display: block; margin-top: 5px; font-size: .72rem; font-weight: 800; }
+.familiarity-stars[data-level="1"] .familiarity-star { color: var(--accent); }
+
+.lang-picks {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
 
 .group-picker {
   padding: 16px;
@@ -483,6 +608,9 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 }
 .exercise-menu-grid label > * { width: 100%; height: 56px; min-width: 0; }
 .exercise-menu-grid .wide { grid-column: span 2; }
+/* The story picker is the only control left in its row, so it takes the
+   whole width rather than leaving half the grid empty. */
+.exercise-menu-grid.story-pick .wide { grid-column: 1 / -1; }
 .option-stack { display: grid; gap: 8px; }
 .exercise-option {
   display: flex;
@@ -1023,6 +1151,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       <div class="toc-grid" id="tocGrid">
         <a class="toc-link" href="#wordbank">Word bank</a>
         <a class="toc-link" href="#vocabExercise">Vocabulary test</a>
+        <a class="toc-link" href="#grammar">Grammar bank</a>
         <a class="toc-link" href="#exercise">Story exercise</a>
         <a class="toc-link" href="#readingExercise">Reading comprehension</a>
       </div>
@@ -1035,14 +1164,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           <h4>The grade 2 word list</h4>
           <p>This list lives in <code>shared-vocab/reading-vocab-2.js</code> and holds only the new grade 2 vocabulary. The grade 1 words are loaded underneath it, so anything a passage reuses from the earlier level still opens a popover &mdash; it just does not clutter these tables or the test below. Romanization is generated character by character from the Hangul spelling.</p>
         </div>
-        <div class="wordbank-tools">
-          <input id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, or English" aria-label="Search the word bank">
-          <button class="blur-toggle" type="button" data-blur-field="english" aria-pressed="false">Blur English</button>
-          <button class="blur-toggle" type="button" data-blur-field="romanization" aria-pressed="false">Blur Romanization</button>
-          <button class="blur-toggle" type="button" data-blur-field="korean" aria-pressed="false">Blur Korean</button>
+        <div class="ref-toolbar">
+          <div class="ref-modes" id="wordbankModes" role="group" aria-label="Group the word bank by">
+            <span class="ref-modes__label">Group by</span>
+          </div>
+          <input class="ref-filter" id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, English, or a story" aria-label="Search the word bank">
+          <button class="blur-toggle" type="button" id="wordbankExpand">Open all</button>
+          <button class="blur-toggle" type="button" id="wordbankCollapse">Close all</button>
           <span class="wordbank-count" id="wordbankCount"></span>
         </div>
-        <p class="wordbank-count">Blur a column to test yourself, then click any blurred cell to peek at it. Rate a word with the stars and the rating is remembered on this device.</p>
+        <p class="wordbank-count">Group the same words by <strong>topic</strong>, by <strong>part of speech</strong>, or by the <strong>story</strong> that uses them &mdash; the story lists are worked out from the passages themselves, so a story's list is exactly the words it underlines. Open a group to blur a column and test yourself, press <strong>&#65291;</strong> on a row for how the word is used and a model sentence, and rate a word with the stars.</p>
         <div id="wordbankGroups"></div>
 
         <article class="exercise" id="vocabExercise">
@@ -1058,10 +1189,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           <div class="exercise-body">
             <div class="exercise-menu">
               <h4>Test setup</h4>
-              <p>Pick the groups you want, choose how the question and the answer are written, then begin.</p>
+              <p>Pick the buckets you want &mdash; by topic, by part of speech, or one passage at a time &mdash; then choose how the question and the answer are written and begin. Testing a single story is the fastest way to get ready to read it.</p>
 
               <fieldset class="group-picker">
-                <legend>Word groups</legend>
+                <legend>What to test</legend>
+                <div class="ref-modes" id="vocabModes" role="group" aria-label="Group the test words by">
+                  <span class="ref-modes__label">Group by</span>
+                </div>
                 <div class="group-grid" id="vocabGroupGrid"></div>
                 <div class="group-actions">
                   <button class="btn secondary small select-all" type="button">Select all</button>
@@ -1069,7 +1203,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 </div>
                 <label class="exercise-option" style="margin-top:12px;">
                   <input class="menu-weak" type="checkbox">
-                  <span>Only words I rated ★ or ★★<small>Uses the star ratings from the tables above.</small></span>
+                  <span>Only words I have not starred<small>Leaves out anything marked familiar in the tables above.</small></span>
                 </label>
               </fieldset>
 
@@ -1083,21 +1217,27 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 <label>Questions
                   <input class="menu-count" type="number" min="1" max="100" value="15">
                 </label>
-                <label>Question shows
-                  <select class="menu-prompt-lang">
-                    <option value="ko">한국어 Korean</option>
-                    <option value="ro">Romanization</option>
-                    <option value="en">English</option>
-                  </select>
-                </label>
-                <label>Answer in
-                  <select class="menu-answer-lang">
-                    <option value="en">English</option>
-                    <option value="ko">한국어 Korean</option>
-                    <option value="ro">Romanization</option>
-                  </select>
-                </label>
               </div>
+
+              <div class="lang-picks">
+                <fieldset class="group-picker">
+                  <legend>Question shows</legend>
+                  <div class="group-grid">
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ko" checked><span>한국어 Korean</span></label>
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ro"><span>Romanization</span></label>
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="en"><span>English</span></label>
+                  </div>
+                </fieldset>
+                <fieldset class="group-picker">
+                  <legend>Answer in</legend>
+                  <div class="group-grid">
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="en" checked><span>English</span></label>
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ko"><span>한국어 Korean</span></label>
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ro"><span>Romanization</span></label>
+                  </div>
+                </fieldset>
+              </div>
+              <p class="wordbank-count">Tick one box on each side for a run that always goes the same way. Tick more than one and the run mixes directions, and every question says which script to answer in.</p>
 
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button">Begin vocabulary test</button>
@@ -1130,6 +1270,27 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       </div>
     </details>
 
+    <details class="section" id="grammar" open>
+      <summary>Grammar bank</summary>
+      <div class="section-body">
+        <div class="info-card">
+          <h4>The grammar these passages are built from</h4>
+          <p>The new grade 2 grammar &mdash; the past tense, quoted speech, the respect forms, and the endings that stack on a verb &mdash; plus the whole grade 1 set underneath it, because these passages still run on 은/는, 을/를 and 에. It lives in <code>shared-vocab/reading-grammar-2.js</code>, and which passages use a point is worked out from the passages themselves.</p>
+        </div>
+        <div class="ref-toolbar">
+          <div class="ref-modes" id="grammarModes" role="group" aria-label="Group the grammar bank by">
+            <span class="ref-modes__label">Group by</span>
+          </div>
+          <input class="ref-filter" id="grammarSearch" type="search" placeholder="Search a form, a name, or an explanation" aria-label="Search the grammar bank">
+          <button class="blur-toggle" type="button" id="grammarExpand">Open all</button>
+          <button class="blur-toggle" type="button" id="grammarCollapse">Close all</button>
+          <span class="wordbank-count" id="grammarCount"></span>
+        </div>
+        <p class="wordbank-count">Grammar overlaps in a way vocabulary does not &mdash; the past tense is in all ten passages &mdash; so a point is never owned by one passage. Group by <strong>type</strong> to see each point once, or by <strong>story</strong> to see everything one passage needs, with a point repeated under every passage that uses it. The <strong>Used by</strong> column says how many that is. Press <strong>&#65291;</strong> for the full explanation, and in story mode the examples are lifted from that passage's own lines.</p>
+        <div id="grammarGroups"></div>
+      </div>
+    </details>
+
     <details class="section" id="exercise" open>
       <summary>Story exercise</summary>
       <div class="section-body">
@@ -1147,32 +1308,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
             <div class="exercise-menu">
               <h4>Exercise setup</h4>
-              <p>Choose a story and the script you want each part shown in. The story stays on screen the whole time, and the hint popovers are always available.</p>
+              <p>Choose a story and begin. Everything runs in 한국어 &mdash; the passage, the questions, the answer choices, and the hints &mdash; because reading it in Korean is the whole exercise. The story stays on screen the whole time, and the popover on any underlined word still gives you its meaning in English.</p>
 
-              <div class="exercise-menu-grid">
+              <div class="exercise-menu-grid story-pick">
                 <label class="wide">Story
                   <select class="menu-story"></select>
-                </label>
-                <label>Story language
-                  <select class="menu-story-lang">
-                    <option value="ko">한국어 Korean</option>
-                    <option value="ro">Romanization</option>
-                    <option value="en">English</option>
-                  </select>
-                </label>
-                <label>Questions &amp; answers
-                  <select class="menu-qa-lang">
-                    <option value="ko">한국어 Korean</option>
-                    <option value="ro">Romanization</option>
-                    <option value="en">English</option>
-                  </select>
-                </label>
-                <label>Hints &amp; popovers
-                  <select class="menu-hint-lang">
-                    <option value="en">English</option>
-                    <option value="ro">Romanization</option>
-                    <option value="ko">한국어 Korean</option>
-                  </select>
                 </label>
               </div>
 
@@ -1256,6 +1396,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
   <script src="./shared-vocab/reading-vocab.js?v=3.0.0"></script>
   <script src="./shared-vocab/reading-vocab-2.js?v=1.0.0"></script>
+  <script src="./shared-vocab/reading-grammar.js?v=1.0.0"></script>
+  <script src="./shared-vocab/reading-grammar-2.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2691,19 +2833,18 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     ----------------------------------------------------------------------- */
     let state = null;
 
-    /* Popover markup is built during render, before state exists on the first
-       preview, so the hint language is read straight from the menu. */
-    function currentHintLang() {
-      return state ? state.settings.hintLang : $(".menu-hint-lang").value;
-    }
+    /* The exercise runs in Korean throughout: the passage, the questions, the
+         choices, and the hints. A word's popover still gives its English
+         meaning, which is what makes reading the Korean possible. */
+    function currentHintLang() { return "ko"; }
 
     function readSettings() {
       const mode = $(".menu-timer-mode").value;
       return {
         storyId: $(".menu-story").value,
-        storyLang: $(".menu-story-lang").value,
-        qaLang: $(".menu-qa-lang").value,
-        hintLang: $(".menu-hint-lang").value,
+        storyLang: "ko",
+        qaLang: "ko",
+        hintLang: "ko",
         timed: $(".menu-timed").checked,
         timerMode: mode,
         timerLimit: Number($(".menu-timer-limit").value) || DEFAULT_LIMIT[mode]
@@ -3157,120 +3298,384 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
        Word bank: grouped tables, blurring, and star ratings
     ----------------------------------------------------------------------- */
     const FAMILIARITY_KEY = "koreanReadingFamiliarity:g2:v1";
-    const RATING_LABELS = ["Not rated", "Learning", "Developing", "Familiar"];
     let familiarity = {};
     try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
-    function ratingOf(id) { return Math.max(0, Math.min(3, Number(familiarity[id]) || 0)); }
+    /* One star now, but ratings saved when the scale ran to three still load:
+       any of them counts as familiar. */
+    function ratingOf(id) { return Math.min(1, Math.max(0, Number(familiarity[id]) || 0)); }
     function saveFamiliarity() {
       try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
     }
+
+    /* -----------------------------------------------------------------------
+       WORD BANK TABLES
+       The same words, looked at three ways: the topic groups the bank ships
+       with, the part of speech, or the story that uses them. The story buckets
+       are not stored anywhere — they are worked out at load time by running the
+       Korean scanner over each passage, so a word lands under a story exactly
+       when that story underlines it, and a word used by four stories appears in
+       all four.
+
+       A group's rows are built the first time it is opened, because grouping by
+       story multiplies the row count several times over.
+    ----------------------------------------------------------------------- */
+    const REF_MODES = ["group", "pos", "story"];
+    const REF_MODE_LABELS = { group: "Topic", pos: "Part of speech", story: "Story" };
+    const REF_MODE_KEY = "korean.readingWordBankMode.g2";
+    const REF_BLUR_KEY = "korean.readingWordBankBlur.g2";
+
+    const POS_LABELS = {
+      noun: "명사 · Nouns", verb: "동사 · Verbs", adjective: "형용사 · Describing words",
+      adverb: "부사 · Adverbs", pronoun: "대명사 · Pronouns", determiner: "관형사 · Words before a noun",
+      number: "수사 · Numbers", counter: "단위 명사 · Counters", conjunction: "접속사 · Joining words",
+      expression: "표현 · Set expressions", name: "이름 · Names"
+    };
+    const POS_ORDER = ["noun", "verb", "adjective", "adverb", "pronoun", "determiner",
+      "number", "counter", "conjunction", "expression", "name"];
+
+    /* Only the words this page's tables own. On grade 2 that is the new
+       vocabulary; the grade 1 words it loads underneath stay clickable in a
+       passage but out of these tables. */
+    const BANK_GROUP_IDS = new Set(BANK.GROUPS.map(group => group.id));
+    const BANK_WORDS = BANK.WORDS.filter(entry => BANK_GROUP_IDS.has(entry.group));
+
+    /* Every scrap of Korean a story shows you, the passage and its questions
+       alike, since the questions underline the same words. */
+    function storyTexts(story) {
+      const out = [story.title.ko, story.purpose.ko];
+      if (story.connect) out.push(story.connect.ko);
+      story.lines.forEach(line => out.push(line.ko));
+      (story.questions || []).forEach(question => {
+        out.push(question.q.ko);
+        question.choices.forEach(choice => out.push(choice.ko));
+      });
+      return out;
+    }
+
+    const STORY_WORD_IDS = new Map(STORIES.map(story => {
+      const ids = new Set();
+      storyTexts(story).forEach(text =>
+        BANK.scanKorean(text).forEach(match => ids.add(match.entry.id)));
+      return [story.id, ids];
+    }));
+
+    function wordStoryIds(entry) {
+      return STORIES.filter(story => STORY_WORD_IDS.get(story.id).has(entry.id)).map(story => story.id);
+    }
+
+    const STORY_TITLES = new Map(STORIES.map(story => [story.id, story.title.en]));
+    const byKorean = (a, b) => a.ko.localeCompare(b.ko, "ko");
+
+    function refGroups(mode) {
+      if (mode === "pos") {
+        const used = POS_ORDER.filter(pos => BANK_WORDS.some(entry => entry.pos === pos));
+        const extra = [...new Set(BANK_WORDS.map(entry => entry.pos))].filter(pos => !POS_ORDER.includes(pos));
+        return used.concat(extra).map(pos => ({
+          id: "pos-" + pos,
+          label: POS_LABELS[pos] || pos,
+          note: "Every " + pos + " in the bank, in Hangul order. Blur a column to quiz just this one.",
+          words: BANK_WORDS.filter(entry => entry.pos === pos).sort(byKorean)
+        }));
+      }
+      if (mode === "story") {
+        return STORIES.map((story, index) => {
+          const ids = STORY_WORD_IDS.get(story.id);
+          return {
+            id: "story-" + story.id,
+            label: (index + 1) + ". " + story.title.ko + " · " + story.title.en,
+            note: "Every word this passage uses, in Hangul order. Learn this list and the passage reads without a dictionary. A word several passages share is listed under each of them.",
+            words: BANK_WORDS.filter(entry => ids.has(entry.id)).sort(byKorean)
+          };
+        });
+      }
+      return BANK.GROUPS.map(group => ({
+        id: "group-" + group.id,
+        label: group.label,
+        note: "Words that belong together by topic. Blur a column to test yourself, then rate each word.",
+        words: BANK_WORDS.filter(entry => entry.group === group.id).sort(byKorean)
+      }));
+    }
+
+    let refMode = (() => {
+      try {
+        const saved = localStorage.getItem(REF_MODE_KEY);
+        return REF_MODES.indexOf(saved) >= 0 ? saved : "group";
+      } catch (_) { return "group"; }
+    })();
+
+    let refBlur = (() => {
+      try { return JSON.parse(localStorage.getItem(REF_BLUR_KEY) || "{}") || {}; }
+      catch (_) { return {}; }
+    })();
+    function saveBlur() {
+      try { localStorage.setItem(REF_BLUR_KEY, JSON.stringify(refBlur)); } catch (_) {}
+    }
+
+    const REF_GROUP_BY_ID = new Map();
+    let repaintRatings = () => {};
 
     function buildWordBank() {
       const host = document.getElementById("wordbankGroups");
       const counter = document.getElementById("wordbankCount");
       const search = document.getElementById("wordbankSearch");
-      /* The bank also carries the grade 1 words so passages stay clickable,
-         but only the grade 2 groups are displayed, so count those. */
-      const groupIds = new Set(BANK.GROUPS.map(group => group.id));
-      const total = BANK.WORDS.filter(entry => groupIds.has(entry.group)).length;
 
-      host.innerHTML = '<div class="vocab-category-stack">' + BANK.GROUPS.map(group => {
-        const words = BANK.WORDS
-          .filter(entry => entry.group === group.id)
-          .sort((a, b) => a.ko.localeCompare(b.ko, "ko"));
-        const rows = words.map(entry => {
-          const ro = BANK.romanize(entry.ko);
-          const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.pos + " " + group.label).toLowerCase();
-          return '<tr data-search="' + esc(haystack) + '">'
-            + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
-            + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
-            + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
-            + '<td>' + esc(entry.pos) + '</td>'
-            + '<td class="familiarity-cell">'
-            + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group" aria-label="Familiarity rating for ' + esc(entry.ko) + '">'
-            + [1, 2, 3].map(level => '<button class="familiarity-star" type="button" data-level="' + level
-                + '" aria-pressed="false" aria-label="Mark ' + level + ' of 3">★</button>').join("")
-            + '</div><span class="familiarity-label">Not rated</span></td></tr>';
-        }).join("");
-        return '<details class="vocab-category" data-group="' + esc(group.id) + '" open>'
+      function render() {
+        const groups = refGroups(refMode);
+        REF_GROUP_BY_ID.clear();
+        groups.forEach(group => REF_GROUP_BY_ID.set(group.id, group));
+        const lastColumn = refMode === "pos" ? "Topic" : (refMode === "story" ? "Part of speech" : "Part of speech");
+
+        host.innerHTML = '<div class="vocab-category-stack">' + groups.map(group =>
+          '<details class="vocab-category" data-section-id="' + esc(group.id) + '">'
           + '<summary><span>' + esc(group.label)
-          + '<span class="vocab-category-count">' + plural(words.length, "word", "words") + '</span></span></summary>'
-          + '<div class="table-wrap"><table><thead><tr><th>English</th><th>Romanization</th><th>Korean</th>'
-          + '<th>Part of speech</th><th>Familiarity</th></tr></thead><tbody>' + rows + '</tbody></table></div></details>';
-      }).join("") + '</div>';
+          + '<span class="vocab-category-count">' + plural(group.words.length, "word", "words")
+          + '</span></span></summary>'
+          + '<p class="group-note">' + esc(group.note) + '</p>'
+          + '<div class="section-toolbar">'
+          + '<button class="blur-toggle" type="button" data-field="english" aria-pressed="false">Blur English</button>'
+          + '<button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>'
+          + '<button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>'
+          + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + '</div>'
+          + '<div class="table-wrap"><table><thead><tr>'
+          + '<th class="vocab-note-head"><span class="sr-only">Usage notes</span></th>'
+          + '<th>English</th><th>Romanization</th><th>Korean</th><th>' + esc(lastColumn) + '</th>'
+          + '<th>Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
 
-      counter.textContent = plural(total, "word", "words");
-
-      /* Search hides rows and collapses groups that end up empty. */
-      search.addEventListener("input", () => {
-        const term = search.value.trim().toLowerCase();
-        let shown = 0;
         host.querySelectorAll(".vocab-category").forEach(section => {
-          let visible = 0;
-          section.querySelectorAll("tbody tr").forEach(row => {
-            const match = !term || row.dataset.search.includes(term);
-            row.hidden = !match;
-            if (match) visible += 1;
-          });
-          section.hidden = Boolean(term) && visible === 0;
-          if (term && visible) section.open = true;
-          shown += visible;
+          section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
+          restoreBlur(section);
         });
-        counter.textContent = term ? shown + " of " + total + " words" : plural(total, "word", "words");
-      });
+        const label = document.getElementById("refModeLabel");
+        if (label) label.textContent = REF_MODE_LABELS[refMode];
+        paintCount("");
+      }
 
-      /* Blur a whole column, then click a cell to peek at just that one. */
-      document.querySelectorAll("[data-blur-field]").forEach(button => {
-        button.addEventListener("click", () => {
-          const field = button.dataset.blurField;
-          const on = button.getAttribute("aria-pressed") !== "true";
+      function fillRows(section) {
+        const body = section.querySelector("tbody");
+        if (body.dataset.filled === "true") return;
+        const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+        if (!group) return;
+        body.innerHTML = group.words.map(entry => row(section, entry)).join("");
+        body.dataset.filled = "true";
+        paintSectionRatings(section);
+        applyBlur(section);
+        syncNotesToggle(section);
+      }
+
+      function lastCell(entry) {
+        if (refMode === "pos") return esc(entry.groupLabel || entry.group || "");
+        return esc(POS_LABELS[entry.pos] ? POS_LABELS[entry.pos].split(" · ")[1] : entry.pos);
+      }
+
+      function row(section, entry) {
+        const ro = BANK.romanize(entry.ko);
+        const stories = wordStoryIds(entry);
+        /* Story titles stay out of the haystack: a passage called "At the
+           Library" would otherwise make every one of its words a hit for
+           "library". Grouping by story is how you get a story's list. */
+        const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.pos + " "
+          + (entry.groupLabel || "") + " " + (entry.forms || []).join(" ")).toLowerCase();
+        const noteId = "vnote-" + section.dataset.sectionId + "-" + entry.id;
+        const main = '<tr data-search="' + esc(haystack) + '">'
+          + '<td class="vocab-note-cell"><button class="vocab-note-toggle" type="button" aria-expanded="false"'
+          + ' aria-controls="' + esc(noteId) + '" aria-label="Show usage notes for ' + esc(entry.ko)
+          + '"><span aria-hidden="true">＋</span></button></td>'
+          + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
+          + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
+          + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
+          + '<td>' + lastCell(entry) + '</td>'
+          + '<td class="familiarity-cell">'
+          + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group"'
+          + ' aria-label="Familiarity for ' + esc(entry.ko) + '">'
+          + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
+          + ' aria-label="Mark as familiar">★</button>'
+          + '</div></td></tr>';
+
+        const tags = '<div class="word-note-tags">'
+          + '<span class="word-tag">' + esc(entry.pos) + '</span>'
+          + (entry.groupLabel ? '<span class="word-tag">' + esc(entry.groupLabel) + '</span>' : "")
+          + stories.map((id, index) => '<span class="word-tag">Story '
+              + (STORIES.findIndex(story => story.id === id) + 1) + ' · ' + esc(STORY_TITLES.get(id)) + '</span>').join("")
+          + '</div>';
+        const forms = (entry.forms || []).filter(form => form !== entry.ko);
+        const note = '<div class="word-note">'
+          + '<p class="word-note-usage">' + esc(entry.usage || "") + '</p>'
+          + (forms.length ? '<p class="word-note-usage"><span class="word-note-label">As it appears</span> '
+              + esc(forms.join(", ")) + '</p>' : "")
+          + '<div class="word-note-example"><span class="word-note-label">Example</span>'
+          + '<p class="word-note-ko">' + esc(entry.exKo) + '</p>'
+          + '<p class="roman">' + esc(BANK.romanize(entry.exKo)) + '</p>'
+          + '<p class="word-note-en">' + esc(entry.exEn) + '</p></div>'
+          + tags + '</div>';
+        return main + '<tr class="vocab-note-row" id="' + esc(noteId) + '" hidden><td colspan="6">' + note + '</td></tr>';
+      }
+
+      /* ---- blur, remembered per section so each group keeps its own state --- */
+      function applyBlur(section) {
+        const saved = refBlur[section.dataset.sectionId] || {};
+        section.querySelectorAll(".section-toolbar .blur-toggle[data-field]").forEach(button => {
+          const on = Boolean(saved[button.dataset.field]);
           button.setAttribute("aria-pressed", String(on));
-          host.querySelectorAll('[data-vocab-field="' + field + '"]').forEach(cell => {
+          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]').forEach(cell => {
             cell.classList.toggle("is-blurred", on);
             cell.classList.remove("is-peeking");
           });
         });
-      });
+      }
+      function restoreBlur(section) { applyBlur(section); }
 
-      const peek = cell => {
-        if (!cell || !cell.classList.contains("is-blurred")) return;
-        cell.classList.toggle("is-peeking");
-      };
-      host.addEventListener("click", event => peek(event.target.closest("[data-vocab-field]")));
-      host.addEventListener("keydown", event => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        const cell = event.target.closest("[data-vocab-field]");
-        if (!cell || !cell.classList.contains("is-blurred")) return;
-        event.preventDefault();
-        peek(cell);
-      });
+      /* ---- the ＋ notes ---------------------------------------------------- */
+      function setNote(button, open) {
+        const noteRow = document.getElementById(button.getAttribute("aria-controls"));
+        button.setAttribute("aria-expanded", String(open));
+        button.querySelector("span").textContent = open ? "−" : "＋";
+        if (noteRow) noteRow.hidden = !open;
+      }
+      function setAllNotes(section, open) {
+        section.querySelectorAll(".vocab-note-toggle").forEach(button => {
+          const hiddenRow = button.closest("tr").classList.contains("is-hidden");
+          setNote(button, open && !hiddenRow);
+        });
+        syncNotesToggle(section);
+      }
+      function syncNotesToggle(section) {
+        const button = section.querySelector(".notes-toggle");
+        if (!button) return;
+        const toggles = [...section.querySelectorAll(".vocab-note-toggle")];
+        const allOpen = toggles.length > 0 && toggles.every(t => t.getAttribute("aria-expanded") === "true");
+        button.setAttribute("aria-pressed", String(allOpen));
+        button.textContent = allOpen ? "Close all notes" : "Open all notes";
+      }
 
-      const paintRating = (group, level) => {
-        const safe = Math.max(0, Math.min(3, Number(level) || 0));
+      /* ---- stars ----------------------------------------------------------- */
+      function paintRating(group, level) {
+        const safe = Math.min(1, Math.max(0, Number(level) || 0));
         group.dataset.level = String(safe);
         group.querySelectorAll(".familiarity-star").forEach(button =>
-          button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
-        const label = group.parentElement.querySelector(".familiarity-label");
-        if (label) label.textContent = RATING_LABELS[safe];
-      };
-      host.querySelectorAll(".familiarity-stars").forEach(group => {
-        paintRating(group, ratingOf(group.dataset.wordId));
-        group.addEventListener("click", event => {
-          const button = event.target.closest(".familiarity-star");
-          if (!button) return;
-          const chosen = Number(button.dataset.level) || 0;
+          button.setAttribute("aria-pressed", String(safe === 1)));
+      }
+      function paintSectionRatings(section) {
+        section.querySelectorAll(".familiarity-stars").forEach(group =>
+          paintRating(group, ratingOf(group.dataset.wordId)));
+      }
+      repaintRatings = () => host.querySelectorAll(".familiarity-stars")
+        .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+
+      /* ---- search ---------------------------------------------------------- */
+      function paintCount(term) {
+        const total = BANK_WORDS.length;
+        if (!term) {
+          counter.textContent = plural(total, "word", "words") + " · grouped by " + REF_MODE_LABELS[refMode].toLowerCase();
+          return;
+        }
+        let shown = 0;
+        host.querySelectorAll(".vocab-category").forEach(section =>
+          { shown += section.querySelectorAll("tbody tr:not(.vocab-note-row):not(.is-hidden)").length; });
+        counter.textContent = shown + " matching " + (shown === 1 ? "row" : "rows");
+      }
+
+      function runSearch() {
+        const term = search.value.trim().toLowerCase();
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          if (term) fillRows(section);
+          let visible = 0;
+          section.querySelectorAll("tbody tr:not(.vocab-note-row)").forEach(tr => {
+            const match = !term || (tr.dataset.search || "").indexOf(term) >= 0;
+            tr.classList.toggle("is-hidden", !match);
+            const noteRow = tr.nextElementSibling;
+            if (noteRow && noteRow.classList.contains("vocab-note-row")) {
+              noteRow.classList.toggle("is-hidden", !match);
+              if (!match) setNote(tr.querySelector(".vocab-note-toggle"), false);
+            }
+            if (match) visible += 1;
+          });
+          section.classList.toggle("is-hidden", Boolean(term) && visible === 0);
+          if (term && visible) section.open = true;
+          syncNotesToggle(section);
+        });
+        paintCount(term);
+      }
+
+      /* ---- one delegated listener for the whole bank ----------------------- */
+      host.addEventListener("click", event => {
+        const modeButton = event.target.closest("[data-ref-mode]");
+        if (modeButton) return;
+
+        const blurButton = event.target.closest(".section-toolbar .blur-toggle[data-field]");
+        if (blurButton) {
+          const section = blurButton.closest(".vocab-category");
+          const id = section.dataset.sectionId;
+          refBlur[id] = refBlur[id] || {};
+          refBlur[id][blurButton.dataset.field] = !refBlur[id][blurButton.dataset.field];
+          saveBlur();
+          applyBlur(section);
+          return;
+        }
+        const notesButton = event.target.closest(".notes-toggle");
+        if (notesButton) {
+          const section = notesButton.closest(".vocab-category");
+          setAllNotes(section, notesButton.getAttribute("aria-pressed") !== "true");
+          return;
+        }
+        const noteToggle = event.target.closest(".vocab-note-toggle");
+        if (noteToggle) {
+          setNote(noteToggle, noteToggle.getAttribute("aria-expanded") !== "true");
+          syncNotesToggle(noteToggle.closest(".vocab-category"));
+          return;
+        }
+        const star = event.target.closest(".familiarity-star");
+        if (star) {
+          const group = star.closest(".familiarity-stars");
+          const chosen = Number(star.dataset.level) || 0;
           const next = Number(group.dataset.level) === chosen ? 0 : chosen;
           if (next) familiarity[group.dataset.wordId] = next;
           else delete familiarity[group.dataset.wordId];
           saveFamiliarity();
           paintRating(group, next);
-        });
+          return;
+        }
+        const cell = event.target.closest("[data-vocab-field]");
+        if (cell && cell.classList.contains("is-blurred")) cell.classList.toggle("is-peeking");
       });
 
-      repaintRatings = () => host.querySelectorAll(".familiarity-stars")
-        .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+      host.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const cell = event.target.closest("[data-vocab-field]");
+        if (!cell || !cell.classList.contains("is-blurred")) return;
+        event.preventDefault();
+        cell.classList.toggle("is-peeking");
+      });
+
+      /* ---- the toolbar above every group ----------------------------------- */
+      document.getElementById("wordbankModes").innerHTML = REF_MODES.map(mode =>
+        '<button class="mode-btn' + (mode === refMode ? " active" : "") + '" type="button" data-ref-mode="'
+        + mode + '" aria-pressed="' + (mode === refMode) + '">' + REF_MODE_LABELS[mode] + '</button>').join("");
+
+      document.getElementById("wordbankModes").addEventListener("click", event => {
+        const button = event.target.closest("[data-ref-mode]");
+        if (!button || button.dataset.refMode === refMode) return;
+        refMode = button.dataset.refMode;
+        try { localStorage.setItem(REF_MODE_KEY, refMode); } catch (_) {}
+        document.querySelectorAll("#wordbankModes .mode-btn").forEach(other => {
+          const on = other.dataset.refMode === refMode;
+          other.classList.toggle("active", on);
+          other.setAttribute("aria-pressed", String(on));
+        });
+        render();
+        if (search.value.trim()) runSearch();
+      });
+
+      document.getElementById("wordbankExpand").addEventListener("click", () => {
+        host.querySelectorAll(".vocab-category").forEach(section => { section.open = true; fillRows(section); });
+      });
+      document.getElementById("wordbankCollapse").addEventListener("click", () => {
+        host.querySelectorAll(".vocab-category").forEach(section => { section.open = false; });
+      });
+
+      search.addEventListener("input", runSearch);
+      render();
     }
-    let repaintRatings = () => {};
 
     /* -----------------------------------------------------------------------
        Vocabulary test
@@ -3320,41 +3725,96 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         weakOnly: $v(".menu-weak").checked,
         mode: $v(".menu-mode").value,
         count: Math.max(1, Math.min(100, Number($v(".menu-count").value) || 15)),
-        promptLang: $v(".menu-prompt-lang").value,
-        answerLang: $v(".menu-answer-lang").value
+        promptLangs: [...vEl.querySelectorAll(".prompt-lang:checked")].map(input => input.value),
+        answerLangs: [...vEl.querySelectorAll(".answer-lang:checked")].map(input => input.value)
       };
     }
 
+    /* The buckets come from whichever grouping the test is set to, so the ids
+       in settings.groups are section ids, not necessarily topic ids. */
+    function testGroups() { return refGroups(testMode); }
+
+    const LANG_NAMES = { ko: "한국어", ro: "romanization", en: "English" };
+
+    /* A question has to show one script and be answered in another, so a run is
+       only possible when the two sides are not the same single tick. Tick more
+       than one and each question picks its own pair, which is why the direction
+       is worked out per word rather than once for the run. */
+    function canPair(settings) {
+      return settings.promptLangs.some(prompt =>
+        settings.answerLangs.some(answer => answer !== prompt));
+    }
+
+    function pickDirection(settings) {
+      const usable = settings.promptLangs.filter(prompt =>
+        settings.answerLangs.some(answer => answer !== prompt));
+      if (!usable.length) return null;
+      const promptLang = usable[Math.floor(Math.random() * usable.length)];
+      const answers = settings.answerLangs.filter(answer => answer !== promptLang);
+      return { promptLang: promptLang, answerLang: answers[Math.floor(Math.random() * answers.length)] };
+    }
+
+    function directionLabel(settings) {
+      const names = list => list.map(lang => LANG_NAMES[lang]).join(", ");
+      return "Question in " + names(settings.promptLangs) + " · answer in " + names(settings.answerLangs);
+    }
+
     function vocabPool(settings) {
-      const groups = new Set(settings.groups);
-      return BANK.WORDS.filter(entry => {
-        if (!groups.has(entry.group)) return false;
+      const chosen = new Set(settings.groups);
+      const ids = new Set();
+      testGroups().forEach(group => {
+        if (!chosen.has(group.id)) return;
+        group.words.forEach(entry => ids.add(entry.id));
+      });
+      return BANK_WORDS.filter(entry => {
+        if (!ids.has(entry.id)) return false;
         if (!settings.weakOnly) return true;
-        const rating = ratingOf(entry.id);
-        return rating === 1 || rating === 2;
+        return ratingOf(entry.id) === 0;
       });
     }
 
     function paintPoolNote() {
       const settings = readVocabSettings();
       const note = $v(".vocab-pool-note");
-      if (settings.promptLang === settings.answerLang) {
-        note.innerHTML = '<span class="assistance-used">Pick different scripts for the question and the answer.</span>';
+      if (!canPair(settings)) {
+        note.innerHTML = '<span class="assistance-used">Tick a script on each side, and not the same one on both.</span>';
         return;
       }
       const size = vocabPool(settings).length;
+      const mixed = settings.promptLangs.length > 1 || settings.answerLangs.length > 1;
       note.textContent = size
-        ? plural(size, "word", "words") + " in your selection."
+        ? plural(size, "word", "words") + " in your selection. " + directionLabel(settings) + "."
+          + (mixed ? " Each question picks its own pair." : "")
         : "No words match your selection yet.";
     }
 
+    let testMode = refMode;
+
+    function paintGroupGrid() {
+      document.getElementById("vocabGroupGrid").innerHTML = testGroups().map(group =>
+        '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
+        + esc(group.id) + '" checked><span>' + esc(group.label)
+        + '<small>' + plural(group.words.length, "word", "words") + '</small></span></label>').join("");
+    }
+
     function buildVocabTest() {
-      document.getElementById("vocabGroupGrid").innerHTML = BANK.GROUPS.map(group => {
-        const size = BANK.WORDS.filter(entry => entry.group === group.id).length;
-        return '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
-          + esc(group.id) + '" checked><span>' + esc(group.label)
-          + '<small>' + plural(size, "word", "words") + '</small></span></label>';
-      }).join("");
+      const modes = document.getElementById("vocabModes");
+      modes.insertAdjacentHTML("beforeend", REF_MODES.map(mode =>
+        '<button class="mode-btn' + (mode === testMode ? " active" : "") + '" type="button" data-test-mode="'
+        + mode + '" aria-pressed="' + (mode === testMode) + '">' + REF_MODE_LABELS[mode] + '</button>').join(""));
+      modes.addEventListener("click", event => {
+        const button = event.target.closest("[data-test-mode]");
+        if (!button || button.dataset.testMode === testMode) return;
+        testMode = button.dataset.testMode;
+        modes.querySelectorAll(".mode-btn").forEach(other => {
+          const on = other.dataset.testMode === testMode;
+          other.classList.toggle("active", on);
+          other.setAttribute("aria-pressed", String(on));
+        });
+        paintGroupGrid();
+        paintPoolNote();
+      });
+      paintGroupGrid();
 
       vEl.querySelector(".exercise-menu").addEventListener("change", paintPoolNote);
       $v(".select-all").addEventListener("click", () => {
@@ -3376,7 +3836,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
     function startVocabTest() {
       const settings = readVocabSettings();
-      if (settings.promptLang === settings.answerLang) {
+      if (!canPair(settings)) {
         paintPoolNote();
         return;
       }
@@ -3393,13 +3853,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         i: 0,
         locked: false,
         finished: false,
+        directions: picked.map(() => pickDirection(settings)),
         results: picked.map(() => null)
       };
       $v(".exercise-menu").classList.add("hidden");
       $v(".finish").classList.add("hidden");
       $v(".live").classList.remove("hidden");
-      $v(".vocab-direction").textContent = "Question in " + settings.promptLang.toUpperCase()
-        + " · answer in " + settings.answerLang.toUpperCase();
+      $v(".vocab-direction").textContent = directionLabel(settings);
       showVocabQuestion();
       vEl.scrollIntoView({ block: "start" });
     }
@@ -3415,6 +3875,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     function showVocabQuestion() {
       const settings = vocabState.settings;
       const entry = vocabState.words[vocabState.i];
+      const direction = vocabState.directions[vocabState.i];
       vocabState.locked = false;
 
       $v(".count").textContent = "Word " + (vocabState.i + 1) + " of " + vocabState.words.length;
@@ -3425,10 +3886,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       progress.setAttribute("aria-valuemax", String(vocabState.words.length));
       progress.setAttribute("aria-valuenow", String(vocabState.i));
 
-      $v(".prompt-label").textContent = settings.mode === "mc"
+      /* The answer script is named on every question, because a mixed run can
+         change it from one word to the next. */
+      $v(".prompt-label").textContent = (settings.mode === "mc"
         ? "Choose the matching word"
-        : "Type the answer";
-      $v(".prompt").textContent = wordIn(entry, settings.promptLang);
+        : "Type the answer") + " in " + LANG_NAMES[direction.answerLang];
+      $v(".prompt").textContent = wordIn(entry, direction.promptLang);
 
       const zone = $v(".zone");
       if (settings.mode === "mc") {
@@ -3438,13 +3901,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         zone.innerHTML = '<div class="choice-list">' + options.map((option, index) =>
           '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
           + '<span class="choice-letter">' + LETTERS[index] + '</span>'
-          + '<span class="choice-text">' + esc(wordIn(option, settings.answerLang)) + '</span></div>').join("")
+          + '<span class="choice-text">' + esc(wordIn(option, direction.answerLang)) + '</span></div>').join("")
           + '</div>';
         zone.querySelectorAll(".choice").forEach(node => {
           const pick = () => {
             if (vocabState.locked || vocabState.finished) return;
             lockVocabQuestion(options[Number(node.dataset.choice)].id === entry.id,
-              wordIn(options[Number(node.dataset.choice)], settings.answerLang));
+              wordIn(options[Number(node.dataset.choice)], direction.answerLang));
           };
           node.addEventListener("click", pick);
           node.addEventListener("keydown", event => {
@@ -3454,12 +3917,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       } else {
         zone.innerHTML = '<div class="answer-row">'
           + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
-          + 'placeholder="' + esc(settings.answerLang === "en" ? "English" : (settings.answerLang === "ro" ? "Romanization" : "한국어")) + '">'
+          + 'placeholder="' + esc(LANG_NAMES[direction.answerLang]) + '">'
           + '<button class="btn primary submit" type="button">Check</button></div>';
         const input = zone.querySelector(".answer-input");
         const submit = () => {
           if (vocabState.locked || vocabState.finished) return;
-          lockVocabQuestion(checkTyped(entry, settings.answerLang, input.value), input.value.trim());
+          lockVocabQuestion(checkTyped(entry, direction.answerLang, input.value), input.value.trim());
         };
         zone.querySelector(".submit").addEventListener("click", submit);
         input.addEventListener("keydown", event => {
@@ -3478,6 +3941,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     function lockVocabQuestion(correct, given) {
       const settings = vocabState.settings;
       const entry = vocabState.words[vocabState.i];
+      const direction = vocabState.directions[vocabState.i];
       vocabState.locked = true;
       vocabState.results[vocabState.i] = { correct, given: given || "" };
 
@@ -3487,7 +3951,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           node.setAttribute("aria-disabled", "true");
           const option = vocabState.options[index];
           if (option.id === entry.id) node.classList.add("correct");
-          else if (wordIn(option, settings.answerLang) === given && !correct) node.classList.add("wrong");
+          else if (wordIn(option, direction.answerLang) === given && !correct) node.classList.add("wrong");
           else node.classList.add("faded");
         });
       } else {
@@ -3501,7 +3965,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const feedback = $v(".feedback");
       feedback.className = "feedback " + (correct ? "good" : "bad");
       feedback.innerHTML = (correct ? "<strong>맞아요!</strong>" : "<strong>아니에요.</strong>")
-        + (correct ? "" : "Answer: <em>" + esc(wordIn(entry, settings.answerLang)) + "</em>. ")
+        + (correct ? "" : "Answer: <em>" + esc(wordIn(entry, direction.answerLang)) + "</em>. ")
         + full + "<br><small>" + esc(entry.usage) + "</small>";
 
       const next = $v(".next");
@@ -3539,7 +4003,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
             + '<span class="word-ro">' + esc(BANK.romanize(entry.ko)) + '</span>'
             + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
           + '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
-          + 'Rate these ' + missed.length + ' as Learning</button></div>'
+          + 'Clear the star on these ' + missed.length + '</button></div>'
         : "<p>Nothing missed. 잘했어요!</p>";
 
       $v(".live").classList.add("hidden");
@@ -3561,11 +4025,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const markWeak = finishEl.querySelector(".mark-weak");
       if (markWeak) {
         markWeak.addEventListener("click", () => {
-          missed.forEach(entry => { familiarity[entry.id] = 1; });
+          missed.forEach(entry => { delete familiarity[entry.id]; });
           saveFamiliarity();
           repaintRatings();
           markWeak.disabled = true;
-          markWeak.textContent = "Rated as Learning";
+          markWeak.textContent = "Stars cleared";
         });
       }
       finishEl.querySelector(".again").addEventListener("click", startVocabTest);
@@ -3578,9 +4042,352 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       paintVocabScore();
     }
 
+    /* -----------------------------------------------------------------------
+       GRAMMAR BANK
+       Same shape as the word bank above: group the points by type or by the
+       story that uses them, search, blur a column, open a point for the long
+       explanation, and rate it with the stars.
+
+       Grammar overlaps far more than vocabulary does — the past tense is in all
+       ten passages — so a point is never owned by one story. Membership is
+       worked out by matching each point's patterns against a story's lines, and
+       a point simply appears under every story that uses it. The header on each
+       row says how many that is.
+    ----------------------------------------------------------------------- */
+    const GRAMMAR = window.ReadingGrammar2;
+    const GRAMMAR_MODES = ["type", "story"];
+    const GRAMMAR_MODE_LABELS = { type: "Type", story: "Story" };
+    const GRAMMAR_MODE_KEY = "korean.readingGrammarMode.g2";
+    const GRAMMAR_BLUR_KEY = "korean.readingGrammarBlur.g2";
+    const GRAMMAR_FAMILIARITY_KEY = "koreanReadingGrammarFamiliarity:g2:v1";
+
+    let grammarFamiliarity = {};
+    try { grammarFamiliarity = JSON.parse(localStorage.getItem(GRAMMAR_FAMILIARITY_KEY) || "{}"); }
+    catch (_) { grammarFamiliarity = {}; }
+    function grammarRatingOf(id) { return Math.min(1, Math.max(0, Number(grammarFamiliarity[id]) || 0)); }
+    function saveGrammarFamiliarity() {
+      try { localStorage.setItem(GRAMMAR_FAMILIARITY_KEY, JSON.stringify(grammarFamiliarity)); } catch (_) {}
+    }
+
+    /* Which points each story uses, and which of a story's lines show a point
+       in action, so the notes can quote the passage the reader just met it in. */
+    const STORY_LINES = new Map(STORIES.map(story => {
+      const lines = [{ ko: story.title.ko, en: story.title.en }];
+      if (story.connect) lines.push(story.connect);
+      story.lines.forEach(line => lines.push(line));
+      lines.push({ ko: story.purpose.ko, en: story.purpose.en });
+      return [story.id, lines];
+    }));
+
+    const STORY_POINT_IDS = new Map(STORIES.map(story => {
+      const lines = STORY_LINES.get(story.id).map(line => line.ko);
+      return [story.id, new Set(GRAMMAR.pointsUsedIn(lines).map(point => point.id))];
+    }));
+
+    function pointStoryIds(point) {
+      return STORIES.filter(story => STORY_POINT_IDS.get(story.id).has(point.id)).map(story => story.id);
+    }
+
+    function grammarGroups(mode) {
+      if (mode === "story") {
+        return STORIES.map((story, index) => {
+          const ids = STORY_POINT_IDS.get(story.id);
+          return {
+            id: "gstory-" + story.id,
+            label: (index + 1) + ". " + story.title.ko + " · " + story.title.en,
+            note: "Every grammar point this passage uses. Most of them are shared with the other passages — the tag on each row says how many use it — so work through a story once and the rest get quicker.",
+            points: GRAMMAR.POINTS.filter(point => ids.has(point.id))
+          };
+        });
+      }
+      return GRAMMAR.TYPES.map(type => ({
+        id: "gtype-" + type.id,
+        label: type.label,
+        note: type.note,
+        points: type.ids.map(id => GRAMMAR.get(id)).filter(Boolean)
+      }));
+    }
+
+    let grammarMode = (() => {
+      try {
+        const saved = localStorage.getItem(GRAMMAR_MODE_KEY);
+        return GRAMMAR_MODES.indexOf(saved) >= 0 ? saved : "type";
+      } catch (_) { return "type"; }
+    })();
+
+    let grammarBlur = (() => {
+      try { return JSON.parse(localStorage.getItem(GRAMMAR_BLUR_KEY) || "{}") || {}; }
+      catch (_) { return {}; }
+    })();
+
+    const GRAMMAR_GROUP_BY_ID = new Map();
+
+    /* A passage's lines run to several sentences each, so quoting a whole line
+       would bury the point. Split on sentence ends, keeping any closing quote
+       mark with the sentence it belongs to, and return only what matches. */
+    function sentencesShowing(point, lines) {
+      const tests = (point.match || []).map(source => new RegExp(source));
+      const out = [];
+      lines.forEach(line => {
+        String(line.ko).split(/(?<=[.!?]["\u201d]?)\s+/).forEach(sentence => {
+          const trimmed = sentence.trim();
+          if (!trimmed || out.indexOf(trimmed) >= 0) return;
+          if (tests.some(test => test.test(trimmed))) out.push(trimmed);
+        });
+      });
+      return out;
+    }
+
+    function buildGrammarBank() {
+      const host = document.getElementById("grammarGroups");
+      const counter = document.getElementById("grammarCount");
+      const search = document.getElementById("grammarSearch");
+      if (!host) return;
+
+      function render() {
+        const groups = grammarGroups(grammarMode);
+        GRAMMAR_GROUP_BY_ID.clear();
+        groups.forEach(group => GRAMMAR_GROUP_BY_ID.set(group.id, group));
+
+        host.innerHTML = '<div class="vocab-category-stack">' + groups.map(group =>
+          '<details class="vocab-category" data-section-id="' + esc(group.id) + '">'
+          + '<summary><span>' + esc(group.label)
+          + '<span class="vocab-category-count">' + plural(group.points.length, "point", "points")
+          + '</span></span></summary>'
+          + '<p class="group-note">' + esc(group.note) + '</p>'
+          + '<div class="section-toolbar">'
+          + '<button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur meaning</button>'
+          + '<button class="blur-toggle" type="button" data-field="form" aria-pressed="false">Blur form</button>'
+          + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + '</div>'
+          + '<div class="table-wrap"><table><thead><tr>'
+          + '<th class="vocab-note-head"><span class="sr-only">Explanation</span></th>'
+          + '<th>Form</th><th>Romanization</th><th>What it does</th><th>Used by</th>'
+          + '<th>Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
+
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
+          applyBlur(section);
+        });
+        paintCount("");
+      }
+
+      function fillRows(section) {
+        const body = section.querySelector("tbody");
+        if (body.dataset.filled === "true") return;
+        const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
+        if (!group) return;
+        body.innerHTML = group.points.map(point => row(section, group, point)).join("");
+        body.dataset.filled = "true";
+        paintSectionRatings(section);
+        applyBlur(section);
+        syncNotesToggle(section);
+      }
+
+      function row(section, group, point) {
+        const stories = pointStoryIds(point);
+        const ro = GRAMMAR.romanize(point.form.replace(/[^가-힣 ]/g, " ")).replace(/\s+/g, " ").trim();
+        const haystack = (point.form + " " + point.name + " " + point.meaning + " " + point.shape
+          + " " + point.usage + " " + ro + " " + point.typeLabel).toLowerCase();
+        const noteId = "gnote-" + section.dataset.sectionId + "-" + point.id;
+
+        /* In story mode, also point at where the passage itself uses this, cut
+           down to the sentences that match rather than the whole paragraph. */
+        const storyId = group.id.indexOf("gstory-") === 0 ? group.id.slice(7) : null;
+        const fromStory = storyId ? sentencesShowing(point, STORY_LINES.get(storyId)).slice(0, 2) : [];
+
+        const main = '<tr data-search="' + esc(haystack) + '">'
+          + '<td class="vocab-note-cell"><button class="vocab-note-toggle" type="button" aria-expanded="false"'
+          + ' aria-controls="' + esc(noteId) + '" aria-label="Show the explanation for ' + esc(point.form)
+          + '"><span aria-hidden="true">＋</span></button></td>'
+          + '<td data-vocab-field="form" tabindex="0"><span class="blur-target"><strong class="grammar-form">'
+          + esc(point.form) + '</strong></span></td>'
+          + '<td><span class="roman">' + esc(ro) + '</span></td>'
+          + '<td data-vocab-field="meaning" tabindex="0"><span class="blur-target">'
+          + '<strong>' + esc(point.name) + '</strong><br>' + esc(point.meaning) + '</span></td>'
+          + '<td><span class="word-tag">' + plural(stories.length, "passage", "passages") + '</span></td>'
+          + '<td class="familiarity-cell">'
+          + '<div class="familiarity-stars" data-point-id="' + esc(point.id) + '" data-level="0" role="group"'
+          + ' aria-label="Familiarity for ' + esc(point.form) + '">'
+          + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
+          + ' aria-label="Mark as familiar">★</button>'
+          + '</div></td></tr>';
+
+        const note = '<div class="word-note">'
+          + '<p class="word-note-usage"><span class="word-note-label">How it attaches</span> ' + esc(point.shape) + '</p>'
+          + '<p class="word-note-usage">' + esc(point.usage) + '</p>'
+          + '<div class="word-note-example"><span class="word-note-label">Example</span>'
+          + point.examples.map(example => '<p class="word-note-ko">' + esc(example.ko) + '</p>'
+              + '<p class="roman">' + esc(GRAMMAR.romanize(example.ko)) + '</p>'
+              + '<p class="word-note-en">' + esc(example.en) + '</p>').join('<hr class="word-note-rule">')
+          + '</div>'
+          + (fromStory.length ? '<div class="word-note-example story-quote">'
+              + '<span class="word-note-label">Where it turns up in this passage</span>'
+              + fromStory.map(sentence => '<p class="word-note-ko">' + esc(sentence) + '</p>'
+                  + '<p class="roman">' + esc(GRAMMAR.romanize(sentence)) + '</p>').join("")
+              + '</div>' : "")
+          + '<div class="word-note-tags"><span class="word-tag">' + esc(point.typeLabel) + '</span>'
+          + stories.map(id => '<span class="word-tag">Passage '
+              + (STORIES.findIndex(story => story.id === id) + 1) + ' · '
+              + esc(STORIES.find(story => story.id === id).title.en) + '</span>').join("")
+          + '</div></div>';
+        return main + '<tr class="vocab-note-row" id="' + esc(noteId) + '" hidden><td colspan="6">' + note + '</td></tr>';
+      }
+
+      function applyBlur(section) {
+        const saved = grammarBlur[section.dataset.sectionId] || {};
+        section.querySelectorAll(".section-toolbar .blur-toggle[data-field]").forEach(button => {
+          const on = Boolean(saved[button.dataset.field]);
+          button.setAttribute("aria-pressed", String(on));
+          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]').forEach(cell => {
+            cell.classList.toggle("is-blurred", on);
+            cell.classList.remove("is-peeking");
+          });
+        });
+      }
+
+      function setNote(button, open) {
+        const noteRow = document.getElementById(button.getAttribute("aria-controls"));
+        button.setAttribute("aria-expanded", String(open));
+        button.querySelector("span").textContent = open ? "−" : "＋";
+        if (noteRow) noteRow.hidden = !open;
+      }
+      function syncNotesToggle(section) {
+        const button = section.querySelector(".notes-toggle");
+        if (!button) return;
+        const toggles = [...section.querySelectorAll(".vocab-note-toggle")];
+        const allOpen = toggles.length > 0 && toggles.every(t => t.getAttribute("aria-expanded") === "true");
+        button.setAttribute("aria-pressed", String(allOpen));
+        button.textContent = allOpen ? "Close all notes" : "Open all notes";
+      }
+
+      function paintRating(group, level) {
+        const safe = Math.min(1, Math.max(0, Number(level) || 0));
+        group.dataset.level = String(safe);
+        group.querySelectorAll(".familiarity-star").forEach(button =>
+          button.setAttribute("aria-pressed", String(safe === 1)));
+      }
+      function paintSectionRatings(section) {
+        section.querySelectorAll(".familiarity-stars").forEach(group =>
+          paintRating(group, grammarRatingOf(group.dataset.pointId)));
+      }
+
+      function paintCount(term) {
+        if (!term) {
+          counter.textContent = plural(GRAMMAR.count, "point", "points")
+            + " · grouped by " + GRAMMAR_MODE_LABELS[grammarMode].toLowerCase();
+          return;
+        }
+        let shown = 0;
+        host.querySelectorAll(".vocab-category").forEach(section =>
+          { shown += section.querySelectorAll("tbody tr:not(.vocab-note-row):not(.is-hidden)").length; });
+        counter.textContent = shown + " matching " + (shown === 1 ? "row" : "rows");
+      }
+
+      function runSearch() {
+        const term = search.value.trim().toLowerCase();
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          if (term) fillRows(section);
+          let visible = 0;
+          section.querySelectorAll("tbody tr:not(.vocab-note-row)").forEach(tr => {
+            const match = !term || (tr.dataset.search || "").indexOf(term) >= 0;
+            tr.classList.toggle("is-hidden", !match);
+            const noteRow = tr.nextElementSibling;
+            if (noteRow && noteRow.classList.contains("vocab-note-row")) {
+              noteRow.classList.toggle("is-hidden", !match);
+              if (!match) setNote(tr.querySelector(".vocab-note-toggle"), false);
+            }
+            if (match) visible += 1;
+          });
+          section.classList.toggle("is-hidden", Boolean(term) && visible === 0);
+          if (term && visible) section.open = true;
+          syncNotesToggle(section);
+        });
+        paintCount(term);
+      }
+
+      host.addEventListener("click", event => {
+        const blurButton = event.target.closest(".section-toolbar .blur-toggle[data-field]");
+        if (blurButton) {
+          const section = blurButton.closest(".vocab-category");
+          const id = section.dataset.sectionId;
+          grammarBlur[id] = grammarBlur[id] || {};
+          grammarBlur[id][blurButton.dataset.field] = !grammarBlur[id][blurButton.dataset.field];
+          try { localStorage.setItem(GRAMMAR_BLUR_KEY, JSON.stringify(grammarBlur)); } catch (_) {}
+          applyBlur(section);
+          return;
+        }
+        const notesButton = event.target.closest(".notes-toggle");
+        if (notesButton) {
+          const section = notesButton.closest(".vocab-category");
+          const open = notesButton.getAttribute("aria-pressed") !== "true";
+          section.querySelectorAll(".vocab-note-toggle").forEach(button =>
+            setNote(button, open && !button.closest("tr").classList.contains("is-hidden")));
+          syncNotesToggle(section);
+          return;
+        }
+        const noteToggle = event.target.closest(".vocab-note-toggle");
+        if (noteToggle) {
+          setNote(noteToggle, noteToggle.getAttribute("aria-expanded") !== "true");
+          syncNotesToggle(noteToggle.closest(".vocab-category"));
+          return;
+        }
+        const star = event.target.closest(".familiarity-star");
+        if (star) {
+          const group = star.closest(".familiarity-stars");
+          const chosen = Number(star.dataset.level) || 0;
+          const next = Number(group.dataset.level) === chosen ? 0 : chosen;
+          if (next) grammarFamiliarity[group.dataset.pointId] = next;
+          else delete grammarFamiliarity[group.dataset.pointId];
+          saveGrammarFamiliarity();
+          paintRating(group, next);
+          return;
+        }
+        const cell = event.target.closest("[data-vocab-field]");
+        if (cell && cell.classList.contains("is-blurred")) cell.classList.toggle("is-peeking");
+      });
+
+      host.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const cell = event.target.closest("[data-vocab-field]");
+        if (!cell || !cell.classList.contains("is-blurred")) return;
+        event.preventDefault();
+        cell.classList.toggle("is-peeking");
+      });
+
+      const modes = document.getElementById("grammarModes");
+      modes.insertAdjacentHTML("beforeend", GRAMMAR_MODES.map(mode =>
+        '<button class="mode-btn' + (mode === grammarMode ? " active" : "") + '" type="button" data-grammar-mode="'
+        + mode + '" aria-pressed="' + (mode === grammarMode) + '">' + GRAMMAR_MODE_LABELS[mode] + '</button>').join(""));
+      modes.addEventListener("click", event => {
+        const button = event.target.closest("[data-grammar-mode]");
+        if (!button || button.dataset.grammarMode === grammarMode) return;
+        grammarMode = button.dataset.grammarMode;
+        try { localStorage.setItem(GRAMMAR_MODE_KEY, grammarMode); } catch (_) {}
+        modes.querySelectorAll(".mode-btn").forEach(other => {
+          const on = other.dataset.grammarMode === grammarMode;
+          other.classList.toggle("active", on);
+          other.setAttribute("aria-pressed", String(on));
+        });
+        render();
+        if (search.value.trim()) runSearch();
+      });
+
+      document.getElementById("grammarExpand").addEventListener("click", () => {
+        host.querySelectorAll(".vocab-category").forEach(section => { section.open = true; fillRows(section); });
+      });
+      document.getElementById("grammarCollapse").addEventListener("click", () => {
+        host.querySelectorAll(".vocab-category").forEach(section => { section.open = false; });
+      });
+
+      search.addEventListener("input", runSearch);
+      render();
+    }
+
     buildMenu();
     buildWordBank();
     buildVocabTest();
+    buildGrammarBank();
   })();
   </script>
 
