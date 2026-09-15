@@ -100,7 +100,12 @@ html[data-theme='dark'] {
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Base text 6pt larger than the browser default (16px -> 24px), the same as
+     the word bank pages. Every size below is in rem, so the layout scales. */
+  font-size: calc(100% + 6pt);
+}
 body {
   margin: 0;
   min-height: 100vh;
@@ -268,7 +273,7 @@ html[data-theme="light"] .info-card { color: #F5F5F5; }
   align-items: center;
   gap: 10px;
 }
-.wordbank-tools input { max-width: 320px; }
+.wordbank-tools input { max-width: 20rem; }
 .wordbank-count { font-size: .86rem; font-weight: 800; opacity: .78; }
 .blur-toggle {
   min-height: 56px;
@@ -335,11 +340,12 @@ td .roman { opacity: .78; }
 .vocab-category > summary::-webkit-details-marker { display: none; }
 .vocab-category > summary::after {
   content: '−';
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
+  width: 2.125rem;
+  height: 2.125rem;
+  flex: 0 0 2.125rem;
   display: grid;
   place-items: center;
+  line-height: 1;
   color: #192B5D;
   background: var(--primary);
   border-radius: var(--radius-md);
@@ -394,7 +400,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 }
 .mode-btn:hover { transform: scale(1.04); }
 .mode-btn.active { color: #192B5D; background: var(--primary); }
-.ref-filter { flex: 1 1 240px; max-width: 380px; }
+.ref-filter { flex: 1 1 15rem; max-width: 24rem; }
 .section-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -411,13 +417,22 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 
 /* The ＋ on a row opens that word's small print underneath it: how the word
    behaves, and one model sentence in all three scripts. */
-.vocab-note-head, .vocab-note-cell { width: 54px; padding-right: 0; }
+.vocab-note-head, .vocab-note-cell {
+  width: 3.5rem;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+/* No line box in the cell, so nothing pushes the button off the middle. */
+.vocab-note-cell { line-height: 0; }
 .vocab-note-toggle {
-  width: 34px;
-  height: 34px;
+  width: 2.125rem;
+  height: 2.125rem;
   display: grid;
   place-items: center;
   padding: 0;
+  line-height: 1;
   color: var(--surface-text);
   background: var(--surface-muted);
   border: 1px solid var(--border);
@@ -429,7 +444,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 .vocab-note-toggle:hover { transform: scale(1.08); }
 .vocab-note-toggle[aria-expanded="true"] { color: #192B5D; background: var(--primary); }
 .vocab-note-row > td {
-  padding: 2px 54px 20px;
+  padding: 2px 3.5rem 20px;
   background: var(--surface-muted);
 }
 .word-note { display: grid; gap: 10px; }
@@ -479,20 +494,27 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 .vocab-category tbody tr.is-hidden { display: none; }
 .vocab-category.is-hidden { display: none; }
 
-.familiarity-cell { min-width: 88px; }
+/* The star pill sits in the middle of its column, header and all, so a
+   column of them reads as one line instead of a ragged left edge. */
+.familiarity-head, .familiarity-cell { min-width: 5.5rem; text-align: center; vertical-align: middle; }
+/* Same trick as the ＋ column: no line box in the cell, and the pill lines up
+   on its middle rather than on a baseline the stars do not really have. */
+.familiarity-cell { line-height: 0; }
 .familiarity-stars {
   display: inline-flex;
+  vertical-align: middle;
   gap: 3px;
   padding: 4px;
   background: var(--surface-muted);
   border-radius: var(--radius-md);
 }
 .familiarity-star {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   display: grid;
   place-items: center;
   padding: 0;
+  line-height: 1;
   color: var(--border);
   background: transparent;
   border: 0;
@@ -924,7 +946,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   top: 0;
   z-index: 1000;
   isolation: isolate;
-  width: min(340px, calc(100vw - 24px));
+  width: min(21rem, calc(100vw - 24px));
   max-height: min(70vh, 520px);
   display: none;
   padding: 12px;
@@ -1187,11 +1209,17 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 <label>Mode
                   <select class="menu-mode">
                     <option value="mc">Multiple choice</option>
-                    <option value="typed">Typed</option>
+                    <option value="typed" selected>Typed</option>
                   </select>
                 </label>
-                <label>Questions
-                  <input class="menu-count" type="number" min="1" max="100" value="15">
+                <label>Length
+                  <select class="menu-passes">
+                    <option value="1" selected>Every word once</option>
+                    <option value="2">Every word twice (2&times;)</option>
+                    <option value="3">Every word three times (3&times;)</option>
+                    <option value="4">Every word four times (4&times;)</option>
+                    <option value="5">Every word five times (5&times;)</option>
+                  </select>
                 </label>
               </div>
 
@@ -1199,21 +1227,26 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 <fieldset class="group-picker">
                   <legend>Question shows</legend>
                   <div class="group-grid">
-                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ko" checked><span>한국어 Korean</span></label>
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ko"><span>한국어 Korean</span></label>
                     <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ro"><span>Romanization</span></label>
-                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="en"><span>English</span></label>
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="en" checked><span>English</span></label>
                   </div>
                 </fieldset>
                 <fieldset class="group-picker">
                   <legend>Answer in</legend>
                   <div class="group-grid">
-                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="en" checked><span>English</span></label>
-                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ko"><span>한국어 Korean</span></label>
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="en"><span>English</span></label>
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ko" checked><span>한국어 Korean</span></label>
                     <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ro"><span>Romanization</span></label>
                   </div>
                 </fieldset>
               </div>
               <p class="wordbank-count">Tick one box on each side for a run that always goes the same way. Tick more than one and the run mixes directions, and every question says which script to answer in.</p>
+
+              <label class="exercise-option" style="margin-top:12px;">
+                <input class="menu-repeat" type="checkbox" checked>
+                <span>Repeat a word until I get it right<small>A miss is asked again, answer hidden, until you answer it. The score still counts the first try.</small></span>
+              </label>
 
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button">Begin vocabulary test</button>
@@ -3314,11 +3347,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>'
           + '<button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + '<button class="blur-toggle clear-stars" type="button">Clear stars</button>'
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
           + '<th class="vocab-note-head"><span class="sr-only">Usage notes</span></th>'
           + '<th>English</th><th>Romanization</th><th>Korean</th><th>' + esc(lastColumn) + '</th>'
-          + '<th>Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
+          + '<th class="familiarity-head">Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
 
         host.querySelectorAll(".vocab-category").forEach(section => {
           section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
@@ -3440,6 +3474,18 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       repaintRatings = () => host.querySelectorAll(".familiarity-stars")
         .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
 
+      /* The button says what it just did for a moment before going back to its
+         name, so a click that found no stars still reads as a click that
+         landed. */
+      function flashCleared(button, count) {
+        if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
+        button.textContent = count ? "Cleared " + plural(count, "star", "stars") : "No stars to clear";
+        button.dataset.resetTimer = String(setTimeout(() => {
+          button.textContent = "Clear stars";
+          delete button.dataset.resetTimer;
+        }, 1600));
+      }
+
       /* ---- search ---------------------------------------------------------- */
       function paintCount(term) {
         const total = BANK_WORDS.length;
@@ -3488,6 +3534,20 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           refBlur[id][blurButton.dataset.field] = !refBlur[id][blurButton.dataset.field];
           saveBlur();
           applyBlur(section);
+          return;
+        }
+        /* Clearing a section's stars clears them everywhere, not just on the
+           rows on screen: grouped by story, one word sits in several sections. */
+        const clearButton = event.target.closest(".clear-stars");
+        if (clearButton) {
+          const section = clearButton.closest(".vocab-category");
+          const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+          if (!group) return;
+          const cleared = group.words.filter(entry => ratingOf(entry.id) > 0).length;
+          group.words.forEach(entry => { delete familiarity[entry.id]; });
+          saveFamiliarity();
+          repaintRatings();
+          flashCleared(clearButton, cleared);
           return;
         }
         const notesButton = event.target.closest(".notes-toggle");
@@ -3601,8 +3661,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return {
         groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
         weakOnly: $v(".menu-weak").checked,
+        repeat: $v(".menu-repeat").checked,
         mode: $v(".menu-mode").value,
-        count: Math.max(1, Math.min(100, Number($v(".menu-count").value) || 15)),
+        passes: Math.max(1, Math.min(5, Number($v(".menu-passes").value) || 1)),
         promptLangs: [...vEl.querySelectorAll(".prompt-lang:checked")].map(input => input.value),
         answerLangs: [...vEl.querySelectorAll(".answer-lang:checked")].map(input => input.value)
       };
@@ -3661,17 +3722,22 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const size = vocabPool(settings).length;
       const mixed = settings.promptLangs.length > 1 || settings.answerLangs.length > 1;
       note.textContent = size
-        ? plural(size, "word", "words") + " in your selection. " + directionLabel(settings) + "."
+        ? plural(size, "word", "words") + " in your selection"
+          + (settings.passes > 1
+              ? ", asked " + settings.passes + " times each — "
+                + plural(size * settings.passes, "question", "questions")
+              : "")
+          + ". " + directionLabel(settings) + "."
           + (mixed ? " Each question picks its own pair." : "")
         : "No words match your selection yet.";
     }
 
-    let testMode = refMode;
+    let testMode = "story";
 
     function paintGroupGrid() {
       document.getElementById("vocabGroupGrid").innerHTML = testGroups().map(group =>
         '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
-        + esc(group.id) + '" checked><span>' + esc(group.label)
+        + esc(group.id) + '"><span>' + esc(group.label)
         + '<small>' + plural(group.words.length, "word", "words") + '</small></span></label>').join("");
     }
 
@@ -3705,11 +3771,52 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       });
       $v(".begin").addEventListener("click", startVocabTest);
       $v(".next").addEventListener("click", nextVocabQuestion);
+
+      /* Enter keeps a run moving without reaching for the mouse: it moves an
+         answered question on and starts another run from the results. A typed
+         answer is still checked by the input's own Enter, which never reaches
+         here because that handler has already claimed the key. */
+      document.addEventListener("keydown", event => {
+        if (event.key !== "Enter" || event.defaultPrevented) return;
+        if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+        if (!vocabState) return;
+        /* A focused button or field answers Enter on its own. */
+        if (event.target && event.target.closest
+          && event.target.closest("button, a, input, select, textarea")) return;
+        if (!$v(".finish").classList.contains("hidden")) {
+          const again = $v(".finish .again");
+          if (again) { event.preventDefault(); again.click(); }
+          return;
+        }
+        if ($v(".live").classList.contains("hidden")) return;
+        if (!vocabState.locked || vocabState.finished) return;
+        event.preventDefault();
+        nextVocabQuestion();
+      });
       $v(".end-early").addEventListener("click", () => {
         if (!vocabState || vocabState.finished) return;
         finishVocabTest("You ended the test early.");
       });
       paintPoolNote();
+    }
+
+    /* A run is the whole selection, shuffled — once for a 1× run, and once
+       more per extra pass, so each word comes round the same number of times.
+       Each pass is shuffled separately, and a pass never opens on the word the
+       one before it closed with. */
+    function buildRun(pool, passes) {
+      const out = [];
+      for (let pass = 0; pass < passes; pass += 1) {
+        const round = shuffled(pool);
+        if (out.length && round.length > 1 && round[0].id === out[out.length - 1].id) {
+          const swap = 1 + Math.floor(Math.random() * (round.length - 1));
+          const first = round[0];
+          round[0] = round[swap];
+          round[swap] = first;
+        }
+        round.forEach(entry => out.push(entry));
+      }
+      return out;
     }
 
     function startVocabTest() {
@@ -3723,7 +3830,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         paintPoolNote();
         return;
       }
-      const picked = shuffled(pool).slice(0, Math.min(settings.count, pool.length));
+      const picked = buildRun(pool, settings.passes);
       vocabState = {
         settings,
         pool,
@@ -3731,6 +3838,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         i: 0,
         locked: false,
         finished: false,
+        /* Counted per word so a repeat run knows when to stop hiding the
+           answer, and so the score can keep the first try's verdict. */
+        attempts: picked.map(() => 0),
+        retry: false,
         directions: picked.map(() => pickDirection(settings)),
         results: picked.map(() => null)
       };
@@ -3746,7 +3857,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const done = vocabState.results.filter(result => result !== null).length;
       const right = vocabState.results.filter(result => result && result.correct).length;
       $v(".score").innerHTML = done
-        ? right + " / " + done + " correct<br><small>" + vocabState.words.length + " words</small>"
+        ? right + " / " + done + " correct<br><small>"
+          + plural(vocabState.words.length, "question", "questions") + "</small>"
         : "Not started";
     }
 
@@ -3789,7 +3901,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           };
           node.addEventListener("click", pick);
           node.addEventListener("keydown", event => {
-            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); pick(); }
+            if (event.key !== "Enter" && event.key !== " ") return;
+            /* Once the question is locked Enter belongs to the shortcut below,
+               so leave it alone and only swallow the space bar's scroll. */
+            if (vocabState.locked || vocabState.finished) {
+              if (event.key === " ") event.preventDefault();
+              return;
+            }
+            event.preventDefault();
+            pick();
           });
         });
       } else {
@@ -3821,16 +3941,32 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const entry = vocabState.words[vocabState.i];
       const direction = vocabState.directions[vocabState.i];
       vocabState.locked = true;
-      vocabState.results[vocabState.i] = { correct, given: given || "" };
+      vocabState.attempts[vocabState.i] += 1;
+      const attempts = vocabState.attempts[vocabState.i];
+      /* The score keeps the first try: a word drilled until it sticks is still
+         a word you missed. Later tries only record that it came good. */
+      if (!vocabState.results[vocabState.i]) {
+        vocabState.results[vocabState.i] = { correct, given: given || "" };
+      } else if (correct) {
+        vocabState.results[vocabState.i].solved = true;
+      }
+
+      /* Asking a word again is only worth anything while the answer stays
+         hidden, so a repeat run holds the card back — until the third miss,
+         when the word has clearly gone and staring at it is the way out. */
+      const retry = Boolean(settings.repeat) && !correct;
+      vocabState.retry = retry;
+      const settle = correct || !retry || attempts >= 3;
+      const shown = settle && !correct;
 
       if (settings.mode === "mc") {
         $v(".zone").querySelectorAll(".choice").forEach((node, index) => {
           node.classList.add("is-locked");
           node.setAttribute("aria-disabled", "true");
           const option = vocabState.options[index];
-          if (option.id === entry.id) node.classList.add("correct");
+          if (option.id === entry.id) { if (settle) node.classList.add("correct"); }
           else if (wordIn(option, direction.answerLang) === given && !correct) node.classList.add("wrong");
-          else node.classList.add("faded");
+          else if (settle) node.classList.add("faded");
         });
       } else {
         const input = $v(".answer-input");
@@ -3842,22 +3978,43 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const full = esc(entry.ko) + " · " + esc(ReadingVocab.romanize(entry.ko)) + " · " + esc(entry.en);
       const feedback = $v(".feedback");
       feedback.className = "feedback " + (correct ? "good" : "bad");
-      feedback.innerHTML = (correct ? "<strong>맞아요!</strong>" : "<strong>아니에요.</strong>")
-        + (correct ? "" : "Answer: <em>" + esc(wordIn(entry, direction.answerLang)) + "</em>. ")
-        + full + "<br><small>" + esc(entry.usage) + "</small>";
+      if (correct) {
+        feedback.innerHTML = "<strong>맞아요!</strong>" + full
+          + "<br><small>" + esc(entry.usage) + "</small>";
+      } else if (shown) {
+        feedback.innerHTML = "<strong>아니에요.</strong>Answer: <em>"
+          + esc(wordIn(entry, direction.answerLang)) + "</em>. "
+          + full + "<br><small>" + esc(entry.usage) + "</small>"
+          + (retry ? "<br><small>Answer it yourself to move on.</small>" : "");
+      } else {
+        feedback.innerHTML = "<strong>아니에요.</strong>다시 해 봐요 — this word comes round again."
+          + "<br><small>Try " + attempts + " · the answer shows on the third miss.</small>";
+      }
 
       const next = $v(".next");
       next.classList.remove("hidden");
-      next.textContent = vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word";
+      next.textContent = retry
+        ? "Try this word again"
+        : (vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word");
+      next.focus({ preventScroll: true });
 
-      const progress = $v(".progress");
-      progress.firstElementChild.style.width =
-        Math.round(((vocabState.i + 1) / vocabState.words.length) * 100) + "%";
-      progress.setAttribute("aria-valuenow", String(vocabState.i + 1));
+      /* A word on its way back round has not moved the run along. */
+      if (!retry) {
+        const progress = $v(".progress");
+        progress.firstElementChild.style.width =
+          Math.round(((vocabState.i + 1) / vocabState.words.length) * 100) + "%";
+        progress.setAttribute("aria-valuenow", String(vocabState.i + 1));
+      }
       paintVocabScore();
     }
 
     function nextVocabQuestion() {
+      /* Same word, same direction, freshly shuffled choices. */
+      if (vocabState.retry) {
+        vocabState.retry = false;
+        showVocabQuestion();
+        return;
+      }
       if (vocabState.i + 1 >= vocabState.words.length) {
         finishVocabTest("");
         return;
@@ -3872,8 +4029,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const answered = vocabState.results.filter(result => result !== null).length;
       const right = vocabState.results.filter(result => result && result.correct).length;
       const percent = total ? Math.round((right / total) * 100) : 0;
-      const missed = vocabState.words.filter((entry, index) =>
-        !vocabState.results[index] || !vocabState.results[index].correct);
+      const missedIds = new Set();
+      const missed = vocabState.words.filter((entry, index) => {
+        if (vocabState.results[index] && vocabState.results[index].correct) return false;
+        if (missedIds.has(entry.id)) return false;
+        missedIds.add(entry.id);
+        return true;
+      });
 
       const missedHtml = missed.length
         ? '<div class="word-list">' + missed.map(entry =>
@@ -3892,7 +4054,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         + '<div class="summary-grid">'
         + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
         + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
-        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Words answered</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Questions answered</small></div>'
         + '</div>'
         + '<div><h4>Words to review</h4>' + missedHtml + '</div>'
         + '<div class="finish-actions">'
@@ -4041,7 +4203,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<div class="table-wrap"><table><thead><tr>'
           + '<th class="vocab-note-head"><span class="sr-only">Explanation</span></th>'
           + '<th>Form</th><th>Romanization</th><th>What it does</th><th>Used by</th>'
-          + '<th>Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
+          + '<th class="familiarity-head">Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
 
         host.querySelectorAll(".vocab-category").forEach(section => {
           section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
