@@ -1482,25 +1482,6 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <p><strong>Day 41, rehearsal.</strong> Tick <em>All</em> days, <em>Word limit</em> 100, timer 20, Korean &rarr; English. A random hundred out of the whole bank is a fair read on where you actually stand.</p>
             <p>Two weeks is the shortest tail worth running: it is what gives the words you met on day 27 a fortnight-wide gap before the exam. Ending at day 41 leaves about two and a half weeks of slack in a two-month run.</p>
           </article>
-          <article class="guide-card">
-            <h3>Expressions</h3>
-            <p>A word that has sentences written for it carries them <strong>nested under its row</strong>, marked &#8627;. Each one has its own star, in a second colour, and its own <strong>&#65291;</strong> for the small print &mdash; why the sentence is put that way, and the register versions where they differ. A word's star and a sentence's star are separate ratings.</p>
-            <p><em>Hide expressions</em> in a section's toolbar collapses a day back to plain vocabulary. Both exercises carry a <strong>What to test</strong> box: words, expressions, or both. Expressions start unticked, so the routine above is unchanged until you ask for them.</p>
-            <p>&#48152;&#47568; casual and &#54633;&#49452;&#52404; formal versions are listed only where the whole utterance changes (&#50504;&#45397;&#55176; &#44032;&#49464;&#50836; / &#51096; &#44032;), not where an ending alone does. All of them are accepted as answers.</p>
-            <p>Every one of the 1358 words carries three, so any day or category can be drilled as sentences.</p>
-          </article>
-          <article class="guide-card">
-            <h3>Romanization Rules</h3>
-            <p>Every Hangul character is transcribed with the strict key below. Syllables are separated by dashes, while spaces remain between separate Korean words, such as <strong>an-nyeong-ha-se-yo</strong>.</p>
-            <p>For &#12593;, &#12599;, &#12601;, and &#12610;, the first form is used at the beginning of a syllable and the second form at the end. Romanization checking removes dashes internally, so answers are accepted with or without syllable dashes.</p>
-          </article>
-          <article class="guide-card">
-            <h3>Strict Transliteration Key</h3>
-            <div class="mini-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-              <div>&#12593; g/k &middot; &#12596; n &middot; &#12599; d/t &middot; &#12601; r/l &middot; &#12609; m &middot; &#12610; b/p<br>&#12613; s &middot; &#12615; silent/ng &middot; &#12616; j &middot; &#12618; ch &middot; &#12619; k &middot; &#12620; t &middot; &#12621; p &middot; &#12622; h<br>&#12594; gg/kk &middot; &#12600; dd/tt &middot; &#12611; bb/pp &middot; &#12614; ss &middot; &#12617; jj</div>
-              <div>&#12623; a &middot; &#12625; ya &middot; &#12627; eo &middot; &#12629; yeo &middot; &#12631; o &middot; &#12635; yo &middot; &#12636; u &middot; &#12640; yu<br>&#12641; eu &middot; &#12643; i &middot; &#12624; ae &middot; &#12628; e &middot; &#12626; yae &middot; &#12630; ye<br>&#12632; oa &middot; &#12637; ueo &middot; &#12639; ui &middot; &#12638; ue &middot; &#12633; oae &middot; &#12634; oi &middot; &#12642; eui</div>
-            </div>
-          </article>
         </div>
         <div id="referenceTables"></div>
       </div>
@@ -2455,8 +2436,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <p>${esc(exercise.blurb)}</p>
           ${exercise.picker()}
           <div class="exercise-menu-grid">
-            ${langBlock(id, "qlang", "Question language", "korean")}
-            ${langBlock(id, "alang", "Answer language", "english")}
+            ${langBlock(id, "qlang", "Question language", "english")}
+            ${langBlock(id, "alang", "Answer language", "korean")}
             <label>Repetitions<select id="menu-multiplier-${id}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}× each word</option>`).join("")}</select></label>
             <label>Word limit<small class="menu-count-note">0 keeps every selected word</small><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
             <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
