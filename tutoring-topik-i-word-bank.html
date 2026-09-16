@@ -561,7 +561,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   background: var(--primary-hover);
   transform: scale(1.05);
 }
-.utility-button.top { background: var(--accent); }
+.utility-button.nav { background: var(--accent); }
+.utility-button[disabled] { opacity: .4; cursor: default; }
+.utility-button[disabled]:hover { background: var(--accent); transform: none; }
 
 .hidden { display: none !important; }
 
@@ -737,6 +739,27 @@ html[data-theme='dark'] th {
   letter-spacing: .02em;
   white-space: nowrap;
 }
+/* Sort control, sized to sit on the same line as those toggles. */
+.sort-field { display: inline-flex; align-items: center; gap: 6px; }
+.sort-field__label {
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .8;
+}
+.sort-select {
+  min-height: 34px;
+  padding: 0 8px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+}
+.sort-select:focus { border-color: var(--primary); outline: none; }
 .blur-target {
   display: inline-block;
   transition: filter 180ms ease, opacity 180ms ease;
@@ -1074,6 +1097,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   .vocab-tools { align-items: stretch; }
   .vocab-tools__label { width: 100%; }
   .blur-toggle { flex: 1 1 140px; }
+  .sort-field { flex: 1 1 100%; }
+  .sort-select { flex: 1; min-width: 0; }
   .status-row { align-items: stretch; flex-direction: column; }
 }
 
@@ -1492,7 +1517,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
   <div class="utility-controls" aria-label="Page utilities">
     <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">&#9790;</span><span class="sr-only">Toggle color theme</span></button>
-    <a class="utility-button top" href="#top" aria-label="Back to top">&uarr;</a>
+    <button class="utility-button nav" type="button" data-section-nav="prev" aria-label="Previous section" title="Previous section">&uarr;</button>
+    <button class="utility-button nav" type="button" data-section-nav="next" aria-label="Next section" title="Next section">&darr;</button>
   </div>
 
   <script src="./shared-vocab/topik-vocab-topik-i.js?v=1.0.0"></script>
@@ -1896,6 +1922,49 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     const familiarity = loadObject(FAMILIARITY_KEY);
     const blurState = loadObject(BLUR_KEY);
 
+    // Sort is saved per section id, the same way blur is, so one day can sit in
+    // unstarred-first order while every other section keeps learning order.
+    const SORT_KEY = "topikISectionSortV1";
+    const SORT_OPTIONS = [
+      { id: "default", label: "Default order" },
+      { id: "unfamiliar", label: "Familiarity: unstarred first" },
+      { id: "familiar", label: "Familiarity: starred first" },
+      { id: "english", label: "English A\u2013Z" },
+      { id: "romanization", label: "Romanization A\u2013Z" },
+      { id: "korean", label: "Korean \uac00\u2013\ud558" }
+    ];
+    const SORT_IDS = SORT_OPTIONS.map(option => option.id);
+    const sortState = loadObject(SORT_KEY);
+
+    function sortFor(sectionId) {
+      const saved = sortState[sectionId];
+      return SORT_IDS.includes(saved) ? saved : "default";
+    }
+
+    // Only headwords are reordered: an expression is rendered underneath the
+    // word it is built on, so it travels with it whatever the sort.
+    function sortItems(items, mode) {
+      if (!SORT_IDS.includes(mode) || mode === "default") return items;
+      const order = new Map(items.map((item, index) => [item.id, index]));
+      const level = item => Math.min(1, familiarity[item.id] || 0);
+      const text = item => mode === "english" ? item.shownMeaning
+        : mode === "romanization" ? item.shownRomanization : item.shownKorean;
+      const locale = mode === "korean" ? "ko" : "en";
+      return items.slice().sort((a, b) => {
+        let diff;
+        if (mode === "unfamiliar") diff = level(a) - level(b);
+        else if (mode === "familiar") diff = level(b) - level(a);
+        else diff = String(text(a)).localeCompare(String(text(b)), locale);
+        // Ties keep the order the section was built in.
+        return diff || order.get(a.id) - order.get(b.id);
+      });
+    }
+
+    function sortControl(sectionId) {
+      const current = sortFor(sectionId);
+      return `<span class="sort-field"><span class="sort-field__label">Sort</span><select class="sort-select" data-sort-for="${esc(sectionId)}" aria-label="Sort this section">${SORT_OPTIONS.map(option => `<option value="${option.id}"${option.id === current ? " selected" : ""}>${esc(option.label)}</option>`).join("")}</select></span>`;
+    }
+
     // ------------------------------------------------------------ reference
     // The bank groups two ways. Part of speech is the reference view; study day
     // is the drilling view, where one section holds exactly today's batch, so
@@ -1962,6 +2031,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
               <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
               <button class="notes-toggle" type="button" aria-pressed="false">Open all notes</button>
               <button class="expr-toggle" type="button" aria-pressed="false">Hide expressions</button>
+              ${sortControl(group.sectionId)}
             </div>
             <div class="table-wrap"><table>
               <thead><tr><th class="vocab-note-head"><span class="sr-only">Usage notes</span></th><th>English</th><th>Romanization</th><th>Korean</th><th>${lastColumn}</th><th>Familiarity</th></tr></thead>
@@ -1984,7 +2054,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       if (body.dataset.filled === "true") return;
       const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
       if (!group) return;
-      body.innerHTML = group.items.map(item => {
+      body.innerHTML = sortItems(group.items, sortFor(section.dataset.sectionId)).map(item => {
         const level = Math.min(1, familiarity[item.id] || 0);
         const note = noteFor(item);
         const noteId = `word-note-${section.dataset.sectionId}-${slug(item.id)}`;
@@ -2218,6 +2288,21 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         }
       });
 
+      // Changing a section's sort rebuilds just that section's rows.
+      container.addEventListener("change", event => {
+        const select = event.target.closest(".sort-select");
+        if (!select) return;
+        const section = select.closest(".ref-section");
+        sortState[select.dataset.sortFor] = select.value;
+        saveObject(SORT_KEY, sortState);
+        const body = section.querySelector("tbody");
+        body.innerHTML = "";
+        body.dataset.filled = "false";
+        fillRows(section);
+        const query = (document.getElementById("refFilter").value || "").trim().toLowerCase();
+        if (query) applyFilter(query); // rebuilt rows start out unfiltered
+      });
+
       let filterTimer = null;
       container.addEventListener("input", event => {
         if (!event.target.matches("#refFilter")) return;
@@ -2354,6 +2439,52 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         </div>`;
     }
 
+    // Which stars a run draws on. This narrows whatever the pickers chose, so
+    // it works the same in every exercise: all of it, only the words still
+    // unstarred in the tables above, or only the ones already starred.
+    const FAMILIARITY_FILTERS = [
+      { id: "all", label: "All words" },
+      { id: "unfamiliar", label: "Unfamiliar words" },
+      { id: "familiar", label: "Familiar words" }
+    ];
+
+    function familiarityBlock(exerciseId) {
+      return `
+        <label>Familiarity<small class="menu-count-note">The stars in the tables above</small>
+          <select id="menu-familiarity-${exerciseId}">
+            ${FAMILIARITY_FILTERS.map(filter => `<option value="${filter.id}">${esc(filter.label)}</option>`).join("")}
+          </select>
+        </label>`;
+    }
+
+    function familiarityChoice(exerciseId) {
+      const select = document.getElementById(`menu-familiarity-${exerciseId}`);
+      return select ? select.value : "all";
+    }
+
+    // An item is familiar exactly when its row is starred; an expression
+    // carries its own star, so it is filtered on its own footing.
+    function selectedItems(exerciseId) {
+      const exercise = EXERCISES.find(e => e.id === exerciseId);
+      if (!exercise) return [];
+      const chosen = exercise.select();
+      const choice = familiarityChoice(exerciseId);
+      if (choice === "all") return chosen;
+      return chosen.filter(item =>
+        (Math.min(1, familiarity[item.id] || 0) === 1) === (choice === "familiar"));
+    }
+
+    // Why a selection came out empty: nothing ticked, or nothing ticked that
+    // the familiarity filter lets through.
+    function emptyMessageFor(exerciseId) {
+      const exercise = EXERCISES.find(e => e.id === exerciseId);
+      const choice = familiarityChoice(exerciseId);
+      if (choice !== "all" && exercise.select().length) {
+        return `Nothing in this selection is ${choice === "familiar" ? "starred" : "unstarred"}. Set Familiarity back to all words, or tick more.`;
+      }
+      return exercise.emptyMessage;
+    }
+
     // What a run may draw on before the category or day filters narrow it.
     function kindPool(exerciseId) {
       const kinds = checkedValues(`${exerciseId}-kind`);
@@ -2438,6 +2569,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <div class="exercise-menu-grid">
             ${langBlock(id, "qlang", "Question language", "english")}
             ${langBlock(id, "alang", "Answer language", "korean")}
+            ${familiarityBlock(id)}
             <label>Repetitions<select id="menu-multiplier-${id}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}× each word</option>`).join("")}</select></label>
             <label>Word limit<small class="menu-count-note">0 keeps every selected word</small><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
             <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
@@ -2529,14 +2661,19 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const target = document.getElementById(`menu-count-${exerciseId}`);
       if (!exercise || !target) return;
       if (exercise.beforeCount) exercise.beforeCount();
-      const words = exercise.select();
+      const chosen = exercise.select();
+      const words = selectedItems(exerciseId);
       const multiplier = Number(document.getElementById(`menu-multiplier-${exerciseId}`)?.value) || 1;
       const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`)?.value) || 0);
       const used = cap > 0 ? Math.min(cap, words.length) : words.length;
       const note = exercise.countNote ? exercise.countNote() : "";
+      const choice = familiarityChoice(exerciseId);
+      const nothing = chosen.length && choice !== "all"
+        ? `Nothing ${choice === "familiar" ? "starred" : "unstarred"} in this selection`
+        : "Nothing selected";
       target.classList.toggle("empty", used === 0);
       target.textContent = used === 0
-        ? `Nothing selected${note}`
+        ? `${nothing}${note}`
         : `${used} item${used === 1 ? "" : "s"} selected · ${used * multiplier} question${used * multiplier === 1 ? "" : "s"}${cap > 0 && words.length > cap ? ` · sampled from ${words.length}` : ""}${note}`;
     }
 
@@ -2619,9 +2756,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       // Shuffled up front, so a run never follows the order the words were
       // listed, pasted, or sorted in — and the cap takes a random slice.
-      let words = shuffle(exercise.select());
+      let words = shuffle(selectedItems(exerciseId));
       const error = document.getElementById(`menu-error-${exerciseId}`);
-      if (!words.length) { error.classList.remove("hidden"); return; }
+      if (!words.length) {
+        error.textContent = emptyMessageFor(exerciseId);
+        error.classList.remove("hidden");
+        return;
+      }
       error.classList.add("hidden");
 
       const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`).value) || 0);
@@ -2934,7 +3075,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // allow — the same pair the exercise would open with.
     function selectionMarkdown(exerciseId, pair) {
       const exercise = EXERCISES.find(e => e.id === exerciseId);
-      let words = exercise.select();
+      let words = selectedItems(exerciseId);
       const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`).value) || 0);
       if (cap > 0 && words.length > cap) words = words.slice(0, cap);
       const separator = separatorValue(exerciseId);
@@ -2957,8 +3098,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         error.classList.remove("hidden");
         return;
       }
-      error.textContent = exercise.emptyMessage;
-      if (!exercise.select().length) { error.classList.remove("hidden"); return; }
+      error.textContent = emptyMessageFor(exerciseId);
+      if (!selectedItems(exerciseId).length) { error.classList.remove("hidden"); return; }
       error.classList.add("hidden");
 
       const pair = pairs[0];
@@ -3083,6 +3224,106 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   </script>
 
 
+  </script>
+  <script>
+    /* The floating arrows walk the page's sections — the same list the "Jump to
+       a section" card holds — rather than only running back to the top. ↑ from
+       the first section still goes to the top of the page. */
+    (function () {
+      const buttons = [...document.querySelectorAll("[data-section-nav]")];
+      if (!buttons.length) return;
+
+      function stops() {
+        const seen = new Set();
+        const list = [];
+        document.querySelectorAll('.toc-link[href^="#"]').forEach(link => {
+          const hash = link.getAttribute("href");
+          const node = hash.length > 1 ? document.querySelector(hash) : null;
+          if (!node || seen.has(hash)) return;
+          seen.add(hash);
+          const span = link.querySelector("span");
+          list.push({ hash: hash, node: node, label: (span ? span.textContent : link.textContent).trim() });
+        });
+        return list;
+      }
+
+      /* The section being read is the last one whose top has passed the upper
+         third of the window, so a long section stays the current one well after
+         its heading has scrolled off. */
+      function measuredIndex(list) {
+        const line = window.innerHeight / 3;
+        let index = -1;
+        list.forEach((stop, position) => {
+          if (stop.node.getBoundingClientRect().top <= line) index = position;
+        });
+        return index;
+      }
+
+      /* A jump scrolls smoothly, so for a moment the page is still where it
+         was. Until the scroll lands, the section just jumped to is the current
+         one — otherwise two quick taps would both move one step. */
+      let jumped = null;
+      function currentIndex(list) {
+        const measured = measuredIndex(list);
+        if (!jumped) return measured;
+        if (measured === jumped.index || Date.now() - jumped.at > 2000) {
+          jumped = null;
+          return measured;
+        }
+        return jumped.index;
+      }
+
+      function targetOf(direction, list) {
+        const index = currentIndex(list);
+        if (direction === "next") return index + 1 < list.length ? index + 1 : -1;
+        return index > 0 ? index - 1 : -1;
+      }
+
+      function paint() {
+        const list = stops();
+        buttons.forEach(button => {
+          const direction = button.dataset.sectionNav;
+          const index = targetOf(direction, list);
+          const stop = index < 0 ? null : list[index];
+          const label = stop
+            ? (direction === "next" ? "Next section: " : "Previous section: ") + stop.label
+            : (direction === "next" ? "Last section" : "Back to the top");
+          button.title = label;
+          button.setAttribute("aria-label", label);
+          button.disabled = direction === "next" ? !stop : (!stop && window.scrollY <= 4);
+        });
+      }
+
+      buttons.forEach(button => button.addEventListener("click", () => {
+        const list = stops();
+        const direction = button.dataset.sectionNav;
+        const index = targetOf(direction, list);
+        if (index < 0) {
+          if (direction === "prev") window.scrollTo({ top: 0, behavior: "smooth" });
+          paint();
+          return;
+        }
+        const stop = list[index];
+        for (let node = stop.node; node; node = node.parentElement) {
+          if (node.tagName === "DETAILS") node.open = true;
+        }
+        jumped = { index: index, at: Date.now() };
+        /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
+           section in the address bar, and lets anything watching for a hash
+           change see the move. */
+        location.hash = stop.hash;
+        paint();
+      }));
+
+      let frame = null;
+      window.addEventListener("scroll", () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => { frame = null; paint(); });
+      }, { passive: true });
+      window.addEventListener("resize", paint);
+      document.addEventListener("toggle", paint, true);
+      paint();
+    })();
   </script>
 </body>
 </html>

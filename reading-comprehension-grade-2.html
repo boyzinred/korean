@@ -408,6 +408,27 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   padding: 14px 18px 18px;
 }
 .section-toolbar .blur-toggle { min-height: 44px; font-size: .84rem; }
+/* The sort control sits in the same row as those toggles, and matches them. */
+.sort-field { display: inline-flex; align-items: center; gap: 8px; }
+.sort-field__label {
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .8;
+}
+.sort-select {
+  min-height: 44px;
+  padding: 0 10px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: .84rem;
+  font-weight: 800;
+}
+.sort-select:focus { border-color: var(--primary); outline: none; }
 .group-note {
   margin: 10px 18px 12px;
   font-size: .86rem;
@@ -1091,7 +1112,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   transition: var(--transition);
 }
 .utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
-.utility-button.top { background: var(--accent); }
+.utility-button.nav { background: var(--accent); }
+.utility-button[disabled] { opacity: .4; cursor: default; }
+.utility-button[disabled]:hover { background: var(--accent); transform: none; }
 
 /* Quick section navigation */
 .toc-card { padding: 18px 22px; border-bottom: 1px solid var(--border); }
@@ -1151,6 +1174,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .btn.small { width: auto; }
   .exercise-menu-actions .btn, .exercise-menu-actions .export-sep,
   .exercise-menu-actions .export-what, .finish-actions .btn { width: 100%; }
+  .sort-field { flex: 1 1 100%; }
+  .sort-select { flex: 1; min-width: 0; }
   .utility-controls { right: 10px; bottom: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1230,13 +1255,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                   <button class="btn secondary small select-all" type="button">Select all</button>
                   <button class="btn secondary small select-none" type="button">Select none</button>
                 </div>
-                <label class="exercise-option" style="margin-top:12px;">
-                  <input class="menu-weak" type="checkbox">
-                  <span>Only words I have not starred<small>Leaves out anything marked familiar in the tables above.</small></span>
-                </label>
               </fieldset>
 
               <div class="exercise-menu-grid">
+                <label>Familiarity
+                  <select class="menu-familiarity">
+                    <option value="all" selected>All words</option>
+                    <option value="unfamiliar">Unfamiliar words</option>
+                    <option value="familiar">Familiar words</option>
+                  </select>
+                </label>
                 <label>Mode
                   <select class="menu-mode">
                     <option value="mc">Multiple choice</option>
@@ -1359,6 +1387,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
               </fieldset>
 
               <div class="exercise-menu-grid">
+                <label>Familiarity
+                  <select class="menu-familiarity">
+                    <option value="all" selected>All points</option>
+                    <option value="unfamiliar">Unfamiliar points</option>
+                    <option value="familiar">Familiar points</option>
+                  </select>
+                </label>
                 <label>Direction
                   <select class="menu-direction">
                     <option value="en-ko" selected>English &rarr; 한국어</option>
@@ -1532,7 +1567,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
   <div class="utility-controls" aria-label="Page utilities">
     <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
-    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+    <button class="utility-button nav" type="button" data-section-nav="prev" aria-label="Previous section" title="Previous section">↑</button>
+    <button class="utility-button nav" type="button" data-section-nav="next" aria-label="Next section" title="Next section">↓</button>
   </div>
 
   <script src="./shared-vocab/reading-vocab.js?v=3.0.0"></script>
@@ -3450,6 +3486,57 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
     }
 
+    /* ---- section sort ------------------------------------------------------
+       Every section of the word bank and of the grammar bank carries its own
+       sort, saved per section id the way blur is, so one group can sit in
+       unstarred-first order while the rest keep the order they were built in.
+       The first option in a list is that built order, and is the default.
+    ----------------------------------------------------------------------- */
+    const SECTION_SORT_KEY = "korean.readingSectionSort.g2";
+    let sectionSort = (() => {
+      try { return JSON.parse(localStorage.getItem(SECTION_SORT_KEY) || "{}") || {}; }
+      catch (_) { return {}; }
+    })();
+    function saveSectionSort() {
+      try { localStorage.setItem(SECTION_SORT_KEY, JSON.stringify(sectionSort)); } catch (_) {}
+    }
+    function sortFor(sectionId, options) {
+      const saved = sectionSort[sectionId];
+      return options.some(option => option.id === saved) ? saved : options[0].id;
+    }
+    function sortControl(sectionId, options) {
+      const current = sortFor(sectionId, options);
+      return '<label class="sort-field"><span class="sort-field__label">Sort</span>'
+        + '<select class="sort-select" data-sort-for="' + esc(sectionId) + '" aria-label="Sort this section">'
+        + options.map(option => '<option value="' + option.id + '"'
+            + (option.id === current ? " selected" : "") + '>' + esc(option.label) + '</option>').join("")
+        + '</select></label>';
+    }
+    /* No comparator means the built order. Everything else falls back to it
+       when two rows tie, so a sort never shuffles rows it has nothing to say
+       about. */
+    function sortRows(items, mode, comparators) {
+      const compare = comparators[mode];
+      if (!compare) return items;
+      const built = new Map(items.map((item, index) => [item, index]));
+      return items.slice().sort((a, b) => compare(a, b) || built.get(a) - built.get(b));
+    }
+
+    const WORD_SORT_OPTIONS = [
+      { id: "korean", label: "Korean \uac00\u2013\ud558" },
+      { id: "unfamiliar", label: "Familiarity: unstarred first" },
+      { id: "familiar", label: "Familiarity: starred first" },
+      { id: "english", label: "English A\u2013Z" },
+      { id: "romanization", label: "Romanization A\u2013Z" }
+    ];
+    const WORD_SORTS = {
+      korean: null,
+      unfamiliar: (a, b) => ratingOf(a.id) - ratingOf(b.id),
+      familiar: (a, b) => ratingOf(b.id) - ratingOf(a.id),
+      english: (a, b) => String(a.en).localeCompare(String(b.en), "en"),
+      romanization: (a, b) => BANK.romanize(a.ko).localeCompare(BANK.romanize(b.ko), "en")
+    };
+
     /* -----------------------------------------------------------------------
        WORD BANK TABLES
        The same words, looked at three ways: the topic groups the bank ships
@@ -3580,6 +3667,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
           + '<button class="blur-toggle clear-stars" type="button">Clear stars</button>'
+          + sortControl(group.id, WORD_SORT_OPTIONS)
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
           + '<th class="vocab-note-head"><span class="sr-only">Usage notes</span></th>'
@@ -3600,7 +3688,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         if (body.dataset.filled === "true") return;
         const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
         if (!group) return;
-        body.innerHTML = group.words.map(entry => row(section, entry)).join("");
+        body.innerHTML = sortRows(group.words, sortFor(section.dataset.sectionId, WORD_SORT_OPTIONS), WORD_SORTS)
+          .map(entry => row(section, entry)).join("");
         body.dataset.filled = "true";
         paintSectionRatings(section);
         applyBlur(section);
@@ -3705,6 +3794,22 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       }
       repaintRatings = () => host.querySelectorAll(".familiarity-stars")
         .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+
+      /* ---- sort ------------------------------------------------------------
+         Changing a section's sort rebuilds that section's rows and nothing
+         else, then re-runs the search so a filtered view stays filtered. */
+      host.addEventListener("change", event => {
+        const select = event.target.closest(".sort-select");
+        if (!select) return;
+        const section = select.closest(".vocab-category");
+        sectionSort[select.dataset.sortFor] = select.value;
+        saveSectionSort();
+        const body = section.querySelector("tbody");
+        body.innerHTML = "";
+        body.dataset.filled = "false";
+        fillRows(section);
+        if (search.value.trim()) runSearch();
+      });
 
       /* The button says what it just did for a moment before going back to its
          name, so a click that found no stars still reads as a click that
@@ -3892,7 +3997,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     function readVocabSettings() {
       return {
         groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
-        weakOnly: $v(".menu-weak").checked,
+        familiarity: $v(".menu-familiarity").value,
         repeat: $v(".menu-repeat").checked,
         mode: $v(".menu-mode").value,
         passes: Math.max(1, Math.min(5, Number($v(".menu-passes").value) || 1)),
@@ -4002,8 +4107,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       });
       return BANK_WORDS.filter(entry => {
         if (!ids.has(entry.id)) return false;
-        if (!settings.weakOnly) return true;
-        return ratingOf(entry.id) === 0;
+        if (settings.familiarity === "all") return true;
+        /* A star means familiar, and nothing else does. */
+        return (ratingOf(entry.id) === 1) === (settings.familiarity === "familiar");
       });
     }
 
@@ -4024,7 +4130,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
               : "")
           + ". " + directionLabel(settings) + "."
           + (mixed ? " Each question picks its own pair." : "")
-        : "No words match your selection yet.";
+        : settings.familiarity === "all"
+          ? "No words match your selection yet."
+          : "No " + (settings.familiarity === "familiar" ? "starred" : "unstarred")
+            + " words in your selection yet.";
     }
 
     let testMode = "story";
@@ -4405,6 +4514,22 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       try { localStorage.setItem(GRAMMAR_FAMILIARITY_KEY, JSON.stringify(grammarFamiliarity)); } catch (_) {}
     }
 
+    /* The same per-section sort the word bank uses, over grammar points. */
+    const GRAMMAR_SORT_OPTIONS = [
+      { id: "default", label: "Default order" },
+      { id: "unfamiliar", label: "Familiarity: unstarred first" },
+      { id: "familiar", label: "Familiarity: starred first" },
+      { id: "form", label: "Form \uac00\u2013\ud558" },
+      { id: "meaning", label: "What it does A\u2013Z" }
+    ];
+    const GRAMMAR_SORTS = {
+      default: null,
+      unfamiliar: (a, b) => grammarRatingOf(a.id) - grammarRatingOf(b.id),
+      familiar: (a, b) => grammarRatingOf(b.id) - grammarRatingOf(a.id),
+      form: (a, b) => String(a.form).localeCompare(String(b.form), "ko"),
+      meaning: (a, b) => String(a.name).localeCompare(String(b.name), "en")
+    };
+
     /* Which points each story uses, and which of a story's lines show a point
        in action, so the notes can quote the passage the reader just met it in. */
     const STORY_LINES = new Map(STORIES.map(story => {
@@ -4495,6 +4620,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur meaning</button>'
           + '<button class="blur-toggle" type="button" data-field="form" aria-pressed="false">Blur form</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + sortControl(group.id, GRAMMAR_SORT_OPTIONS)
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
           + '<th class="vocab-note-head"><span class="sr-only">Explanation</span></th>'
@@ -4513,7 +4639,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         if (body.dataset.filled === "true") return;
         const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
         if (!group) return;
-        body.innerHTML = group.points.map(point => row(section, group, point)).join("");
+        body.innerHTML = sortRows(group.points, sortFor(section.dataset.sectionId, GRAMMAR_SORT_OPTIONS), GRAMMAR_SORTS)
+          .map(point => row(section, group, point)).join("");
         body.dataset.filled = "true";
         paintSectionRatings(section);
         applyBlur(section);
@@ -4607,6 +4734,19 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         section.querySelectorAll(".familiarity-stars").forEach(group =>
           paintRating(group, grammarRatingOf(group.dataset.pointId)));
       }
+
+      host.addEventListener("change", event => {
+        const select = event.target.closest(".sort-select");
+        if (!select) return;
+        const section = select.closest(".vocab-category");
+        sectionSort[select.dataset.sortFor] = select.value;
+        saveSectionSort();
+        const body = section.querySelector("tbody");
+        body.innerHTML = "";
+        body.dataset.filled = "false";
+        fillRows(section);
+        if (search.value.trim()) runSearch();
+      });
 
       function paintCount(term) {
         if (!term) {
@@ -4756,8 +4896,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     })).filter(type => type.points.length);
 
     function sentenceSettings() {
+      const picked = [...sEl.querySelectorAll(".sentence-point:checked")].map(input => input.value);
+      const familiarity = $s(".menu-familiarity").value;
       return {
-        points: [...sEl.querySelectorAll(".sentence-point:checked")].map(input => input.value),
+        picked: picked,
+        familiarity: familiarity,
+        /* The stars on the grammar tables decide which of the ticked points a
+           run may actually draw on. */
+        points: familiarity === "all" ? picked
+          : picked.filter(id => (grammarRatingOf(id) === 1) === (familiarity === "familiar")),
         direction: $s(".menu-direction").value,
         length: Math.max(1, Number($s(".menu-length").value) || 10)
       };
@@ -4777,7 +4924,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const settings = sentenceSettings();
       const note = $s(".sentence-pool-note");
       if (!settings.points.length) {
-        note.innerHTML = '<span class="assistance-used">Tick at least one grammar point.</span>';
+        note.innerHTML = '<span class="assistance-used">' + (settings.picked.length
+          ? "None of the points you ticked are "
+            + (settings.familiarity === "familiar" ? "starred" : "unstarred") + "."
+          : "Tick at least one grammar point.") + '</span>';
         return;
       }
       note.textContent = plural(settings.points.length, "grammar point", "grammar points")
@@ -5217,6 +5367,107 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           }
         });
       });
+    })();
+  </script>
+
+  <script>
+    /* The floating arrows walk the page's sections — the same list the "Jump to
+       a section" card holds — rather than only running back to the top. ↑ from
+       the first section still goes to the top of the page. */
+    (function () {
+      const buttons = [...document.querySelectorAll("[data-section-nav]")];
+      if (!buttons.length) return;
+
+      function stops() {
+        const seen = new Set();
+        const list = [];
+        document.querySelectorAll('.toc-link[href^="#"]').forEach(link => {
+          const hash = link.getAttribute("href");
+          const node = hash.length > 1 ? document.querySelector(hash) : null;
+          if (!node || seen.has(hash)) return;
+          seen.add(hash);
+          const span = link.querySelector("span");
+          list.push({ hash: hash, node: node, label: (span ? span.textContent : link.textContent).trim() });
+        });
+        return list;
+      }
+
+      /* The section being read is the last one whose top has passed the upper
+         third of the window, so a long section stays the current one well after
+         its heading has scrolled off. */
+      function measuredIndex(list) {
+        const line = window.innerHeight / 3;
+        let index = -1;
+        list.forEach((stop, position) => {
+          if (stop.node.getBoundingClientRect().top <= line) index = position;
+        });
+        return index;
+      }
+
+      /* A jump scrolls smoothly, so for a moment the page is still where it
+         was. Until the scroll lands, the section just jumped to is the current
+         one — otherwise two quick taps would both move one step. */
+      let jumped = null;
+      function currentIndex(list) {
+        const measured = measuredIndex(list);
+        if (!jumped) return measured;
+        if (measured === jumped.index || Date.now() - jumped.at > 2000) {
+          jumped = null;
+          return measured;
+        }
+        return jumped.index;
+      }
+
+      function targetOf(direction, list) {
+        const index = currentIndex(list);
+        if (direction === "next") return index + 1 < list.length ? index + 1 : -1;
+        return index > 0 ? index - 1 : -1;
+      }
+
+      function paint() {
+        const list = stops();
+        buttons.forEach(button => {
+          const direction = button.dataset.sectionNav;
+          const index = targetOf(direction, list);
+          const stop = index < 0 ? null : list[index];
+          const label = stop
+            ? (direction === "next" ? "Next section: " : "Previous section: ") + stop.label
+            : (direction === "next" ? "Last section" : "Back to the top");
+          button.title = label;
+          button.setAttribute("aria-label", label);
+          button.disabled = direction === "next" ? !stop : (!stop && window.scrollY <= 4);
+        });
+      }
+
+      buttons.forEach(button => button.addEventListener("click", () => {
+        const list = stops();
+        const direction = button.dataset.sectionNav;
+        const index = targetOf(direction, list);
+        if (index < 0) {
+          if (direction === "prev") window.scrollTo({ top: 0, behavior: "smooth" });
+          paint();
+          return;
+        }
+        const stop = list[index];
+        for (let node = stop.node; node; node = node.parentElement) {
+          if (node.tagName === "DETAILS") node.open = true;
+        }
+        jumped = { index: index, at: Date.now() };
+        /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
+           section in the address bar, and lets anything watching for a hash
+           change see the move. */
+        location.hash = stop.hash;
+        paint();
+      }));
+
+      let frame = null;
+      window.addEventListener("scroll", () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => { frame = null; paint(); });
+      }, { passive: true });
+      window.addEventListener("resize", paint);
+      document.addEventListener("toggle", paint, true);
+      paint();
     })();
   </script>
 
