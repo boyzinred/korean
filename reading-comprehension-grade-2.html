@@ -549,6 +549,11 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   margin-top: 8px;
 }
 .group-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* The translation picker stacks one grid per grammar type, so a point is
+   found under the heading it is filed under in the bank above. */
+.group-stack > .ref-modes__label { display: block; margin: 14px 0 0; }
+.group-stack > .ref-modes__label:first-child { margin-top: 0; }
+.sentence-cue { margin: 6px 0 0; font-size: .86rem; font-weight: 700; opacity: .8; }
 .answer-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 .answer-input {
   width: 100%;
@@ -672,7 +677,12 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   letter-spacing: .07em;
   text-transform: uppercase;
 }
-.exercise-menu-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.exercise-menu-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+/* The export writes out whatever the setup selects, so the separator it uses
+   is picked in the same row rather than in a dialog the download would wait
+   on. */
+.export-sep,
+.export-what { width: auto; flex: 0 0 auto; font-size: .82rem; font-weight: 700; }
 
 input, select {
   width: 100%;
@@ -1139,7 +1149,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .exercise-menu-grid .wide { grid-column: span 1; }
   .btn { width: 100%; }
   .btn.small { width: auto; }
-  .exercise-menu-actions .btn, .finish-actions .btn { width: 100%; }
+  .exercise-menu-actions .btn, .exercise-menu-actions .export-sep,
+  .exercise-menu-actions .export-what, .finish-actions .btn { width: 100%; }
   .utility-controls { right: 10px; bottom: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1274,6 +1285,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button">Begin vocabulary test</button>
+                <button class="btn secondary export-md" type="button">Export as .md</button>
+                <label class="sr-only" for="vocabSep">Separator between question and answer</label>
+                <select class="export-sep" id="vocabSep">
+                  <option value="slash">Separator: /</option>
+                  <option value="dash">Separator: -</option>
+                  <option value="comma">Separator: ,</option>
+                  <option value="semicolon">Separator: ;</option>
+                  <option value="equals">Separator: =</option>
+                  <option value="tab">Separator: Tab</option>
+                </select>
               </div>
               <p class="assistant-status vocab-pool-note"></p>
             </div>
@@ -1321,6 +1342,103 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         </div>
         <p class="wordbank-count">Grammar overlaps in a way vocabulary does not &mdash; the past tense is in all ten passages &mdash; so a point is never owned by one passage. Group by <strong>type</strong> to see each point once, or by <strong>story</strong> to see everything one passage needs, with a point repeated under every passage that uses it. The <strong>Used by</strong> column says how many that is. Press <strong>&#65291;</strong> for the full explanation, and in story mode the examples are lifted from that passage's own lines.</p>
         <div id="grammarGroups"></div>
+
+        <article class="exercise" id="sentenceExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Grammar</span>
+              <h3>Translation practice</h3>
+              <p>One generated sentence at a time, in either direction.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="exercise-menu">
+              <h4>Exercise setup</h4>
+              <p>The grammar you tick decides the shape of each sentence. The words are drawn from this page's word bank by part of speech and nothing else, so 학교를 마셔요 is a sentence this exercise is happy to ask for. That is what keeps one grammar point from running out of sentences.</p>
+
+              <fieldset class="group-picker">
+                <legend>What to practise</legend>
+                <div class="group-stack" id="sentencePointGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small select-all" type="button">Select all</button>
+                  <button class="btn secondary small select-none" type="button">Select none</button>
+                </div>
+              </fieldset>
+
+              <div class="exercise-menu-grid">
+                <label>Direction
+                  <select class="menu-direction">
+                    <option value="en-ko" selected>English &rarr; 한국어</option>
+                    <option value="ko-en">한국어 &rarr; English</option>
+                    <option value="mixed">Mixed &mdash; each sentence picks one</option>
+                  </select>
+                </label>
+                <label>Length
+                  <select class="menu-length">
+                    <option value="5">5 sentences</option>
+                    <option value="10" selected>10 sentences</option>
+                    <option value="15">15 sentences</option>
+                    <option value="20">20 sentences</option>
+                    <option value="30">30 sentences</option>
+                    <option value="50">50 sentences</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin translation practice</button>
+                <button class="btn secondary export-md" type="button">Export as .md</button>
+                <label class="sr-only" for="sentenceWhat">What to export</label>
+                <select class="export-what" id="sentenceWhat">
+                  <option value="questions" selected>Export: sentences</option>
+                  <option value="grammar">Export: grammar</option>
+                  <option value="both">Export: both</option>
+                </select>
+                <label class="sr-only" for="sentenceSep">Separator between question and answer</label>
+                <select class="export-sep" id="sentenceSep">
+                  <option value="slash">Separator: /</option>
+                  <option value="dash">Separator: -</option>
+                  <option value="comma">Separator: ,</option>
+                  <option value="semicolon">Separator: ;</option>
+                  <option value="equals">Separator: =</option>
+                  <option value="tab">Separator: Tab</option>
+                </select>
+              </div>
+              <p class="assistant-status sentence-pool-note"></p>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <span class="wordbank-count sentence-direction"></span>
+                <button class="btn warning small end-early" type="button">End exercise early</button>
+              </div>
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+              <p class="sentence-cue"></p>
+
+              <div class="zone"></div>
+
+              <div class="hint-row">
+                <div><button class="btn secondary small show-words" type="button">Show the words</button></div>
+                <div class="question-hint" aria-live="polite"></div>
+                <p class="assistant-status">No help used on this sentence.</p>
+              </div>
+
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">Next sentence</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+          </div>
+        </article>
       </div>
     </details>
 
@@ -1431,6 +1549,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   <script src="./shared-vocab/reading-vocab-2.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-grammar-2.js?v=1.0.0"></script>
+  <script src="./shared-vocab/korean-grammar.js?v=1.0.0"></script>
+  <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -3820,6 +3940,69 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return "Question in " + names(settings.promptLangs) + " · answer in " + names(settings.answerLangs);
     }
 
+    /* What goes between the question and the answer in an exported line. The
+       slash matches the word bank tables and the paste exercise, but an
+       English gloss can carry one itself ("snow / eye"), so a list bound for a
+       spreadsheet or Anki can pick another. */
+    const SEPARATORS = {
+      slash: " / ",
+      dash: " - ",
+      comma: ", ",
+      semicolon: "; ",
+      equals: " = ",
+      tab: "\t"
+    };
+
+    function separatorValue(scope) {
+      return SEPARATORS[scope.querySelector(".export-sep").value] || SEPARATORS.slash;
+    }
+
+    /* A mixed run picks its pair per question, so an export — which writes one
+       line per word — takes the first pair the ticks allow, the same pair the
+       test could open with. */
+    function exportDirection(settings) {
+      const promptLang = settings.promptLangs.find(prompt =>
+        settings.answerLangs.some(answer => answer !== prompt));
+      if (!promptLang) return null;
+      return { promptLang: promptLang, answerLang: settings.answerLangs.find(answer => answer !== promptLang) };
+    }
+
+    const PAGE_SLUG = (location.pathname.split("/").pop() || "reading").replace(/\.html?$/i, "") || "reading";
+
+    /* The selection as it stands in the setup, written out before a run rather
+       than after one: one word per line, question language first, then the
+       answer language. */
+    function exportVocabSelection(button) {
+      const settings = readVocabSettings();
+      const direction = exportDirection(settings);
+      if (!direction) { paintPoolNote(); return; }
+      const pool = vocabPool(settings);
+      if (!pool.length) { paintPoolNote(); return; }
+
+      const separator = separatorValue(vEl);
+      const today = new Date().toISOString().slice(0, 10);
+      const text = [
+        "# Vocabulary — " + LANG_NAMES[direction.promptLang] + " → " + LANG_NAMES[direction.answerLang] + " — " + today,
+        "# " + plural(pool.length, "word", "words") + " selected",
+        ""
+      ].concat(pool.map(entry =>
+        wordIn(entry, direction.promptLang) + separator + wordIn(entry, direction.answerLang)
+      )).join("\n") + "\n";
+
+      const blob = new Blob([text], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = PAGE_SLUG + "-vocab-" + direction.promptLang + "-to-" + direction.answerLang + "-" + today + ".md";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      button.textContent = "Exported";
+      setTimeout(() => { button.textContent = "Export as .md"; }, 1600);
+    }
+
     function vocabPool(settings) {
       const chosen = new Set(settings.groups);
       const ids = new Set();
@@ -3892,6 +4075,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         paintPoolNote();
       });
       $v(".begin").addEventListener("click", startVocabTest);
+      $v(".export-md").addEventListener("click", event => exportVocabSelection(event.currentTarget));
       $v(".next").addEventListener("click", nextVocabQuestion);
 
       /* Enter keeps a run moving without reaching for the mouse: it moves an
@@ -4546,10 +4730,451 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       render();
     }
 
+
+    /* -----------------------------------------------------------------------
+       TRANSLATION PRACTICE
+       A grammar point is a shape, not a sentence: 을/를 says an object comes
+       before the verb, and says nothing about which object. So this exercise
+       keeps the shape and throws the word bank at it — every noun fits a noun
+       slot, every verb a verb slot, and no check is made that the result means
+       anything. 학교를 마셔요 (I drink the school) is a legitimate question
+       here, and dropping the meaning check is what turns 24 grammar points and
+       180 words into more sentences than anyone can work through.
+
+       Both the sentence and its translation come out of reading-sentences.js,
+       so a run can be asked in either direction, and either direction can be
+       written out as a .md list before it is run.
+    ----------------------------------------------------------------------- */
+    const sEl = document.getElementById("sentenceExercise");
+    const $s = selector => sEl.querySelector(selector);
+    const SENTENCES = window.ReadingSentences;
+    let sentenceState = null;
+
+    const DIRECTION_LABELS = {
+      "en-ko": "English → 한국어",
+      "ko-en": "한국어 → English",
+      mixed: "Mixed directions"
+    };
+
+    /* A point is offered only when this page's own bank can fill one of its
+       templates — grade 1 has four names, so a template wanting two of them
+       never appears there. */
+    const SENTENCE_TYPES = GRAMMAR.TYPES.map(type => ({
+      label: type.label,
+      points: type.ids.map(id => GRAMMAR.get(id))
+        .filter(point => point && SENTENCES.supports(point.id, BANK_WORDS))
+    })).filter(type => type.points.length);
+
+    function sentenceSettings() {
+      return {
+        points: [...sEl.querySelectorAll(".sentence-point:checked")].map(input => input.value),
+        direction: $s(".menu-direction").value,
+        length: Math.max(1, Number($s(".menu-length").value) || 10)
+      };
+    }
+
+    function paintSentencePointGrid() {
+      document.getElementById("sentencePointGrid").innerHTML = SENTENCE_TYPES.map(type =>
+        '<p class="ref-modes__label">' + esc(type.label) + '</p><div class="group-grid">'
+        + type.points.map(point =>
+          '<label class="exercise-option"><input class="sentence-point" type="checkbox" value="'
+          + esc(point.id) + '"><span>' + esc(point.form)
+          + '<small>' + esc(point.name) + '</small></span></label>').join("")
+        + '</div>').join("");
+    }
+
+    function paintSentenceNote() {
+      const settings = sentenceSettings();
+      const note = $s(".sentence-pool-note");
+      if (!settings.points.length) {
+        note.innerHTML = '<span class="assistance-used">Tick at least one grammar point.</span>';
+        return;
+      }
+      note.textContent = plural(settings.points.length, "grammar point", "grammar points")
+        + " selected · " + plural(settings.length, "sentence", "sentences")
+        + " · " + DIRECTION_LABELS[settings.direction] + ".";
+    }
+
+    /* Draws sentences one at a time from the ticked points. A point is picked
+       per sentence rather than dealt round-robin, so a run of ten off two
+       points is not five and five. Repeats are skipped rather than counted,
+       which matters on a point with few templates and a small bank. */
+    function makeSentences(settings) {
+      const out = [];
+      const seen = new Set();
+      const ceiling = settings.length * 20;
+      for (let tries = 0; out.length < settings.length && tries < ceiling; tries += 1) {
+        const pointId = settings.points[Math.floor(Math.random() * settings.points.length)];
+        const made = SENTENCES.make(pointId, BANK_WORDS);
+        if (!made || seen.has(made.ko)) continue;
+        seen.add(made.ko);
+        out.push(Object.assign({}, made, {
+          point: GRAMMAR.get(pointId),
+          direction: settings.direction === "mixed"
+            ? (Math.random() < 0.5 ? "en-ko" : "ko-en")
+            : settings.direction
+        }));
+      }
+      return out;
+    }
+
+    const askedIn = item => (item.direction === "en-ko" ? "English" : "한국어");
+    const answerIn = item => (item.direction === "en-ko" ? "한국어" : "English");
+    const questionOf = item => (item.direction === "en-ko" ? item.en : item.ko);
+    const answerOf = item => (item.direction === "en-ko" ? item.ko : item.en);
+
+    /* Korean is compared without spacing, because a beginner's spacing is not
+       what this exercise is about. English drops articles and punctuation for
+       the same reason. Everything the generator marked as an equally good
+       answer — the other particle, the other negative — is accepted too. */
+    function normalizeKoSentence(text) {
+      return String(text || "").replace(/\s+/g, "").replace(/[.,?!·]/g, "").trim();
+    }
+
+    function normalizeEnSentence(text) {
+      return String(text || "").toLowerCase()
+        .replace(/[.,?!'’"]/g, "")
+        .replace(/\b(?:a|an|the)\b/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function acceptedSentences(item) {
+      return item.direction === "en-ko" ? [item.ko].concat(item.alts) : [item.en];
+    }
+
+    function checkSentence(item, given) {
+      const normalize = item.direction === "en-ko" ? normalizeKoSentence : normalizeEnSentence;
+      const answer = normalize(given);
+      if (!answer) return false;
+      return acceptedSentences(item).some(candidate => normalize(candidate) === answer);
+    }
+
+    function startSentenceRun() {
+      const settings = sentenceSettings();
+      if (!settings.points.length) { paintSentenceNote(); return; }
+      const items = makeSentences(settings);
+      if (!items.length) { paintSentenceNote(); return; }
+
+      sentenceState = {
+        settings: settings,
+        items: items,
+        i: 0,
+        locked: false,
+        finished: false,
+        assisted: false,
+        results: items.map(() => null)
+      };
+      $s(".exercise-menu").classList.add("hidden");
+      $s(".finish").classList.add("hidden");
+      $s(".live").classList.remove("hidden");
+      $s(".sentence-direction").textContent = DIRECTION_LABELS[settings.direction];
+      showSentenceQuestion();
+      sEl.scrollIntoView({ block: "start" });
+    }
+
+    function paintSentenceScore() {
+      const done = sentenceState.results.filter(result => result !== null).length;
+      const right = sentenceState.results.filter(result => result && result.correct).length;
+      $s(".score").innerHTML = done
+        ? right + " / " + done + " correct<br><small>"
+          + plural(sentenceState.items.length, "sentence", "sentences") + "</small>"
+        : "Not started";
+    }
+
+    function showSentenceQuestion() {
+      const item = sentenceState.items[sentenceState.i];
+      sentenceState.locked = false;
+      sentenceState.assisted = false;
+
+      $s(".count").textContent = "Sentence " + (sentenceState.i + 1) + " of " + sentenceState.items.length;
+      $s(".mode-label").textContent = item.point.form + " · " + item.point.name;
+      const progress = $s(".progress");
+      progress.firstElementChild.style.width =
+        Math.round((sentenceState.i / sentenceState.items.length) * 100) + "%";
+      progress.setAttribute("aria-valuemax", String(sentenceState.items.length));
+      progress.setAttribute("aria-valuenow", String(sentenceState.i));
+
+      $s(".prompt-label").textContent = "Translate into " + answerIn(item);
+      $s(".prompt").textContent = questionOf(item);
+      $s(".sentence-cue").textContent = item.cue ? "Hint: " + item.cue : "";
+
+      const zone = $s(".zone");
+      zone.innerHTML = '<div class="answer-row">'
+        + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
+        + 'placeholder="' + esc(answerIn(item)) + '">'
+        + '<button class="btn primary submit" type="button">Check</button></div>';
+      const input = zone.querySelector(".answer-input");
+      const submit = () => {
+        if (sentenceState.locked || sentenceState.finished) return;
+        lockSentenceQuestion(checkSentence(item, input.value), input.value.trim());
+      };
+      zone.querySelector(".submit").addEventListener("click", submit);
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") { event.preventDefault(); submit(); }
+      });
+      input.focus({ preventScroll: true });
+
+      $s(".question-hint").innerHTML = "";
+      $s(".show-words").disabled = false;
+      $s(".hint-row .assistant-status").textContent = "No help used on this sentence.";
+      const feedback = $s(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $s(".next").classList.add("hidden");
+      paintSentenceScore();
+    }
+
+    /* The words that went into the sentence, in the same three-part shape the
+       word bank rows use. Asked for before answering, it counts as help. */
+    function showSentenceWords() {
+      if (!sentenceState || sentenceState.finished) return;
+      const item = sentenceState.items[sentenceState.i];
+      $s(".question-hint").innerHTML = '<div class="word-list">' + item.words.map(entry =>
+        '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
+        + '<span class="word-ro">' + esc(BANK.romanize(entry.ko)) + '</span>'
+        + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>';
+      $s(".show-words").disabled = true;
+      if (!sentenceState.locked) {
+        sentenceState.assisted = true;
+        $s(".hint-row .assistant-status").innerHTML =
+          '<span class="assistance-used">Words shown before answering.</span>';
+      }
+    }
+
+    function lockSentenceQuestion(correct, given) {
+      const item = sentenceState.items[sentenceState.i];
+      sentenceState.locked = true;
+      sentenceState.results[sentenceState.i] = {
+        correct: correct,
+        given: given || "",
+        assisted: sentenceState.assisted
+      };
+
+      const input = $s(".answer-input");
+      if (input) input.disabled = true;
+      const submit = $s(".submit");
+      if (submit) submit.disabled = true;
+
+      /* The prompt is still on screen, so the detail line carries only what it
+         does not: the romanization, and the point the sentence was built on. */
+      const others = acceptedSentences(item).slice(1);
+      const feedback = $s(".feedback");
+      feedback.className = "feedback " + (correct ? "good" : "bad");
+      feedback.innerHTML = (correct ? "<strong>맞아요!</strong>" : "<strong>아니에요.</strong>")
+        + "<em>" + esc(answerOf(item)) + "</em>"
+        + "<br><small>" + esc(BANK.romanize(item.ko)) + "</small>"
+        + "<br><small>" + esc(item.point.form) + " — " + esc(item.point.meaning) + "</small>"
+        + (others.length ? "<br><small>Also accepted: " + esc(others.join(" · ")) + "</small>" : "")
+        + (correct ? "" : '<div class="finish-actions"><button class="btn secondary count-correct" type="button">'
+          + "My answer was right too — count it</button></div>");
+
+      /* A translation has more than one good answer, and no checker catches
+         them all. Rather than argue with the exercise, mark it yourself. */
+      const countCorrect = feedback.querySelector(".count-correct");
+      if (countCorrect) {
+        countCorrect.addEventListener("click", () => {
+          sentenceState.results[sentenceState.i].correct = true;
+          sentenceState.results[sentenceState.i].selfMarked = true;
+          countCorrect.disabled = true;
+          countCorrect.textContent = "Counted as correct";
+          feedback.className = "feedback good";
+          paintSentenceScore();
+        });
+      }
+
+      const next = $s(".next");
+      next.classList.remove("hidden");
+      next.textContent = sentenceState.i + 1 >= sentenceState.items.length
+        ? "See my results"
+        : "Next sentence";
+      next.focus({ preventScroll: true });
+
+      const progress = $s(".progress");
+      progress.firstElementChild.style.width =
+        Math.round(((sentenceState.i + 1) / sentenceState.items.length) * 100) + "%";
+      progress.setAttribute("aria-valuenow", String(sentenceState.i + 1));
+      paintSentenceScore();
+    }
+
+    function nextSentenceQuestion() {
+      if (sentenceState.i + 1 >= sentenceState.items.length) {
+        finishSentenceRun("");
+        return;
+      }
+      sentenceState.i += 1;
+      showSentenceQuestion();
+    }
+
+    function finishSentenceRun(note) {
+      sentenceState.finished = true;
+      const total = sentenceState.items.length;
+      const answered = sentenceState.results.filter(result => result !== null).length;
+      const right = sentenceState.results.filter(result => result && result.correct).length;
+      const percent = total ? Math.round((right / total) * 100) : 0;
+
+      const rows = sentenceState.items.map((item, index) => {
+        const result = sentenceState.results[index];
+        const mark = !result ? "—" : (result.correct ? (result.selfMarked ? "✓" : "✅") : "❌");
+        return '<div class="word-card"><span class="word-ko">' + mark + " " + esc(item.ko) + '</span>'
+          + '<span class="word-ro">' + esc(BANK.romanize(item.ko)) + '</span>'
+          + '<span class="word-en">' + esc(item.en) + '</span>'
+          + '<span class="word-ro">' + esc(item.point.form) + " · "
+          + (result && result.given ? "you wrote: " + esc(result.given) : "not answered") + '</span></div>';
+      }).join("");
+
+      $s(".live").classList.add("hidden");
+      const finishEl = $s(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = '<h4>Translation practice complete</h4>'
+        + (note ? "<p><strong>" + esc(note) + "</strong></p>" : "")
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Sentences answered</small></div>'
+        + '</div>'
+        + '<div><h4>Every sentence</h4><div class="word-list">' + rows + '</div></div>'
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Practise again</button>'
+        + '<button class="btn secondary export-run" type="button">Export as .md</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      finishEl.querySelector(".again").addEventListener("click", startSentenceRun);
+      finishEl.querySelector(".export-run").addEventListener("click", event =>
+        downloadSentences(sentenceState.items, sentenceState.settings, event.currentTarget));
+      finishEl.querySelector(".change-setup").addEventListener("click", () => {
+        $s(".live").classList.add("hidden");
+        $s(".finish").classList.add("hidden");
+        $s(".exercise-menu").classList.remove("hidden");
+        paintSentenceNote();
+      });
+      paintSentenceScore();
+    }
+
+    /* Sentences, the grammar behind them, or both. The picker lives in the
+       setup, so the results screen reads it there too — the menu is hidden by
+       then, not gone. */
+    function exportWhat() {
+      return $s(".export-what").value;
+    }
+
+    /* A grammar line is the form and what it does, ordered the same way a
+       sentence line is: the language being asked for goes second, so an
+       English → 한국어 run writes the meaning first and the form second. */
+    function grammarLines(points, direction, separator) {
+      return points.map(id => GRAMMAR.get(id)).filter(Boolean).map(point =>
+        direction === "en-ko"
+          ? point.meaning + separator + point.form
+          : point.form + separator + point.meaning);
+    }
+
+    /* One line per sentence, question first and answer second, in whatever
+       direction the sentence is set to — so a mixed run writes some lines
+       English first and some Korean first, exactly as it would ask them. */
+    function downloadSentences(items, settings, button) {
+      const separator = separatorValue(sEl);
+      const what = exportWhat();
+      const today = new Date().toISOString().slice(0, 10);
+      const grammar = plural(settings.points.length, "grammar point", "grammar points");
+
+      /* The two halves are only labelled when both are present; on its own
+         each one already has the file's own heading above it. */
+      const body = [];
+      if (what !== "questions") {
+        if (what === "both") body.push("# Grammar", "");
+        grammarLines(settings.points, settings.direction, separator).forEach(line => body.push(line));
+      }
+      if (what !== "grammar") {
+        if (what === "both") body.push("", "# Sentences", "");
+        items.forEach(item => body.push(questionOf(item) + separator + answerOf(item)));
+      }
+
+      const heading = what === "grammar" ? "Grammar" : "Translation practice";
+      const text = [
+        "# " + heading + " — " + DIRECTION_LABELS[settings.direction] + " — " + today,
+        "# " + (what === "grammar" ? grammar : plural(items.length, "sentence", "sentences") + " from " + grammar),
+        ""
+      ].concat(body).join("\n") + "\n";
+
+      const kind = what === "questions" ? "sentences" : (what === "grammar" ? "grammar" : "grammar-sentences");
+      const blob = new Blob([text], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = PAGE_SLUG + "-" + kind + "-" + settings.direction + "-" + today + ".md";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      const label = button.textContent;
+      button.textContent = "Exported";
+      setTimeout(() => { button.textContent = label; }, 1600);
+    }
+
+    /* The setup's own export builds a fresh batch rather than reusing a run,
+       so a list can be taken away without answering a single question. A
+       grammar-only export needs no sentences at all, so none are built. */
+    function exportSentenceSelection(button) {
+      const settings = sentenceSettings();
+      if (!settings.points.length) { paintSentenceNote(); return; }
+      if (exportWhat() === "grammar") { downloadSentences([], settings, button); return; }
+      const items = makeSentences(settings);
+      if (!items.length) { paintSentenceNote(); return; }
+      downloadSentences(items, settings, button);
+    }
+
+    function buildSentenceExercise() {
+      if (!SENTENCES || !window.KoreanGrammar || !SENTENCE_TYPES.length) {
+        sEl.remove();
+        return;
+      }
+      paintSentencePointGrid();
+      $s(".exercise-menu").addEventListener("change", paintSentenceNote);
+      $s(".select-all").addEventListener("click", () => {
+        sEl.querySelectorAll(".sentence-point").forEach(input => { input.checked = true; });
+        paintSentenceNote();
+      });
+      $s(".select-none").addEventListener("click", () => {
+        sEl.querySelectorAll(".sentence-point").forEach(input => { input.checked = false; });
+        paintSentenceNote();
+      });
+      $s(".begin").addEventListener("click", startSentenceRun);
+      $s(".export-md").addEventListener("click", event => exportSentenceSelection(event.currentTarget));
+      $s(".next").addEventListener("click", nextSentenceQuestion);
+      $s(".show-words").addEventListener("click", showSentenceWords);
+      $s(".end-early").addEventListener("click", () => {
+        if (!sentenceState || sentenceState.finished) return;
+        finishSentenceRun("You ended the exercise early.");
+      });
+
+      /* Enter moves an answered sentence on, the same as it does in the
+         vocabulary test, unless a field or button already owns the key. */
+      document.addEventListener("keydown", event => {
+        if (event.key !== "Enter" || event.defaultPrevented) return;
+        if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+        if (!sentenceState) return;
+        if (event.target && event.target.closest
+          && event.target.closest("button, a, input, select, textarea")) return;
+        if (!$s(".finish").classList.contains("hidden")) {
+          const again = $s(".finish .again");
+          if (again) { event.preventDefault(); again.click(); }
+          return;
+        }
+        if ($s(".live").classList.contains("hidden")) return;
+        if (!sentenceState.locked || sentenceState.finished) return;
+        event.preventDefault();
+        nextSentenceQuestion();
+      });
+      paintSentenceNote();
+    }
+
     buildMenu();
     buildWordBank();
     buildVocabTest();
     buildGrammarBank();
+    buildSentenceExercise();
   })();
   </script>
 

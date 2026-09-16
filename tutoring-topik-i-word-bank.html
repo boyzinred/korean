@@ -1125,11 +1125,20 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 .answer-mode-note strong { color: var(--primary); }
 .exercise-menu-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
 }
 .exercise-menu-actions .btn,
 .exercise-menu-actions .primary-btn { width: auto; }
+/* The export sits beside Start, so the separator it writes is picked in the
+   same row rather than in a dialog the download would have to wait on. */
+.export-sep {
+  width: auto;
+  flex: 0 0 auto;
+  font-size: .82rem;
+  font-weight: 700;
+}
 .runtime-bar {
   display: flex;
   align-items: center;
@@ -1160,6 +1169,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   .runtime-bar { align-items: stretch; flex-direction: column; }
   .exercise-menu-actions .btn,
   .exercise-menu-actions .primary-btn,
+  .exercise-menu-actions .export-sep,
   .end-early-btn { width: 100%; }
 }
 
@@ -1763,6 +1773,24 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       { key: "romanization", label: "Romanization" },
       { key: "korean", label: "Korean" }
     ];
+
+    // What goes between the question and the answer in an exported line. The
+    // slash is first because it is what the reference rows and the paste
+    // exercise already read, but an English gloss can contain one ("snow /
+    // eye"), so a list bound for a spreadsheet or Anki can pick another.
+    const SEPARATORS = [
+      { key: "slash", label: "/", value: " / " },
+      { key: "dash", label: "-", value: " - " },
+      { key: "comma", label: ",", value: ", " },
+      { key: "semicolon", label: ";", value: "; " },
+      { key: "equals", label: "=", value: " = " },
+      { key: "tab", label: "Tab", value: "\t" }
+    ];
+
+    function separatorValue(exerciseId) {
+      const key = document.getElementById(`menu-sep-${exerciseId}`)?.value;
+      return (SEPARATORS.find(sep => sep.key === key) || SEPARATORS[0]).value;
+    }
 
     function displayValue(item, mode) {
       if (mode === "english") return item.shownMeaning;
@@ -2438,6 +2466,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <p class="menu-error hidden" id="menu-error-${id}">${esc(exercise.emptyMessage)}</p>
           <div class="exercise-menu-actions">
             <button class="primary-btn" type="button" data-start="${id}">Start exercise</button>
+            <button class="btn secondary" type="button" data-export-menu="${id}">Export as .md</button>
+            <label class="sr-only" for="menu-sep-${id}">Separator between question and answer</label>
+            <select class="export-sep" id="menu-sep-${id}">${SEPARATORS.map(sep => `<option value="${sep.key}">Separator: ${esc(sep.label)}</option>`).join("")}</select>
           </div>
         </div>`;
     }
@@ -2551,6 +2582,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         }
         const start = event.target.closest("[data-start]");
         if (start) { startQuiz(start.dataset.start); return; }
+        const exportMenu = event.target.closest("[data-export-menu]");
+        if (exportMenu) { exportSelection(exportMenu.dataset.exportMenu, exportMenu); return; }
         const next = event.target.closest("[data-next]");
         if (next) { advance(next.dataset.next); return; }
         const end = event.target.closest("[data-end]");
@@ -2895,16 +2928,64 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       });
     }
 
-    function downloadExport(exerciseId) {
-      const blob = new Blob([document.getElementById(`export-text-${exerciseId}`).value], { type: "text/markdown" });
+    function downloadMarkdown(text, filename) {
+      const blob = new Blob([text], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `missed-words-${new Date().toISOString().slice(0, 10)}.md`;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function downloadExport(exerciseId) {
+      downloadMarkdown(
+        document.getElementById(`export-text-${exerciseId}`).value,
+        `missed-words-${new Date().toISOString().slice(0, 10)}.md`);
+    }
+
+    // The words the setup currently selects, written out before a run rather
+    // than after one. A line is one word, in the direction the run would ask
+    // it: the question language first, then the answer language. A mixed run
+    // has no single direction, so the file takes the first pair the ticks
+    // allow — the same pair the exercise would open with.
+    function selectionMarkdown(exerciseId, pair) {
+      const exercise = EXERCISES.find(e => e.id === exerciseId);
+      let words = exercise.select();
+      const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`).value) || 0);
+      if (cap > 0 && words.length > cap) words = words.slice(0, cap);
+      const separator = separatorValue(exerciseId);
+      const header = [
+        `# ${exercise.title} — ${modeLabel(pair.q)} → ${modeLabel(pair.a)} — ${new Date().toISOString().slice(0, 10)}`,
+        `# ${words.length} word${words.length === 1 ? "" : "s"} selected`,
+        ""
+      ];
+      const lines = words.map(item =>
+        `${displayValue(item, pair.q)}${separator}${itemAnswerDisplay(item, pair.a)}`);
+      return header.concat(lines).join("\n") + "\n";
+    }
+
+    function exportSelection(exerciseId, button) {
+      const exercise = EXERCISES.find(e => e.id === exerciseId);
+      const error = document.getElementById(`menu-error-${exerciseId}`);
+      const pairs = modePairs(checkedValues(`${exerciseId}-qlang`), checkedValues(`${exerciseId}-alang`));
+      if (!pairs.length) {
+        error.textContent = "Pick a question language and a different answer language.";
+        error.classList.remove("hidden");
+        return;
+      }
+      error.textContent = exercise.emptyMessage;
+      if (!exercise.select().length) { error.classList.remove("hidden"); return; }
+      error.classList.add("hidden");
+
+      const pair = pairs[0];
+      downloadMarkdown(
+        selectionMarkdown(exerciseId, pair),
+        `${exerciseId}-${pair.q}-to-${pair.a}-${new Date().toISOString().slice(0, 10)}.md`);
+      button.textContent = "Exported";
+      setTimeout(() => { button.textContent = "Export as .md"; }, 1600);
     }
 
     // The paste exercise is its own page, so the export is parked under a key
