@@ -533,6 +533,16 @@ textarea:disabled,
   background: var(--accent-soft);
   border-left: 8px solid var(--accent);
 }
+.feedback-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-bottom: 4px;
+}
+.feedback-head > :first-child { flex: 1 1 12ch; min-width: 0; margin-bottom: 0; }
+.feedback-head [data-count-correct] { flex: none; min-height: 40px; padding: 0 14px; font-size: .88rem; }
 html[data-theme="light"] .feedback { color: #FFFFFF; }
 .utility-controls {
   position: fixed;
@@ -2702,6 +2712,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         if (start) { startQuiz(start.dataset.start); return; }
         const exportMenu = event.target.closest("[data-export-menu]");
         if (exportMenu) { exportSelection(exportMenu.dataset.exportMenu, exportMenu); return; }
+        const countCorrect = event.target.closest("[data-count-correct]");
+        if (countCorrect) { countAsCorrect(countCorrect.dataset.countCorrect); return; }
         const next = event.target.closest("[data-next]");
         if (next) { advance(next.dataset.next); return; }
         const end = event.target.closest("[data-end]");
@@ -2933,7 +2945,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       } else {
         state.currentHadWrong = true;
         feedback.className = "feedback bad";
-        feedback.innerHTML = `Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span><br><span class="small">Full entry: ${esc(fullEntry(item))}</span>`;
+        feedback.innerHTML = `<div class="feedback-head"><span>Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span></span><button class="btn secondary" type="button" data-count-correct="${exerciseId}">Count as correct →</button></div><span class="small">Full entry: ${esc(fullEntry(item))}</span>`;
         if (state.repeatWrong) {
           state.retryCurrent = true;
         } else {
@@ -2952,6 +2964,29 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         : (state.index === state.questions.length - 1 ? "Finish" : "Next");
       next.classList.remove("hidden");
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
+    }
+
+    // A typed answer can be right in a way the checker cannot see: another
+    // good gloss, a different spacing. Rather than argue with the exercise,
+    // take the point yourself and move straight on to the next question.
+    function countAsCorrect(exerciseId) {
+      const state = STATES.get(exerciseId);
+      if (!state || !state.answered || state.finished) return;
+      const attempt = state.currentAttempts[state.currentAttempts.length - 1];
+      if (attempt) attempt.correct = true;
+      if (state.retryCurrent) {
+        // The word was on its way back round, so no result was recorded yet.
+        state.retryCurrent = false;
+        pushResult(state, state.questions[state.index], attempt ? attempt.userAnswer : "", true, false);
+      }
+      const result = state.results[state.results.length - 1];
+      if (result) {
+        result.correct = true;
+        result.selfMarked = true;
+      }
+      state.score += 1;
+      document.getElementById(`score-${exerciseId}`).textContent = `Score: ${state.score}`;
+      advance(exerciseId);
     }
 
     function advance(exerciseId) {
@@ -2998,7 +3033,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         <h3>Review</h3>
         ${state.results.map((result, i) => {
           const attemptText = result.attempts.map((attempt, n) => `${n + 1}: ${attempt.userAnswer || "(blank)"}${attempt.correct ? " ✓" : " ✗"}`).join(" · ");
-          const status = result.masteredAfterRetry ? "↻" : (result.correct ? "✅" : "❌");
+          const status = result.selfMarked ? "✓" : (result.masteredAfterRetry ? "↻" : (result.correct ? "✅" : "❌"));
           return `
             <div class="review-row">
               <div><strong>${i + 1}. ${esc(result.prompt)}</strong><br><span class="small">Attempts: ${esc(attemptText)}</span></div>

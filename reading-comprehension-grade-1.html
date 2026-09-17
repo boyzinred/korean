@@ -951,6 +951,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   font-weight: 700;
 }
 .finish-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.feedback-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-bottom: 4px;
+}
+.feedback-head > :first-child { flex: 1 1 12ch; min-width: 0; margin-bottom: 0; }
+.feedback-head .count-correct { flex: none; min-height: 40px; padding: 0 14px; font-size: .88rem; }
 
 .vocab-token {
   position: relative;
@@ -3137,9 +3147,20 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         feedback.innerHTML = "<strong>맞아요! That&#039;s right.</strong>" + why;
       } else {
         feedback.className = "feedback bad";
-        feedback.innerHTML = "<strong>"
+        feedback.innerHTML = '<div class="feedback-head"><strong>'
           + (ranOutOfTime ? "Time is up on this question." : "아니에요. Not quite.")
-          + "</strong>The answer is <em>" + answerText + "</em>. " + why;
+          + '</strong><button class="btn secondary count-correct" type="button">Count as correct →</button></div>'
+          + "The answer is <em>" + answerText + "</em>. " + why;
+
+        /* A choice can be defensible in a way a single keyed answer is not.
+           Rather than argue with the exercise, take the point yourself and
+           move straight on. */
+        feedback.querySelector(".count-correct").addEventListener("click", () => {
+          state.results[state.i].correct = true;
+          state.results[state.i].selfMarked = true;
+          paintScore();
+          goNext();
+        });
       }
 
       $(".show-hint").disabled = true;
@@ -3204,6 +3225,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<span class="review-line"><strong>Correct answer:</strong> '
           + esc(plain(item.choices[item.answer], lang)) + '</span>'
           + '<span class="review-line">' + esc(plain(item.source.why, lang)) + '</span>'
+          + (result && result.selfMarked ? '<span class="review-line"><em>You counted this one correct yourself.</em></span>' : "")
           + (result && result.assisted ? '<span class="review-line"><em>You used help on this one.</em></span>' : "")
           + '</div>';
       }).join("");
@@ -4269,17 +4291,37 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const full = esc(entry.ko) + " · " + esc(ReadingVocab.romanize(entry.ko)) + " · " + esc(entry.en);
       const feedback = $v(".feedback");
       feedback.className = "feedback " + (correct ? "good" : "bad");
+      /* A word has more than one good gloss, and no checker catches them all.
+         Rather than argue with the exercise, mark it yourself from the headline
+         line: the word counts as known, drops out of the retry queue, and the
+         run moves straight on. */
+      const head = correct
+        ? "<strong>맞아요!</strong>"
+        : '<div class="feedback-head"><strong>아니에요.</strong>'
+          + '<button class="btn secondary count-correct" type="button">Count as correct →</button></div>';
       if (correct) {
-        feedback.innerHTML = "<strong>맞아요!</strong>" + full
+        feedback.innerHTML = head + full
           + "<br><small>" + esc(entry.usage) + "</small>";
       } else if (shown) {
-        feedback.innerHTML = "<strong>아니에요.</strong>Answer: <em>"
+        feedback.innerHTML = head + "Answer: <em>"
           + esc(wordIn(entry, direction.answerLang)) + "</em>. "
           + full + "<br><small>" + esc(entry.usage) + "</small>"
           + (retry ? "<br><small>Answer it yourself to move on.</small>" : "");
       } else {
-        feedback.innerHTML = "<strong>아니에요.</strong>다시 해 봐요 — this word comes round again."
+        feedback.innerHTML = head + "다시 해 봐요 — this word comes round again."
           + "<br><small>Try " + attempts + " · the answer shows on the third miss.</small>";
+      }
+
+      const countCorrect = feedback.querySelector(".count-correct");
+      if (countCorrect) {
+        countCorrect.addEventListener("click", () => {
+          const result = vocabState.results[vocabState.i];
+          result.correct = true;
+          result.selfMarked = true;
+          vocabState.retry = false;
+          paintVocabScore();
+          nextVocabQuestion();
+        });
       }
 
       const next = $v(".next");
@@ -4987,25 +5029,25 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const others = acceptedSentences(item).slice(1);
       const feedback = $s(".feedback");
       feedback.className = "feedback " + (correct ? "good" : "bad");
-      feedback.innerHTML = (correct ? "<strong>맞아요!</strong>" : "<strong>아니에요.</strong>")
+      feedback.innerHTML = (correct
+          ? "<strong>맞아요!</strong>"
+          : '<div class="feedback-head"><strong>아니에요.</strong>'
+            + '<button class="btn secondary count-correct" type="button">Count as correct →</button></div>')
         + "<em>" + esc(answerOf(item)) + "</em>"
         + "<br><small>" + esc(ReadingVocab.romanize(item.ko)) + "</small>"
         + "<br><small>" + esc(item.point.form) + " — " + esc(item.point.meaning) + "</small>"
-        + (others.length ? "<br><small>Also accepted: " + esc(others.join(" · ")) + "</small>" : "")
-        + (correct ? "" : '<div class="finish-actions"><button class="btn secondary count-correct" type="button">'
-          + "My answer was right too — count it</button></div>");
+        + (others.length ? "<br><small>Also accepted: " + esc(others.join(" · ")) + "</small>" : "");
 
       /* A translation has more than one good answer, and no checker catches
-         them all. Rather than argue with the exercise, mark it yourself. */
+         them all. Rather than argue with the exercise, mark it yourself and
+         move straight on to the next sentence. */
       const countCorrect = feedback.querySelector(".count-correct");
       if (countCorrect) {
         countCorrect.addEventListener("click", () => {
           sentenceState.results[sentenceState.i].correct = true;
           sentenceState.results[sentenceState.i].selfMarked = true;
-          countCorrect.disabled = true;
-          countCorrect.textContent = "Counted as correct";
-          feedback.className = "feedback good";
           paintSentenceScore();
+          nextSentenceQuestion();
         });
       }
 
