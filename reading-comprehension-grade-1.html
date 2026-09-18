@@ -408,24 +408,53 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   padding: 14px 18px 18px;
 }
 .section-toolbar .blur-toggle { min-height: 44px; font-size: .84rem; }
-/* The sort control sits in the same row as those toggles, and matches them. */
-.sort-field { display: inline-flex; align-items: center; gap: 8px; }
+/* A zero-height item that eats the rest of a toolbar line, so the sort control
+   below it starts a line of its own. */
+.toolbar-break { flex: 0 0 100%; height: 0; }
+/* The sort control is the quiet one of the row, so it sits under the toggles
+   rather than beside them, and runs smaller. Its left padding is the toggles'
+   own, which puts "Sort" directly under the B of "Blur English". */
+.sort-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 16px;
+}
 .sort-field__label {
-  font-size: .7rem;
+  font-size: .64rem;
   font-weight: 800;
-  letter-spacing: .1em;
+  line-height: 1;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  opacity: .8;
+  opacity: .65;
+}
+/* The select wears its own chevron: the native one cannot be made this small,
+   and a border drawn in currentColor follows the theme for free. */
+.sort-select-wrap { position: relative; display: inline-flex; align-items: center; }
+.sort-select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  opacity: .55;
+  pointer-events: none;
 }
 .sort-select {
-  min-height: 44px;
-  padding: 0 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 36px;
+  padding: 0 28px 0 12px;
   color: var(--surface-text);
   background: var(--surface-muted);
   border: 2px solid transparent;
   border-radius: var(--radius-md);
   font-family: inherit;
-  font-size: .84rem;
+  font-size: .78rem;
   font-weight: 800;
 }
 .sort-select:focus { border-color: var(--primary); outline: none; }
@@ -1247,8 +1276,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .btn.small { width: auto; }
   .exercise-menu-actions .btn, .exercise-menu-actions .export-sep,
   .exercise-menu-actions .export-what, .finish-actions .btn { width: 100%; }
-  .sort-field { flex: 1 1 100%; }
-  .sort-select { flex: 1; min-width: 0; }
+  .sort-field { flex: 1 1 100%; padding-left: 0; }
+  .sort-select-wrap { flex: 1; min-width: 0; }
+  .sort-select { width: 100%; min-height: 44px; }
   .utility-controls { right: 10px; bottom: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3591,11 +3621,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     }
     function sortControl(sectionId, options) {
       const current = sortFor(sectionId, options);
-      return '<label class="sort-field"><span class="sort-field__label">Sort</span>'
+      return '<span class="toolbar-break" aria-hidden="true"></span>'
+        + '<label class="sort-field"><span class="sort-field__label">Sort</span>'
+        + '<span class="sort-select-wrap">'
         + '<select class="sort-select" data-sort-for="' + esc(sectionId) + '" aria-label="Sort this section">'
         + options.map(option => '<option value="' + option.id + '"'
             + (option.id === current ? " selected" : "") + '>' + esc(option.label) + '</option>').join("")
-        + '</select></label>';
+        + '</select></span></label>';
     }
     /* No comparator means the built order. Everything else falls back to it
        when two rows tie, so a sort never shuffles rows it has nothing to say
@@ -3754,8 +3786,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>'
           + '<button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
-          + '<button class="blur-toggle star-all" type="button">Star all</button>'
-          + '<button class="blur-toggle clear-stars" type="button">Clear stars</button>'
+          + '<button class="blur-toggle star-toggle" type="button">Star all</button>'
           + sortControl(group.id, WORD_SORT_OPTIONS)
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
@@ -3766,6 +3797,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         host.querySelectorAll(".vocab-category").forEach(section => {
           section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
           restoreBlur(section);
+          syncStarToggle(section);
         });
         const label = document.getElementById("refModeLabel");
         if (label) label.textContent = REF_MODE_LABELS[refMode];
@@ -3881,8 +3913,28 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         section.querySelectorAll(".familiarity-stars").forEach(group =>
           paintRating(group, ratingOf(group.dataset.wordId)));
       }
-      repaintRatings = () => host.querySelectorAll(".familiarity-stars")
-        .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+      repaintRatings = () => {
+        host.querySelectorAll(".familiarity-stars")
+          .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+        syncStarToggles();
+      };
+      /* One switch for a section's stars, the way the notes have one: it fills
+         the section while anything in it is unstarred, and clears it once every
+         word is. The name it should be wearing lives in dataset.label, which is
+         what a flash message hands back when it fades. */
+      function starsFull(group) {
+        return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === 1);
+      }
+      function syncStarToggle(section) {
+        const button = section.querySelector(".star-toggle");
+        const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+        if (!button || !group) return;
+        button.dataset.label = starsFull(group) ? "Clear stars" : "Star all";
+        if (!button.dataset.resetTimer) button.textContent = button.dataset.label;
+      }
+      function syncStarToggles() {
+        host.querySelectorAll(".vocab-category").forEach(section => syncStarToggle(section));
+      }
 
       /* ---- sort ------------------------------------------------------------
          Changing a section's sort rebuilds that section's rows and nothing
@@ -3967,14 +4019,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         /* Filling or clearing a section's stars does it everywhere, not just on
            the rows on screen: grouped by story one word sits in several
            sections, and the rating belongs to the word, not to the row. */
-        const starAll = event.target.closest(".star-all");
-        const clearButton = event.target.closest(".clear-stars");
-        if (starAll || clearButton) {
-          const button = starAll || clearButton;
+        const button = event.target.closest(".star-toggle");
+        if (button) {
           const section = button.closest(".vocab-category");
           const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
           if (!group) return;
-          const filling = Boolean(starAll);
+          const filling = !starsFull(group);
           const touched = group.words.filter(entry => (ratingOf(entry.id) === 1) !== filling).length;
           group.words.forEach(entry => {
             if (filling) familiarity[entry.id] = 1;
@@ -4008,6 +4058,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           else delete familiarity[group.dataset.wordId];
           saveFamiliarity();
           paintRating(group, next);
+          syncStarToggles();
           return;
         }
         const cell = event.target.closest("[data-vocab-field]");
@@ -4740,8 +4791,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur meaning</button>'
           + '<button class="blur-toggle" type="button" data-field="form" aria-pressed="false">Blur form</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
-          + '<button class="blur-toggle star-all" type="button">Star all</button>'
-          + '<button class="blur-toggle clear-stars" type="button">Clear stars</button>'
+          + '<button class="blur-toggle star-toggle" type="button">Star all</button>'
           + sortControl(group.id, GRAMMAR_SORT_OPTIONS)
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
@@ -4752,6 +4802,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         host.querySelectorAll(".vocab-category").forEach(section => {
           section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
           applyBlur(section);
+          syncStarToggle(section);
         });
         paintCount("");
       }
@@ -4861,6 +4912,23 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       function repaintAllRatings() {
         host.querySelectorAll(".familiarity-stars").forEach(group =>
           paintRating(group, grammarRatingOf(group.dataset.pointId)));
+        syncStarToggles();
+      }
+      /* One switch for a section's stars: fill while anything is unstarred,
+         clear once every point is starred. dataset.label holds the name a
+         flash message gives back when it fades. */
+      function starsFull(group) {
+        return Boolean(group.points.length) && group.points.every(point => grammarRatingOf(point.id) === 1);
+      }
+      function syncStarToggle(section) {
+        const button = section.querySelector(".star-toggle");
+        const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
+        if (!button || !group) return;
+        button.dataset.label = starsFull(group) ? "Clear stars" : "Star all";
+        if (!button.dataset.resetTimer) button.textContent = button.dataset.label;
+      }
+      function syncStarToggles() {
+        host.querySelectorAll(".vocab-category").forEach(section => syncStarToggle(section));
       }
       function flashButton(button, message) {
         if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
@@ -4939,14 +5007,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           syncNotesToggle(section);
           return;
         }
-        const starAll = event.target.closest(".star-all");
-        const clearStars = event.target.closest(".clear-stars");
-        if (starAll || clearStars) {
-          const button = starAll || clearStars;
+        const button = event.target.closest(".star-toggle");
+        if (button) {
           const section = button.closest(".vocab-category");
           const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
           if (!group) return;
-          const filling = Boolean(starAll);
+          const filling = !starsFull(group);
           const touched = group.points.filter(point => (grammarRatingOf(point.id) === 1) !== filling).length;
           group.points.forEach(point => {
             if (filling) grammarFamiliarity[point.id] = 1;
@@ -4974,6 +5040,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           else delete grammarFamiliarity[group.dataset.pointId];
           saveGrammarFamiliarity();
           paintRating(group, next);
+          syncStarToggles();
           return;
         }
         const cell = event.target.closest("[data-vocab-field]");
