@@ -880,6 +880,87 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
 .choice.wrong .choice-letter { color: #192B5D; }
 .choice.faded { opacity: .55; }
 
+/* ---------------------------------------------------------------------------
+   Question drill
+   Two things the other exercises on this page do not have: a sentence with a
+   hole in it, and a puzzle assembled by clicking. Everything else it shows —
+   the card, the choices, the feedback, the review — is the exercise furniture
+   already defined above.
+--------------------------------------------------------------------------- */
+.drill-sentence {
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.95;
+}
+/* Fixed width whatever word is missing, so the size of the gap never says how
+   long the answer is. */
+.drill-blank {
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.drill-passage { margin-bottom: 18px; }
+
+.order-zone { display: grid; gap: 12px; }
+.order-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  min-height: 76px;
+  padding: 12px;
+  background: var(--surface-muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.order-slot:empty::after {
+  content: "여기에 차례대로 놓으세요";
+  font-size: .9rem;
+  font-weight: 700;
+  opacity: .62;
+}
+.order-bank { display: flex; flex-wrap: wrap; gap: 8px; }
+.order-tile {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-height: 52px;
+  padding: 12px 15px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.order-tile:hover:not(:disabled) { color: #192B5D; background: var(--primary); transform: scale(1.02); }
+.order-tile:disabled { cursor: default; }
+.order-tile .order-no {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .74rem;
+  font-weight: 800;
+}
+.order-tile.correct { color: #FFFFFF; background: var(--secondary); border-color: var(--secondary); }
+.order-tile.wrong { color: #FFFFFF; background: var(--accent); border-color: var(--accent); }
+.order-tile.correct .order-no,
+.order-tile.wrong .order-no { color: #192B5D; }
+.order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
 .hint-row { display: grid; gap: 8px; margin: 16px 0; }
 .question-hint {
   display: none;
@@ -1222,6 +1303,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         <a class="toc-link" href="#grammar">Grammar bank</a>
         <a class="toc-link" href="#exercise">Story exercise</a>
         <a class="toc-link" href="#readingExercise">Reading comprehension</a>
+        <a class="toc-link" href="#drill">Question drill</a>
       </div>
     </nav>
 
@@ -1573,6 +1655,103 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         </article>
       </div>
     </details>
+    <details class="section" id="drill" open>
+      <summary>Question drill</summary>
+      <div class="section-body">
+        <article class="exercise" id="drillExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">한국어로만</span>
+              <h3>Question drill</h3>
+              <p>Asked and answered in Korean, start to finish. Nothing to type &mdash; every question is a choice or a puzzle you click together.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="exercise-menu">
+              <h4>Drill setup</h4>
+              <p>Questions are written fresh from this page&rsquo;s own passages, word bank, and grammar bank, so no two runs ask the same set.</p>
+
+              <fieldset class="group-picker">
+                <legend>Passages to draw on</legend>
+                <div class="group-grid" id="drillStoryGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small" type="button" data-drill-all="story">Select all</button>
+                  <button class="btn secondary small" type="button" data-drill-none="story">Select none</button>
+                </div>
+              </fieldset>
+
+              <fieldset class="group-picker">
+                <legend>Kinds of question</legend>
+                <div class="group-grid" id="drillTypeGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small" type="button" data-drill-all="type">Select all</button>
+                  <button class="btn secondary small" type="button" data-drill-none="type">Select none</button>
+                </div>
+              </fieldset>
+
+              <fieldset class="group-picker">
+                <legend>Grammar to include</legend>
+                <p class="wordbank-count">Grammar feeds the fill-in-the-blank questions and the &ldquo;which sentence uses this?&rdquo; ones. Untick a point and it never comes up.</p>
+                <div class="group-grid" id="drillGrammarGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small" type="button" data-drill-all="grammar">Select all</button>
+                  <button class="btn secondary small" type="button" data-drill-none="grammar">Select none</button>
+                </div>
+              </fieldset>
+
+              <div class="exercise-menu-grid story-pick">
+                <label class="wide">Length
+                  <select class="menu-count"></select>
+                </label>
+              </div>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin drill</button>
+              </div>
+              <p class="assistant-status drill-pool-note"></p>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <span class="wordbank-count drill-kind"></span>
+                <button class="btn warning small end-early" type="button">End drill early</button>
+              </div>
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Drill progress" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="story-panel drill-passage hidden">
+                <div class="story-text"></div>
+              </div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+              <p class="drill-sentence hidden"></p>
+
+              <div class="choice-list"></div>
+
+              <div class="order-zone hidden">
+                <div class="order-slot" aria-label="Your order"></div>
+                <div class="order-bank"></div>
+                <div class="order-actions">
+                  <button class="btn primary check-order" type="button" disabled>확인</button>
+                  <button class="btn secondary small reset-order" type="button">다시 놓기</button>
+                </div>
+              </div>
+
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">다음 문제</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+          </div>
+        </article>
+      </div>
+    </details>
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
@@ -1587,6 +1766,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   <script src="./shared-vocab/reading-grammar-2.js?v=1.0.0"></script>
   <script src="./shared-vocab/korean-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
+  <script src="./shared-vocab/drill-questions.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -3688,6 +3868,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>'
           + '<button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + '<button class="blur-toggle star-all" type="button">Star all</button>'
           + '<button class="blur-toggle clear-stars" type="button">Clear stars</button>'
           + sortControl(group.id, WORD_SORT_OPTIONS)
           + '</div>'
@@ -3834,13 +4015,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       });
 
       /* The button says what it just did for a moment before going back to its
-         name, so a click that found no stars still reads as a click that
-         landed. */
-      function flashCleared(button, count) {
+         name, so a click that changed nothing still reads as a click that
+         landed. The name is read off the button, because one helper backs both
+         Star all and Clear stars. */
+      function flashButton(button, message) {
         if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
-        button.textContent = count ? "Cleared " + plural(count, "star", "stars") : "No stars to clear";
+        if (!button.dataset.label) button.dataset.label = button.textContent;
+        button.textContent = message;
         button.dataset.resetTimer = String(setTimeout(() => {
-          button.textContent = "Clear stars";
+          button.textContent = button.dataset.label;
           delete button.dataset.resetTimer;
         }, 1600));
       }
@@ -3895,18 +4078,27 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           applyBlur(section);
           return;
         }
-        /* Clearing a section's stars clears them everywhere, not just on the
-           rows on screen: grouped by story, one word sits in several sections. */
+        /* Filling or clearing a section's stars does it everywhere, not just on
+           the rows on screen: grouped by story one word sits in several
+           sections, and the rating belongs to the word, not to the row. */
+        const starAll = event.target.closest(".star-all");
         const clearButton = event.target.closest(".clear-stars");
-        if (clearButton) {
-          const section = clearButton.closest(".vocab-category");
+        if (starAll || clearButton) {
+          const button = starAll || clearButton;
+          const section = button.closest(".vocab-category");
           const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
           if (!group) return;
-          const cleared = group.words.filter(entry => ratingOf(entry.id) > 0).length;
-          group.words.forEach(entry => { delete familiarity[entry.id]; });
+          const filling = Boolean(starAll);
+          const touched = group.words.filter(entry => (ratingOf(entry.id) === 1) !== filling).length;
+          group.words.forEach(entry => {
+            if (filling) familiarity[entry.id] = 1;
+            else delete familiarity[entry.id];
+          });
           saveFamiliarity();
           repaintRatings();
-          flashCleared(clearButton, cleared);
+          flashButton(button, touched
+            ? (filling ? "Starred " : "Cleared ") + plural(touched, "word", "words")
+            : (filling ? "All starred already" : "No stars to clear"));
           return;
         }
         const notesButton = event.target.closest(".notes-toggle");
@@ -4662,6 +4854,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<button class="blur-toggle" type="button" data-field="meaning" aria-pressed="false">Blur meaning</button>'
           + '<button class="blur-toggle" type="button" data-field="form" aria-pressed="false">Blur form</button>'
           + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + '<button class="blur-toggle star-all" type="button">Star all</button>'
+          + '<button class="blur-toggle clear-stars" type="button">Clear stars</button>'
           + sortControl(group.id, GRAMMAR_SORT_OPTIONS)
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
@@ -4776,6 +4970,21 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         section.querySelectorAll(".familiarity-stars").forEach(group =>
           paintRating(group, grammarRatingOf(group.dataset.pointId)));
       }
+      /* Grouped by story a point sits under every story that uses it, so a
+         rating changed in one place is repainted in all of them. */
+      function repaintAllRatings() {
+        host.querySelectorAll(".familiarity-stars").forEach(group =>
+          paintRating(group, grammarRatingOf(group.dataset.pointId)));
+      }
+      function flashButton(button, message) {
+        if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
+        if (!button.dataset.label) button.dataset.label = button.textContent;
+        button.textContent = message;
+        button.dataset.resetTimer = String(setTimeout(() => {
+          button.textContent = button.dataset.label;
+          delete button.dataset.resetTimer;
+        }, 1600));
+      }
 
       host.addEventListener("change", event => {
         const select = event.target.closest(".sort-select");
@@ -4842,6 +5051,26 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           section.querySelectorAll(".vocab-note-toggle").forEach(button =>
             setNote(button, open && !button.closest("tr").classList.contains("is-hidden")));
           syncNotesToggle(section);
+          return;
+        }
+        const starAll = event.target.closest(".star-all");
+        const clearStars = event.target.closest(".clear-stars");
+        if (starAll || clearStars) {
+          const button = starAll || clearStars;
+          const section = button.closest(".vocab-category");
+          const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
+          if (!group) return;
+          const filling = Boolean(starAll);
+          const touched = group.points.filter(point => (grammarRatingOf(point.id) === 1) !== filling).length;
+          group.points.forEach(point => {
+            if (filling) grammarFamiliarity[point.id] = 1;
+            else delete grammarFamiliarity[point.id];
+          });
+          saveGrammarFamiliarity();
+          repaintAllRatings();
+          flashButton(button, touched
+            ? (filling ? "Starred " : "Cleared ") + plural(touched, "point", "points")
+            : (filling ? "All starred already" : "No stars to clear"));
           return;
         }
         const noteToggle = event.target.closest(".vocab-note-toggle");
@@ -5352,11 +5581,494 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       paintSentenceNote();
     }
 
+
+    /* -----------------------------------------------------------------------
+       QUESTION DRILL
+       The last exercise on the page, and the only one that shows no English
+       once it has started. It asks about a word rather than asking for it —
+       which class it belongs to, which two words it is built from, which word
+       the sentence is missing, what order the sentences go in — and everything
+       it asks is generated by shared-vocab/drill-questions.js out of this
+       page's own passages, word bank, and grammar bank.
+
+       That file writes the questions and draws none of them. This is where
+       they are rendered, using the same exercise card, choices, feedback, and
+       review blocks as every other exercise above.
+    ----------------------------------------------------------------------- */
+    const dEl = document.getElementById("drillExercise");
+    const $d = selector => dEl.querySelector(selector);
+
+    const DRILL_SETUP_KEY = "korean.readingDrillSetup.g2";
+    const DRILL_LENGTHS = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+    const DRILL_ANTONYMS = [
+      ["기쁘다", "슬프다"], ["어렵다", "쉽다"], ["빠르다", "느리다"], ["높다", "낮다"],
+      ["이기다", "지다"], ["들어가다", "나오다"], ["알다", "모르다"], ["옛날", "오늘날"],
+      ["함께", "혼자"], ["잃어버리다", "찾다"], ["넘어지다", "일어서다"],
+      ["시작하다", "그만하다"]
+    ];
+    const DRILL_TYPE_KO = new Map(
+      (window.DrillQuestions ? window.DrillQuestions.TYPES : []).map(type => [type.id, type.ko]));
+
+    let drillBank = null;
+    let drillRun = null;
+
+    /* The banks label a group "명사 · Nouns". The drill wants the Korean half on
+       its own: a question that names the class in English answers itself. */
+    const koreanHalf = label => String(label || "").split(" · ")[0];
+
+    function drillConfig() {
+      return {
+        units: STORIES.map((story, index) => ({
+          id: story.id,
+          label: (index + 1) + ". " + story.title.ko,
+          titleKo: story.title.ko,
+          lines: story.lines.map(line => ({ ko: line.ko }))
+        })),
+        words: BANK_WORDS.map(entry => ({
+          id: entry.id,
+          ko: entry.ko,
+          pos: entry.pos,
+          posKo: koreanHalf(POS_LABELS[entry.pos] || entry.pos),
+          topicId: entry.group,
+          topicKo: koreanHalf(entry.groupLabel || entry.group),
+          unitIds: wordStoryIds(entry),
+          forms: (entry.forms && entry.forms.length) ? entry.forms : [entry.ko]
+        })),
+        grammar: GRAMMAR.POINTS.map(point => ({
+          id: point.id,
+          form: point.form,
+          label: point.name,
+          unitIds: pointStoryIds(point),
+          examples: (point.examples || []).map(example => ({ ko: example.ko }))
+        })),
+        antonyms: DRILL_ANTONYMS,
+        /* Every word's model sentence, filed under the passages that use the
+           word, so the blanks and the chunk puzzles have more to work with than
+           the ten passages on their own. */
+        extras: BANK_WORDS
+          .map(entry => ({ ko: entry.exKo, unitIds: wordStoryIds(entry) }))
+          .filter(item => item.ko && item.unitIds.length)
+      };
+    }
+
+    /* ---- the setup, remembered between visits ---------------------------- */
+    function loadDrillSetup() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(DRILL_SETUP_KEY) || "{}") || {}; }
+      catch (_) { saved = {}; }
+      const pick = (list, every) => {
+        const kept = Array.isArray(list) ? list.filter(id => every.indexOf(id) >= 0) : [];
+        return new Set(kept.length ? kept : every);
+      };
+      return {
+        units: pick(saved.units, STORIES.map(story => story.id)),
+        types: pick(saved.types, window.DrillQuestions.TYPES.map(type => type.id)),
+        grammar: pick(saved.grammar, GRAMMAR.POINTS.map(point => point.id)),
+        count: DRILL_LENGTHS.indexOf(Number(saved.count)) >= 0 ? Number(saved.count) : 20
+      };
+    }
+    function saveDrillSetup(settings) {
+      try {
+        localStorage.setItem(DRILL_SETUP_KEY, JSON.stringify({
+          units: [...settings.units],
+          types: [...settings.types],
+          grammar: [...settings.grammar],
+          count: Number($d(".menu-count").value) || 20
+        }));
+      } catch (_) {}
+    }
+
+    function paintDrillMenu() {
+      const saved = loadDrillSetup();
+      const box = (cls, value, checked, main, note) =>
+        '<label class="exercise-option"><input class="' + cls + '" type="checkbox" value="' + esc(value) + '"'
+        + (checked ? " checked" : "") + '><span>' + main
+        + (note ? '<small>' + esc(note) + '</small>' : "") + '</span></label>';
+
+      document.getElementById("drillStoryGrid").innerHTML = STORIES.map((story, index) =>
+        box("drill-story", story.id, saved.units.has(story.id),
+          (index + 1) + ". " + esc(story.title.ko), story.title.en)).join("");
+
+      document.getElementById("drillTypeGrid").innerHTML = window.DrillQuestions.TYPES.map(type =>
+        box("drill-type", type.id, saved.types.has(type.id),
+          esc(type.ko) + " &middot; " + esc(type.en), type.note)).join("");
+
+      document.getElementById("drillGrammarGrid").innerHTML = GRAMMAR.POINTS.map(point =>
+        box("drill-grammar", point.id, saved.grammar.has(point.id),
+          esc(point.form), point.name)).join("");
+
+      $d(".menu-count").innerHTML = DRILL_LENGTHS.map(length =>
+        '<option value="' + length + '"' + (length === saved.count ? " selected" : "") + '>'
+        + plural(length, "question", "questions") + '</option>').join("");
+    }
+
+    function drillSettings() {
+      const checked = selector => new Set([...dEl.querySelectorAll(selector)].map(input => input.value));
+      return {
+        units: checked(".drill-story:checked"),
+        types: checked(".drill-type:checked"),
+        grammar: checked(".drill-grammar:checked")
+      };
+    }
+
+    /* How many questions the current ticks can produce. Recounted on every
+       change, because the honest answer to "will this be enough?" is a number,
+       and it moves a long way as the passages come on and off. */
+    let drillPoolTimer = null;
+    function paintDrillPool() {
+      clearTimeout(drillPoolTimer);
+      drillPoolTimer = setTimeout(() => {
+        const note = $d(".drill-pool-note");
+        const settings = drillSettings();
+        if (!settings.units.size) { note.textContent = "Tick at least one passage."; return; }
+        if (!settings.types.size) { note.textContent = "Tick at least one kind of question."; return; }
+        const size = drillBank.pool(settings).length;
+        note.textContent = size
+          ? plural(size, "question", "questions") + " can be built from this selection right now, and a different set is drawn every time you begin."
+          : "Nothing can be built from this selection. Tick more passages, or more kinds of question.";
+        saveDrillSetup(settings);
+      }, 140);
+    }
+
+    /* ---- running a drill ------------------------------------------------- */
+    function startDrill() {
+      const settings = drillSettings();
+      if (!settings.units.size || !settings.types.size) { paintDrillPool(); return; }
+      const questions = drillBank.draw(settings, Number($d(".menu-count").value) || 20);
+      if (!questions.length) { paintDrillPool(); return; }
+
+      drillRun = { questions, at: 0, right: 0, locked: false, placed: [], results: [] };
+      $d(".exercise-menu").classList.add("hidden");
+      $d(".finish").classList.add("hidden");
+      $d(".live").classList.remove("hidden");
+      showDrillQuestion();
+      $d(".live").scrollIntoView({ block: "start" });
+    }
+
+    function drillQuestion() { return drillRun.questions[drillRun.at]; }
+
+    function paintDrillScore() {
+      const answered = drillRun ? drillRun.results.filter(Boolean).length : 0;
+      $d(".score").textContent = drillRun
+        ? drillRun.right + " / " + answered + " correct"
+        : "Not started";
+    }
+
+    /* A blank is drawn the same width whatever word is behind it, so the size
+       of the gap never gives the length of the answer away. */
+    function drillSentenceHtml(parts) {
+      return parts.map(part => part.blank !== undefined
+        ? '<span class="drill-blank">' + esc(part.blank) + "◯◯◯</span>"
+        : esc(part.text)).join("");
+    }
+
+    function showDrillQuestion() {
+      const question = drillQuestion();
+      drillRun.locked = false;
+      drillRun.placed = [];
+
+      $d(".count").textContent = "Question " + (drillRun.at + 1) + " of " + drillRun.questions.length;
+      $d(".mode-label").textContent = question.tag;
+      $d(".drill-kind").textContent = DRILL_TYPE_KO.get(question.type) + " · " + question.tag;
+
+      const progress = $d(".progress");
+      progress.firstElementChild.style.width = Math.round((drillRun.at / drillRun.questions.length) * 100) + "%";
+      progress.setAttribute("aria-valuemax", String(drillRun.questions.length));
+      progress.setAttribute("aria-valuenow", String(drillRun.at));
+
+      $d(".prompt-label").textContent = DRILL_TYPE_KO.get(question.type);
+      $d(".prompt").textContent = (drillRun.at + 1) + ". " + question.prompt;
+
+      const passage = $d(".drill-passage");
+      passage.classList.toggle("hidden", !(question.passage && question.passage.length));
+      passage.querySelector(".story-text").innerHTML = (question.passage || [])
+        .map(line => '<span class="story-line">' + esc(line) + "</span>").join("");
+
+      const sentence = $d(".drill-sentence");
+      sentence.classList.toggle("hidden", !question.sentence);
+      sentence.innerHTML = question.sentence ? drillSentenceHtml(question.sentence) : "";
+
+      const list = $d(".choice-list");
+      const zone = $d(".order-zone");
+      if (question.mode === "mc") {
+        zone.classList.add("hidden");
+        /* The puzzle is hidden rather than removed, so its tiles are emptied
+           too — a hidden element holding the previous question's pieces is a
+           trap for anything that reads the card. */
+        zone.querySelector(".order-bank").innerHTML = "";
+        zone.querySelector(".order-slot").innerHTML = "";
+        list.classList.remove("hidden");
+        list.innerHTML = question.choices.map((choice, index) =>
+          '<div class="choice" role="button" tabindex="0" data-drill-choice="' + index + '">'
+          + '<span class="choice-letter">' + LETTERS[index] + '</span>'
+          + '<span class="choice-text">' + esc(choice) + '</span></div>').join("");
+      } else {
+        list.classList.add("hidden");
+        list.innerHTML = "";
+        zone.classList.remove("hidden");
+        zone.querySelector(".order-bank").innerHTML = question.tiles.map((tile, index) =>
+          '<button class="order-tile" type="button" data-drill-tile="' + index + '">'
+          + '<span>' + esc(tile) + '</span></button>').join("");
+        $d(".reset-order").disabled = false;
+        paintDrillOrder();
+      }
+
+      const feedback = $d(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $d(".next").classList.add("hidden");
+      paintDrillScore();
+    }
+
+    function paintDrillOrder() {
+      const question = drillQuestion();
+      $d(".order-slot").innerHTML = drillRun.placed.map((tile, position) =>
+        '<button class="order-tile" type="button" data-drill-placed="' + tile + '">'
+        + '<span class="order-no">' + (position + 1) + '</span>'
+        + '<span>' + esc(question.tiles[tile]) + '</span></button>').join("");
+      $d(".order-bank").querySelectorAll("[data-drill-tile]").forEach(button => {
+        button.classList.toggle("hidden", drillRun.placed.indexOf(Number(button.dataset.drillTile)) >= 0);
+      });
+      $d(".check-order").disabled = drillRun.placed.length !== question.tiles.length;
+    }
+
+    function lockDrillChoice(index) {
+      const question = drillQuestion();
+      if (drillRun.locked) return;
+      drillRun.locked = true;
+
+      const correct = index === question.answer;
+      drillRun.results[drillRun.at] = { correct, given: question.choices[index] };
+      if (correct) drillRun.right += 1;
+
+      $d(".choice-list").querySelectorAll(".choice").forEach(node => {
+        const at = Number(node.dataset.drillChoice);
+        node.classList.add("is-locked");
+        node.setAttribute("aria-disabled", "true");
+        if (at === question.answer) node.classList.add("correct");
+        else if (at === index) node.classList.add("wrong");
+        else node.classList.add("faded");
+      });
+      showDrillFeedback(correct, question.choices[question.answer]);
+    }
+
+    function checkDrillOrder() {
+      const question = drillQuestion();
+      if (drillRun.locked) return;
+      drillRun.locked = true;
+
+      const given = drillRun.placed.map(index => question.tiles[index]);
+      const correct = given.join("") === question.solution.join("");
+      drillRun.results[drillRun.at] = { correct, given: given.join(question.join) };
+      if (correct) drillRun.right += 1;
+
+      $d(".order-slot").querySelectorAll("[data-drill-placed]").forEach((tile, position) => {
+        tile.classList.add(given[position] === question.solution[position] ? "correct" : "wrong");
+        tile.disabled = true;
+      });
+      $d(".order-bank").querySelectorAll("[data-drill-tile]").forEach(tile => { tile.disabled = true; });
+      $d(".check-order").disabled = true;
+      $d(".reset-order").disabled = true;
+      showDrillFeedback(correct, question.solution.join(question.join));
+    }
+
+    function showDrillFeedback(correct, answerText) {
+      const question = drillQuestion();
+      const feedback = $d(".feedback");
+      if (correct) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = "<strong>맞아요!</strong>" + esc(question.why);
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = '<div class="feedback-head"><strong>아니에요.</strong>'
+          + '<button class="btn secondary count-correct" type="button">Count as correct &rarr;</button></div>'
+          + "정답: <em>" + esc(answerText) + "</em>" + (question.why ? "<br>" + esc(question.why) : "");
+
+        /* A word order can be defensible in a way one keyed answer is not.
+           Rather than argue with the exercise, take the point and move on —
+           the same escape hatch the other exercises on this page offer. */
+        feedback.querySelector(".count-correct").addEventListener("click", event => {
+          const result = drillRun.results[drillRun.at];
+          if (!result || result.correct) return;
+          result.correct = true;
+          result.selfMarked = true;
+          drillRun.right += 1;
+          event.currentTarget.disabled = true;
+          event.currentTarget.textContent = "Counted";
+          paintDrillScore();
+        });
+      }
+
+      const next = $d(".next");
+      next.classList.remove("hidden");
+      next.textContent = drillRun.at + 1 >= drillRun.questions.length ? "결과 보기" : "다음 문제";
+      const progress = $d(".progress");
+      progress.firstElementChild.style.width = Math.round(((drillRun.at + 1) / drillRun.questions.length) * 100) + "%";
+      progress.setAttribute("aria-valuenow", String(drillRun.at + 1));
+      paintDrillScore();
+    }
+
+    function nextDrillQuestion() {
+      if (drillRun.at + 1 >= drillRun.questions.length) { finishDrill(); return; }
+      drillRun.at += 1;
+      showDrillQuestion();
+      $d(".live").scrollIntoView({ block: "start" });
+    }
+
+    function showDrillMenu() {
+      drillRun = null;
+      $d(".live").classList.add("hidden");
+      $d(".finish").classList.add("hidden");
+      $d(".exercise-menu").classList.remove("hidden");
+      $d(".score").textContent = "Not started";
+      paintDrillPool();
+      $d(".exercise-menu").scrollIntoView({ block: "start" });
+    }
+
+    function finishDrill() {
+      const answered = drillRun.results.filter(Boolean).length;
+      const right = drillRun.results.filter(result => result && result.correct).length;
+      const percent = answered ? Math.round((right / answered) * 100) : 0;
+
+      const kinds = new Map();
+      drillRun.questions.forEach((question, index) => {
+        const result = drillRun.results[index];
+        if (!result) return;
+        const label = DRILL_TYPE_KO.get(question.type) + " · " + question.tag;
+        const bucket = kinds.get(label) || { right: 0, total: 0 };
+        bucket.total += 1;
+        if (result.correct) bucket.right += 1;
+        kinds.set(label, bucket);
+      });
+
+      const reviewHtml = drillRun.questions.map((question, index) => {
+        const result = drillRun.results[index];
+        const wrong = !result || !result.correct;
+        const answerText = question.mode === "mc"
+          ? question.choices[question.answer]
+          : question.solution.join(question.join);
+        return '<div class="review-item' + (wrong ? " is-wrong" : "") + '">'
+          + '<span class="review-tag">' + esc(DRILL_TYPE_KO.get(question.type)) + " · " + esc(question.tag) + '</span>'
+          + '<span class="review-q">' + (index + 1) + ". " + esc(question.prompt) + '</span>'
+          + (question.sentence ? '<span class="review-line">' + drillSentenceHtml(question.sentence) + '</span>' : "")
+          + '<span class="review-line"><strong>Your answer:</strong> '
+          + (result ? esc(result.given) : "<em>not reached</em>") + '</span>'
+          + '<span class="review-line"><strong>Correct answer:</strong> ' + esc(answerText) + '</span>'
+          + (question.why ? '<span class="review-line">' + esc(question.why) + '</span>' : "")
+          + (result && result.selfMarked ? '<span class="review-line"><em>You counted this one correct yourself.</em></span>' : "")
+          + '</div>';
+      }).join("");
+
+      let message;
+      if (percent === 100) message = "잘했어요! Not one slip.";
+      else if (percent >= 80) message = "Strong. Look at the few you missed and read those lines again.";
+      else if (percent >= 50) message = "A fair run. The word bank above explains everything you missed.";
+      else message = "Take it slowly. Read the passages first, then come back and run a shorter set.";
+
+      $d(".live").classList.add("hidden");
+      const finishEl = $d(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = ''
+        + '<h4>Drill complete</h4>'
+        + '<p>' + esc(message) + '</p>'
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + answered + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + drillRun.questions.length + '</strong><small>Questions drawn</small></div>'
+        + '<div class="summary-tile"><strong>' + kinds.size + '</strong><small>Kinds of question</small></div>'
+        + '</div>'
+        + '<div><h4>How you did by kind</h4><div class="skill-breakdown">'
+        + [...kinds.entries()].map(entry =>
+            '<div class="skill-row"><span>' + esc(entry[0]) + '</span><span>'
+            + entry[1].right + " / " + entry[1].total + '</span></div>').join("")
+        + '</div></div>'
+        + '<div><h4>Question by question</h4><div class="review">' + reviewHtml + '</div></div>'
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Run another set</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      finishEl.querySelector(".again").addEventListener("click", startDrill);
+      finishEl.querySelector(".change-setup").addEventListener("click", showDrillMenu);
+      finishEl.scrollIntoView({ block: "start" });
+      paintDrillScore();
+    }
+
+    function buildDrill() {
+      if (!dEl) return;
+      /* Without the generator there is no exercise, so the card comes out
+         rather than sitting there doing nothing. */
+      if (!window.DrillQuestions || !STORIES.length) { dEl.closest(".section").remove(); return; }
+
+      drillBank = window.DrillQuestions.create(drillConfig());
+      paintDrillMenu();
+
+      $d(".exercise-menu").addEventListener("change", paintDrillPool);
+
+      dEl.addEventListener("click", event => {
+        const all = event.target.closest("[data-drill-all]");
+        const none = event.target.closest("[data-drill-none]");
+        if (all || none) {
+          const which = (all || none).dataset.drillAll || (all || none).dataset.drillNone;
+          dEl.querySelectorAll(".drill-" + which).forEach(input => { input.checked = Boolean(all); });
+          paintDrillPool();
+          return;
+        }
+        if (event.target.closest(".begin")) { startDrill(); return; }
+        if (!drillRun) return;
+
+        if (event.target.closest(".end-early")) {
+          if (drillRun.results.filter(Boolean).length) finishDrill();
+          else showDrillMenu();
+          return;
+        }
+        if (event.target.closest(".next")) { nextDrillQuestion(); return; }
+        if (event.target.closest(".check-order")) { checkDrillOrder(); return; }
+        if (event.target.closest(".reset-order")) {
+          if (drillRun.locked) return;
+          drillRun.placed = [];
+          paintDrillOrder();
+          return;
+        }
+        const placed = event.target.closest("[data-drill-placed]");
+        if (placed) {
+          if (drillRun.locked) return;
+          const index = Number(placed.dataset.drillPlaced);
+          drillRun.placed = drillRun.placed.filter(other => other !== index);
+          paintDrillOrder();
+          return;
+        }
+        const tile = event.target.closest("[data-drill-tile]");
+        if (tile) {
+          if (drillRun.locked) return;
+          const index = Number(tile.dataset.drillTile);
+          if (drillRun.placed.indexOf(index) < 0) drillRun.placed.push(index);
+          paintDrillOrder();
+          return;
+        }
+        const choice = event.target.closest("[data-drill-choice]");
+        if (choice) lockDrillChoice(Number(choice.dataset.drillChoice));
+      });
+
+      /* The choices are divs with a button role, the way they are in the
+         reading exercise above, so they need the keyboard wired by hand. */
+      dEl.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const choice = event.target.closest("[data-drill-choice]");
+        if (!choice || !drillRun) return;
+        event.preventDefault();
+        lockDrillChoice(Number(choice.dataset.drillChoice));
+      });
+
+      paintDrillPool();
+    }
+
     buildMenu();
     buildWordBank();
     buildVocabTest();
     buildGrammarBank();
     buildSentenceExercise();
+    buildDrill();
   })();
   </script>
 

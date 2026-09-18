@@ -542,6 +542,100 @@ textarea:disabled,
   margin-bottom: 4px;
 }
 .feedback-head > :first-child { flex: 1 1 12ch; min-width: 0; margin-bottom: 0; }
+
+/* Question drill: the pieces the typed exercises above have no use for — a
+   passage to read, a sentence with a hole in it, a row of choices, and a
+   puzzle assembled by clicking. The choice styling itself is already defined
+   above; all it needs here is room to wrap, because these choices are whole
+   Korean sentences rather than single words. */
+.drill-choices { display: grid; gap: 10px; margin-top: 18px; }
+.drill-choices .choice {
+  padding: 14px 18px;
+  line-height: 1.8;
+  white-space: normal;
+}
+.drill-passage {
+  margin-top: 22px;
+  padding: 18px 20px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-left: 8px solid var(--primary);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 6px;
+}
+.drill-passage p { margin: 0; font-size: 1.05rem; line-height: 1.85; }
+.drill-sentence {
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.95;
+}
+/* Fixed width whatever word is missing, so the gap never says how long the
+   answer is. */
+.drill-blank { color: var(--accent); font-weight: 800; letter-spacing: .06em; }
+
+.order-zone { display: grid; gap: 12px; margin-top: 18px; }
+.order-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  min-height: 76px;
+  padding: 12px;
+  background: var(--surface-muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.order-slot:empty::after {
+  content: "여기에 차례대로 놓으세요";
+  font-size: .9rem;
+  font-weight: 700;
+  opacity: .62;
+}
+.order-bank { display: flex; flex-wrap: wrap; gap: 8px; }
+.order-tile {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-height: 52px;
+  padding: 12px 15px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.order-tile:hover:not(:disabled) { color: #192B5D; background: var(--primary); transform: scale(1.02); }
+.order-tile:disabled { cursor: default; }
+.order-tile .order-no {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .74rem;
+  font-weight: 800;
+}
+.order-tile.correct { color: #FFFFFF; background: var(--secondary); border-color: var(--secondary); }
+.order-tile.wrong { color: #FFFFFF; background: var(--accent); border-color: var(--accent); }
+.order-tile.correct .order-no,
+.order-tile.wrong .order-no { color: #192B5D; }
+.order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.order-actions .primary-btn,
+.order-actions .btn { width: auto; }
 .feedback-head [data-count-correct] { flex: none; min-height: 40px; padding: 0 14px; font-size: .88rem; }
 html[data-theme="light"] .feedback { color: #FFFFFF; }
 .utility-controls {
@@ -1523,6 +1617,113 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     </details>
 
     <div id="exerciseSections"></div>
+
+    <details class="quiz-section" id="exercise-drill">
+      <summary><span>Exercise 3 &mdash; Question Drill</span></summary>
+      <div class="quiz-body" style="padding: 0;">
+        <div class="exercise-menu" id="menu-drill">
+          <h4>Set up the exercise</h4>
+          <p>The one exercise here that never shows English once it starts, and the one that asks about a word rather than asking for it. Every question is generated from the day&rsquo;s own words, the sentences built on them, and a short passage written for that day &mdash; so no two runs ask the same set.</p>
+
+          <div class="picker">
+            <div class="picker-head">
+              <span class="control-label">Study days</span>
+              <div class="picker-actions">
+                <label class="sr-only" for="drill-from">From day</label>
+                <input class="ref-filter" id="drill-from" type="number" min="1" value="1" style="flex: 0 0 88px; min-height: 38px;">
+                <label class="sr-only" for="drill-to">To day</label>
+                <input class="ref-filter" id="drill-to" type="number" min="1" value="1" style="flex: 0 0 88px; min-height: 38px;">
+                <button class="btn secondary" type="button" id="drill-apply-range">Check range</button>
+                <button class="btn secondary" type="button" data-drill-all="day">All</button>
+                <button class="btn secondary" type="button" data-drill-none="day">None</button>
+              </div>
+            </div>
+            <div class="option-grid days" id="drillDayGrid"></div>
+          </div>
+
+          <div class="picker">
+            <div class="picker-head">
+              <span class="control-label">Kinds of question</span>
+              <div class="picker-actions">
+                <button class="btn secondary" type="button" data-drill-all="type">All</button>
+                <button class="btn secondary" type="button" data-drill-none="type">None</button>
+              </div>
+            </div>
+            <div class="option-grid" id="drillTypeGrid"></div>
+          </div>
+
+          <div class="exercise-menu-grid">
+            <label>Length<small class="menu-count-note">How many questions the run asks</small>
+              <select id="menu-count-drill"></select>
+            </label>
+          </div>
+
+          <div class="menu-summary" id="menu-count-drill-note"></div>
+          <p class="menu-error hidden" id="menu-error-drill">Check at least one study day and one kind of question.</p>
+          <div class="exercise-menu-actions">
+            <button class="primary-btn" type="button" data-drill-start>Start exercise</button>
+          </div>
+        </div>
+
+        <article class="quiz-card hidden" id="quiz-card-drill">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Exercise 3 &middot; 한국어로만</span>
+              <h3>Question Drill</h3>
+            </div>
+            <div class="score" id="score-drill" aria-live="polite">Not started</div>
+          </div>
+          <div class="quiz-body">
+            <div id="live-drill">
+              <div class="runtime-bar">
+                <span class="runtime-timer" id="kind-drill"></span>
+                <button class="restart-top-btn" type="button" data-drill-end>End exercise</button>
+              </div>
+              <div class="status-row">
+                <div id="question-number-drill"></div>
+                <div class="small" id="pool-label-drill"></div>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Exercise progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progress-drill"></div></div>
+
+              <div class="drill-passage hidden" id="passage-drill"></div>
+
+              <div class="prompt-label" id="prompt-label-drill"></div>
+              <p class="prompt" id="prompt-drill"></p>
+              <p class="drill-sentence hidden" id="sentence-drill"></p>
+
+              <div class="drill-choices" id="choices-drill"></div>
+
+              <div class="order-zone hidden" id="order-drill">
+                <div class="order-slot" aria-label="Your order"></div>
+                <div class="order-bank"></div>
+                <div class="order-actions">
+                  <button class="primary-btn" type="button" data-drill-check disabled>확인</button>
+                  <button class="btn secondary" type="button" data-drill-reset>다시 놓기</button>
+                </div>
+              </div>
+
+              <div class="feedback" id="feedback-drill" aria-live="polite"></div>
+              <button class="secondary-btn hidden" type="button" data-drill-next>다음 문제</button>
+            </div>
+
+            <div class="finish-panel" id="finish-drill">
+              <span class="prompt-label">Exercise complete</span>
+              <p class="finish-headline" id="final-drill"></p>
+              <span class="finish-sub" id="final-sub-drill"></span>
+              <div class="finish-block">
+                <h4>How you did by kind</h4>
+                <div id="kinds-drill"></div>
+              </div>
+              <div class="finish-block review" id="review-drill"></div>
+              <div class="finish-actions">
+                <button class="primary-btn" type="button" data-drill-again>Run another set</button>
+                <button class="btn secondary" type="button" data-drill-setup>Back to setup</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </details>
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
@@ -1535,6 +1736,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
+  <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
+  <script src="./shared-vocab/drill-questions.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2041,6 +2244,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
               <button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>
               <button class="notes-toggle" type="button" aria-pressed="false">Open all notes</button>
               <button class="expr-toggle" type="button" aria-pressed="false">Hide expressions</button>
+              <button class="blur-toggle star-all" type="button">Star all</button>
+              <button class="blur-toggle clear-stars" type="button">Clear stars</button>
               ${sortControl(group.sectionId)}
             </div>
             <div class="table-wrap"><table>
@@ -2147,6 +2352,21 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
     function paintAllRatings(scope) {
       scope.querySelectorAll(".familiarity-stars").forEach(group => paintRating(group, familiarity[group.dataset.wordKey] || 0));
+    }
+
+    // Star all and Clear stars say what they just did for a moment before going
+    // back to their name, so a press that changed nothing still reads as a
+    // press that landed.
+    function flashStarButton(button, count, filling) {
+      if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
+      if (!button.dataset.label) button.dataset.label = button.textContent;
+      button.textContent = count
+        ? `${filling ? "Starred" : "Cleared"} ${count} ${count === 1 ? "row" : "rows"}`
+        : (filling ? "All starred already" : "No stars to clear");
+      button.dataset.resetTimer = String(setTimeout(() => {
+        button.textContent = button.dataset.label;
+        delete button.dataset.resetTimer;
+      }, 1600));
     }
 
     // One switch per section for the usage notes, so a whole day can be read
@@ -2267,6 +2487,36 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           blurState[section.dataset.sectionId].expressions = shown;
           saveObject(BLUR_KEY, blurState);
           applyExpressions(section, shown);
+          return;
+        }
+
+        // Checked ahead of the blur toggles, whose class these two share so
+        // that they share its styling. Rows are lazy, so the section's words
+        // come from the group rather than off the screen, and a word's
+        // expressions carry their own star and go with it.
+        const starAll = event.target.closest(".star-all");
+        const clearStars = event.target.closest(".clear-stars");
+        if (starAll || clearStars) {
+          const button = starAll || clearStars;
+          const section = button.closest(".ref-section");
+          const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+          if (!group) return;
+          const filling = Boolean(starAll);
+          const ids = [];
+          group.items.forEach(item => {
+            ids.push(item.id);
+            (item.expressions || []).forEach(expression => ids.push(expression.id));
+          });
+          let touched = 0;
+          ids.forEach(id => {
+            if ((Math.min(1, familiarity[id] || 0) === 1) === filling) return;
+            touched += 1;
+            if (filling) familiarity[id] = 1;
+            else delete familiarity[id];
+          });
+          saveObject(FAMILIARITY_KEY, familiarity);
+          paintAllRatings(container);
+          flashStarButton(button, touched, filling);
           return;
         }
 
@@ -3182,13 +3432,477 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <a class="toc-link" href="#exercise-${exercise.id}">
             <span>${esc(exercise.kicker)} — ${esc(exercise.title)}</span>
             <span>${esc(exercise.title === "By Study Day" ? `${DAYS.length} days` : "practice")}</span>
-          </a>`).join("")}`;
+          </a>`).join("")}
+        <a class="toc-link" href="#exercise-drill"><span>Exercise 3 &mdash; Question Drill</span><span>in Korean</span></a>`;
+    }
+
+
+    // ------------------------------------------------------------ the drill
+    // Exercise 3. Everything it asks is generated by drill-questions.js out of
+    // this page's own material: the day's words, the sentences built on them,
+    // and the short passage written for that day in drill-passages-topik-i.js.
+    // That file writes the questions; this renders them, with the same card,
+    // choices, feedback and review the two exercises above use.
+    //
+    // A unit is a study day, so the day picker here works the way it does in
+    // Exercise 2 — one day, or a range.
+    const DRILL_PASSAGES = (window.TopikIDrillPassages || {}).PASSAGES || [];
+    const DRILL_LENGTHS = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+    const DRILL_SETUP_KEY = "topikIDrillSetupV1";
+
+    // The bank's topics are labelled in English, and a question that names the
+    // group in English answers itself, so the drill gets Korean labels.
+    const DRILL_TOPICS_KO = {
+      "abstract": "생각", "body-health": "몸과 건강", "communication": "말과 소통",
+      "culture-leisure": "문화와 여가", "daily-life": "생활", "description": "모습",
+      "family": "가족", "feelings": "느낌", "food": "음식", "movement": "움직임",
+      "nature-environment": "자연과 환경", "people": "사람", "places": "장소",
+      "quantity-degree": "수와 정도", "shopping-money": "물건과 돈", "society": "사회",
+      "technology": "기술", "time": "시간", "transport": "교통", "weather": "날씨",
+      "work-study": "일과 공부"
+    };
+
+    const DRILL_ANTONYMS = [
+      ["크다", "작다"], ["좋다", "싫다"], ["길다", "짧다"], ["덥다", "춥다"],
+      ["많다", "적다"], ["있다", "없다"], ["가다", "오다"], ["열다", "닫다"],
+      ["사다", "팔다"], ["웃다", "울다"], ["재미있다", "재미없다"], ["맛있다", "맛없다"],
+      ["어렵다", "쉽다"], ["높다", "낮다"], ["싸다", "비싸다"], ["무겁다", "가볍다"],
+      ["위", "밑"], ["앞", "뒤"], ["오른쪽", "왼쪽"], ["남자", "여자"],
+      ["어른", "어린이"], ["안", "밖"]
+    ];
+
+    let drillBank = null;
+    let drillRun = null;
+    const drillEl = id => document.getElementById(id + "-drill");
+    const DRILL_TYPE_KO = new Map(
+      (window.DrillQuestions ? window.DrillQuestions.TYPES : []).map(type => [type.id, type.ko]));
+
+    function drillConfig() {
+      return {
+        units: DRILL_PASSAGES.map(passage => ({
+          id: `day-${passage.day}`,
+          label: `Day ${passage.day}`,
+          titleKo: passage.titleKo,
+          lines: passage.lines.map(line => ({ ko: line }))
+        })),
+        // Auxiliary verbs are stored as the pattern they form, and a pattern is
+        // not a word you can be asked the class of, so they sit this one out.
+        words: BANK.filter(word => word.korean === word.shownKorean).map(word => ({
+          id: word.id,
+          ko: word.korean,
+          pos: word.partOfSpeech,
+          posKo: (POS_BY_ID.get(word.partOfSpeech) || {}).korean || word.partOfSpeech,
+          topicId: word.topic,
+          topicKo: DRILL_TOPICS_KO[word.topic] || word.topic,
+          unitIds: [`day-${word.day}`],
+          forms: [word.korean]
+        })),
+        grammar: null,
+        antonyms: DRILL_ANTONYMS,
+        // Every expression in the bank, filed under its word's day. This is
+        // where the blanks and the chunk puzzles find their four thousand
+        // sentences.
+        extras: EXPRESSIONS.map(expression => ({
+          ko: expression.korean,
+          unitIds: [`day-${expression.day}`]
+        })),
+        // The bank stores dictionary forms, so the surfaces a sentence actually
+        // shows — 먹었어요, 먹고 — are read back off the sentences themselves.
+        mineSurfaces: true
+      };
+    }
+
+    function loadDrillSetup() {
+      const saved = loadObject(DRILL_SETUP_KEY);
+      const pick = (list, every) => {
+        const kept = Array.isArray(list) ? list.filter(id => every.includes(id)) : [];
+        return new Set(kept.length ? kept : every);
+      };
+      return {
+        units: pick(saved.units, DRILL_PASSAGES.map(passage => `day-${passage.day}`)),
+        types: pick(saved.types, window.DrillQuestions.TYPES.map(type => type.id)),
+        count: DRILL_LENGTHS.includes(Number(saved.count)) ? Number(saved.count) : 20
+      };
+    }
+
+    function paintDrillMenu() {
+      const saved = loadDrillSetup();
+      document.getElementById("drillDayGrid").innerHTML = DRILL_PASSAGES.map(passage => `
+        <label class="option">
+          <input type="checkbox" data-drill-group="day" value="day-${passage.day}"${saved.units.has(`day-${passage.day}`) ? " checked" : ""}>
+          <span>Day ${passage.day}</span>
+        </label>`).join("");
+
+      document.getElementById("drillTypeGrid").innerHTML = window.DrillQuestions.TYPES.map(type => `
+        <label class="option">
+          <input type="checkbox" data-drill-group="type" value="${esc(type.id)}"${saved.types.has(type.id) ? " checked" : ""}>
+          <span>${esc(type.ko)} — ${esc(type.en)}</span>
+        </label>`).join("");
+
+      document.getElementById("menu-count-drill").innerHTML = DRILL_LENGTHS.map(length =>
+        `<option value="${length}"${length === saved.count ? " selected" : ""}>${length} questions</option>`).join("");
+
+      const from = document.getElementById("drill-from");
+      const to = document.getElementById("drill-to");
+      const last = DRILL_PASSAGES.length;
+      [from, to].forEach(input => { input.max = String(last); });
+      to.value = String(last);
+    }
+
+    function drillSettings() {
+      const checked = kind => new Set([...document.querySelectorAll(`input[data-drill-group="${kind}"]:checked`)]
+        .map(input => input.value));
+      return { units: checked("day"), types: checked("type"), grammar: new Set() };
+    }
+
+    function saveDrillSetup(settings) {
+      saveObject(DRILL_SETUP_KEY, {
+        units: [...settings.units],
+        types: [...settings.types],
+        count: Number(document.getElementById("menu-count-drill").value) || 20
+      });
+    }
+
+    // How many questions the current ticks can produce, recounted on every
+    // change the way Exercise 1 and 2 recount their word pools.
+    let drillPoolTimer = null;
+    function refreshDrillCount() {
+      clearTimeout(drillPoolTimer);
+      drillPoolTimer = setTimeout(() => {
+        const note = document.getElementById("menu-count-drill-note");
+        const error = document.getElementById("menu-error-drill");
+        const settings = drillSettings();
+        if (!settings.units.size || !settings.types.size) {
+          note.textContent = "";
+          note.classList.add("empty");
+          error.classList.remove("hidden");
+          return;
+        }
+        error.classList.add("hidden");
+        const size = drillBank.pool(settings).length;
+        note.classList.toggle("empty", size === 0);
+        note.textContent = size
+          ? `${size} questions can be built from this selection right now, and a different set is drawn every time you start.`
+          : "Nothing can be built from this selection. Check more days, or more kinds of question.";
+        saveDrillSetup(settings);
+      }, 140);
+    }
+
+    function startDrill() {
+      const settings = drillSettings();
+      const error = document.getElementById("menu-error-drill");
+      if (!settings.units.size || !settings.types.size) { error.classList.remove("hidden"); return; }
+      const questions = drillBank.draw(settings, Number(document.getElementById("menu-count-drill").value) || 20);
+      if (!questions.length) { error.classList.remove("hidden"); return; }
+      error.classList.add("hidden");
+
+      drillRun = { questions, at: 0, right: 0, locked: false, placed: [], results: [] };
+      document.getElementById("menu-drill").classList.add("hidden");
+      document.getElementById("quiz-card-drill").classList.remove("hidden");
+      drillEl("live").classList.remove("hidden");
+      drillEl("finish").classList.remove("shown");
+      showDrillQuestion();
+      document.getElementById("quiz-card-drill").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function drillQuestion() { return drillRun.questions[drillRun.at]; }
+
+    function paintDrillScore() {
+      const answered = drillRun ? drillRun.results.filter(Boolean).length : 0;
+      drillEl("score").textContent = drillRun ? `${drillRun.right} / ${answered} correct` : "Not started";
+    }
+
+    // A blank is drawn the same width whatever word is behind it, so the size
+    // of the gap never gives the length of the answer away.
+    function drillSentenceHtml(parts) {
+      return parts.map(part => part.blank !== undefined
+        ? `<span class="drill-blank">${esc(part.blank)}◯◯◯</span>`
+        : esc(part.text)).join("");
+    }
+
+    function showDrillQuestion() {
+      const question = drillQuestion();
+      drillRun.locked = false;
+      drillRun.placed = [];
+
+      drillEl("question-number").textContent = `Question ${drillRun.at + 1} of ${drillRun.questions.length}`;
+      drillEl("pool-label").textContent = question.tag;
+      drillEl("kind").textContent = `${DRILL_TYPE_KO.get(question.type)} · ${question.tag}`;
+      drillEl("progress").style.width = `${Math.round((drillRun.at / drillRun.questions.length) * 100)}%`;
+      drillEl("prompt-label").textContent = DRILL_TYPE_KO.get(question.type);
+      drillEl("prompt").textContent = `${drillRun.at + 1}. ${question.prompt}`;
+
+      const passage = drillEl("passage");
+      passage.classList.toggle("hidden", !(question.passage && question.passage.length));
+      passage.innerHTML = (question.passage || []).map(line => `<p>${esc(line)}</p>`).join("");
+
+      const sentence = drillEl("sentence");
+      sentence.classList.toggle("hidden", !question.sentence);
+      sentence.innerHTML = question.sentence ? drillSentenceHtml(question.sentence) : "";
+
+      const choices = drillEl("choices");
+      const order = drillEl("order");
+      if (question.mode === "mc") {
+        order.classList.add("hidden");
+        // Hidden rather than removed, so its tiles are emptied too: a hidden
+        // element still holding the last question's pieces is a trap for
+        // anything that reads the card.
+        order.querySelector(".order-bank").innerHTML = "";
+        order.querySelector(".order-slot").innerHTML = "";
+        choices.classList.remove("hidden");
+        choices.innerHTML = question.choices.map((choice, index) =>
+          `<button class="choice" type="button" data-drill-choice="${index}">${esc(choice)}</button>`).join("");
+      } else {
+        choices.classList.add("hidden");
+        choices.innerHTML = "";
+        order.classList.remove("hidden");
+        order.querySelector(".order-bank").innerHTML = question.tiles.map((tile, index) =>
+          `<button class="order-tile" type="button" data-drill-tile="${index}"><span>${esc(tile)}</span></button>`).join("");
+        order.querySelector("[data-drill-reset]").disabled = false;
+        paintDrillOrder();
+      }
+
+      const feedback = drillEl("feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      document.querySelector("[data-drill-next]").classList.add("hidden");
+      paintDrillScore();
+    }
+
+    function paintDrillOrder() {
+      const question = drillQuestion();
+      const order = drillEl("order");
+      order.querySelector(".order-slot").innerHTML = drillRun.placed.map((tile, position) =>
+        `<button class="order-tile" type="button" data-drill-placed="${tile}"><span class="order-no">${position + 1}</span><span>${esc(question.tiles[tile])}</span></button>`).join("");
+      order.querySelectorAll("[data-drill-tile]").forEach(button => {
+        button.classList.toggle("hidden", drillRun.placed.includes(Number(button.dataset.drillTile)));
+      });
+      order.querySelector("[data-drill-check]").disabled = drillRun.placed.length !== question.tiles.length;
+    }
+
+    function lockDrillChoice(index) {
+      const question = drillQuestion();
+      if (drillRun.locked) return;
+      drillRun.locked = true;
+
+      const correct = index === question.answer;
+      drillRun.results[drillRun.at] = { correct, given: question.choices[index] };
+      if (correct) drillRun.right += 1;
+
+      drillEl("choices").querySelectorAll(".choice").forEach(button => {
+        const at = Number(button.dataset.drillChoice);
+        button.disabled = true;
+        if (at === question.answer) button.classList.add("correct");
+        else if (at === index) button.classList.add("wrong");
+      });
+      showDrillFeedback(correct, question.choices[question.answer]);
+    }
+
+    function checkDrillOrder() {
+      const question = drillQuestion();
+      if (drillRun.locked) return;
+      drillRun.locked = true;
+
+      const given = drillRun.placed.map(index => question.tiles[index]);
+      const correct = given.join("") === question.solution.join("");
+      drillRun.results[drillRun.at] = { correct, given: given.join(question.join) };
+      if (correct) drillRun.right += 1;
+
+      const order = drillEl("order");
+      order.querySelectorAll("[data-drill-placed]").forEach((tile, position) => {
+        tile.classList.add(given[position] === question.solution[position] ? "correct" : "wrong");
+        tile.disabled = true;
+      });
+      order.querySelectorAll("[data-drill-tile]").forEach(tile => { tile.disabled = true; });
+      order.querySelector("[data-drill-check]").disabled = true;
+      order.querySelector("[data-drill-reset]").disabled = true;
+      showDrillFeedback(correct, question.solution.join(question.join));
+    }
+
+    function showDrillFeedback(correct, answerText) {
+      const question = drillQuestion();
+      const feedback = drillEl("feedback");
+      if (correct) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = `<strong>맞아요!</strong> ${esc(question.why)}`;
+      } else {
+        feedback.className = "feedback bad";
+        feedback.innerHTML = `
+          <div class="feedback-head">
+            <strong>아니에요.</strong>
+            <button class="btn secondary" type="button" data-count-correct>Count as correct →</button>
+          </div>
+          정답: <strong>${esc(answerText)}</strong>${question.why ? `<br>${esc(question.why)}` : ""}`;
+
+        // A word order can be defensible in a way one keyed answer is not, so
+        // rather than argue with the exercise you take the point and move on —
+        // the same escape hatch the exercises above offer.
+        feedback.querySelector("[data-count-correct]").addEventListener("click", event => {
+          const result = drillRun.results[drillRun.at];
+          if (!result || result.correct) return;
+          result.correct = true;
+          result.selfMarked = true;
+          drillRun.right += 1;
+          event.currentTarget.disabled = true;
+          event.currentTarget.textContent = "Counted";
+          paintDrillScore();
+        });
+      }
+
+      const next = document.querySelector("[data-drill-next]");
+      next.classList.remove("hidden");
+      next.textContent = drillRun.at + 1 >= drillRun.questions.length ? "결과 보기" : "다음 문제";
+      drillEl("progress").style.width = `${Math.round(((drillRun.at + 1) / drillRun.questions.length) * 100)}%`;
+      paintDrillScore();
+    }
+
+    function nextDrillQuestion() {
+      if (drillRun.at + 1 >= drillRun.questions.length) { finishDrill(); return; }
+      drillRun.at += 1;
+      showDrillQuestion();
+    }
+
+    function showDrillMenu() {
+      drillRun = null;
+      document.getElementById("menu-drill").classList.remove("hidden");
+      document.getElementById("quiz-card-drill").classList.add("hidden");
+      drillEl("finish").classList.remove("shown");
+      drillEl("score").textContent = "Not started";
+      refreshDrillCount();
+      document.getElementById("menu-drill").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function finishDrill() {
+      const answered = drillRun.results.filter(Boolean).length;
+      const right = drillRun.results.filter(result => result && result.correct).length;
+      const percent = answered ? Math.round((right / answered) * 100) : 0;
+
+      const kinds = new Map();
+      drillRun.questions.forEach((question, index) => {
+        const result = drillRun.results[index];
+        if (!result) return;
+        const label = `${DRILL_TYPE_KO.get(question.type)} · ${question.tag}`;
+        const bucket = kinds.get(label) || { right: 0, total: 0 };
+        bucket.total += 1;
+        if (result.correct) bucket.right += 1;
+        kinds.set(label, bucket);
+      });
+
+      drillEl("live").classList.add("hidden");
+      drillEl("finish").classList.add("shown");
+      drillEl("final").textContent = `${right} / ${answered} correct · ${percent}%`;
+      drillEl("final-sub").textContent =
+        `${drillRun.questions.length} questions drawn across ${kinds.size} kinds`;
+
+      drillEl("kinds").innerHTML = [...kinds.entries()].map(entry => `
+        <div class="review-row">
+          <div><strong>${esc(entry[0])}</strong></div>
+          <div>${entry[1].right} / ${entry[1].total}</div>
+        </div>`).join("");
+
+      drillEl("review").innerHTML = `
+        <h3>Review</h3>
+        ${drillRun.questions.map((question, index) => {
+          const result = drillRun.results[index];
+          const answerText = question.mode === "mc"
+            ? question.choices[question.answer]
+            : question.solution.join(question.join);
+          const status = result ? (result.selfMarked ? "✓" : (result.correct ? "✅" : "❌")) : "—";
+          return `
+            <div class="review-row">
+              <div><strong>${index + 1}. ${esc(question.prompt)}</strong>${question.sentence ? `<br><span class="small">${drillSentenceHtml(question.sentence)}</span>` : ""}<br><span class="small">Your answer: ${result ? esc(result.given) : "not reached"}</span></div>
+              <div>${status} <strong>${esc(answerText)}</strong>${question.why ? `<br><span class="small">${esc(question.why)}</span>` : ""}</div>
+            </div>`;
+        }).join("")}`;
+
+      document.getElementById("quiz-card-drill").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      paintDrillScore();
+    }
+
+    function renderDrill() {
+      const section = document.getElementById("exercise-drill");
+      // Without the generator or the passages there is no exercise, so the
+      // section comes out rather than sitting there empty.
+      if (!section || !window.DrillQuestions || !DRILL_PASSAGES.length) {
+        if (section) section.remove();
+        return;
+      }
+
+      drillBank = window.DrillQuestions.create(drillConfig());
+      paintDrillMenu();
+
+      document.getElementById("drill-apply-range").addEventListener("click", () => {
+        const from = Number(document.getElementById("drill-from").value) || 1;
+        const to = Number(document.getElementById("drill-to").value) || from;
+        const low = Math.min(from, to);
+        const high = Math.max(from, to);
+        document.querySelectorAll('input[data-drill-group="day"]').forEach(input => {
+          const day = Number(input.value.replace("day-", ""));
+          input.checked = day >= low && day <= high;
+        });
+        refreshDrillCount();
+      });
+
+      section.addEventListener("change", event => {
+        if (event.target.matches('input[data-drill-group], #menu-count-drill')) refreshDrillCount();
+      });
+
+      section.addEventListener("click", event => {
+        const all = event.target.closest("[data-drill-all]");
+        const none = event.target.closest("[data-drill-none]");
+        if (all || none) {
+          const kind = (all || none).dataset.drillAll || (all || none).dataset.drillNone;
+          document.querySelectorAll(`input[data-drill-group="${kind}"]`).forEach(input => {
+            input.checked = Boolean(all);
+          });
+          refreshDrillCount();
+          return;
+        }
+        if (event.target.closest("[data-drill-start]")) { startDrill(); return; }
+        if (event.target.closest("[data-drill-again]")) { startDrill(); return; }
+        if (event.target.closest("[data-drill-setup]")) { showDrillMenu(); return; }
+        if (!drillRun) return;
+
+        if (event.target.closest("[data-drill-end]")) {
+          if (drillRun.results.filter(Boolean).length) finishDrill();
+          else showDrillMenu();
+          return;
+        }
+        if (event.target.closest("[data-drill-next]")) { nextDrillQuestion(); return; }
+        if (event.target.closest("[data-drill-check]")) { checkDrillOrder(); return; }
+        if (event.target.closest("[data-drill-reset]")) {
+          if (drillRun.locked) return;
+          drillRun.placed = [];
+          paintDrillOrder();
+          return;
+        }
+        const placed = event.target.closest("[data-drill-placed]");
+        if (placed) {
+          if (drillRun.locked) return;
+          drillRun.placed = drillRun.placed.filter(other => other !== Number(placed.dataset.drillPlaced));
+          paintDrillOrder();
+          return;
+        }
+        const tile = event.target.closest("[data-drill-tile]");
+        if (tile) {
+          if (drillRun.locked) return;
+          const index = Number(tile.dataset.drillTile);
+          if (!drillRun.placed.includes(index)) drillRun.placed.push(index);
+          paintDrillOrder();
+          return;
+        }
+        const choice = event.target.closest("[data-drill-choice]");
+        if (choice) lockDrillChoice(Number(choice.dataset.drillChoice));
+      });
+
+      refreshDrillCount();
     }
 
     renderStats();
     renderTOC();
     renderReference();
     renderExercises();
+    renderDrill();
   })();
   </script>
   <script>
