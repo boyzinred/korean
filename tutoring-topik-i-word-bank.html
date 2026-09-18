@@ -145,7 +145,7 @@ summary:focus-visible {
 }
 .header-inner,
 .page-main {
-  width: min(1120px, calc(100% - 40px));
+  width: min(1320px, calc(100% - 40px));
   margin-inline: auto;
 }
 .header-inner {
@@ -332,7 +332,7 @@ details.quiz-section:not([open]) > summary::after { content: "Expand"; }
 .section-body,
 .block-inner,
 .quiz-body {
-  padding: clamp(26px, 5vw, 64px);
+  padding: clamp(18px, 3vw, 40px);
   color: var(--surface-text);
   background: var(--surface);
 }
@@ -749,6 +749,45 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 }
 .guide-card p,
 .note-card p { margin: 0 0 10px; }
+/* A walkthrough is read a few times and then known, so its card folds shut and
+   stops pushing the tables under it down the page. It wears the same
+   Collapse/Expand pill the big sections do, one size smaller. */
+.guide-card > summary {
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.guide-card > summary::-webkit-details-marker { display: none; }
+.guide-card > summary h3 { margin: 0; }
+.guide-card[open] > summary { margin-bottom: 10px; }
+.guide-card > summary::after {
+  content: "Collapse";
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  color: #192B5D;
+  background: #FFFFFF;
+  border: 2px solid #192B5D;
+  border-radius: var(--radius-md);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.guide-card:not([open]) > summary::after { content: "Expand"; }
+/* A shut card is not stretched to a tall neighbour's height, and the two of
+   them shut to the same height: the bar is a fixed size and a title that would
+   have wrapped onto a second line is kept on one. */
+.guide-grid > .guide-card:not([open]) { align-self: start; }
+.guide-card:not([open]) > summary h3 {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .mini-list {
   display: grid;
   gap: 8px;
@@ -808,6 +847,21 @@ html[data-theme='dark'] th {
   color: var(--surface-text);
   background: var(--muted-strong);
 }
+/* Every cell centres on its own column, headers included, so a column reads as
+   one straight line from top to bottom. */
+.ref-section table {
+  width: 100%;
+  /* Fixed layout so the five content columns split the width evenly instead of
+     each one sizing to its longest word. The ＋ is left out of that split: it
+     takes a narrow strip on the far left and the button sits in the middle of
+     it, which is why the columns no longer start off-centre. */
+  table-layout: fixed;
+}
+.ref-section th,
+.ref-section td { text-align: center; vertical-align: middle; }
+.ref-section .word-tags { justify-content: center; }
+/* The small print under a row is prose, and prose still reads from the left. */
+.ref-section .vocab-note-row > td { text-align: left; }
 .roman {
   color: var(--primary);
   font-weight: 800;
@@ -1011,9 +1065,10 @@ html[data-theme='dark'] th {
   opacity: .85;
 }
 /* Per-word usage notes: a toggle in the first column opens the row below it. */
-.vocab-note-head { width: 3.5rem; }
+.vocab-note-head { width: 4.5rem; }
 .vocab-note-cell {
-  width: 3.5rem;
+  width: 4.5rem;
+  padding-left: 0;
   padding-right: 0;
   vertical-align: middle;
 }
@@ -1022,6 +1077,9 @@ html[data-theme='dark'] th {
   height: 34px;
   display: grid;
   place-items: center;
+  /* A grid box is block-level, so the cell's text-align does nothing for it —
+     auto side margins are what put it in the middle of its strip. */
+  margin-inline: auto;
   padding: 0;
   color: #192B5D;
   background: var(--primary);
@@ -1576,13 +1634,14 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 .expr-row + .vocab-note-row td {
   border-left: 4px solid var(--secondary);
 }
-.expr-row td:first-child { padding-left: 26px; }
 .expr-row + .vocab-note-row td { padding-left: 52px; }
-.expr-row td:nth-child(2) { position: relative; padding-left: 52px; }
+/* Equal pads either side, so the sentence still centres on its column while the
+   ↳ that marks it stays pinned to the left edge of the cell. */
+.expr-row td:nth-child(2) { position: relative; padding-left: 30px; padding-right: 30px; }
 .expr-row td:nth-child(2)::before {
   content: "\21B3";
   position: absolute;
-  left: 26px;
+  left: 10px;
   opacity: .55;
   font-weight: 800;
 }
@@ -1625,22 +1684,22 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       <summary><span>The Word Bank &mdash; All 1358, by <span id="refModeLabel">Part of Speech</span></span></summary>
       <div class="block-inner">
         <div class="guide-grid">
-          <article class="guide-card">
-            <h3>Days 1&ndash;27 &mdash; Learn</h3>
+          <details class="guide-card" open>
+            <summary><h3>Days 1&ndash;27 &mdash; Learn</h3></summary>
             <p>Every study day is <strong>two separate runs</strong> of Exercise 2. Do not put them in one selection: mixing 50 unfamiliar words into 200 familiar ones hides how the new batch actually went.</p>
             <p><strong>Run 1, the new batch.</strong> Tick today's day only. Tick <em>Korean</em> for the question language and <em>English</em> for the answer. Leave &ldquo;Retry a word until it is right&rdquo; on. 50 words.</p>
             <p><strong>Run 2, the review.</strong> Tick four boxes &mdash; the days <strong>1, 3, 7 and 16 back</strong> &mdash; and leave today's unticked. Tick <em>English</em> for the question language and <em>Korean</em> for the answer, because recall is the direction that fails first. (Tick more than one box on either side and the run mixes directions, telling you on every question which language to answer in.) Set <em>Word limit</em> to 60 so a ~200 word pool becomes a random 60, and put 15 in <em>Timer in minutes</em>.</p>
             <p>On day 20 that is: run 1 = day 20; run 2 = days 19, 17, 13 and 4. Early on there is nothing 16 back, so tick only the boxes that exist.</p>
-          </article>
-          <article class="guide-card">
-            <h3>Days 28&ndash;41 &mdash; Consolidate</h3>
+          </details>
+          <details class="guide-card" open>
+            <summary><h3>Days 28&ndash;41 &mdash; Consolidate</h3></summary>
             <p>No new words &mdash; the bank stops at day 27. This fortnight is two full passes over all 1358, then the leftovers. Use <em>Check range</em> for the blocks.</p>
             <p><strong>Days 28&ndash;32, pass one.</strong> Korean &rarr; English. One block a day: days 1&ndash;6, 7&ndash;11, 12&ndash;17, 18&ndash;22, 23&ndash;27. About 270 words each, 25 minutes on the timer.</p>
             <p><strong>Days 33&ndash;37, pass two.</strong> Same five blocks, but English &rarr; Korean. Harder, and the direction the writing paper needs.</p>
             <p><strong>Days 38&ndash;40, the leftovers.</strong> Every run ends with a <em>Words to review</em> box holding what you missed. Press <strong>Send to paste practice</strong> and it carries them to the Paste Your Own List page, where you drill just those until a run comes back clean.</p>
             <p><strong>Day 41, rehearsal.</strong> Tick <em>All</em> days, <em>Word limit</em> 100, timer 20, Korean &rarr; English. A random hundred out of the whole bank is a fair read on where you actually stand.</p>
             <p>Two weeks is the shortest tail worth running: it is what gives the words you met on day 27 a fortnight-wide gap before the exam. Ending at day 41 leaves about two and a half weeks of slack in a two-month run.</p>
-          </article>
+          </details>
         </div>
         <div id="referenceTables"></div>
       </div>
@@ -2399,8 +2458,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
     // One switch for the stars, the way expressions have one: it fills the
     // section while anything in it is unstarred, and clears it once
-    // everything is starred. Its name is kept in dataset.label so a flash
-    // message can hand the button back the name it should have by then.
+    // everything is starred. Pressing it just does the thing and renames
+    // itself.
     function starsFull(group) {
       const ids = starIds(group);
       return Boolean(ids.length) && ids.every(isStarred);
@@ -2409,26 +2468,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const button = section.querySelector(".star-toggle");
       const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
       if (!button || !group) return;
-      button.dataset.label = starsFull(group) ? "Clear stars" : "Star all";
-      if (!button.dataset.resetTimer) button.textContent = button.dataset.label;
+      button.textContent = starsFull(group) ? "Clear stars" : "Star all";
     }
     function syncStarToggles() {
       document.querySelectorAll("#referenceTables .ref-section").forEach(section => syncStarToggle(section));
-    }
-
-    // The star switch says what it just did for a moment before going back to
-    // its name, so a press that changed nothing still reads as a press that
-    // landed. paintAllRatings has already refreshed dataset.label by then.
-    function flashStarButton(button, count, filling) {
-      if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
-      if (!button.dataset.label) button.dataset.label = button.textContent;
-      button.textContent = count
-        ? `${filling ? "Starred" : "Cleared"} ${count} ${count === 1 ? "row" : "rows"}`
-        : (filling ? "All starred already" : "No stars to clear");
-      button.dataset.resetTimer = String(setTimeout(() => {
-        button.textContent = button.dataset.label;
-        delete button.dataset.resetTimer;
-      }, 1600));
     }
 
     // One switch per section for the usage notes, so a whole day can be read
@@ -2564,16 +2607,12 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           if (!group) return;
           const ids = starIds(group);
           const filling = !starsFull(group);
-          let touched = 0;
           ids.forEach(id => {
-            if (isStarred(id) === filling) return;
-            touched += 1;
             if (filling) familiarity[id] = 1;
             else delete familiarity[id];
           });
           saveObject(FAMILIARITY_KEY, familiarity);
           paintAllRatings(container);
-          flashStarButton(starButton, touched, filling);
           return;
         }
 
@@ -4110,9 +4149,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           return;
         }
         const stop = list[index];
-        for (let node = stop.node; node; node = node.parentElement) {
-          if (node.tagName === "DETAILS") node.open = true;
-        }
+        /* A collapsed section is left collapsed: the arrows move the page, they
+           do not decide what is open. The jump still lands on its heading. */
         jumped = { index: index, at: Date.now() };
         /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
            section in the address bar, and lets anything watching for a hash

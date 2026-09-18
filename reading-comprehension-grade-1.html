@@ -146,7 +146,7 @@ summary:focus-visible,
 }
 .header-inner,
 .page-main {
-  width: min(1120px, calc(100% - 40px));
+  width: min(1320px, calc(100% - 40px));
   margin-inline: auto;
 }
 .header-inner {
@@ -253,7 +253,7 @@ details.section:not([open]) > summary::after { content: "Expand"; }
 .section-body {
   display: grid;
   gap: 22px;
-  padding: clamp(26px, 5vw, 64px);
+  padding: clamp(18px, 3vw, 40px);
   color: var(--surface-text);
   background: var(--surface);
 }
@@ -361,7 +361,21 @@ td .roman { opacity: .78; }
 }
 html[data-theme="light"] .vocab-category > summary .vocab-category-count { color: #FFFFFF; opacity: 1; }
 .vocab-category .table-wrap { border: 0; border-radius: 0; }
-.vocab-category table { min-width: 720px; }
+/* Every cell centres on its own column, headers included, so a column reads as
+   one straight line from top to bottom. */
+.vocab-category table {
+  width: 100%;
+  min-width: 720px;
+  /* Fixed layout so the five content columns split the width evenly instead of
+     each one sizing to its longest word. The ＋ is left out of that split: it
+     takes a narrow strip on the far left and the button sits in the middle of
+     it, which is why the columns no longer start off-centre. */
+  table-layout: fixed;
+}
+.vocab-category th,
+.vocab-category td { text-align: center; vertical-align: middle; }
+/* The small print under a row is prose, and prose still reads from the left. */
+.vocab-category .vocab-note-row > td { text-align: left; }
 
 /* The word bank toolbar: how the same words are regrouped, and the search that
    runs across every group at once. */
@@ -468,7 +482,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 /* The ＋ on a row opens that word's small print underneath it: how the word
    behaves, and one model sentence in all three scripts. */
 .vocab-note-head, .vocab-note-cell {
-  width: 3.5rem;
+  width: 4.5rem;
   padding-left: 0;
   padding-right: 0;
   text-align: center;
@@ -481,6 +495,9 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   height: 2.125rem;
   display: grid;
   place-items: center;
+  /* A grid box is block-level, so the cell's text-align does nothing for it —
+     auto side margins are what put it in the middle of its strip. */
+  margin-inline: auto;
   padding: 0;
   line-height: 1;
   color: var(--surface-text);
@@ -494,7 +511,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 .vocab-note-toggle:hover { transform: scale(1.08); }
 .vocab-note-toggle[aria-expanded="true"] { color: #192B5D; background: var(--primary); }
 .vocab-note-row > td {
-  padding: 2px 3.5rem 20px;
+  padding: 2px 4.5rem 20px;
   background: var(--surface-muted);
 }
 .word-note { display: grid; gap: 10px; }
@@ -3920,8 +3937,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       };
       /* One switch for a section's stars, the way the notes have one: it fills
          the section while anything in it is unstarred, and clears it once every
-         word is. The name it should be wearing lives in dataset.label, which is
-         what a flash message hands back when it fades. */
+         word is. Pressing it just does the thing and renames itself. */
       function starsFull(group) {
         return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === 1);
       }
@@ -3929,8 +3945,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         const button = section.querySelector(".star-toggle");
         const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
         if (!button || !group) return;
-        button.dataset.label = starsFull(group) ? "Clear stars" : "Star all";
-        if (!button.dataset.resetTimer) button.textContent = button.dataset.label;
+        button.textContent = starsFull(group) ? "Clear stars" : "Star all";
       }
       function syncStarToggles() {
         host.querySelectorAll(".vocab-category").forEach(section => syncStarToggle(section));
@@ -3951,20 +3966,6 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         fillRows(section);
         if (search.value.trim()) runSearch();
       });
-
-      /* The button says what it just did for a moment before going back to its
-         name, so a click that changed nothing still reads as a click that
-         landed. The name is read off the button, because one helper backs both
-         Star all and Clear stars. */
-      function flashButton(button, message) {
-        if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
-        if (!button.dataset.label) button.dataset.label = button.textContent;
-        button.textContent = message;
-        button.dataset.resetTimer = String(setTimeout(() => {
-          button.textContent = button.dataset.label;
-          delete button.dataset.resetTimer;
-        }, 1600));
-      }
 
       /* ---- search ---------------------------------------------------------- */
       function paintCount(term) {
@@ -4025,16 +4026,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
           if (!group) return;
           const filling = !starsFull(group);
-          const touched = group.words.filter(entry => (ratingOf(entry.id) === 1) !== filling).length;
           group.words.forEach(entry => {
             if (filling) familiarity[entry.id] = 1;
             else delete familiarity[entry.id];
           });
           saveFamiliarity();
           repaintRatings();
-          flashButton(button, touched
-            ? (filling ? "Starred " : "Cleared ") + plural(touched, "word", "words")
-            : (filling ? "All starred already" : "No stars to clear"));
           return;
         }
         const notesButton = event.target.closest(".notes-toggle");
@@ -4915,8 +4912,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         syncStarToggles();
       }
       /* One switch for a section's stars: fill while anything is unstarred,
-         clear once every point is starred. dataset.label holds the name a
-         flash message gives back when it fades. */
+         clear once every point is starred. Pressing it just does the thing
+         and renames itself. */
       function starsFull(group) {
         return Boolean(group.points.length) && group.points.every(point => grammarRatingOf(point.id) === 1);
       }
@@ -4924,20 +4921,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         const button = section.querySelector(".star-toggle");
         const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
         if (!button || !group) return;
-        button.dataset.label = starsFull(group) ? "Clear stars" : "Star all";
-        if (!button.dataset.resetTimer) button.textContent = button.dataset.label;
+        button.textContent = starsFull(group) ? "Clear stars" : "Star all";
       }
       function syncStarToggles() {
         host.querySelectorAll(".vocab-category").forEach(section => syncStarToggle(section));
-      }
-      function flashButton(button, message) {
-        if (button.dataset.resetTimer) clearTimeout(Number(button.dataset.resetTimer));
-        if (!button.dataset.label) button.dataset.label = button.textContent;
-        button.textContent = message;
-        button.dataset.resetTimer = String(setTimeout(() => {
-          button.textContent = button.dataset.label;
-          delete button.dataset.resetTimer;
-        }, 1600));
       }
 
       host.addEventListener("change", event => {
@@ -5013,16 +5000,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           const group = GRAMMAR_GROUP_BY_ID.get(section.dataset.sectionId);
           if (!group) return;
           const filling = !starsFull(group);
-          const touched = group.points.filter(point => (grammarRatingOf(point.id) === 1) !== filling).length;
           group.points.forEach(point => {
             if (filling) grammarFamiliarity[point.id] = 1;
             else delete grammarFamiliarity[point.id];
           });
           saveGrammarFamiliarity();
           repaintAllRatings();
-          flashButton(button, touched
-            ? (filling ? "Starred " : "Cleared ") + plural(touched, "point", "points")
-            : (filling ? "All starred already" : "No stars to clear"));
           return;
         }
         const noteToggle = event.target.closest(".vocab-note-toggle");
@@ -6155,9 +6138,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           return;
         }
         const stop = list[index];
-        for (let node = stop.node; node; node = node.parentElement) {
-          if (node.tagName === "DETAILS") node.open = true;
-        }
+        /* A collapsed section is left collapsed: the arrows move the page, they
+           do not decide what is open. The jump still lands on its heading. */
         jumped = { index: index, at: Date.now() };
         /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
            section in the address bar, and lets anything watching for a hash
