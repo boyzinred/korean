@@ -951,16 +951,24 @@ html[data-theme='dark'] th {
   display: inline-block;
   transition: filter 180ms ease, opacity 180ms ease;
 }
-/* Hidden cells collapse to one fixed-width bar, so the blur gives away
-   neither the letters nor how long the word is. */
-.ref-section.blur-meaning [data-vocab-field="meaning"],
-.ref-section.blur-romanization [data-vocab-field="romanization"],
-.ref-section.blur-korean [data-vocab-field="korean"] {
+/* A cell is hidden when the section's blur for its field is on and the cell has
+   not been flipped open, or when that blur is off and the cell has been flipped
+   shut by its own click. Hidden cells collapse to one fixed-width bar, so the
+   blur gives away neither the letters nor how long the word is. */
+.ref-section.blur-meaning [data-vocab-field="meaning"]:not(.flip),
+.ref-section.blur-romanization [data-vocab-field="romanization"]:not(.flip),
+.ref-section.blur-korean [data-vocab-field="korean"]:not(.flip),
+.ref-section:not(.blur-meaning) [data-vocab-field="meaning"].flip,
+.ref-section:not(.blur-romanization) [data-vocab-field="romanization"].flip,
+.ref-section:not(.blur-korean) [data-vocab-field="korean"].flip {
   overflow: hidden;
 }
-.ref-section.blur-meaning [data-vocab-field="meaning"]:not(.peek) .blur-target,
-.ref-section.blur-romanization [data-vocab-field="romanization"]:not(.peek) .blur-target,
-.ref-section.blur-korean [data-vocab-field="korean"]:not(.peek) .blur-target {
+.ref-section.blur-meaning [data-vocab-field="meaning"]:not(.flip) .blur-target,
+.ref-section.blur-romanization [data-vocab-field="romanization"]:not(.flip) .blur-target,
+.ref-section.blur-korean [data-vocab-field="korean"]:not(.flip) .blur-target,
+.ref-section:not(.blur-meaning) [data-vocab-field="meaning"].flip .blur-target,
+.ref-section:not(.blur-romanization) [data-vocab-field="romanization"].flip .blur-target,
+.ref-section:not(.blur-korean) [data-vocab-field="korean"].flip .blur-target {
   display: block;
   width: 6rem;
   height: 1.4rem;
@@ -969,16 +977,7 @@ html[data-theme='dark'] th {
   background: var(--muted-strong);
   border-radius: var(--radius-md);
   text-indent: -9999px;
-}
-.ref-section.blur-meaning [data-vocab-field="meaning"] .blur-target,
-.ref-section.blur-romanization [data-vocab-field="romanization"] .blur-target,
-.ref-section.blur-korean [data-vocab-field="korean"] .blur-target {
   user-select: none;
-}
-.ref-section.blur-meaning [data-vocab-field="meaning"].peek .blur-target,
-.ref-section.blur-romanization [data-vocab-field="romanization"].peek .blur-target,
-.ref-section.blur-korean [data-vocab-field="korean"].peek .blur-target {
-  user-select: text;
 }
 [data-vocab-field] { cursor: pointer; }
 [data-vocab-field]:focus-visible {
@@ -2624,16 +2623,15 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           blurState[section.dataset.sectionId] = blurState[section.dataset.sectionId] || {};
           blurState[section.dataset.sectionId][field] = enabled;
           saveObject(BLUR_KEY, blurState);
-          section.querySelectorAll(`[data-vocab-field="${field}"]`).forEach(cell => cell.classList.remove("peek"));
+          section.querySelectorAll(`[data-vocab-field="${field}"]`).forEach(cell => cell.classList.remove("flip"));
           applyBlur(section, field, enabled);
           return;
         }
 
+        // A click flips one cell away from whatever its section's blur toggle
+        // says, so a word can be hidden or revealed on its own either way.
         const cell = event.target.closest("[data-vocab-field]");
-        if (cell) {
-          const section = cell.closest(".ref-section");
-          if (section.classList.contains(`blur-${cell.dataset.vocabField}`)) cell.classList.toggle("peek");
-        }
+        if (cell) cell.classList.toggle("flip");
       });
 
       container.addEventListener("keydown", event => {

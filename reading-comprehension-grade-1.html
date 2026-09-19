@@ -314,8 +314,9 @@ tbody tr:last-child td { border-bottom: 0; }
 td .roman { opacity: .78; }
 
 .is-blurred .blur-target { filter: blur(7px); user-select: none; }
-.is-blurred { cursor: pointer; }
-.is-blurred.is-peeking .blur-target { filter: none; user-select: auto; }
+/* Every vocab and grammar cell blurs and unblurs on its own click, whether or
+   not the toolbar has blurred the whole column it sits in. */
+[data-vocab-field] { cursor: pointer; }
 
 .vocab-category-stack { display: grid; gap: 14px; }
 .vocab-category {
@@ -3888,10 +3889,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         section.querySelectorAll(".section-toolbar .blur-toggle[data-field]").forEach(button => {
           const on = Boolean(saved[button.dataset.field]);
           button.setAttribute("aria-pressed", String(on));
-          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]').forEach(cell => {
-            cell.classList.toggle("is-blurred", on);
-            cell.classList.remove("is-peeking");
-          });
+          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]')
+            .forEach(cell => cell.classList.toggle("is-blurred", on));
         });
       }
       function restoreBlur(section) { applyBlur(section); }
@@ -4059,15 +4058,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           return;
         }
         const cell = event.target.closest("[data-vocab-field]");
-        if (cell && cell.classList.contains("is-blurred")) cell.classList.toggle("is-peeking");
+        if (cell) cell.classList.toggle("is-blurred");
       });
 
       host.addEventListener("keydown", event => {
         if (event.key !== "Enter" && event.key !== " ") return;
         const cell = event.target.closest("[data-vocab-field]");
-        if (!cell || !cell.classList.contains("is-blurred")) return;
+        if (!cell) return;
         event.preventDefault();
-        cell.classList.toggle("is-peeking");
+        cell.classList.toggle("is-blurred");
       });
 
       /* ---- the toolbar above every group ----------------------------------- */
@@ -4872,10 +4871,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         section.querySelectorAll(".section-toolbar .blur-toggle[data-field]").forEach(button => {
           const on = Boolean(saved[button.dataset.field]);
           button.setAttribute("aria-pressed", String(on));
-          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]').forEach(cell => {
-            cell.classList.toggle("is-blurred", on);
-            cell.classList.remove("is-peeking");
-          });
+          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]')
+            .forEach(cell => cell.classList.toggle("is-blurred", on));
         });
       }
 
@@ -5027,15 +5024,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           return;
         }
         const cell = event.target.closest("[data-vocab-field]");
-        if (cell && cell.classList.contains("is-blurred")) cell.classList.toggle("is-peeking");
+        if (cell) cell.classList.toggle("is-blurred");
       });
 
       host.addEventListener("keydown", event => {
         if (event.key !== "Enter" && event.key !== " ") return;
         const cell = event.target.closest("[data-vocab-field]");
-        if (!cell || !cell.classList.contains("is-blurred")) return;
+        if (!cell) return;
         event.preventDefault();
-        cell.classList.toggle("is-peeking");
+        cell.classList.toggle("is-blurred");
       });
 
       const modes = document.getElementById("grammarModes");
