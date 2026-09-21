@@ -590,7 +590,9 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   font-size: 1.3rem;
 }
 .familiarity-star:hover { transform: scale(1.12); }
-.familiarity-stars[data-level="1"] .familiarity-star { color: var(--accent); }
+/* A rating lights the stars up to it: the first at one star, both at two. */
+.familiarity-stars[data-level="1"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star { color: var(--accent); }
 
 .lang-picks {
   display: grid;
@@ -1381,8 +1383,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 <label>Familiarity
                   <select class="menu-familiarity">
                     <option value="all" selected>All words</option>
-                    <option value="unfamiliar">Unfamiliar words</option>
-                    <option value="familiar">Familiar words</option>
+                    <option value="unfamiliar">Unfamiliar words (no star)</option>
+                    <option value="learning">Learning words (one star)</option>
+                    <option value="familiar">Familiar words (two stars)</option>
                   </select>
                 </label>
                 <label>Mode
@@ -1509,8 +1512,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 <label>Familiarity
                   <select class="menu-familiarity">
                     <option value="all" selected>All points</option>
-                    <option value="unfamiliar">Unfamiliar points</option>
-                    <option value="familiar">Familiar points</option>
+                    <option value="unfamiliar">Unfamiliar points (no star)</option>
+                    <option value="learning">Learning points (one star)</option>
+                    <option value="familiar">Familiar points (two stars)</option>
                   </select>
                 </label>
                 <label>Direction
@@ -3612,9 +3616,17 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     const FAMILIARITY_KEY = "koreanReadingFamiliarity:v1";
     let familiarity = {};
     try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
-    /* One star now, but ratings saved when the scale ran to three still load:
-       any of them counts as familiar. */
-    function ratingOf(id) { return Math.min(1, Math.max(0, Number(familiarity[id]) || 0)); }
+    /* Two stars: one for a word that is coming along, two for one that is
+       known. Ratings saved when the scale ran to three still load, clamped. */
+    function ratingOf(id) { return Math.min(2, Math.max(0, Number(familiarity[id]) || 0)); }
+
+    /* The rungs the Familiarity menus filter on, with the wording the empty
+       notes use for each. */
+    const STAR_FILTERS = {
+      unfamiliar: { level: 0, adjective: "unstarred", phrase: "unstarred" },
+      learning: { level: 1, adjective: "one-star", phrase: "at one star" },
+      familiar: { level: 2, adjective: "two-star", phrase: "at two stars" }
+    };
     function saveFamiliarity() {
       try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
     }
@@ -3861,6 +3873,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group"'
           + ' aria-label="Familiarity for ' + esc(entry.ko) + '">'
           + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
+          + ' aria-label="Mark as coming along">★</button>'
+          + '<button class="familiarity-star" type="button" data-level="2" aria-pressed="false"'
           + ' aria-label="Mark as familiar">★</button>'
           + '</div></td></tr>';
 
@@ -3920,10 +3934,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
       /* ---- stars ----------------------------------------------------------- */
       function paintRating(group, level) {
-        const safe = Math.min(1, Math.max(0, Number(level) || 0));
+        const safe = Math.min(2, Math.max(0, Number(level) || 0));
         group.dataset.level = String(safe);
         group.querySelectorAll(".familiarity-star").forEach(button =>
-          button.setAttribute("aria-pressed", String(safe === 1)));
+          button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
       }
       function paintSectionRatings(section) {
         section.querySelectorAll(".familiarity-stars").forEach(group =>
@@ -3935,10 +3949,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         syncStarToggles();
       };
       /* One switch for a section's stars, the way the notes have one: it fills
-         the section while anything in it is unstarred, and clears it once every
-         word is. Pressing it just does the thing and renames itself. */
+         the section to both stars while anything in it is short of them, and
+         clears it once every word has both. Pressing it just does the thing and
+         renames itself. */
       function starsFull(group) {
-        return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === 1);
+        return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === 2);
       }
       function syncStarToggle(section) {
         const button = section.querySelector(".star-toggle");
@@ -4026,7 +4041,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           if (!group) return;
           const filling = !starsFull(group);
           group.words.forEach(entry => {
-            if (filling) familiarity[entry.id] = 1;
+            if (filling) familiarity[entry.id] = 2;
             else delete familiarity[entry.id];
           });
           saveFamiliarity();
@@ -4255,8 +4270,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return BANK_WORDS.filter(entry => {
         if (!ids.has(entry.id)) return false;
         if (settings.familiarity === "all") return true;
-        /* A star means familiar, and nothing else does. */
-        return (ratingOf(entry.id) === 1) === (settings.familiarity === "familiar");
+        /* Each menu choice names one rung of the scale, so a half-known word
+           is drilled on its own rather than with the words already known. */
+        return ratingOf(entry.id) === STAR_FILTERS[settings.familiarity].level;
       });
     }
 
@@ -4279,7 +4295,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + (mixed ? " Each question picks its own pair." : "")
         : settings.familiarity === "all"
           ? "No words match your selection yet."
-          : "No " + (settings.familiarity === "familiar" ? "starred" : "unstarred")
+          : "No " + STAR_FILTERS[settings.familiarity].adjective
             + " words in your selection yet.";
     }
 
@@ -4615,7 +4631,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
             + '<span class="word-ro">' + esc(ReadingVocab.romanize(entry.ko)) + '</span>'
             + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
           + '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
-          + 'Clear the star on these ' + missed.length + '</button></div>'
+          + 'Lower the stars on these ' + missed.length + '</button></div>'
         : "<p>Nothing missed. 잘했어요!</p>";
 
       $v(".live").classList.add("hidden");
@@ -4637,11 +4653,17 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const markWeak = finishEl.querySelector(".mark-weak");
       if (markWeak) {
         markWeak.addEventListener("click", () => {
-          missed.forEach(entry => { delete familiarity[entry.id]; });
+          /* A miss demotes rather than resets: two stars fall to one, one
+             falls to none. */
+          missed.forEach(entry => {
+            const next = ratingOf(entry.id) - 1;
+            if (next > 0) familiarity[entry.id] = next;
+            else delete familiarity[entry.id];
+          });
           saveFamiliarity();
           repaintRatings();
           markWeak.disabled = true;
-          markWeak.textContent = "Stars cleared";
+          markWeak.textContent = "Stars lowered";
         });
       }
       finishEl.querySelector(".again").addEventListener("click", startVocabTest);
@@ -4676,7 +4698,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     let grammarFamiliarity = {};
     try { grammarFamiliarity = JSON.parse(localStorage.getItem(GRAMMAR_FAMILIARITY_KEY) || "{}"); }
     catch (_) { grammarFamiliarity = {}; }
-    function grammarRatingOf(id) { return Math.min(1, Math.max(0, Number(grammarFamiliarity[id]) || 0)); }
+    function grammarRatingOf(id) { return Math.min(2, Math.max(0, Number(grammarFamiliarity[id]) || 0)); }
     function saveGrammarFamiliarity() {
       try { localStorage.setItem(GRAMMAR_FAMILIARITY_KEY, JSON.stringify(grammarFamiliarity)); } catch (_) {}
     }
@@ -4842,6 +4864,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<div class="familiarity-stars" data-point-id="' + esc(point.id) + '" data-level="0" role="group"'
           + ' aria-label="Familiarity for ' + esc(point.form) + '">'
           + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
+          + ' aria-label="Mark as coming along">★</button>'
+          + '<button class="familiarity-star" type="button" data-level="2" aria-pressed="false"'
           + ' aria-label="Mark as familiar">★</button>'
           + '</div></td></tr>';
 
@@ -4892,10 +4916,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       }
 
       function paintRating(group, level) {
-        const safe = Math.min(1, Math.max(0, Number(level) || 0));
+        const safe = Math.min(2, Math.max(0, Number(level) || 0));
         group.dataset.level = String(safe);
         group.querySelectorAll(".familiarity-star").forEach(button =>
-          button.setAttribute("aria-pressed", String(safe === 1)));
+          button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
       }
       function paintSectionRatings(section) {
         section.querySelectorAll(".familiarity-stars").forEach(group =>
@@ -4908,11 +4932,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           paintRating(group, grammarRatingOf(group.dataset.pointId)));
         syncStarToggles();
       }
-      /* One switch for a section's stars: fill while anything is unstarred,
-         clear once every point is starred. Pressing it just does the thing
-         and renames itself. */
+      /* One switch for a section's stars: fill to both stars while anything is
+         short of them, clear once every point has both. Pressing it just does
+         the thing and renames itself. */
       function starsFull(group) {
-        return Boolean(group.points.length) && group.points.every(point => grammarRatingOf(point.id) === 1);
+        return Boolean(group.points.length) && group.points.every(point => grammarRatingOf(point.id) === 2);
       }
       function syncStarToggle(section) {
         const button = section.querySelector(".star-toggle");
@@ -4998,7 +5022,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           if (!group) return;
           const filling = !starsFull(group);
           group.points.forEach(point => {
-            if (filling) grammarFamiliarity[point.id] = 1;
+            if (filling) grammarFamiliarity[point.id] = 2;
             else delete grammarFamiliarity[point.id];
           });
           saveGrammarFamiliarity();
@@ -5108,7 +5132,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         /* The stars on the grammar tables decide which of the ticked points a
            run may actually draw on. */
         points: familiarity === "all" ? picked
-          : picked.filter(id => (grammarRatingOf(id) === 1) === (familiarity === "familiar")),
+          : picked.filter(id => grammarRatingOf(id) === STAR_FILTERS[familiarity].level),
         direction: $s(".menu-direction").value,
         length: Math.max(1, Number($s(".menu-length").value) || 10)
       };
@@ -5130,7 +5154,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       if (!settings.points.length) {
         note.innerHTML = '<span class="assistance-used">' + (settings.picked.length
           ? "None of the points you ticked are "
-            + (settings.familiarity === "familiar" ? "starred" : "unstarred") + "."
+            + STAR_FILTERS[settings.familiarity].phrase + "."
           : "Tick at least one grammar point.") + '</span>';
         return;
       }

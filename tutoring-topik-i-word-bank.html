@@ -1169,7 +1169,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   line-height: 1;
 }
 .familiarity-star:hover { transform: scale(1.12); }
-.familiarity-stars[data-level="1"] .familiarity-star { color: var(--accent); }
+/* A rating lights the stars up to it: the first at one star, both at two. */
+.familiarity-stars[data-level="1"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star { color: var(--accent); }
 
 .section-meta {
   margin: 0 0 20px;
@@ -1646,7 +1648,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 }
 .expr-row .hangul { font-size: 1.05rem; }
 /* A second star colour, so a word's own rating never reads as a sentence's. */
-.familiarity-stars.expr[data-level="1"] .familiarity-star { color: var(--secondary); }
+.familiarity-stars.expr[data-level="1"] .familiarity-star[data-level="1"],
+.familiarity-stars.expr[data-level="2"] .familiarity-star { color: var(--secondary); }
 .ref-section.hide-expressions .expr-row,
 .ref-section.hide-expressions .expr-row + .vocab-note-row { display: none; }
 /* The register variants, shown only where they differ from the polite form. */
@@ -2221,6 +2224,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     const familiarity = loadObject(FAMILIARITY_KEY);
+
+    // Two stars: one for a word that is coming along, two for one that is
+    // known. Ratings saved when the scale ran to three still load, clamped.
+    const ratingOf = id => Math.min(2, Math.max(0, Number(familiarity[id]) || 0));
+    const STAR_LABELS = ["Mark as coming along", "Mark as familiar"];
     const blurState = loadObject(BLUR_KEY);
 
     // Sort is saved per section id, the same way blur is, so one day can sit in
@@ -2247,7 +2255,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     function sortItems(items, mode) {
       if (!SORT_IDS.includes(mode) || mode === "default") return items;
       const order = new Map(items.map((item, index) => [item.id, index]));
-      const level = item => Math.min(1, familiarity[item.id] || 0);
+      const level = item => ratingOf(item.id);
       const text = item => mode === "english" ? item.shownMeaning
         : mode === "romanization" ? item.shownRomanization : item.shownKorean;
       const locale = mode === "korean" ? "ko" : "en";
@@ -2357,7 +2365,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
       if (!group) return;
       body.innerHTML = sortItems(group.items, sortFor(section.dataset.sectionId)).map(item => {
-        const level = Math.min(1, familiarity[item.id] || 0);
+        const level = ratingOf(item.id);
         const note = noteFor(item);
         const noteId = `word-note-${section.dataset.sectionId}-${slug(item.id)}`;
         const toggle = note
@@ -2373,7 +2381,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <td>${refMode === "day" ? esc((POS_BY_ID.get(item.partOfSpeech) || {}).label || item.partOfSpeech) : esc(item.day)}</td>
           <td class="familiarity-cell">
             <span class="familiarity-stars" data-word-key="${esc(item.id)}" data-level="${level}" role="group" aria-label="Familiarity for ${esc(item.korean)}">
-              ${[1].map(n => `<button class="familiarity-star" type="button" data-level="${n}" aria-pressed="${n <= level}" aria-label="Mark as familiar"><span aria-hidden="true">★</span></button>`).join("")}
+              ${STAR_LABELS.map((label, index) => `<button class="familiarity-star" type="button" data-level="${index + 1}" aria-pressed="${index + 1 <= level}" aria-label="${label}"><span aria-hidden="true">★</span></button>`).join("")}
             </span>
           </td>
         </tr>`;
@@ -2393,7 +2401,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // star, in its own colour, and its own ＋ for the small print: why the
     // sentence is put this way, and the register versions where they differ.
     function expressionRow(section, item) {
-      const level = Math.min(1, familiarity[item.id] || 0);
+      const level = ratingOf(item.id);
       const noteId = `expr-note-${section.dataset.sectionId}-${slug(item.id)}`;
       const registers = REGISTERS.filter(register => item[register.key]);
       const hasNote = Boolean(item.exprNote) || registers.length > 1;
@@ -2411,7 +2419,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <td><span class="word-tag">expression</span></td>
           <td class="familiarity-cell">
             <span class="familiarity-stars expr" data-word-key="${esc(item.id)}" data-level="${level}" role="group" aria-label="Familiarity for ${esc(item.korean)}">
-              <button class="familiarity-star" type="button" data-level="1" aria-pressed="${level >= 1}" aria-label="Mark as familiar"><span aria-hidden="true">★</span></button>
+              ${STAR_LABELS.map((label, index) => `<button class="familiarity-star" type="button" data-level="${index + 1}" aria-pressed="${index + 1 <= level}" aria-label="${label}"><span aria-hidden="true">★</span></button>`).join("")}
             </span>
           </td>
         </tr>`;
@@ -2428,12 +2436,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     function paintRating(group, level) {
-      // Clamped to 0/1: ratings saved back when the scale had three stars
-      // still load, and any of them counts as familiar.
-      const safe = Math.min(1, Math.max(0, Number(level) || 0));
+      const safe = Math.min(2, Math.max(0, Number(level) || 0));
       group.dataset.level = String(safe);
-      group.querySelectorAll(".familiarity-star").forEach((button, index) => {
-        button.setAttribute("aria-pressed", String(index < safe));
+      group.querySelectorAll(".familiarity-star").forEach(button => {
+        button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe));
       });
     }
 
@@ -2442,7 +2448,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       syncStarToggles();
     }
 
-    const isStarred = id => Math.min(1, familiarity[id] || 0) === 1;
+    const isStarred = id => ratingOf(id) === 2;
 
     // A section's words plus the expressions hanging off them: a word's
     // expressions carry their own star and go wherever the word goes.
@@ -2456,8 +2462,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // One switch for the stars, the way expressions have one: it fills the
-    // section while anything in it is unstarred, and clears it once
-    // everything is starred. Pressing it just does the thing and renames
+    // section to both stars while anything in it is short of them, and clears
+    // it once everything has both. Pressing it just does the thing and renames
     // itself.
     function starsFull(group) {
       const ids = starIds(group);
@@ -2607,7 +2613,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           const ids = starIds(group);
           const filling = !starsFull(group);
           ids.forEach(id => {
-            if (filling) familiarity[id] = 1;
+            if (filling) familiarity[id] = 2;
             else delete familiarity[id];
           });
           saveObject(FAMILIARITY_KEY, familiarity);
@@ -2794,13 +2800,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // Which stars a run draws on. This narrows whatever the pickers chose, so
-    // it works the same in every exercise: all of it, only the words still
-    // unstarred in the tables above, or only the ones already starred.
+    // it works the same in every exercise. Every choice but the first names one
+    // rung of the scale in the tables above, so a half-known word is drilled on
+    // its own rather than alongside the words already known. `phrase` is the
+    // wording the empty-selection notes use.
     const FAMILIARITY_FILTERS = [
       { id: "all", label: "All words" },
-      { id: "unfamiliar", label: "Unfamiliar words" },
-      { id: "familiar", label: "Familiar words" }
+      { id: "unfamiliar", label: "Unfamiliar words (no star)", level: 0, phrase: "unstarred" },
+      { id: "learning", label: "Learning words (one star)", level: 1, phrase: "at one star" },
+      { id: "familiar", label: "Familiar words (two stars)", level: 2, phrase: "at two stars" }
     ];
+    const FAMILIARITY_BY_ID = new Map(FAMILIARITY_FILTERS.map(filter => [filter.id, filter]));
 
     function familiarityBlock(exerciseId) {
       return `
@@ -2816,16 +2826,16 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       return select ? select.value : "all";
     }
 
-    // An item is familiar exactly when its row is starred; an expression
+    // An item sits on the rung its row's stars put it on; an expression
     // carries its own star, so it is filtered on its own footing.
     function selectedItems(exerciseId) {
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       if (!exercise) return [];
       const chosen = exercise.select();
       const choice = familiarityChoice(exerciseId);
-      if (choice === "all") return chosen;
-      return chosen.filter(item =>
-        (Math.min(1, familiarity[item.id] || 0) === 1) === (choice === "familiar"));
+      const filter = FAMILIARITY_BY_ID.get(choice);
+      if (!filter || filter.level === undefined) return chosen;
+      return chosen.filter(item => ratingOf(item.id) === filter.level);
     }
 
     // Why a selection came out empty: nothing ticked, or nothing ticked that
@@ -2834,7 +2844,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       const choice = familiarityChoice(exerciseId);
       if (choice !== "all" && exercise.select().length) {
-        return `Nothing in this selection is ${choice === "familiar" ? "starred" : "unstarred"}. Set Familiarity back to all words, or tick more.`;
+        return `Nothing in this selection is ${FAMILIARITY_BY_ID.get(choice).phrase}. Set Familiarity back to all words, or tick more.`;
       }
       return exercise.emptyMessage;
     }
@@ -3023,7 +3033,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const note = exercise.countNote ? exercise.countNote() : "";
       const choice = familiarityChoice(exerciseId);
       const nothing = chosen.length && choice !== "all"
-        ? `Nothing ${choice === "familiar" ? "starred" : "unstarred"} in this selection`
+        ? `Nothing ${FAMILIARITY_BY_ID.get(choice).phrase} in this selection`
         : "Nothing selected";
       target.classList.toggle("empty", used === 0);
       target.textContent = used === 0
