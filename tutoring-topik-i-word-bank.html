@@ -3552,7 +3552,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // Exercise 2 — one day, or a range.
     const DRILL_PASSAGES = (window.TopikIDrillPassages || {}).PASSAGES || [];
     const DRILL_LENGTHS = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-    const DRILL_SETUP_KEY = "topikIDrillSetupV1";
+    // V2 because a saved setup names the kinds of question it ticked, and a
+    // kind that did not exist when it was saved cannot be in that list: the
+    // 자리·어순 and 말투·높임 questions would arrive switched off and stay off.
+    const DRILL_SETUP_KEY = "topikIDrillSetupV2";
 
     // The bank's topics are labelled in English, and a question that names the
     // group in English answers itself, so the drill gets Korean labels.

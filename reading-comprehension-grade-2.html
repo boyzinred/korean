@@ -5669,7 +5669,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     const dEl = document.getElementById("drillExercise");
     const $d = selector => dEl.querySelector(selector);
 
-    const DRILL_SETUP_KEY = "korean.readingDrillSetup.g2";
+    // V2 because a saved setup names the kinds of question it ticked, and a
+    // kind that did not exist when it was saved cannot be in that list: the
+    // 자리·어순 and 말투·높임 questions would arrive switched off and stay off.
+    const DRILL_SETUP_KEY = "korean.readingDrillSetup.g2.v2";
     const DRILL_LENGTHS = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
     const DRILL_ANTONYMS = [
       ["기쁘다", "슬프다"], ["어렵다", "쉽다"], ["빠르다", "느리다"], ["높다", "낮다"],

@@ -11,13 +11,18 @@
   buttons, and its own feedback blocks. A question comes out of here as data
   and each page renders it the way it renders everything else.
 
-  Six kinds of question, each of which the page can switch off:
+  Eight kinds of question, each of which the page can switch off:
 
     concept   개념·형태   the idea behind a word rather than the word itself:
                           its class, its group, the two words it is built from,
                           the syllable it shares with another, its opposite, the
                           sentence that uses a grammar point.
     blank     빈칸 채우기 one or two words cut out of a real sentence.
+    place     자리·어순   where a word belongs: which particle a noun takes, the
+                          noun a particle is written onto, and what a sentence
+                          looks like once a word is moved out of its place.
+    polite    말투·높임   how high a sentence speaks, which sentences speak at
+                          the same height, and the words that raise one.
     order     문장 순서   three or four sentences put back in order.
     chunk     조각 순서   one sentence cut into pieces and put back together.
     excerpt   짧은 글     two or three lines and a question about them.
@@ -62,12 +67,33 @@
   ======================================================================= */
 
   /* Particles agree with the last letter of the word in front of them, so the
-     generated prompts work it out instead of writing 은/는 everywhere. */
-  function hasFinal(text) {
+     generated prompts work it out instead of writing 은/는 everywhere.
+
+     finalIndex is the same sum kept as a number rather than a yes or no: 0 when
+     the syllable has no final consonant, 8 when that consonant is ㄹ, 17 when it
+     is ㅂ. The placement and politeness questions need all three — ㄹ is the
+     letter (으)로 bends around, and ㅂ is what tells 갑니다 from 아니다. */
+  function finalIndex(text) {
     const clean = String(text || "").replace(/[^가-힣]/g, "");
-    if (!clean) return false;
-    return (clean.charCodeAt(clean.length - 1) - 0xAC00) % 28 !== 0;
+    if (!clean) return -1;
+    return (clean.charCodeAt(clean.length - 1) - 0xAC00) % 28;
   }
+  function hasFinal(text) {
+    return finalIndex(text) > 0;
+  }
+  /* A syllable taken apart, for the questions that have to look at the vowel
+     rather than the letter: 가 and 해 end an -아/-어 ending, 세 and 예 do not,
+     and nothing but the vowel separates them. */
+  function syllable(letter) {
+    const code = String(letter || "").charCodeAt(0) - 0xAC00;
+    if (!(code >= 0 && code <= 11171)) return null;
+    return { vowel: Math.floor((code % 588) / 28), final: code % 28 };
+  }
+  const INFINITIVE_VOWELS = new Set([0, 1, 4, 5, 6, 9, 10, 14, 15]);
+  /* Syllables that pass the vowel test above and still are not an -아/-어
+     ending: 이에요 and 예요 are the copula, -(으)세요 is honorific, and none of
+     the three loses its 요 by having the 요 taken off. */
+  const NOT_INFINITIVE = new Set(["에", "예", "세", "셔"]);
   const eun = text => (hasFinal(text) ? "은" : "는");
   const iga = text => (hasFinal(text) ? "이" : "가");
   const eul = text => (hasFinal(text) ? "을" : "를");
@@ -118,6 +144,10 @@
       note: "What a word is, which group it belongs to, what it is built from." },
     { id: "blank", ko: "빈칸 채우기", en: "Fill in the blank",
       note: "One or two words cut out of a real sentence." },
+    { id: "place", ko: "자리·어순", en: "Where the word goes",
+      note: "Which particle a noun takes, and where a word sits in the sentence." },
+    { id: "polite", ko: "말투·높임", en: "Politeness and speech level",
+      note: "How high a sentence speaks, and the words that raise it." },
     { id: "order", ko: "문장 순서", en: "Sentence ordering",
       note: "Whole sentences put back in the order they were written." },
     { id: "chunk", ko: "조각 순서", en: "Sentence chunk ordering",
@@ -133,6 +163,102 @@
      shuffled its source first, so every run draws a different slice of a bank
      that may hold several thousand. */
   const PER_KIND_CAP = 400;
+
+  /* =======================================================================
+     The three rules the placement questions lean on
+     -----------------------------------------------------------------------
+     Korean word order is loose enough that moving a word around a sentence is
+     usually not an error, so a question built on "move this and see" would have
+     more than one answer. Three things a sentence genuinely cannot do:
+
+       a particle is written onto the back of its noun, never in front of it
+       and never with a space between;
+       a 관형사 sits directly before the word it describes;
+       the predicate closes the sentence.
+
+     Nothing else is asked about, and the particle a noun takes is decided by
+     its last letter rather than by taste, so it can be asked about too.
+  ======================================================================= */
+  const PARTICLE_FAMILIES = [
+    { withFinal: "은", without: "는" },
+    { withFinal: "이", without: "가" },
+    { withFinal: "을", without: "를" },
+    { withFinal: "과", without: "와" },
+    /* (으)로 is the odd one: a ㄹ 받침 takes the short form, like 서울로. */
+    { withFinal: "으로", without: "로", liquid: true }
+  ];
+  function particleFor(noun, family) {
+    const last = finalIndex(noun);
+    if (family.liquid && last === 8) return family.without;
+    return last > 0 ? family.withFinal : family.without;
+  }
+  function otherParticle(noun, family) {
+    return particleFor(noun, family) === family.withFinal ? family.without : family.withFinal;
+  }
+
+  /* Everything that may be found sitting in front of a particle. */
+  const PARTICLES = new Set([
+    "은", "는", "이", "가", "을", "를", "의", "도", "만", "에", "에서", "에게",
+    "에게서", "한테", "한테서", "께", "께서", "와", "과", "랑", "이랑", "하고",
+    "부터", "까지", "로", "으로", "보다", "처럼", "같이", "마다", "밖에"
+  ]);
+  const NOUNISH = new Set(["noun", "proper noun", "noun phrase", "dependent noun",
+    "pronoun", "number", "numeral", "counter", "name"]);
+  const PREDICATE_POS = new Set(["verb", "adjective", "auxiliary verb"]);
+
+  /* =======================================================================
+     Speech levels
+     -----------------------------------------------------------------------
+     Four heights, named the way a Korean classroom names them and glossed in
+     Korean, because this exercise never shows English. A sentence is only
+     given a height when its last word says so plainly; anything the reader of
+     this file would have to think about is left unclassified rather than
+     guessed at, since a question about a sentence nobody can place is worse
+     than a question that never gets asked.
+  ======================================================================= */
+  const LEVELS = [
+    { id: "hamnida", name: "합니다체", ko: "합니다체 — 아주 높임",
+      cue: "'-습니다', '-ㅂ니다'로 끝나면 합니다체예요." },
+    { id: "haeyo", name: "해요체", ko: "해요체 — 두루높임",
+      cue: "'요'로 끝나면 해요체예요." },
+    { id: "banmal", name: "반말", ko: "반말 — 낮춤",
+      cue: "'요'를 붙이지 않으면 반말이에요." },
+    { id: "haera", name: "해라체", ko: "해라체 — 글말",
+      cue: "'-다', '-ㄴ다'로 끝나면 해라체예요. 글에서 많이 써요." }
+  ];
+  const TAIL_PUNCT = /[\s.,!?…"'“”‘’]+$/;
+  const BANMAL_TAIL = /(야|니|자|지|네|군|까|래|걸|게)$/;
+
+  /* The last word of a sentence, with its full stop off, since that is the word
+     every politeness question is really about. */
+  function lastWord(text) {
+    const tokens = eojeols(String(text || "").replace(TAIL_PUNCT, ""));
+    return tokens.length ? tokens[tokens.length - 1] : "";
+  }
+  /* 로 after a vowel or a ㄹ, 으로 after everything else. */
+  const ro = text => ([0, 8].indexOf(finalIndex(text)) >= 0 ? "로" : "으로");
+
+  /* The handful of words Korean swaps rather than bends when it speaks upward.
+     This is the one table in the file that is not read off the page — nothing
+     in a word bank says 진지 is 밥 spoken higher — but a pair is only ever
+     asked about when the plain half is a word the page itself teaches. */
+  const HONORIFICS = [
+    { plain: "밥", high: "진지", kind: "noun" },
+    { plain: "나이", high: "연세", kind: "noun" },
+    { plain: "이름", high: "성함", kind: "noun" },
+    { plain: "집", high: "댁", kind: "noun" },
+    { plain: "사람", high: "분", kind: "noun" },
+    { plain: "말", high: "말씀", kind: "noun" },
+    { plain: "생일", high: "생신", kind: "noun" },
+    { plain: "먹다", high: "드시다", kind: "verb" },
+    { plain: "자다", high: "주무시다", kind: "verb" },
+    { plain: "있다", high: "계시다", kind: "verb" },
+    { plain: "주다", high: "드리다", kind: "verb" },
+    { plain: "말하다", high: "말씀하시다", kind: "verb" },
+    { plain: "묻다", high: "여쭈다", kind: "verb" },
+    { plain: "보다", high: "뵙다", kind: "verb" },
+    { plain: "죽다", high: "돌아가시다", kind: "verb" }
+  ];
 
   /* =======================================================================
      Question constructors
@@ -317,7 +443,28 @@
       return found;
     }
 
-    return { words, sentences, scan, distractorsFor };
+    /* The bank word an eojeol is a form of, found by the longest stem it begins
+       with, so 먹었어 comes back as 먹다. It misses the forms that change the
+       stem itself — 간다 never begins with 가 — which is why the politeness
+       questions treat a word it cannot place as a word they will not ask about
+       rather than guessing at one. */
+    function rootOf(token) {
+      const clean = bare(token);
+      for (let length = clean.length; length >= 1; length -= 1) {
+        const word = stems.get(clean.slice(0, length));
+        if (word) return word;
+      }
+      return null;
+    }
+
+    /* Dictionary forms only. Not surfaceMap, which on a mining page holds
+       학교에서 as a form of 학교 and would call every noun-and-particle in the
+       corpus a word of its own. */
+    const dictionary = new Set(words.map(word => String(word.ko || "")).filter(Boolean));
+    const isWord = text => dictionary.has(String(text || ""));
+    const wordFor = surface => surfaceMap.get(bare(surface)) || null;
+
+    return { words, sentences, scan, distractorsFor, rootOf, isWord, wordFor };
   }
 
   /* =======================================================================
@@ -419,16 +566,18 @@
       corpus.words.forEach(word => {
         if (word.ko && !koIndex.has(word.ko)) koIndex.set(word.ko, word);
       });
-      const NOUNISH = new Set(["noun", "proper noun", "noun phrase", "dependent noun"]);
+      /* Narrower than the NOUNISH set above: a pronoun or a counter spelling
+         out half of a compound is a coincidence, not a word it is built from. */
+      const COMPOUNDABLE = new Set(["noun", "proper noun", "noun phrase", "dependent noun"]);
       const compounds = [];
       words.forEach(word => {
         const ko = String(word.ko || "");
-        if (ko.length < 2 || !NOUNISH.has(word.pos) || !/^[가-힣]+$/.test(ko)) return;
+        if (ko.length < 2 || !COMPOUNDABLE.has(word.pos) || !/^[가-힣]+$/.test(ko)) return;
         for (let cut = 1; cut < ko.length; cut += 1) {
           const left = koIndex.get(ko.slice(0, cut));
           const right = koIndex.get(ko.slice(cut));
           if (left && right && left.ko !== ko && right.ko !== ko
-            && NOUNISH.has(left.pos) && NOUNISH.has(right.pos)
+            && COMPOUNDABLE.has(left.pos) && COMPOUNDABLE.has(right.pos)
             && (left.topicId === word.topicId || right.topicId === word.topicId)) {
             compounds.push({ word, left, right });
             break;
@@ -676,6 +825,437 @@
       return out;
     }
 
+    /* ---------------------------------------------------------------- place */
+    /* Every eojeol in a sentence that is one of the page's nouns with a
+       particle written onto its back, and where in the sentence that sits.
+
+       This reads the eojeols rather than the scanner, because on a mining page
+       the scanner has already learnt 학교에서 as a form of 학교 and hands back
+       the whole eojeol, leaving no particle behind it to find. An eojeol taken
+       apart from the right gives the same answer either way. */
+    const PARTICLES_LONGEST = [...PARTICLES].sort((a, b) => b.length - a.length);
+    const TRAILING = /[.,!?…"'“”‘’]+$/;
+    function particleHits(text) {
+      const found = [];
+      const tokens = eojeols(text);
+      let from = 0;
+      tokens.forEach((token, index) => {
+        const start = text.indexOf(token, from);
+        from = start + token.length;
+        /* The last eojeol closes the sentence, so what looks like a particle on
+           the end of it is the end of a verb: 나와 is 나오다, not 나 with 와
+           behind it. Nothing is lost by leaving that one alone. */
+        if (index === tokens.length - 1) return;
+        const whole = token.replace(TRAILING, "");
+        if (!/^[가-힣]+$/.test(whole)) return;
+        /* 물가 is not 물 with a particle on it. A compound the bank knows in
+           its own right is left alone here; one the bank does not know is a
+           hole this cannot see, and a rare one. */
+        if (corpus.isWord(whole)) return;
+        const particle = PARTICLES_LONGEST.find(item =>
+          whole.length > item.length && whole.slice(-item.length) === item);
+        if (!particle) return;
+        const noun = whole.slice(0, -particle.length);
+        const word = corpus.wordFor(noun);
+        if (!word || !NOUNISH.has(word.pos) || bare(noun) !== noun) return;
+        found.push({ noun, word, particle, start, end: start + whole.length });
+      });
+      return found;
+    }
+
+    function placeQuestions(state) {
+      const out = [];
+      const words = corpus.words.filter(word => inSelection(word.unitIds, state.units));
+      const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
+      const quoted = text => /["“”‘’']/.test(text);
+
+      /* 1 — the particle a noun takes, which its last letter decides and
+         nothing else does. The wrong answers are the same noun wearing the
+         forms that belong to a word ending the other way. */
+      const nouns = words.filter(word => NOUNISH.has(word.pos)
+        && /^[가-힣]{1,4}$/.test(String(word.ko || "")));
+      take(nouns, PER_KIND_CAP).forEach(word => {
+        const noun = String(word.ko);
+        const family = pickOne(PARTICLE_FAMILIES);
+        const particle = particleFor(noun, family);
+        const right = noun + particle;
+        const wrong = unique([noun + otherParticle(noun, family)].concat(
+          take(PARTICLE_FAMILIES.filter(other => other !== family), 2)
+            .map(other => noun + otherParticle(noun, other))))
+          .filter(text => text !== right).slice(0, 3);
+        if (wrong.length < 3) return;
+        const last = finalIndex(noun);
+        const reason = family.liquid && last === 8
+          ? "'" + noun + "'의 받침은 'ㄹ'이에요."
+          : (last > 0 ? "'" + noun + "'에는 받침이 있어요." : "'" + noun + "'에는 받침이 없어요.");
+        out.push(multipleChoice({
+          type: "place", tag: "조사 붙이기",
+          prompt: "'" + noun + "' 뒤에 조사를 바르게 붙인 것은 무엇이에요?",
+          choices: [right].concat(wrong),
+          answer: right,
+          why: reason + " " + noun + " + " + particle + " → " + right
+        }));
+      });
+
+      /* 2 — the noun and its particle written as one word, in that order. The
+         three wrong answers are the three ways it can go wrong: the particle
+         in front, the particle in front with a space, the particle behind with
+         a space. */
+      take(pool, PER_KIND_CAP).forEach(entry => {
+        const hit = pickOne(particleHits(entry.ko));
+        if (!hit) return;
+        const right = hit.noun + hit.particle;
+        const wrong = unique([
+          hit.particle + hit.noun,
+          hit.particle + " " + hit.noun,
+          hit.noun + " " + hit.particle
+        ]).filter(text => text !== right).slice(0, 3);
+        if (wrong.length < 3) return;
+        out.push(multipleChoice({
+          type: "place", tag: "조사 자리",
+          prompt: "빈칸에 알맞게 쓴 것을 고르세요.",
+          sentence: [
+            { text: entry.ko.slice(0, hit.start) },
+            { blank: "" },
+            { text: entry.ko.slice(hit.end) }
+          ],
+          choices: [right].concat(wrong),
+          answer: right,
+          why: "조사는 앞말에 붙여 써요. " + hit.noun + " + " + hit.particle + " → " + right
+        }));
+      });
+
+      /* 3 — which word the particle rode in on. Every wrong answer is another
+         word out of the same sentence, so the answer cannot be the one that
+         happens to be there; a word carrying that same particle somewhere else
+         in the line is kept out, since it would be right as well. */
+      take(pool, PER_KIND_CAP).forEach(entry => {
+        const hits = particleHits(entry.ko);
+        const hit = pickOne(hits);
+        if (!hit) return;
+        const shared = new Set(hits.filter(item => item.particle === hit.particle)
+          .map(item => item.noun));
+        const candidates = unique(eojeols(entry.ko).map(token => {
+          const clean = bare(token);
+          const known = hits.find(item => item.noun + item.particle === clean);
+          return known ? known.noun : clean;
+        })).filter(text => text && text !== hit.noun && !shared.has(text));
+        const wrong = take(candidates, 3);
+        if (wrong.length < 3) return;
+        out.push(multipleChoice({
+          type: "place", tag: "조사가 붙는 말",
+          prompt: "이 문장에서 '" + hit.particle + "'" + eun(hit.particle) + " 어느 말 뒤에 붙었어요?",
+          sentence: [{ text: entry.ko }],
+          choices: [hit.noun].concat(wrong),
+          answer: hit.noun,
+          why: "조사는 앞말 뒤에 붙어요. " + hit.noun + " + " + hit.particle
+            + " → " + (hit.noun + hit.particle)
+        }));
+      });
+
+      /* 4 — the predicate closes the sentence. Move it anywhere else and the
+         sentence is wrong, which is not true of moving anything else, so this
+         is the only word the wrong answers are built by moving. */
+      take(pool, PER_KIND_CAP).forEach(entry => {
+        if (quoted(entry.ko)) return;
+        const tokens = eojeols(entry.ko.replace(TAIL_PUNCT, ""));
+        if (tokens.length < 4 || tokens.length > 6) return;
+        if (unique(tokens).length !== tokens.length) return;
+        const last = tokens[tokens.length - 1];
+        if (!/(요|다|까)$/.test(last)) return;
+        const rest = tokens.slice(0, -1);
+        const right = tokens.join(" ");
+        const wrong = unique(rest.map((ignore, at) =>
+          rest.slice(0, at).concat([last], rest.slice(at)).join(" ")))
+          .filter(text => text !== right).slice(0, 3);
+        if (wrong.length < 3) return;
+        out.push(multipleChoice({
+          type: "place", tag: "서술어 자리",
+          prompt: "낱말을 바른 자리에 놓은 문장은 무엇이에요?",
+          choices: [right].concat(wrong),
+          answer: right,
+          why: "한국어는 서술어가 맨 뒤에 와요. '" + last + "'" + iga(last) + " 맨 뒤에 있어요."
+        }));
+      });
+
+      /* 5 — a 관형사 stands directly in front of the word it describes, and
+         nowhere else in the sentence will do. */
+      /* The headword only. A bank files 어떤지 as a searchable form of 어떤, and
+         어떤지 closes a clause rather than standing in front of a noun, so the
+         rule this question teaches is not a rule it keeps. */
+      const determiners = new Set(words.filter(word => word.pos === "determiner")
+        .map(word => bare(word.ko)).filter(Boolean));
+      if (determiners.size) {
+        take(pool, PER_KIND_CAP).forEach(entry => {
+          if (quoted(entry.ko)) return;
+          const tokens = eojeols(entry.ko.replace(TAIL_PUNCT, ""));
+          if (tokens.length < 4 || unique(tokens).length !== tokens.length) return;
+          const at = tokens.findIndex((token, index) =>
+            index < tokens.length - 1 && determiners.has(bare(token)));
+          if (at < 0) return;
+          const mover = tokens[at];
+          const rest = tokens.slice(0, at).concat(tokens.slice(at + 1));
+          const right = tokens.join(" ");
+          const wrong = unique(rest.map((ignore, index) =>
+            rest.slice(0, index).concat([mover], rest.slice(index)).join(" "))
+            .concat([rest.concat([mover]).join(" ")]))
+            .filter(text => text !== right).slice(0, 3);
+          if (wrong.length < 3) return;
+          out.push(multipleChoice({
+            type: "place", tag: "꾸미는 말 자리",
+            prompt: "'" + mover + "'" + eul(mover) + " 바른 자리에 놓은 문장은 무엇이에요?",
+            choices: [right].concat(wrong),
+            answer: right,
+            why: "관형사는 꾸미는 말 바로 앞에 와요. '" + mover + " " + tokens[at + 1] + "'처럼 써요."
+          }));
+        });
+      }
+
+      return out;
+    }
+
+    /* --------------------------------------------------------------- polite */
+    /* The height a sentence speaks at, read off its last word, or nothing when
+       that word does not say plainly. Guessing here would put two right answers
+       on the screen, so a sentence this cannot place is a sentence it does not
+       ask about. */
+    function levelOf(text) {
+      const body = String(text || "").replace(TAIL_PUNCT, "");
+      const tokens = eojeols(body);
+      if (tokens.length < 2) return null;
+      const last = tokens[tokens.length - 1];
+      if (last.length < 2) return null;
+      /* 갑니다 and 아니다 both end in 니다. Only the first has a ㅂ in front of
+         it, and that ㅂ is the whole of the 합니다체. */
+      if (/(니다|니까|시다)$/.test(last) && finalIndex(last.slice(0, -2)) === 17) return "hamnida";
+      if (/십시오$/.test(last)) return "hamnida";
+      if (/요$/.test(last)) return "haeyo";
+
+      const root = corpus.rootOf(last);
+      const predicate = Boolean(root && PREDICATE_POS.has(root.pos));
+      if (/다$/.test(last)) {
+        /* 간다, 먹는다, 갔다 — the plain written ending — but not 바다. */
+        const before = last[last.length - 2];
+        const piece = syllable(before);
+        if (predicate || before === "는" || (piece && piece.final === 4)
+          || /(았|었|겠|였)다$/.test(last)) return "haera";
+        return null;
+      }
+      /* Below this line the ending is a bare one, and a bare ending only says
+         반말 when the word carrying it is a verb or an adjective. 개 ends the
+         way 봐 does and is a puppy. */
+      if (!predicate) return null;
+      if (BANMAL_TAIL.test(last)) return "banmal";
+      const tail = last[last.length - 1];
+      const piece = syllable(tail);
+      if (piece && piece.final === 0 && INFINITIVE_VOWELS.has(piece.vowel)
+        && !NOT_INFINITIVE.has(tail)) return "banmal";
+      return null;
+    }
+
+    /* 해요체 comes apart cleanly: the 요 on the end is the politeness and
+       nothing else, so taking it off leaves the same sentence in 반말. Only the
+       -아/-어 endings survive that cut — 이에요 becomes 이야 and -(으)세요
+       becomes 해, neither of which is a letter you can delete — so the syllable
+       in front of the 요 has to be an infinitive one. */
+    function toBanmal(text) {
+      const trail = (String(text).match(TAIL_PUNCT) || [""])[0];
+      const body = String(text).replace(TAIL_PUNCT, "");
+      if (!/요$/.test(body) || body.length < 3 || eojeols(body).length < 2) return null;
+      const before = body[body.length - 2];
+      const piece = syllable(before);
+      if (!piece || piece.final !== 0 || !INFINITIVE_VOWELS.has(piece.vowel)) return null;
+      if (NOT_INFINITIVE.has(before)) return null;
+      return body.slice(0, -1) + trail;
+    }
+
+    function politeQuestions(state) {
+      const out = [];
+      const words = corpus.words.filter(word => inSelection(word.unitIds, state.units));
+      const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
+
+      /* Every sentence filed under the height it speaks at, plus the 반말 each
+         해요체 sentence turns into once its 요 comes off. That is the one change
+         to a sentence this file makes rather than finds, and it is here because
+         a bank of polite model sentences holds no 반말 of its own to compare
+         them with. A derived line remembers where it came from, so that no
+         question ever shows a sentence beside its own 반말. */
+      const byLevel = new Map(LEVELS.map(level => [level.id, []]));
+      take(pool, PER_KIND_CAP * 3).forEach(entry => {
+        const level = levelOf(entry.ko);
+        if (level) byLevel.get(level).push({ text: entry.ko, from: entry.ko });
+        const low = toBanmal(entry.ko);
+        if (low) byLevel.get("banmal").push({ text: low, from: entry.ko });
+      });
+      const at = id => byLevel.get(id) || [];
+      const share = Math.ceil(PER_KIND_CAP / 4);
+
+      /* Wrong answers drawn from other heights, never twice from the same
+         sentence and never from one the question already shows. */
+      function against(shown, levels, wanted) {
+        const used = new Set();
+        shown.forEach(item => { used.add(item.from); used.add(item.text); });
+        const wrong = [];
+        shuffle(levels.flatMap(at)).forEach(item => {
+          if (wrong.length >= wanted || used.has(item.from) || used.has(item.text)) return;
+          used.add(item.from);
+          used.add(item.text);
+          wrong.push(item.text);
+        });
+        return wrong.length === wanted ? wrong : null;
+      }
+
+      /* 1 — name the height of one sentence */
+      LEVELS.forEach(level => {
+        take(at(level.id), share).forEach(item => {
+          out.push(multipleChoice({
+            type: "polite", tag: "말투 찾기",
+            prompt: "이 문장은 어떤 말투예요?",
+            sentence: [{ text: item.text }],
+            choices: [level.ko].concat(LEVELS.filter(other => other.id !== level.id)
+              .map(other => other.ko)),
+            answer: level.ko,
+            why: "'" + lastWord(item.text) + "'" + ro(lastWord(item.text)) + " 끝나요. " + level.cue
+          }));
+        });
+      });
+
+      /* 2 — the sentence that speaks at the same height as this one */
+      LEVELS.forEach(level => {
+        const mine = at(level.id);
+        if (mine.length < 2) return;
+        const elsewhere = LEVELS.filter(other => other.id !== level.id).map(other => other.id);
+        take(mine, share).forEach(item => {
+          const twin = pickOne(mine.filter(other =>
+            other.from !== item.from && other.text !== item.text));
+          if (!twin) return;
+          const wrong = against([item, twin], elsewhere, 3);
+          if (!wrong) return;
+          out.push(multipleChoice({
+            type: "polite", tag: "말투가 같은 것",
+            prompt: "이 문장과 말투가 같은 것을 고르세요.",
+            sentence: [{ text: item.text }],
+            choices: [twin.text].concat(wrong),
+            answer: twin.text,
+            why: "두 문장 다 " + level.name + ida(level.name) + "."
+          }));
+        });
+      });
+
+      /* 3 — the one that speaks at a different height from the other three */
+      LEVELS.forEach(odd => {
+        LEVELS.forEach(crowd => {
+          if (crowd.id === odd.id || at(crowd.id).length < 3) return;
+          take(at(odd.id), Math.ceil(share / 3)).forEach(item => {
+            const wrong = against([item], [crowd.id], 3);
+            if (!wrong) return;
+            out.push(multipleChoice({
+              type: "polite", tag: "말투가 다른 것",
+              prompt: "다음 중 말투가 다른 하나는 무엇이에요?",
+              choices: [item.text].concat(wrong),
+              answer: item.text,
+              why: "'" + item.text + "'만 " + odd.name + ida(odd.name)
+                + ". 나머지는 " + crowd.name + ida(crowd.name) + "."
+            }));
+          });
+        });
+      });
+
+      /* 4 — the highest of the four, and 5 — the one that is not 높임말 at all */
+      const top = at("hamnida").length ? "hamnida" : "haeyo";
+      const below = top === "hamnida" ? ["haeyo", "banmal", "haera"] : ["banmal", "haera"];
+      take(at(top), share).forEach(item => {
+        const wrong = against([item], below, 3);
+        if (!wrong) return;
+        out.push(multipleChoice({
+          type: "polite", tag: "가장 높은 말투",
+          prompt: "다음 중 가장 높여 말한 것은 무엇이에요?",
+          choices: [item.text].concat(wrong),
+          answer: item.text,
+          why: top === "hamnida"
+            ? "'-습니다', '-ㅂ니다'로 끝나는 합니다체가 가장 높은 말투예요."
+            : "'요'를 붙이면 높임말이 돼요."
+        }));
+      });
+
+      take(at("banmal"), share).forEach(item => {
+        const wrong = against([item], ["haeyo", "hamnida"], 3);
+        if (!wrong) return;
+        out.push(multipleChoice({
+          type: "polite", tag: "높임말이 아닌 것",
+          prompt: "다음 중 높임말이 아닌 것은 무엇이에요?",
+          choices: [item.text].concat(wrong),
+          answer: item.text,
+          why: "'" + item.text + "'에는 '요'가 없어요. 반말이에요."
+        }));
+      });
+
+      /* 6 — who you may say it to. Only this direction is asked: 반말 to a
+         teacher is wrong, while 해요체 to a friend is merely polite, and a
+         question whose wrong answers are not wrong is not a question. */
+      ["haeyo", "hamnida"].forEach(id => {
+        take(at(id), Math.ceil(share / 2)).forEach(item => {
+          const wrong = against([item], ["banmal"], 3);
+          if (!wrong) return;
+          out.push(multipleChoice({
+            type: "polite", tag: "듣는 사람",
+            prompt: "선생님께 하는 말로 알맞은 것은 무엇이에요?",
+            choices: [item.text].concat(wrong),
+            answer: item.text,
+            why: "어른께는 '요'나 '-습니다'를 붙여서 말해요. 나머지는 반말이에요."
+          }));
+        });
+      });
+
+      /* 7 — the ending that raises the person being spoken to */
+      /* The answer has to end in -(으)세요, since that is what the question
+         names; the wrong answers have to be free of every honorific mark, not
+         just that one, or 주셨어요 ends up standing there raising someone in a
+         choice the reader is being told is plain. */
+      const raises = item => /(세요|십니|십시오|셨|시는)/.test(item.text);
+      const endsSeyo = item => /세요["'“”‘’]?[.!?…]*$/.test(item.text);
+      const plainHaeyo = at("haeyo").filter(item => !raises(item));
+      if (plainHaeyo.length >= 3) {
+        take(at("haeyo").filter(endsSeyo), Math.ceil(share / 2)).forEach(item => {
+          const used = new Set([item.from, item.text]);
+          const wrong = [];
+          shuffle(plainHaeyo).forEach(other => {
+            if (wrong.length >= 3 || used.has(other.from) || used.has(other.text)) return;
+            used.add(other.from);
+            used.add(other.text);
+            wrong.push(other.text);
+          });
+          if (wrong.length < 3) return;
+          out.push(multipleChoice({
+            type: "polite", tag: "높임 말끝",
+            prompt: "듣는 사람을 높이는 '-(으)세요'를 쓴 문장은 무엇이에요?",
+            choices: [item.text].concat(wrong),
+            answer: item.text,
+            why: "'" + lastWord(item.text) + "'에 '-(으)세요'가 있어요."
+          }));
+        });
+      }
+
+      /* 8 — the words Korean swaps rather than bends, asked only about the
+         plain halves this page actually teaches */
+      const known = new Set(words.map(word => String(word.ko || "")));
+      HONORIFICS.filter(pair => known.has(pair.plain)).forEach(pair => {
+        const wrong = take(unique(HONORIFICS
+          .filter(other => other.kind === pair.kind && other.high !== pair.high)
+          .map(other => other.high)), 3);
+        if (wrong.length < 3) return;
+        out.push(multipleChoice({
+          type: "polite", tag: "높임말 낱말",
+          prompt: "'" + pair.plain + "'" + eul(pair.plain) + " 높여서 말하면 무엇이에요?",
+          choices: [pair.high].concat(wrong),
+          answer: pair.high,
+          why: "'" + pair.plain + "'의 높임말은 '" + pair.high + "'" + ida(pair.high) + "."
+        }));
+      });
+
+      return out;
+    }
+
     /* ------------------------------------------------------------ order/chunk */
     function orderQuestions(state) {
       const out = [];
@@ -864,6 +1444,8 @@
     const GENERATORS = {
       concept: conceptQuestions,
       blank: blankQuestions,
+      place: placeQuestions,
+      polite: politeQuestions,
       order: orderQuestions,
       chunk: chunkQuestions,
       excerpt: excerptQuestions,
