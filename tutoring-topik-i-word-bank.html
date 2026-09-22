@@ -18,7 +18,7 @@
   <title>TOPIK I Vocabulary Bank</title>
   <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
   color-scheme: light;
@@ -59,7 +59,15 @@
   --hero-text: #EFF6FF;
   --radius-md: 6px;
   --radius-lg: 8px;
-  --font: 'Outfit', system-ui, sans-serif;
+  /* Outfit has no Hangul, so Korean falls past it to IBM Plex Sans KR, picked
+     for its branching ㅈ: the two legs meet at one point under the bar instead
+     of hooking off its left end. As a batchim, where the jamo is squeezed into
+     the bottom third of the block, that is the difference between reading 갖
+     and guessing at it. Latin never reaches Plex — Outfit covers that, and the
+     fallback runs character by character, not run by run. Plex KR stops at
+     700, so the 800s below land on its bold instead of a synthesised one,
+     which on Hangul would fill the counters straight back in. */
+  --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
   --transition: all 200ms ease;
 }
 
@@ -1656,6 +1664,96 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 .register-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); margin-top: 10px; }
 .register-row { display: grid; gap: 4px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
 .register-row p { margin: 0; }
+
+/* ---------------------------------------------------------------------------
+   Korean leading
+   Korean is set in IBM Plex Sans KR (see --font above), but no face fixes the
+   spacing on its own: a syllable block stacks two or three jamo into the
+   height a Latin letter spends on one, so the leading the English reads
+   comfortably at still closes Korean up. The strokes inside 왔 run together,
+   을 and 늘 stop being tellable apart at a glance, and in the reference table
+   the word ends up pressed against the rule under its row. Everything below
+   hands Korean a taller line box. Two numbers drive the lot — one for running
+   text, one for the small print (notes, part-of-speech headers, feedback)
+   where full leading would push the content out of the box it sits in.
+
+   These rules come last in the sheet on purpose: each component sets its own
+   line-height beside the rest of its styling, and this is what overrides them
+   without scattering the number across the file.
+--------------------------------------------------------------------------- */
+:root {
+  /* How much bigger Korean is set than the Latin it sits beside. Every size in
+     the block at the bottom of this sheet is the page's original number times
+     this, so the proportions the layout was drawn to still hold and only this
+     one value moves. */
+  --ko-size: 1.25;
+  /* Eased back from 2.3 now that the larger size carries the legibility; at
+     2.3 the taller Korean was leaving holes between the rows. */
+  --ko-leading: 2;
+  --ko-leading-tight: 1.75;
+}
+.hangul,
+.ref-section td[data-vocab-field],
+.choice,
+.drill-choices .choice,
+.drill-passage p,
+.drill-sentence,
+.order-tile,
+.answer-key,
+.word-note-ko,
+.review-row { line-height: var(--ko-leading); }
+
+.order-slot:empty::after,
+.feedback,
+.small,
+.pos-note,
+.word-note-usage,
+.word-note-en,
+.word-note-form { line-height: var(--ko-leading-tight); }
+
+/* The quizzed word is the one thing on the card that has to be unmistakable,
+   and it was set on a line box exactly as tall as its own type: at 5rem that
+   clipped the descending stroke of a 를 against the answer field below it.
+   Hangul is drawn on a square body with no side bearings to spare, so the
+   negative tracking goes too — on Korean it pushes the blocks into each other
+   rather than closing a gap. */
+.prompt {
+  min-height: 1.5em;
+  line-height: 1.3;
+  letter-spacing: normal;
+}
+.drill-sentence { letter-spacing: normal; }
+
+/* Taller lines need the row to grow with them, or the new leading just eats
+   the padding that was keeping the words off the rules above and below. The
+   note and expression rows keep their own padding: they are meant to hug the
+   word row they belong to. */
+.ref-section th,
+.ref-section td { padding-top: 18px; padding-bottom: 18px; }
+
+/* ---------------------------------------------------------------------------
+   Korean size
+   Leading alone did not do it. A Hangul block spends its height on two or
+   three stacked jamo, so at the size the Latin is set at, the counters inside
+   ㅁ and ㅇ and the whole batchim close up well before an English word of the
+   same measure gets hard to read — which is why Korean here is set a quarter
+   larger than everything around it rather than matching it.
+
+   Each rule keeps the page's original size inside the calc(), so what the
+   layout was drawn to is still legible in the source and --ko-size is the only
+   thing to turn.
+
+   The quizzed word on the exercise card is left alone: it is already display
+   size, and a quarter more would run it past the edge of its card.
+--------------------------------------------------------------------------- */
+.hangul,
+.answer-key { font-size: calc(1.15rem * var(--ko-size)); }
+.expr-row .hangul,
+.drill-passage p,
+.word-note-ko { font-size: calc(1.05rem * var(--ko-size)); }
+.drill-sentence { font-size: calc(clamp(1.1rem, 2vw, 1.35rem) * var(--ko-size)); }
+.order-tile { font-size: calc(1.02rem * var(--ko-size)); }
+.choice { font-size: calc(1rem * var(--ko-size)); }
 </style>
 </head>
 <body id="top">
