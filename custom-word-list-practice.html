@@ -1834,8 +1834,8 @@ th {
           <p>${esc(exercise.blurb)}</p>
           ${exercise.picker()}
           <div class="exercise-menu-grid">
-            <label>Question language<select id="menu-question-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "korean" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
-            <label>Answer language<select id="menu-answer-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "english" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
+            <label>Question language<select id="menu-question-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "english" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
+            <label>Answer language<select id="menu-answer-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "korean" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
             <label>Repetitions<select id="menu-multiplier-${id}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}× each word</option>`).join("")}</select></label>
             <label>Word limit<small class="menu-count-note">0 keeps every selected word</small><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
             <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
@@ -2294,9 +2294,9 @@ th {
     }
 
     function sendToCustom(exerciseId) {
-      const input = document.getElementById("custom-input");
-      const existing = input.value.trim();
-      input.value = (existing ? existing + "\n\n" : "") + document.getElementById(`export-text-${exerciseId}`).value;
+      // The missed words replace what was in the box rather than joining it:
+      // the list just finished is the list they came out of.
+      document.getElementById("custom-input").value = document.getElementById(`export-text-${exerciseId}`).value;
       // The export is always english / romanization / korean, so a mapping
       // left over from an earlier paste would misread it.
       const separator = document.getElementById("custom-sep");
@@ -2320,9 +2320,9 @@ th {
         localStorage.removeItem(HANDOFF_KEY);
       } catch (_) {}
       if (!text.trim()) return;
-      const input = document.getElementById("custom-input");
-      const existing = input.value.trim();
-      input.value = (existing ? existing + "\n\n" : "") + text;
+      // A handed-over list replaces whatever the box held, the same way
+      // Practice these again does.
+      document.getElementById("custom-input").value = text;
       refreshCount("custom");
     }
 
