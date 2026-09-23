@@ -573,6 +573,17 @@ textarea:disabled,
   gap: 6px;
 }
 .drill-passage p { margin: 0; font-size: 1.05rem; line-height: 1.85; }
+/* The English behind the answer, shown only for a word with no star on it in
+   the tables above. It sits between the sentence and the choices, small and
+   quiet, because it is a prop the run is meant to stop needing. */
+.drill-hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: .82rem;
+  font-style: italic;
+  letter-spacing: .01em;
+}
+.drill-hint strong { font-style: normal; color: var(--surface-text); }
 .drill-sentence {
   margin: 16px 0 0;
   padding: 16px 18px;
@@ -1537,6 +1548,28 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 .option input { width: 1.1rem; height: 1.1rem; margin: 0; flex: none; accent-color: var(--secondary); }
 .option .option-count { margin-left: auto; opacity: .7; font-size: .72rem; font-variant-numeric: tabular-nums; }
 
+/* The mix sliders. One row per ticked day, saying how much of the run that day
+   is to fill — the number on the right is the share it works out to once every
+   other slider is taken into account, so the column always adds up to 100%. */
+.mix-grid { display: grid; gap: 8px; }
+.mix-row {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) 1fr 3.6rem;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .78rem;
+  font-weight: 700;
+}
+.mix-row input[type="range"] { width: 100%; margin: 0; accent-color: var(--secondary); }
+.mix-share { text-align: right; font-variant-numeric: tabular-nums; opacity: .75; }
+.mix-row.off { opacity: .55; }
+.mix-row.off .mix-share { color: var(--accent); opacity: 1; }
+
 /* The missed-words export block on the finish card. */
 .export-block { margin-top: 20px; }
 .export-head {
@@ -1812,7 +1845,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       <div class="quiz-body" style="padding: 0;">
         <div class="exercise-menu" id="menu-drill">
           <h4>Set up the exercise</h4>
-          <p>The one exercise here that never shows English once it starts, and the one that asks about a word rather than asking for it. Every question is generated from the day&rsquo;s own words, the sentences built on them, and a short passage written for that day &mdash; so no two runs ask the same set.</p>
+          <p>The one exercise here that asks about a word rather than asking for it, and the one that shows no English once it starts &mdash; apart from the hint below, which only appears on words you have not starred yet. Every question is generated from the day&rsquo;s own words, the sentences built on them, and a short passage written for that day &mdash; so no two runs ask the same set.</p>
 
           <div class="picker">
             <div class="picker-head">
@@ -1830,6 +1863,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <div class="option-grid days" id="drillDayGrid"></div>
           </div>
 
+          <div class="picker hidden" id="drillMixPicker">
+            <div class="picker-head">
+              <span class="control-label">How much of each day</span>
+              <div class="picker-actions">
+                <button class="btn secondary" type="button" data-drill-mix="even">Even out</button>
+              </div>
+            </div>
+            <p class="menu-summary">Two days at the same setting split the run down the middle. Pull one down and it asks less; pull it to zero and that day sits the run out without being unticked.</p>
+            <div class="mix-grid" id="drillMixGrid"></div>
+          </div>
+
           <div class="picker">
             <div class="picker-head">
               <span class="control-label">Kinds of question</span>
@@ -1844,6 +1888,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <div class="exercise-menu-grid">
             <label>Length<small class="menu-count-note">How many questions the run asks</small>
               <select id="menu-count-drill"></select>
+            </label>
+          </div>
+
+          <div class="option-grid">
+            <label class="option">
+              <input type="checkbox" id="drill-hints">
+              <span>English hint on unstarred words</span>
             </label>
           </div>
 
@@ -1879,6 +1930,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
               <div class="prompt-label" id="prompt-label-drill"></div>
               <p class="prompt" id="prompt-drill"></p>
               <p class="drill-sentence hidden" id="sentence-drill"></p>
+              <p class="drill-hint hidden" id="hint-drill"></p>
 
               <div class="drill-choices" id="choices-drill"></div>
 
@@ -1926,7 +1978,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
-  <script src="./shared-vocab/drill-questions.js?v=1.0.0"></script>
+  <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
   <script>
   (() => {
     "use strict";
@@ -3650,10 +3702,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // Exercise 2 — one day, or a range.
     const DRILL_PASSAGES = (window.TopikIDrillPassages || {}).PASSAGES || [];
     const DRILL_LENGTHS = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-    // V2 because a saved setup names the kinds of question it ticked, and a
+    // V3 because a saved setup names the kinds of question it ticked, and a
     // kind that did not exist when it was saved cannot be in that list: the
-    // 자리·어순 and 말투·높임 questions would arrive switched off and stay off.
-    const DRILL_SETUP_KEY = "topikIDrillSetupV2";
+    // 뜻 짐작하기, 닮은 말 and 틀린 곳 questions would arrive switched off and
+    // stay off. V2 did the same for 자리·어순 and 말투·높임 before them.
+    const DRILL_SETUP_KEY = "topikIDrillSetupV3";
 
     // The bank's topics are labelled in English, and a question that names the
     // group in English answers itself, so the drill gets Korean labels.
@@ -3676,8 +3729,36 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       ["어른", "어린이"], ["안", "밖"]
     ];
 
+    // Words near enough in shape or in job that the sentence around them is
+    // the only thing that says which one is wanted. The drill finds families
+    // of its own by looking for stems that begin alike — 놀다 · 놀라다 — so
+    // what is written out here is the pairs worth a line of explanation, and
+    // the line is what the feedback shows when one is missed.
+    const DRILL_CONFUSABLES = [
+      { words: ["듣다", "들다"], ko: "'듣다'는 귀로 들어요. '들다'는 손으로 들어요." },
+      { words: ["놀다", "놀라다"], ko: "'놀다'는 재미있게 시간을 보내요. '놀라다'는 깜짝 놀라요." },
+      { words: ["적다", "작다"], ko: "'적다'는 수가 많지 않아요. '작다'는 크기가 크지 않아요." },
+      { words: ["나가다", "나오다"], ko: "'나가다'는 안에서 밖으로 가요. '나오다'는 밖으로 와요." },
+      { words: ["가르치다", "배우다"], ko: "'가르치다'는 선생님이 해요. '배우다'는 학생이 해요." },
+      { words: ["시작하다", "시작되다"], ko: "'시작하다'는 사람이 시작해요. '시작되다'는 저절로 시작돼요." },
+      { words: ["끝나다", "끝내다"], ko: "'끝나다'는 저절로 끝나요. '끝내다'는 사람이 끝내요." },
+      { words: ["하다", "되다"], ko: "'하다'는 내가 해요. '되다'는 저절로 돼요." },
+      { words: ["만들다", "만나다"], ko: "'만들다'는 물건을 만들어요. '만나다'는 사람을 만나요." },
+      { words: ["놓다", "넣다"], ko: "'놓다'는 위에 놓아요. '넣다'는 안에 넣어요." },
+      { words: ["생기다", "생각하다"], ko: "'생기다'는 없던 것이 생겨요. '생각하다'는 머리로 생각해요." },
+      { words: ["묻다", "물어보다"], ko: "두 말 다 질문해요. 말할 때는 '물어보다'를 더 많이 써요." },
+      { words: ["빌리다", "빌려주다"], ko: "'빌리다'는 내가 받아 써요. '빌려주다'는 남에게 줘요." },
+      { words: ["입다", "신다"], ko: "'입다'는 옷을 입어요. '신다'는 신발을 신어요." },
+      { words: ["타다", "내리다"], ko: "'타다'는 차에 올라타요. '내리다'는 차에서 나와요." }
+    ];
+
     let drillBank = null;
     let drillRun = null;
+    // What the sliders stand at, day by day, between 0 and 100. Fifty is where
+    // every one of them starts, so a day pulled up and a day pulled down are
+    // the same gesture in opposite directions.
+    let drillMix = {};
+    const DRILL_MIX_DEFAULT = 50;
     const drillEl = id => document.getElementById(id + "-drill");
     const DRILL_TYPE_KO = new Map(
       (window.DrillQuestions ? window.DrillQuestions.TYPES : []).map(type => [type.id, type.ko]));
@@ -3695,6 +3776,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         words: BANK.filter(word => word.korean === word.shownKorean).map(word => ({
           id: word.id,
           ko: word.korean,
+          // The English the hint shows, which is the gloss the tables show and
+          // never the pattern half of an auxiliary's "-고 있다: to be doing".
+          en: word.shownMeaning,
           pos: word.partOfSpeech,
           posKo: (POS_BY_ID.get(word.partOfSpeech) || {}).korean || word.partOfSpeech,
           topicId: word.topic,
@@ -3704,6 +3788,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         })),
         grammar: null,
         antonyms: DRILL_ANTONYMS,
+        confusables: DRILL_CONFUSABLES,
         // Every expression in the bank, filed under its word's day. This is
         // where the blanks and the chunk puzzles find their four thousand
         // sentences.
@@ -3726,7 +3811,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       return {
         units: pick(saved.units, DRILL_PASSAGES.map(passage => `day-${passage.day}`)),
         types: pick(saved.types, window.DrillQuestions.TYPES.map(type => type.id)),
-        count: DRILL_LENGTHS.includes(Number(saved.count)) ? Number(saved.count) : 20
+        count: DRILL_LENGTHS.includes(Number(saved.count)) ? Number(saved.count) : 20,
+        mix: saved.mix && typeof saved.mix === "object" ? saved.mix : {},
+        hints: saved.hints !== false
       };
     }
 
@@ -3747,6 +3834,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       document.getElementById("menu-count-drill").innerHTML = DRILL_LENGTHS.map(length =>
         `<option value="${length}"${length === saved.count ? " selected" : ""}>${length} questions</option>`).join("");
 
+      drillMix = Object.assign({}, saved.mix);
+      document.getElementById("drill-hints").checked = saved.hints;
+      paintDrillMix();
+
       const from = document.getElementById("drill-from");
       const to = document.getElementById("drill-to");
       const last = DRILL_PASSAGES.length;
@@ -3754,17 +3845,69 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       to.value = String(last);
     }
 
+    // The ticked days, in the order the day grid shows them.
+    function drillTickedDays() {
+      return [...document.querySelectorAll('input[data-drill-group="day"]:checked')]
+        .map(input => input.value);
+    }
+    const drillMixOf = id => {
+      const held = Number(drillMix[id]);
+      return Number.isFinite(held) ? Math.min(100, Math.max(0, held)) : DRILL_MIX_DEFAULT;
+    };
+
+    // One slider per ticked day, and nothing at all while only one day is
+    // ticked — there is no mix to set when everything comes from one place.
+    function paintDrillMix() {
+      const picker = document.getElementById("drillMixPicker");
+      const days = drillTickedDays();
+      picker.classList.toggle("hidden", days.length < 2);
+      if (days.length < 2) return;
+      document.getElementById("drillMixGrid").innerHTML = days.map(id => `
+        <label class="mix-row" data-mix-row="${esc(id)}">
+          <span class="mix-name">Day ${esc(id.replace("day-", ""))}</span>
+          <input type="range" min="0" max="100" step="5" value="${drillMixOf(id)}"
+            data-drill-mix-day="${esc(id)}" aria-label="Share of the run from day ${esc(id.replace("day-", ""))}">
+          <span class="mix-share"></span>
+        </label>`).join("");
+      paintDrillShares();
+    }
+
+    // The number on the right of each slider: not what the slider stands at,
+    // but what that works out to once the others are counted in.
+    function paintDrillShares() {
+      const days = drillTickedDays();
+      const total = days.reduce((sum, id) => sum + drillMixOf(id), 0);
+      days.forEach(id => {
+        const row = document.querySelector(`[data-mix-row="${id}"]`);
+        if (!row) return;
+        const share = total ? Math.round((drillMixOf(id) / total) * 100) : 0;
+        row.querySelector(".mix-share").textContent = total ? `${share}%` : "even";
+        row.classList.toggle("off", total > 0 && drillMixOf(id) === 0);
+      });
+    }
+
     function drillSettings() {
       const checked = kind => new Set([...document.querySelectorAll(`input[data-drill-group="${kind}"]:checked`)]
         .map(input => input.value));
-      return { units: checked("day"), types: checked("type"), grammar: new Set() };
+      const days = drillTickedDays();
+      const values = days.map(drillMixOf);
+      // Sliders that all stand at the same place are no mix at all, and are
+      // handed over as none, so a run nobody has touched the sliders for is
+      // drawn exactly the way it was drawn before they existed.
+      const level = values.every(value => value === values[0]);
+      const weights = days.length < 2 || level || !values.some(value => value > 0)
+        ? null
+        : Object.fromEntries(days.map((id, at) => [id, values[at]]));
+      return { units: checked("day"), types: checked("type"), grammar: new Set(), weights };
     }
 
     function saveDrillSetup(settings) {
       saveObject(DRILL_SETUP_KEY, {
         units: [...settings.units],
         types: [...settings.types],
-        count: Number(document.getElementById("menu-count-drill").value) || 20
+        count: Number(document.getElementById("menu-count-drill").value) || 20,
+        mix: drillMix,
+        hints: document.getElementById("drill-hints").checked
       });
     }
 
@@ -3801,7 +3944,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       if (!questions.length) { error.classList.remove("hidden"); return; }
       error.classList.add("hidden");
 
-      drillRun = { questions, at: 0, right: 0, locked: false, placed: [], results: [] };
+      drillRun = {
+        questions, at: 0, right: 0, locked: false, placed: [], results: [],
+        hints: document.getElementById("drill-hints").checked
+      };
       document.getElementById("menu-drill").classList.add("hidden");
       document.getElementById("quiz-card-drill").classList.remove("hidden");
       drillEl("live").classList.remove("hidden");
@@ -3818,11 +3964,16 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // A blank is drawn the same width whatever word is behind it, so the size
-    // of the gap never gives the length of the answer away.
+    // of the gap never gives the length of the answer away. A break is where a
+    // question shows more than one sentence at once — the 뜻 짐작하기 ones,
+    // which put the same hole in two or three different lines.
     function drillSentenceHtml(parts) {
-      return parts.map(part => part.blank !== undefined
-        ? `<span class="drill-blank">${esc(part.blank)}◯◯◯</span>`
-        : esc(part.text)).join("");
+      return parts.map(part => {
+        if (part.br) return "<br>";
+        return part.blank !== undefined
+          ? `<span class="drill-blank">${esc(part.blank)}◯◯◯</span>`
+          : esc(part.text);
+      }).join("");
     }
 
     function showDrillQuestion() {
@@ -3844,6 +3995,14 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const sentence = drillEl("sentence");
       sentence.classList.toggle("hidden", !question.sentence);
       sentence.innerHTML = question.sentence ? drillSentenceHtml(question.sentence) : "";
+
+      // The English behind the answer, for a word still carrying no star in
+      // the tables above. Star it and the prop goes away on its own, which is
+      // the only reason the stars and the hint are wired to each other.
+      const hint = drillEl("hint");
+      const showHint = Boolean(drillRun.hints && question.hint && ratingOf(question.hintId) === 0);
+      hint.classList.toggle("hidden", !showHint);
+      hint.innerHTML = showHint ? `<strong>Hint</strong> &mdash; ${esc(question.hint)}` : "";
 
       const choices = drillEl("choices");
       const order = drillEl("order");
@@ -4045,11 +4204,24 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           const day = Number(input.value.replace("day-", ""));
           input.checked = day >= low && day <= high;
         });
+        paintDrillMix();
         refreshDrillCount();
       });
 
       section.addEventListener("change", event => {
-        if (event.target.matches('input[data-drill-group], #menu-count-drill')) refreshDrillCount();
+        if (event.target.matches('input[data-drill-group="day"]')) paintDrillMix();
+        if (event.target.matches('input[data-drill-group], #menu-count-drill, #drill-hints')) refreshDrillCount();
+        const slider = event.target.closest("[data-drill-mix-day]");
+        // A slider at rest is a new pool to count. While it is being dragged it
+        // is only a new set of shares to letter in, which is the input below.
+        if (slider) refreshDrillCount();
+      });
+
+      section.addEventListener("input", event => {
+        const slider = event.target.closest("[data-drill-mix-day]");
+        if (!slider) return;
+        drillMix[slider.dataset.drillMixDay] = Number(slider.value);
+        paintDrillShares();
       });
 
       section.addEventListener("click", event => {
@@ -4060,6 +4232,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           document.querySelectorAll(`input[data-drill-group="${kind}"]`).forEach(input => {
             input.checked = Boolean(all);
           });
+          if (kind === "day") paintDrillMix();
+          refreshDrillCount();
+          return;
+        }
+        if (event.target.closest('[data-drill-mix="even"]')) {
+          drillTickedDays().forEach(id => { drillMix[id] = DRILL_MIX_DEFAULT; });
+          paintDrillMix();
           refreshDrillCount();
           return;
         }

@@ -11,13 +11,20 @@
   buttons, and its own feedback blocks. A question comes out of here as data
   and each page renders it the way it renders everything else.
 
-  Eight kinds of question, each of which the page can switch off:
+  Eleven kinds of question, each of which the page can switch off:
 
     concept   개념·형태   the idea behind a word rather than the word itself:
                           its class, its group, the two words it is built from,
                           the syllable it shares with another, its opposite, the
                           sentence that uses a grammar point.
+    guess     뜻 짐작하기 two or three sentences that all want the same word,
+                          with the word taken out of every one of them.
     blank     빈칸 채우기 one or two words cut out of a real sentence.
+    confuse   닮은 말     보다 · 보이다 · 보여 주다, and which of them the
+                          sentence in front of you is asking for.
+    fix       틀린 곳     a sentence with something wrong in it: find the wrong
+                          one, find the right one, find the wrong word in it,
+                          and put that word right.
     place     자리·어순   where a word belongs: which particle a noun takes, the
                           noun a particle is written onto, and what a sentence
                           looks like once a word is moved out of its place.
@@ -42,22 +49,32 @@
       words:    [{ id, ko, pos, posKo, topicId, topicKo, unitIds, forms }],
       grammar:  [{ id, form, label, unitIds, examples: [{ ko }] }] or null,
       antonyms: [[ko, ko], …],
+      confusables: [{ words: [ko, ko, ko], ko: "what separates them" }, …],
       extras:   [{ ko, unitIds }] more sentences for blanks and chunks,
       mineSurfaces: true when the bank stores dictionary forms only
     });
 
-    drill.pool({ units: Set, types: Set, grammar: Set })   -> every question
-    drill.draw({ … }, 20)                                  -> a balanced run
+    drill.pool({ units: Set, types: Set, grammar: Set, weights })  -> every question
+    drill.draw({ … }, 20)                                          -> a balanced run
+
+  weights is optional: a unit id → 0-100 map saying how much of a run each of
+  the ticked units is to fill. Without it the units share a run evenly, which
+  is what every caller did before the mix sliders existed.
 
   A question
   ----------
-    { id, type, tag, passage, prompt, sentence, mode, choices, answer,
-      answerText, tiles, solution, join, why }
+    { id, type, tag, units, passage, prompt, sentence, mode, choices, answer,
+      answerText, tiles, solution, join, hint, hintId, why }
 
     mode "mc"     choices / answer / answerText
     mode "order"  tiles (shuffled) / solution / join
-    sentence      null, or [{ text }, { blank: "①" }, …] for the page to render
+    sentence      null, or [{ text }, { blank: "①" }, { br: true }, …]
     passage       null, or the lines to show above the question
+    units         the unit ids the question was built out of, which is what the
+                  mix sliders weigh
+    hint / hintId the English behind the answer, and the id of the word it
+                  belongs to. The generator never decides whether a hint is
+                  shown — the page does, off its own familiarity stars.
 */
 (function (global) {
   "use strict";
@@ -142,8 +159,14 @@
   const TYPES = [
     { id: "concept", ko: "개념·형태", en: "Concept and word building",
       note: "What a word is, which group it belongs to, what it is built from." },
+    { id: "guess", ko: "뜻 짐작하기", en: "Context, then the word",
+      note: "Two or three sentences that all want the same word, and the word gone from every one." },
     { id: "blank", ko: "빈칸 채우기", en: "Fill in the blank",
       note: "One or two words cut out of a real sentence." },
+    { id: "confuse", ko: "닮은 말", en: "Choose between similar words",
+      note: "보다 · 보이다 · 보여 주다 — which one this sentence is asking for." },
+    { id: "fix", ko: "틀린 곳", en: "Error correction",
+      note: "A sentence with something wrong in it: spot it, then put it right." },
     { id: "place", ko: "자리·어순", en: "Where the word goes",
       note: "Which particle a noun takes, and where a word sits in the sentence." },
     { id: "polite", ko: "말투·높임", en: "Politeness and speech level",
@@ -275,6 +298,9 @@
       mode: "mc",
       type: spec.type,
       tag: spec.tag,
+      units: unique(spec.units || []),
+      hint: spec.hint || "",
+      hintId: spec.hintId || "",
       passage: spec.passage || null,
       prompt: spec.prompt,
       sentence: spec.sentence || null,
@@ -297,6 +323,9 @@
       mode: "order",
       type: spec.type,
       tag: spec.tag,
+      units: unique(spec.units || []),
+      hint: "",
+      hintId: "",
       passage: null,
       prompt: spec.prompt,
       sentence: null,
@@ -509,7 +538,7 @@
           const others = take(posNames.filter(name => name !== word.posKo), 3);
           if (others.length < 3) return;
           out.push(multipleChoice({
-            type: "concept", tag: "품사",
+            type: "concept", tag: "품사", units: word.unitIds,
             prompt: "'" + word.ko + "'" + eun(word.ko) + " 무슨 품사예요?",
             choices: [word.posKo].concat(others),
             answer: word.posKo,
@@ -524,7 +553,7 @@
           const others = take(topicNames.filter(name => name !== word.topicKo), 3);
           if (others.length < 3) return;
           out.push(multipleChoice({
-            type: "concept", tag: "갈래",
+            type: "concept", tag: "갈래", units: word.unitIds,
             prompt: "'" + word.ko + "'" + eun(word.ko) + " 어느 갈래에 속해요?",
             choices: [word.topicKo].concat(others),
             answer: word.topicKo,
@@ -545,6 +574,7 @@
             if (inside.length < 3 || !outsider) return;
             out.push(multipleChoice({
               type: "concept", tag,
+              units: inside.flatMap(word => word.unitIds || []).concat(outsider.unitIds || []),
               prompt: "다음 중 '" + name + "'에 속하지 않는 말은 무엇이에요?",
               choices: inside.map(word => word.ko).concat([outsider.ko]),
               answer: outsider.ko,
@@ -600,7 +630,7 @@
           .filter(text => text !== right).slice(0, 3);
         if (wrong.length < 3) return;
         out.push(multipleChoice({
-          type: "concept", tag: "낱말 만들기",
+          type: "concept", tag: "낱말 만들기", units: item.word.unitIds,
           prompt: "'" + item.word.ko + "'" + eun(item.word.ko) + " 어떤 두 말이 합쳐진 말이에요?",
           choices: [right].concat(wrong),
           answer: right,
@@ -623,7 +653,7 @@
           .map(noun => noun.ko + eul(noun.ko) + " 해요")).filter(text => text !== right).slice(0, 3);
         if (wrong.length < 3) return;
         out.push(multipleChoice({
-          type: "concept", tag: "낱말 만들기",
+          type: "concept", tag: "낱말 만들기", units: item.word.unitIds,
           prompt: "'" + item.word.ko + "'" + eun(item.word.ko) + " 무엇을 하는 거예요?",
           choices: [right].concat(wrong),
           answer: right,
@@ -657,6 +687,7 @@
           if (wrong.length < 3) continue;
           out.push(multipleChoice({
             type: "concept", tag: "같은 글자",
+            units: (pair[0].unitIds || []).concat(pair[1].unitIds || []),
             prompt: "'" + pair[0].ko + "'" + wa(pair[0].ko) + " '" + pair[1].ko
               + "'에 똑같이 들어 있는 글자는 무엇이에요?",
             choices: [syllable].concat(wrong),
@@ -681,7 +712,7 @@
               .map(word => word.ko)).slice(0, 3);
             if (wrong.length < 3) return;
             out.push(multipleChoice({
-              type: "concept", tag: "반대말",
+              type: "concept", tag: "반대말", units: source.unitIds,
               prompt: "'" + from + "'의 반대말은 무엇이에요?",
               choices: [to].concat(wrong),
               answer: to,
@@ -705,7 +736,7 @@
           const wrong = unique(others).slice(0, 3);
           if (wrong.length < 3) return;
           out.push(multipleChoice({
-            type: "concept", tag: "문법",
+            type: "concept", tag: "문법", units: point.unitIds,
             prompt: "'" + point.form + "'" + eul(point.form) + " 쓴 문장을 고르세요.",
             choices: [right].concat(wrong),
             answer: right,
@@ -722,6 +753,76 @@
         state.grammar.has(point.id) && inSelection(point.unitIds, state.units));
     }
 
+    /* ---------------------------------------------------------------- guess */
+    /* Context first, the word after it. A definition would be the obvious way
+       to write this question, and there is no Korean definition anywhere in
+       the three banks to write it from — what they carry is English, and
+       English is the one thing this exercise never shows. So the idea is
+       described the way a reader meets it in the first place: two or three
+       real sentences that all want the same word, with the word taken out of
+       every one of them. One context can be filled by guessing at the shape of
+       the answer. Three cannot — only the word that means the right thing fits
+       all of them at once. */
+    function guessQuestions(state) {
+      const out = [];
+      const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
+
+      /* Every surface the pool shows, and the sentences it turns up in. A
+         surface twice in one sentence is one home rather than two, or a
+         question built on "different sentences" shows the same line twice. */
+      const homes = new Map();
+      take(pool, PER_KIND_CAP * 3).forEach(entry => {
+        const seen = new Set();
+        corpus.scan(entry.ko).forEach(hit => {
+          if (!hit.word || seen.has(hit.surface)) return;
+          seen.add(hit.surface);
+          if (!homes.has(hit.surface)) homes.set(hit.surface, []);
+          homes.get(hit.surface).push({ entry, hit });
+        });
+      });
+
+      homes.forEach((places, surface) => {
+        if (places.length < 2) return;
+        const word = places[0].hit.word;
+        if (!word || !inSelection(word.unitIds, state.units)) return;
+        [2, 3].forEach(size => {
+          if (places.length < size) return;
+          const shown = take(places, size);
+          const lines = shown.map(place => place.entry.ko);
+          if (unique(lines).length !== size) return;
+          /* Two lines where one is written inside the other are one context
+             shown twice: 제 이야기를 잘 들어요 beside 콩이는 제 이야기를 잘
+             들어요 asks nothing the shorter one did not ask on its own. */
+          if (lines.some(line => lines.some(other => other !== line && other.indexOf(line) >= 0))) return;
+          const wrong = corpus.distractorsFor(surface, word, 3);
+          if (wrong.length < 3) return;
+          /* Each line is the sentence with its hole in it, and the lines are
+             kept apart by a break the page draws, so all of the contexts are
+             read at once rather than one at a time. */
+          const sentence = [];
+          shown.forEach((place, index) => {
+            if (index) sentence.push({ br: true });
+            sentence.push({ text: place.entry.ko.slice(0, place.hit.start) });
+            sentence.push({ blank: "" });
+            sentence.push({ text: place.entry.ko.slice(place.hit.end) });
+          });
+          out.push(multipleChoice({
+            type: "guess", tag: size === 2 ? "두 문장 공통" : "세 문장 공통",
+            units: shown.flatMap(place => place.entry.unitIds || []),
+            prompt: (size === 2 ? "두" : "세") + " 문장에 똑같이 들어갈 말은 무엇이에요?",
+            sentence,
+            choices: [surface].concat(wrong),
+            answer: surface,
+            hint: word.en,
+            hintId: word.id,
+            why: shown.map(place => place.entry.ko).join(" ")
+          }));
+        });
+      });
+
+      return take(out, PER_KIND_CAP);
+    }
+
     /* ---------------------------------------------------------------- blank */
     function blankQuestions(state) {
       const out = [];
@@ -735,8 +836,9 @@
         const wrong = corpus.distractorsFor(hit.surface, hit.word, 3);
         if (wrong.length === 3) {
           out.push(multipleChoice({
-            type: "blank", tag: "빈칸",
+            type: "blank", tag: "빈칸", units: entry.unitIds,
             prompt: "빈칸에 알맞은 말을 고르세요.",
+            hint: hit.word.en, hintId: hit.word.id,
             sentence: [
               { text: entry.ko.slice(0, hit.start) },
               { blank: "" },
@@ -765,7 +867,7 @@
         ]).filter(text => text !== rightPair).slice(0, 3);
         if (wrongPairs.length < 3) return;
         out.push(multipleChoice({
-          type: "blank", tag: "빈칸 둘",
+          type: "blank", tag: "빈칸 둘", units: entry.unitIds,
           prompt: "①과 ②에 알맞은 말을 차례대로 고르세요.",
           sentence: [
             { text: entry.ko.slice(0, first.start) },
@@ -808,7 +910,7 @@
           const wrong = take(elsewhere, 3);
           if (wrong.length < 3) return;
           out.push(multipleChoice({
-            type: "blank", tag: "문법 빈칸",
+            type: "blank", tag: "문법 빈칸", units: point.unitIds,
             prompt: "빈칸에 알맞은 말을 고르세요.",
             sentence: [
               { text: text.slice(0, at) },
@@ -889,7 +991,7 @@
           ? "'" + noun + "'의 받침은 'ㄹ'이에요."
           : (last > 0 ? "'" + noun + "'에는 받침이 있어요." : "'" + noun + "'에는 받침이 없어요.");
         out.push(multipleChoice({
-          type: "place", tag: "조사 붙이기",
+          type: "place", tag: "조사 붙이기", units: word.unitIds,
           prompt: "'" + noun + "' 뒤에 조사를 바르게 붙인 것은 무엇이에요?",
           choices: [right].concat(wrong),
           answer: right,
@@ -912,7 +1014,7 @@
         ]).filter(text => text !== right).slice(0, 3);
         if (wrong.length < 3) return;
         out.push(multipleChoice({
-          type: "place", tag: "조사 자리",
+          type: "place", tag: "조사 자리", units: entry.unitIds,
           prompt: "빈칸에 알맞게 쓴 것을 고르세요.",
           sentence: [
             { text: entry.ko.slice(0, hit.start) },
@@ -943,7 +1045,7 @@
         const wrong = take(candidates, 3);
         if (wrong.length < 3) return;
         out.push(multipleChoice({
-          type: "place", tag: "조사가 붙는 말",
+          type: "place", tag: "조사가 붙는 말", units: entry.unitIds,
           prompt: "이 문장에서 '" + hit.particle + "'" + eun(hit.particle) + " 어느 말 뒤에 붙었어요?",
           sentence: [{ text: entry.ko }],
           choices: [hit.noun].concat(wrong),
@@ -970,7 +1072,7 @@
           .filter(text => text !== right).slice(0, 3);
         if (wrong.length < 3) return;
         out.push(multipleChoice({
-          type: "place", tag: "서술어 자리",
+          type: "place", tag: "서술어 자리", units: entry.unitIds,
           prompt: "낱말을 바른 자리에 놓은 문장은 무엇이에요?",
           choices: [right].concat(wrong),
           answer: right,
@@ -1002,7 +1104,7 @@
             .filter(text => text !== right).slice(0, 3);
           if (wrong.length < 3) return;
           out.push(multipleChoice({
-            type: "place", tag: "꾸미는 말 자리",
+            type: "place", tag: "꾸미는 말 자리", units: entry.unitIds,
             prompt: "'" + mover + "'" + eul(mover) + " 바른 자리에 놓은 문장은 무엇이에요?",
             choices: [right].concat(wrong),
             answer: right,
@@ -1012,6 +1114,364 @@
       }
 
       return out;
+    }
+
+
+    /* -------------------------------------------------------------- confuse */
+    /* 보다 · 보이다 · 보여 주다: words close enough in shape that nothing but
+       the sentence around them says which one is wanted. Families come from two
+       places — the page hands over the ones worth a line of explanation, and
+       the rest are found by looking for a stem another stem begins with, which
+       is how 살다 · 살리다 and 앉다 · 앉히다 turn up without anybody listing
+       them.
+
+       The wrong answers are built rather than borrowed, because a family member
+       may never appear in the corpus in the form the question needs. The ending
+       is lifted off the right answer and glued onto the other stems, so 보고
+       becomes 보이고 and 보여 주고. Three things keep that from writing Korean
+       nobody would:
+
+         the surface still begins with its own stem, which 봤어요 does not, 보
+           and 았 having been squeezed into one syllable;
+         every stem involved ends in a vowel, since a stem ending in a
+           consonant takes a different ending and 가깝 + 요 is not a word;
+         the ending begins with a consonant — -고, -는, -면, -지 — which is the
+           half of the endings that attach to a stem without changing it or
+           being changed by it.
+
+       That last rule is also what keeps the questions honest, and not only
+       tidy. The corpus is read by matching an eojeol against the longest stem
+       it begins with, and a contraction defeats that: 말해 begins with 말, so
+       it is filed under 말다 rather than 말하다, and 들었어요 under 들다 rather
+       than 듣다. Neither remainder — 해, 었어요 — is an ending that begins with
+       a consonant, so neither is ever asked about, and a question whose keyed
+       answer is the wrong word never reaches the screen. */
+    const stemOf = ko => {
+      const text = String(ko || "");
+      return /다$/.test(text) && text.length > 1 ? text.slice(0, -1) : text;
+    };
+    const vowelStem = ko => finalIndex(stemOf(ko)) === 0;
+    const ENDING_HEADS = new Set(["고", "는", "니", "면", "지", "게", "서", "기", "자",
+      "거", "려", "러", "네", "며", "세", "시", "다", "죠", "던", "잖", "구"]);
+    /* What is left of a surface once its own stem is taken off the front, or
+       nothing when what is left is not an ending this can safely move. */
+    function endingAfter(surface, word) {
+      const stem = stemOf(word.ko);
+      if (!stem || !vowelStem(word.ko)) return "";
+      if (surface.indexOf(stem) !== 0 || surface.length <= stem.length) return "";
+      const rest = surface.slice(stem.length);
+      if (PARTICLES.has(rest) || !ENDING_HEADS.has(rest[0])) return "";
+      return rest;
+    }
+
+    function confusableFamilies() {
+      const byKo = new Map();
+      corpus.words.forEach(word => { if (word.ko && !byKo.has(word.ko)) byKo.set(word.ko, word); });
+
+      const families = [];
+      const seen = new Set();
+      function add(members, note) {
+        const kept = members.filter(Boolean).slice(0, 4);
+        if (kept.length < 2) return;
+        const key = kept.map(word => word.ko).sort().join("|");
+        if (seen.has(key)) return;
+        seen.add(key);
+        families.push({ words: kept, ko: note || "" });
+      }
+
+      (config.confusables || []).forEach(group => {
+        const list = Array.isArray(group) ? group : (group.words || []);
+        add(list.map(ko => byKo.get(ko)), Array.isArray(group) ? "" : group.ko);
+      });
+
+      const predicates = corpus.words.filter(word => PREDICATE_POS.has(word.pos)
+        && /^[가-힣 ]+다$/.test(String(word.ko || "")));
+      predicates.forEach(word => {
+        const stem = stemOf(word.ko);
+        if (!stem || stem.length > 3) return;
+        const kin = predicates.filter(other => {
+          if (other.ko === word.ko) return false;
+          const theirs = stemOf(other.ko);
+          return theirs !== stem && theirs.indexOf(stem) === 0 && theirs.length <= stem.length + 2;
+        });
+        if (kin.length) add([word].concat(kin), "");
+      });
+      return families;
+    }
+
+    function confuseQuestions(state) {
+      const out = [];
+      const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
+      const families = confusableFamilies()
+        .filter(family => family.words.some(word => inSelection(word.unitIds, state.units)));
+      if (!families.length) return out;
+
+      /* Words by class, for the families of two: three choices are wanted and
+         two words can only supply two of them. */
+      const byPos = new Map();
+      corpus.words.forEach(word => {
+        if (!byPos.has(word.pos)) byPos.set(word.pos, []);
+        byPos.get(word.pos).push(word);
+      });
+      /* Every stem the same ending can be glued to, which is where the filling
+         comes from when a family is too small to supply three wrong answers.
+         Drawn the same way the family's own wrong answers are, so a choice
+         list never mixes 가고 and 나가고 with a 알아보세요. */
+      const gluable = corpus.words.filter(word => PREDICATE_POS.has(word.pos) && vowelStem(word.ko));
+
+      /* Which families a word belongs to, so a sentence is scanned once and
+         each of its words looked up rather than every family walking the pool. */
+      const familiesOf = new Map();
+      families.forEach(family => {
+        family.words.forEach(word => {
+          if (!familiesOf.has(word.id)) familiesOf.set(word.id, []);
+          familiesOf.get(word.id).push(family);
+        });
+      });
+
+      take(pool, PER_KIND_CAP * 2).forEach(entry => {
+        corpus.scan(entry.ko).forEach(hit => {
+          const word = hit.word;
+          if (!word) return;
+          (familiesOf.get(word.id) || []).forEach(family => {
+            const others = family.words.filter(other => other.id !== word.id);
+            const note = family.ko || "";
+
+            /* 1 — which of the family the sentence is asking for */
+            const ending = endingAfter(hit.surface, word);
+            if (ending) {
+              const wrong = unique(others.filter(other => vowelStem(other.ko))
+                .map(other => stemOf(other.ko) + ending))
+                .filter(text => text !== hit.surface);
+              if (wrong.length) {
+                /* A family of two leaves one near miss and two ordinary wrong
+                   answers, which is still the question being asked: the one
+                   word it is easy to reach for instead is on the screen. */
+                const padded = unique(wrong.concat(take(gluable, 8)
+                  .map(other => stemOf(other.ko) + ending)))
+                  .filter(text => text !== hit.surface).slice(0, 3);
+                if (padded.length === 3) {
+                  out.push(multipleChoice({
+                    type: "confuse", tag: "닮은 말",
+                    units: entry.unitIds,
+                    prompt: "빈칸에 알맞은 말을 고르세요.",
+                    sentence: [
+                      { text: entry.ko.slice(0, hit.start) },
+                      { blank: "" },
+                      { text: entry.ko.slice(hit.end) }
+                    ],
+                    choices: [hit.surface].concat(padded),
+                    answer: hit.surface,
+                    hint: word.en,
+                    hintId: word.id,
+                    why: note || "'" + entry.ko + "'"
+                  }));
+                }
+              }
+            }
+
+            /* 2 — which of them the word in front of you is a form of. Not
+               asked when the sentence shows the dictionary form itself, since
+               then the answer is already written on the screen, and not asked
+               unless the form can be taken apart into a stem and an ending this
+               file is sure about — see endingAfter above. */
+            if (hit.surface !== word.ko && ending) {
+              const spare = others.length >= 2 ? []
+                : take(byPos.get(word.pos) || [], 4)
+                  .filter(other => other.id !== word.id).map(other => other.ko);
+              const choices = unique([word.ko]
+                .concat(others.map(other => other.ko)).concat(spare)).slice(0, 4);
+              if (choices.length >= 3) {
+                out.push(multipleChoice({
+                  type: "confuse", tag: "닮은 말 찾기",
+                  units: entry.unitIds,
+                  prompt: "이 문장의 '" + hit.surface + "'" + eun(hit.surface) + " 어느 말이에요?",
+                  sentence: [{ text: entry.ko }],
+                  choices,
+                  answer: word.ko,
+                  hint: word.en,
+                  hintId: word.id,
+                  why: note || "'" + hit.surface + "'" + eun(hit.surface) + " '" + word.ko + "'의 모습이에요."
+                }));
+              }
+            }
+          });
+        });
+      });
+
+      return take(out, PER_KIND_CAP);
+    }
+
+    /* ------------------------------------------------------------------ fix */
+    /* A sentence with something wrong in it — and nothing wrong that a rule
+       does not guarantee is wrong. Korean lets a writer move most things
+       around, so "that reads oddly" is not a mistake and is never asked about
+       here. Three things are mistakes wherever they turn up, and each is made
+       by taking a real sentence and breaking it:
+
+         a particle that disagrees with the last letter of its noun
+           (학교를 → 학교을),
+         a particle written apart from its noun, or in front of it
+           (학교에 → 학교 에, 에학교),
+         the predicate lifted out of the last place in the sentence.
+
+       A meaning error would be the fourth kind — 저는 친구보다 영화를 좋아해요,
+       where every word is spelled right and the sentence still says something
+       nobody meant — and it is not generated here. Swap one word for another of
+       the same class and the sentence that comes out is as likely to be true as
+       to be wrong, and a wrong answer that is not wrong is worse than a
+       question never asked. The words that really are used for one another are
+       asked about by 닮은 말 instead. */
+    function corruptionsOf(entry) {
+      const text = String(entry.ko || "");
+      const out = [];
+
+      particleHits(text).forEach(hit => {
+        const right = hit.noun + hit.particle;
+        const family = PARTICLE_FAMILIES.find(item =>
+          item.withFinal === hit.particle || item.without === hit.particle);
+        const swap = family && particleFor(hit.noun, family) === hit.particle
+          ? hit.noun + otherParticle(hit.noun, family) : null;
+        /* Everything the noun and its particle can be written as and be wrong,
+           which is where the choices for "put it right" come from. */
+        const spoiled = unique([
+          swap,
+          hit.particle + hit.noun,
+          hit.noun + " " + hit.particle
+        ].concat(PARTICLE_FAMILIES.map(other => hit.noun + otherParticle(hit.noun, other)))
+          .filter(Boolean).filter(form => form !== right));
+
+        if (swap) {
+          out.push({
+            single: true, bad: swap, right, spoiled,
+            text: text.slice(0, hit.start) + swap + text.slice(hit.end),
+            why: "'" + hit.noun + "'에는 받침이 " + (hasFinal(hit.noun) ? "있" : "없")
+              + "어요. '" + swap + "'" + iga(swap) + " 아니라 '" + right + "'" + ida(right) + "."
+          });
+        }
+        out.push({
+          single: true, bad: hit.particle + hit.noun, right, spoiled,
+          text: text.slice(0, hit.start) + hit.particle + hit.noun + text.slice(hit.end),
+          why: "조사는 앞말 뒤에 붙어요. '" + hit.particle + hit.noun + "'" + iga(hit.particle + hit.noun)
+            + " 아니라 '" + right + "'" + ida(right) + "."
+        });
+        out.push({
+          single: false, bad: hit.noun + " " + hit.particle, right, spoiled,
+          text: text.slice(0, hit.start) + hit.noun + " " + hit.particle + text.slice(hit.end),
+          why: "조사는 앞말에 붙여 써요. '" + hit.noun + " " + hit.particle + "'" + iga(hit.particle)
+            + " 아니라 '" + right + "'" + ida(right) + "."
+        });
+      });
+
+      /* The predicate out of its place. Nothing here is a single wrong word —
+         every word is spelled right and the sentence is still not Korean — so
+         this one is only ever shown whole. */
+      const tokens = eojeols(text.replace(TAIL_PUNCT, ""));
+      const last = tokens[tokens.length - 1] || "";
+      if (!/["“”‘’']/.test(text) && tokens.length >= 4 && tokens.length <= 7
+        && unique(tokens).length === tokens.length && /(요|다|까)$/.test(last)) {
+        const rest = tokens.slice(0, -1);
+        const at = 1 + Math.floor(Math.random() * (rest.length - 1));
+        out.push({
+          single: false, bad: null, right: text, spoiled: [],
+          text: rest.slice(0, at).concat([last], rest.slice(at)).join(" "),
+          why: "한국어는 서술어가 맨 뒤에 와요. '" + last + "'" + iga(last) + " 맨 뒤로 가야 해요."
+        });
+      }
+
+      return out;
+    }
+
+    function fixQuestions(state) {
+      const out = [];
+      const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
+      const lines = unique(pool.map(entry => entry.ko));
+      if (lines.length < 4) return out;
+      const lineSet = new Set(lines);
+
+      /* One breakage per sentence, drawn fresh, so the same line coming round
+         again in another run is not broken in the same place. */
+      const broken = [];
+      take(pool, PER_KIND_CAP).forEach(entry => {
+        const spoil = pickOne(corruptionsOf(entry));
+        if (spoil && !lineSet.has(spoil.text)) broken.push({ entry, spoil });
+      });
+      if (!broken.length) return out;
+
+      broken.forEach(item => {
+        const entry = item.entry;
+        const spoil = item.spoil;
+
+        /* 1 — the wrong one among three that are right */
+        const honest = take(lines.filter(line => line !== entry.ko), 3);
+        if (honest.length === 3) {
+          out.push(multipleChoice({
+            type: "fix", tag: "틀린 문장 찾기",
+            units: entry.unitIds,
+            prompt: "다음 중 틀린 문장은 무엇이에요?",
+            choices: [spoil.text].concat(honest),
+            answer: spoil.text,
+            why: spoil.why
+          }));
+        }
+
+        /* 2 — the right one among three that are wrong. The three are other
+           sentences broken, never this one broken three ways, or the answer is
+           the line the other three are all versions of. */
+        const wrong = unique(take(broken.filter(other => other.entry.ko !== entry.ko), 6)
+          .map(other => other.spoil.text)).filter(text => !lineSet.has(text)).slice(0, 3);
+        if (wrong.length === 3) {
+          out.push(multipleChoice({
+            type: "fix", tag: "바른 문장 찾기",
+            units: entry.unitIds,
+            prompt: "다음 중 바른 문장은 무엇이에요?",
+            choices: [entry.ko].concat(wrong),
+            answer: entry.ko,
+            why: "'" + entry.ko + "'만 바른 문장이에요."
+          }));
+        }
+
+        if (!spoil.bad) return;
+
+        /* 3 — where the mistake is. Only the breakages that leave exactly one
+           wrong word behind: a particle written apart from its noun is a
+           mistake spread over two words, and pointing at either one of them is
+           half an answer. */
+        if (spoil.single) {
+          const others = unique(eojeols(spoil.text).map(bare))
+            .filter(token => token && token !== spoil.bad);
+          const picked = take(others, 3);
+          if (picked.length === 3) {
+            out.push(multipleChoice({
+              type: "fix", tag: "틀린 곳 찾기",
+              units: entry.unitIds,
+              prompt: "이 문장에서 틀린 말은 무엇이에요?",
+              sentence: [{ text: spoil.text }],
+              choices: [spoil.bad].concat(picked),
+              answer: spoil.bad,
+              why: spoil.why
+            }));
+          }
+        }
+
+        /* 4 — put it right. The thing on the screen is never offered back as a
+           choice; the other three are the other ways the same two words can be
+           written wrongly. */
+        const fixes = take(spoil.spoiled.filter(form => form !== spoil.bad), 3);
+        if (fixes.length === 3) {
+          out.push(multipleChoice({
+            type: "fix", tag: "바르게 고치기",
+            units: entry.unitIds,
+            prompt: "'" + spoil.bad + "'" + eul(spoil.bad) + " 바르게 고친 것은 무엇이에요?",
+            sentence: [{ text: spoil.text }],
+            choices: [spoil.right].concat(fixes),
+            answer: spoil.right,
+            why: spoil.why
+          }));
+        }
+      });
+
+      return take(out, PER_KIND_CAP);
     }
 
     /* --------------------------------------------------------------- polite */
@@ -1083,9 +1543,10 @@
       const byLevel = new Map(LEVELS.map(level => [level.id, []]));
       take(pool, PER_KIND_CAP * 3).forEach(entry => {
         const level = levelOf(entry.ko);
-        if (level) byLevel.get(level).push({ text: entry.ko, from: entry.ko });
+        const units = entry.unitIds || [];
+        if (level) byLevel.get(level).push({ text: entry.ko, from: entry.ko, units });
         const low = toBanmal(entry.ko);
-        if (low) byLevel.get("banmal").push({ text: low, from: entry.ko });
+        if (low) byLevel.get("banmal").push({ text: low, from: entry.ko, units });
       });
       const at = id => byLevel.get(id) || [];
       const share = Math.ceil(PER_KIND_CAP / 4);
@@ -1109,7 +1570,7 @@
       LEVELS.forEach(level => {
         take(at(level.id), share).forEach(item => {
           out.push(multipleChoice({
-            type: "polite", tag: "말투 찾기",
+            type: "polite", tag: "말투 찾기", units: item.units,
             prompt: "이 문장은 어떤 말투예요?",
             sentence: [{ text: item.text }],
             choices: [level.ko].concat(LEVELS.filter(other => other.id !== level.id)
@@ -1132,7 +1593,7 @@
           const wrong = against([item, twin], elsewhere, 3);
           if (!wrong) return;
           out.push(multipleChoice({
-            type: "polite", tag: "말투가 같은 것",
+            type: "polite", tag: "말투가 같은 것", units: item.units,
             prompt: "이 문장과 말투가 같은 것을 고르세요.",
             sentence: [{ text: item.text }],
             choices: [twin.text].concat(wrong),
@@ -1150,7 +1611,7 @@
             const wrong = against([item], [crowd.id], 3);
             if (!wrong) return;
             out.push(multipleChoice({
-              type: "polite", tag: "말투가 다른 것",
+              type: "polite", tag: "말투가 다른 것", units: item.units,
               prompt: "다음 중 말투가 다른 하나는 무엇이에요?",
               choices: [item.text].concat(wrong),
               answer: item.text,
@@ -1168,7 +1629,7 @@
         const wrong = against([item], below, 3);
         if (!wrong) return;
         out.push(multipleChoice({
-          type: "polite", tag: "가장 높은 말투",
+          type: "polite", tag: "가장 높은 말투", units: item.units,
           prompt: "다음 중 가장 높여 말한 것은 무엇이에요?",
           choices: [item.text].concat(wrong),
           answer: item.text,
@@ -1182,7 +1643,7 @@
         const wrong = against([item], ["haeyo", "hamnida"], 3);
         if (!wrong) return;
         out.push(multipleChoice({
-          type: "polite", tag: "높임말이 아닌 것",
+          type: "polite", tag: "높임말이 아닌 것", units: item.units,
           prompt: "다음 중 높임말이 아닌 것은 무엇이에요?",
           choices: [item.text].concat(wrong),
           answer: item.text,
@@ -1198,7 +1659,7 @@
           const wrong = against([item], ["banmal"], 3);
           if (!wrong) return;
           out.push(multipleChoice({
-            type: "polite", tag: "듣는 사람",
+            type: "polite", tag: "듣는 사람", units: item.units,
             prompt: "선생님께 하는 말로 알맞은 것은 무엇이에요?",
             choices: [item.text].concat(wrong),
             answer: item.text,
@@ -1227,7 +1688,7 @@
           });
           if (wrong.length < 3) return;
           out.push(multipleChoice({
-            type: "polite", tag: "높임 말끝",
+            type: "polite", tag: "높임 말끝", units: item.units,
             prompt: "듣는 사람을 높이는 '-(으)세요'를 쓴 문장은 무엇이에요?",
             choices: [item.text].concat(wrong),
             answer: item.text,
@@ -1238,14 +1699,14 @@
 
       /* 8 — the words Korean swaps rather than bends, asked only about the
          plain halves this page actually teaches */
-      const known = new Set(words.map(word => String(word.ko || "")));
+      const known = new Map(words.map(word => [String(word.ko || ""), word]));
       HONORIFICS.filter(pair => known.has(pair.plain)).forEach(pair => {
         const wrong = take(unique(HONORIFICS
           .filter(other => other.kind === pair.kind && other.high !== pair.high)
           .map(other => other.high)), 3);
         if (wrong.length < 3) return;
         out.push(multipleChoice({
-          type: "polite", tag: "높임말 낱말",
+          type: "polite", tag: "높임말 낱말", units: known.get(pair.plain).unitIds,
           prompt: "'" + pair.plain + "'" + eul(pair.plain) + " 높여서 말하면 무엇이에요?",
           choices: [pair.high].concat(wrong),
           answer: pair.high,
@@ -1266,7 +1727,7 @@
             const run = lines.slice(start, start + size);
             if (unique(run).length !== run.length) continue;
             out.push(ordering({
-              type: "order", tag: "문장 순서",
+              type: "order", tag: "문장 순서", units: [unit.id],
               prompt: "문장을 글의 순서대로 놓으세요.",
               solution: run,
               why: run.join(" ")
@@ -1298,7 +1759,7 @@
         }
         if (pieces.length < 3 || unique(pieces).length !== pieces.length) return;
         out.push(ordering({
-          type: "chunk", tag: "조각 순서",
+          type: "chunk", tag: "조각 순서", units: entry.unitIds,
           prompt: "조각을 눌러 바른 문장을 만드세요.",
           solution: pieces,
           why: entry.ko
@@ -1343,7 +1804,7 @@
               const others = take(window.filter(line => line !== altered.from), 3);
               if (others.length >= 2) {
                 out.push(multipleChoice({
-                  type: "excerpt", tag: "다른 내용 찾기",
+                  type: "excerpt", tag: "다른 내용 찾기", units: [unit.id],
                   passage: window,
                   prompt: "이 글의 내용과 다른 것은 무엇이에요?",
                   choices: [altered.text].concat(others),
@@ -1367,7 +1828,7 @@
             const wrong = unique(fakes).slice(0, 3);
             if (wrong.length === 3) {
               out.push(multipleChoice({
-                type: "excerpt", tag: "같은 내용 찾기",
+                type: "excerpt", tag: "같은 내용 찾기", units: [unit.id],
                 passage: window,
                 prompt: "이 글의 내용과 같은 것은 무엇이에요?",
                 choices: [right].concat(wrong),
@@ -1385,7 +1846,7 @@
             const shown = take(inside, 3);
             if (missing && shown.length === 3) {
               out.push(multipleChoice({
-                type: "excerpt", tag: "글에 있는 말",
+                type: "excerpt", tag: "글에 있는 말", units: [unit.id],
                 passage: window,
                 prompt: "이 글에 나오지 않는 말은 무엇이에요?",
                 choices: shown.concat([missing.ko]),
@@ -1401,7 +1862,7 @@
           const wrong = take(allTitles.filter(title => title !== unit.titleKo), 3);
           if (wrong.length === 3) {
             out.push(multipleChoice({
-              type: "excerpt", tag: "제목",
+              type: "excerpt", tag: "제목", units: [unit.id],
               passage: lines.slice(0, 4),
               prompt: "이 글의 제목으로 알맞은 것은 무엇이에요?",
               choices: [unit.titleKo].concat(wrong),
@@ -1429,7 +1890,7 @@
           const wrong = unique(take(outside, 8).map(line => line.ko)).slice(0, 3);
           if (wrong.length < 3) continue;
           out.push(multipleChoice({
-            type: "next", tag: "다음 문장",
+            type: "next", tag: "다음 문장", units: [unit.id],
             passage: lines.slice(Math.max(0, at - 3), at),
             prompt: "이 글 다음에 올 문장으로 알맞은 것은 무엇이에요?",
             choices: [right].concat(wrong),
@@ -1443,7 +1904,10 @@
 
     const GENERATORS = {
       concept: conceptQuestions,
+      guess: guessQuestions,
       blank: blankQuestions,
+      confuse: confuseQuestions,
+      fix: fixQuestions,
       place: placeQuestions,
       polite: politeQuestions,
       order: orderQuestions,
@@ -1452,12 +1916,30 @@
       next: nextQuestions
     };
 
+    /* A unit the run is to be drawn from at all: ticked, and — where the page
+       has mix sliders — not turned all the way down. A question belonging to no
+       unit belongs to every one of them and is never weighed out. */
+    function weightOf(state, id) {
+      if (!state.weights) return 1;
+      const held = state.weights instanceof Map ? state.weights.get(id) : state.weights[id];
+      return held === undefined || held === null ? 1 : Math.max(0, Number(held) || 0);
+    }
+    function livingUnits(state, question) {
+      const mine = (question.units || []).filter(id => state.units.has(id));
+      if (!mine.length) return null;
+      const kept = mine.filter(id => weightOf(state, id) > 0);
+      return kept.length ? kept : [];
+    }
+
     function pool(state) {
       const out = [];
       TYPES.forEach(type => {
         if (!state.types.has(type.id)) return;
         GENERATORS[type.id](state).forEach(question => {
-          if (question && question.valid) out.push(question);
+          if (!question || !question.valid) return;
+          const units = livingUnits(state, question);
+          if (units && !units.length) return;
+          out.push(question);
         });
       });
       return out;
@@ -1481,9 +1963,21 @@
       return out;
     }
 
-    function draw(state, wanted) {
+    /* A generator that runs a couple of rounds over its source can draw the
+       same pair of words twice, so a run refuses a question it has asked. */
+    function keyOf(question) {
+      return [
+        question.type,
+        question.prompt,
+        (question.sentence || []).map(part => part.text || "").join("§"),
+        (question.passage || []).join("§"),
+        question.mode === "order" ? question.solution.join("§") : question.answerText
+      ].join("|");
+    }
+
+    function drawFrom(questions, wanted, asked) {
       const byType = new Map();
-      pool(state).forEach(question => {
+      questions.forEach(question => {
         if (!byType.has(question.type)) byType.set(question.type, new Map());
         const byTag = byType.get(question.type);
         if (!byTag.has(question.tag)) byTag.set(question.tag, []);
@@ -1493,25 +1987,79 @@
       const buckets = [...byType.values()].map(byTag => interleave([...byTag.values()]).reverse());
 
       const picked = [];
-      /* A generator that runs a couple of rounds over its source can draw the
-         same pair of words twice, so a run refuses a question it has asked. */
-      const asked = new Set();
       let cursor = 0;
       while (picked.length < wanted && buckets.some(bucket => bucket.length)) {
         const bucket = buckets[cursor % buckets.length];
         cursor += 1;
         if (!bucket.length) continue;
         const question = bucket.pop();
-        const key = [
-          question.type,
-          question.prompt,
-          (question.sentence || []).map(part => part.text || "").join("§"),
-          (question.passage || []).join("§"),
-          question.mode === "order" ? question.solution.join("§") : question.answerText
-        ].join("|");
+        const key = keyOf(question);
         if (asked.has(key)) continue;
         asked.add(key);
         picked.push(question);
+      }
+      return picked;
+    }
+
+    /* How many of the run each unit is to fill. A slider standing at twice
+       another fills twice as much of it; the remainders are handed out largest
+       first, so twenty questions over three even units come out 7/7/6 rather
+       than 6/6/6 and a gap. */
+    function quotasFor(ids, weights, wanted) {
+      const total = ids.reduce((sum, id) => sum + weights.get(id), 0);
+      if (!total) return new Map(ids.map(id => [id, 0]));
+      const shares = ids.map(id => {
+        const exact = (weights.get(id) / total) * wanted;
+        return { id, whole: Math.floor(exact), rest: exact - Math.floor(exact) };
+      });
+      const quotas = new Map(shares.map(share => [share.id, share.whole]));
+      let left = wanted - shares.reduce((sum, share) => sum + share.whole, 0);
+      shares.sort((a, b) => b.rest - a.rest).forEach(share => {
+        if (left <= 0) return;
+        quotas.set(share.id, quotas.get(share.id) + 1);
+        left -= 1;
+      });
+      return quotas;
+    }
+
+    function draw(state, wanted) {
+      const questions = pool(state);
+      const asked = new Set();
+      if (!state.weights) return shuffle(drawFrom(questions, wanted, asked));
+
+      /* Each question is filed under one of its units, chosen by the sliders
+         themselves: a word that turns up in day 3 and day 9 belongs to
+         whichever of the two the run is asking for more of, most of the time. */
+      const weights = new Map([...state.units].map(id => [id, weightOf(state, id)]));
+      const ids = [...state.units].filter(id => weights.get(id) > 0);
+      if (ids.length < 2) return shuffle(drawFrom(questions, wanted, asked));
+
+      const groups = new Map(ids.map(id => [id, []]));
+      questions.forEach(question => {
+        /* A question the page filed under no unit at all — a word that turns
+           up in none of the passages — belongs to every one of them, so it is
+           filed by the sliders like everything else rather than being left to
+           fill whatever gap is over at the end. */
+        const mine = livingUnits(state, question) || ids;
+        if (!mine.length) return;
+        let ticket = Math.random() * mine.reduce((sum, id) => sum + weights.get(id), 0);
+        let home = mine[mine.length - 1];
+        for (let i = 0; i < mine.length; i += 1) {
+          ticket -= weights.get(mine[i]);
+          if (ticket <= 0) { home = mine[i]; break; }
+        }
+        groups.get(home).push(question);
+      });
+
+      const quotas = quotasFor(ids, weights, wanted);
+      const picked = [];
+      ids.forEach(id => { picked.push(...drawFrom(groups.get(id), quotas.get(id), asked)); });
+      /* A unit that could not fill its share hands what is left to the others,
+         so a mix that asks for more of a thin day still returns a full run. */
+      if (picked.length < wanted) {
+        const rest = ids.flatMap(id => groups.get(id))
+          .filter(question => !asked.has(keyOf(question)));
+        picked.push(...drawFrom(rest, wanted - picked.length, asked));
       }
       return shuffle(picked);
     }

@@ -961,6 +961,39 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   letter-spacing: .06em;
 }
 .drill-passage { margin-bottom: 18px; }
+/* The English behind the answer, shown only for a word still carrying no
+   familiarity star in the tables above. It sits between the sentence and the
+   choices, small and quiet, because it is a prop the run is meant to stop
+   needing. */
+.drill-hint {
+  margin: -6px 0 16px;
+  color: var(--muted);
+  font-size: .86rem;
+  font-style: italic;
+}
+.drill-hint strong { font-style: normal; color: var(--surface-text); }
+
+/* The mix sliders. One row per ticked passage, saying how much of the run that
+   passage is to fill — the number on the right is the share it works out to
+   once every other slider is counted in, so the column always adds to 100%. */
+.mix-grid { display: grid; gap: 8px; margin-top: 8px; }
+.mix-row {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) 1fr 3.4rem;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 700;
+}
+.mix-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mix-row input[type="range"] { width: 100%; margin: 0; min-height: 0; accent-color: var(--primary); }
+.mix-share { text-align: right; font-variant-numeric: tabular-nums; opacity: .75; }
+.mix-row.off { opacity: .55; }
+.mix-row.off .mix-share { color: var(--accent); opacity: 1; }
 
 .order-zone { display: grid; gap: 12px; }
 .order-slot {
@@ -1811,7 +1844,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
             <div class="exercise-head-copy">
               <span class="exercise-kicker">한국어로만</span>
               <h3>Question drill</h3>
-              <p>Asked and answered in Korean, start to finish. Nothing to type &mdash; every question is a choice or a puzzle you click together.</p>
+              <p>Asked and answered in Korean, start to finish &mdash; apart from the hint you can leave switched on, which shows the English only for words you have not starred yet. Nothing to type: every question is a choice or a puzzle you click together.</p>
             </div>
             <div class="score">Not started</div>
           </div>
@@ -1827,6 +1860,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 <div class="group-actions">
                   <button class="btn secondary small" type="button" data-drill-all="story">Select all</button>
                   <button class="btn secondary small" type="button" data-drill-none="story">Select none</button>
+                </div>
+              </fieldset>
+
+              <fieldset class="group-picker hidden" id="drillMixPicker">
+                <legend>How much of each passage</legend>
+                <p class="wordbank-count">Two passages at the same setting split the run down the middle. Pull one down and it asks less of that passage; pull it to zero and the passage sits the run out without being unticked.</p>
+                <div class="mix-grid" id="drillMixGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small" type="button" data-drill-mix="even">Even out</button>
                 </div>
               </fieldset>
 
@@ -1855,6 +1897,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 </label>
               </div>
 
+              <div class="option-stack">
+                <label class="exercise-option">
+                  <input class="drill-hints" type="checkbox">
+                  <span>English hint on unstarred words<small>The word behind the blank, in English, for words with no familiarity star yet. Star one and its hint stops coming.</small></span>
+                </label>
+              </div>
+
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button">Begin drill</button>
               </div>
@@ -1879,6 +1928,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
               <div class="prompt-label"></div>
               <div class="prompt"></div>
               <p class="drill-sentence hidden"></p>
+              <p class="drill-hint hidden"></p>
 
               <div class="choice-list"></div>
 
@@ -1914,7 +1964,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   <script src="./shared-vocab/reading-grammar-2.js?v=1.0.0"></script>
   <script src="./shared-vocab/korean-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
-  <script src="./shared-vocab/drill-questions.js?v=1.0.0"></script>
+  <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
   <script>
   (() => {
     "use strict";
@@ -5765,10 +5815,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     const dEl = document.getElementById("drillExercise");
     const $d = selector => dEl.querySelector(selector);
 
-    // V2 because a saved setup names the kinds of question it ticked, and a
+    // V3 because a saved setup names the kinds of question it ticked, and a
     // kind that did not exist when it was saved cannot be in that list: the
-    // 자리·어순 and 말투·높임 questions would arrive switched off and stay off.
-    const DRILL_SETUP_KEY = "korean.readingDrillSetup.g2.v2";
+    // 뜻 짐작하기, 닮은 말 and 틀린 곳 questions would arrive switched off and
+    // stay off. V2 did the same for 자리·어순 and 말투·높임 before them.
+    const DRILL_SETUP_KEY = "korean.readingDrillSetup.g2.v3";
     const DRILL_LENGTHS = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
     const DRILL_ANTONYMS = [
       ["기쁘다", "슬프다"], ["어렵다", "쉽다"], ["빠르다", "느리다"], ["높다", "낮다"],
@@ -5779,8 +5830,32 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     const DRILL_TYPE_KO = new Map(
       (window.DrillQuestions ? window.DrillQuestions.TYPES : []).map(type => [type.id, type.ko]));
 
+    /* Words near enough in shape or in job that the sentence around them is the
+       only thing that says which one is wanted. The drill finds families of its
+       own by looking for stems that begin alike, so what is written out here is
+       the pairs worth a line of explanation — and the line is what the feedback
+       shows when one of them is missed. */
+    const DRILL_CONFUSABLES = [
+      { words: ["가르치다", "배우다"], ko: "'가르치다'는 선생님이 해요. '배우다'는 학생이 해요." },
+      { words: ["주다", "받다"], ko: "'주다'는 내가 남에게 줘요. '받다'는 남이 나에게 줘요." },
+      { words: ["들어가다", "들어오다", "나오다"], ko: "'가다'가 붙으면 나에게서 멀어져요. '오다'가 붙으면 나에게 가까워져요." },
+      { words: ["돌아오다", "돌아보다"], ko: "'돌아오다'는 다시 와요. '돌아보다'는 고개를 돌려서 봐요." },
+      { words: ["서다", "일어서다"], ko: "'서다'는 그냥 서 있어요. '일어서다'는 앉았다가 일어나요." },
+      { words: ["찾다", "차다"], ko: "'찾다'는 없는 것을 찾아요. '차다'는 발로 차요." },
+      { words: ["말다", "말씀하다"], ko: "'말다'는 하지 않아요. '말씀하다'는 높여서 말해요." },
+      { words: ["지다", "지나가다"], ko: "'지다'는 시합에서 져요. '지나가다'는 옆을 지나서 가요." },
+      { words: ["나다", "나오다"], ko: "'나다'는 저절로 생겨요. '나오다'는 밖으로 나와요." },
+      { words: ["잡다", "줍다"], ko: "'잡다'는 손으로 잡아요. '줍다'는 떨어진 것을 주워요." },
+      { words: ["뜨다", "뛰다"], ko: "'뜨다'는 해가 떠요. '뛰다'는 빨리 달려요." }
+    ];
+
     let drillBank = null;
     let drillRun = null;
+    /* What the sliders stand at, passage by passage, between 0 and 100. Fifty
+       is where every one of them starts, so a passage pulled up and a passage
+       pulled down are the same gesture in opposite directions. */
+    let drillMix = {};
+    const DRILL_MIX_DEFAULT = 50;
 
     /* The banks label a group "명사 · Nouns". The drill wants the Korean half on
        its own: a question that names the class in English answers itself. */
@@ -5797,6 +5872,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         words: BANK_WORDS.map(entry => ({
           id: entry.id,
           ko: entry.ko,
+          en: entry.en,
           pos: entry.pos,
           posKo: koreanHalf(POS_LABELS[entry.pos] || entry.pos),
           topicId: entry.group,
@@ -5812,6 +5888,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           examples: (point.examples || []).map(example => ({ ko: example.ko }))
         })),
         antonyms: DRILL_ANTONYMS,
+        confusables: DRILL_CONFUSABLES,
         /* Every word's model sentence, filed under the passages that use the
            word, so the blanks and the chunk puzzles have more to work with than
            the ten passages on their own. */
@@ -5834,7 +5911,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         units: pick(saved.units, STORIES.map(story => story.id)),
         types: pick(saved.types, window.DrillQuestions.TYPES.map(type => type.id)),
         grammar: pick(saved.grammar, GRAMMAR.POINTS.map(point => point.id)),
-        count: DRILL_LENGTHS.indexOf(Number(saved.count)) >= 0 ? Number(saved.count) : 20
+        count: DRILL_LENGTHS.indexOf(Number(saved.count)) >= 0 ? Number(saved.count) : 20,
+        mix: saved.mix && typeof saved.mix === "object" ? saved.mix : {},
+        hints: saved.hints !== false
       };
     }
     function saveDrillSetup(settings) {
@@ -5843,7 +5922,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           units: [...settings.units],
           types: [...settings.types],
           grammar: [...settings.grammar],
-          count: Number($d(".menu-count").value) || 20
+          count: Number($d(".menu-count").value) || 20,
+          mix: drillMix,
+          hints: $d(".drill-hints").checked
         }));
       } catch (_) {}
     }
@@ -5870,14 +5951,71 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       $d(".menu-count").innerHTML = DRILL_LENGTHS.map(length =>
         '<option value="' + length + '"' + (length === saved.count ? " selected" : "") + '>'
         + plural(length, "question", "questions") + '</option>').join("");
+
+      drillMix = Object.assign({}, saved.mix);
+      $d(".drill-hints").checked = saved.hints;
+      paintDrillMix();
+    }
+
+    /* The ticked passages, in the order the picker shows them. */
+    function drillTickedUnits() {
+      return [...dEl.querySelectorAll(".drill-story:checked")].map(input => input.value);
+    }
+    const drillMixOf = id => {
+      const held = Number(drillMix[id]);
+      return isFinite(held) ? Math.min(100, Math.max(0, held)) : DRILL_MIX_DEFAULT;
+    };
+    function drillUnitLabel(id) {
+      const at = STORIES.findIndex(story => story.id === id);
+      return at < 0 ? id : (at + 1) + ". " + STORIES[at].title.ko;
+    }
+
+    /* One slider per ticked passage, and nothing at all while only one is
+       ticked — there is no mix to set when everything comes from one place. */
+    function paintDrillMix() {
+      const picker = document.getElementById("drillMixPicker");
+      const units = drillTickedUnits();
+      picker.classList.toggle("hidden", units.length < 2);
+      if (units.length < 2) return;
+      document.getElementById("drillMixGrid").innerHTML = units.map(id =>
+        '<label class="mix-row" data-mix-row="' + esc(id) + '">'
+        + '<span class="mix-name">' + esc(drillUnitLabel(id)) + '</span>'
+        + '<input type="range" min="0" max="100" step="5" value="' + drillMixOf(id) + '"'
+        + ' data-drill-mix-unit="' + esc(id) + '"'
+        + ' aria-label="Share of the run from ' + esc(drillUnitLabel(id)) + '">'
+        + '<span class="mix-share"></span></label>').join("");
+      paintDrillShares();
+    }
+
+    /* The number on the right of each slider: not what the slider stands at,
+       but what that works out to once the others are counted in. */
+    function paintDrillShares() {
+      const units = drillTickedUnits();
+      const total = units.reduce((sum, id) => sum + drillMixOf(id), 0);
+      units.forEach(id => {
+        const row = dEl.querySelector('[data-mix-row="' + id + '"]');
+        if (!row) return;
+        row.querySelector(".mix-share").textContent = total
+          ? Math.round((drillMixOf(id) / total) * 100) + "%" : "even";
+        row.classList.toggle("off", total > 0 && drillMixOf(id) === 0);
+      });
     }
 
     function drillSettings() {
       const checked = selector => new Set([...dEl.querySelectorAll(selector)].map(input => input.value));
+      const units = drillTickedUnits();
+      const values = units.map(drillMixOf);
+      /* Sliders that all stand at the same place are no mix at all, and are
+         handed over as none, so a run nobody has touched the sliders for is
+         drawn exactly the way it was drawn before they existed. */
+      const level = values.every(value => value === values[0]);
       return {
         units: checked(".drill-story:checked"),
         types: checked(".drill-type:checked"),
-        grammar: checked(".drill-grammar:checked")
+        grammar: checked(".drill-grammar:checked"),
+        weights: units.length < 2 || level || !values.some(value => value > 0)
+          ? null
+          : Object.fromEntries(units.map((id, at) => [id, values[at]]))
       };
     }
 
@@ -5907,7 +6045,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const questions = drillBank.draw(settings, Number($d(".menu-count").value) || 20);
       if (!questions.length) { paintDrillPool(); return; }
 
-      drillRun = { questions, at: 0, right: 0, locked: false, placed: [], results: [] };
+      drillRun = {
+        questions, at: 0, right: 0, locked: false, placed: [], results: [],
+        hints: $d(".drill-hints").checked
+      };
       $d(".exercise-menu").classList.add("hidden");
       $d(".finish").classList.add("hidden");
       $d(".live").classList.remove("hidden");
@@ -5925,11 +6066,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     }
 
     /* A blank is drawn the same width whatever word is behind it, so the size
-       of the gap never gives the length of the answer away. */
+       of the gap never gives the length of the answer away. A break is where a
+       question shows more than one sentence at once — the 뜻 짐작하기 ones,
+       which put the same hole in two or three different lines. */
     function drillSentenceHtml(parts) {
-      return parts.map(part => part.blank !== undefined
-        ? '<span class="drill-blank">' + esc(part.blank) + "◯◯◯</span>"
-        : esc(part.text)).join("");
+      return parts.map(part => {
+        if (part.br) return "<br>";
+        return part.blank !== undefined
+          ? '<span class="drill-blank">' + esc(part.blank) + "◯◯◯</span>"
+          : esc(part.text);
+      }).join("");
     }
 
     function showDrillQuestion() {
@@ -5957,6 +6103,14 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const sentence = $d(".drill-sentence");
       sentence.classList.toggle("hidden", !question.sentence);
       sentence.innerHTML = question.sentence ? drillSentenceHtml(question.sentence) : "";
+
+      /* The English behind the answer, for a word still carrying no star in the
+         tables above. Star it and the prop goes away on its own, which is the
+         only reason the stars and the hint are wired to each other. */
+      const hint = $d(".drill-hint");
+      const showHint = Boolean(drillRun.hints && question.hint && ratingOf(question.hintId) === 0);
+      hint.classList.toggle("hidden", !showHint);
+      hint.innerHTML = showHint ? "<strong>Hint</strong> &mdash; " + esc(question.hint) : "";
 
       const list = $d(".choice-list");
       const zone = $d(".order-zone");
@@ -6173,7 +6327,19 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       drillBank = window.DrillQuestions.create(drillConfig());
       paintDrillMenu();
 
-      $d(".exercise-menu").addEventListener("change", paintDrillPool);
+      $d(".exercise-menu").addEventListener("change", event => {
+        if (event.target.matches(".drill-story")) paintDrillMix();
+        paintDrillPool();
+      });
+
+      /* A slider at rest is a new pool to count, which the change above does.
+         While it is being dragged it is only a new set of shares to letter in. */
+      $d(".exercise-menu").addEventListener("input", event => {
+        const slider = event.target.closest("[data-drill-mix-unit]");
+        if (!slider) return;
+        drillMix[slider.dataset.drillMixUnit] = Number(slider.value);
+        paintDrillShares();
+      });
 
       dEl.addEventListener("click", event => {
         const all = event.target.closest("[data-drill-all]");
@@ -6181,6 +6347,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         if (all || none) {
           const which = (all || none).dataset.drillAll || (all || none).dataset.drillNone;
           dEl.querySelectorAll(".drill-" + which).forEach(input => { input.checked = Boolean(all); });
+          if (which === "story") paintDrillMix();
+          paintDrillPool();
+          return;
+        }
+        if (event.target.closest('[data-drill-mix="even"]')) {
+          drillTickedUnits().forEach(id => { drillMix[id] = DRILL_MIX_DEFAULT; });
+          paintDrillMix();
           paintDrillPool();
           return;
         }
