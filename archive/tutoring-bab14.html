@@ -11,7 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>Bab 20 · 요리 책을 보고 있어요</title>
+  <title>Bab 14 · 잠깐 쉴까요?</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -1209,11 +1209,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
   <!-- Page header -->
   <header class="site-header">
    <div class="header-inner">
-    <a class="brand" href="./index.html">
+    <a class="brand" href="../index.html">
      Korean Language Resources
     </a>
     <div class="header-actions">
-     <a class="header-link" href="./index.html">
+     <a class="header-link" href="../index.html">
       Home
      </a>
     </div>
@@ -1259,7 +1259,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
         Grouped by part of speech
        </h3>
        <p>
-        The table lists vocabulary used across the Bab 20 worksheet, including the model dialogues, conjugation table, and preparation activities. Words are grouped by part of speech, following the Korean divisions where they differ from English — descriptive verbs, 관형사 determiners, counters, and particles each keep their own group. Open the ＋ beside a word for a usage note and an example sentence showing how it is conjugated or marked.
+        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here. Words are grouped by part of speech, following the Korean divisions where they differ from English — descriptive verbs, 관형사 determiners, counters, and particles each keep their own group. Open the ＋ beside a word for a usage note and an example sentence showing how it is conjugated or marked.
        </p>
       </article>
       <article class="guide-card">
@@ -1296,7 +1296,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
      </div>
      <div id="vocabCategorySections"></div>
      <p class="source-note">
-      Vocabulary, grammar points, and model sentences are based on the supplied Bab 20 worksheet. Every exercise below is translation practice.
+      Vocabulary is loaded from ./shared-vocab/shared-vocab.js. Every exercise below is translation practice.
      </p>
      <div class="exercise-stack" id="vocabExercises">
      </div>
@@ -1319,387 +1319,334 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
-  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
+  <script src="../shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="../shared-vocab/word-notes.js?v=1.0.0"></script>
   <script>
    (() => {
     "use strict";
     // -------------------------------------------------------------------------
     // Lesson content
     // -------------------------------------------------------------------------
-    const BAB20_LOCAL_VOCAB = [{"id":"kv0193","korean":"게임","romanization":"ge-im","english":"game","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab06","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local008","korean":"고양이","romanization":"go-yang-i","english":"cat","partOfSpeech":"noun","topikLevel":1,"category":"animals-nature","labels":["animals-nature"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local020","korean":"고추장","romanization":"go-chu-jang","english":"gochujang / red pepper paste","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local024","korean":"고춧가루","romanization":"go-chus-ga-ru","english":"red chili powder","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0540","korean":"공원","romanization":"gong-ueon","english":"park","partOfSpeech":"noun","topikLevel":2,"category":"places-buildings","labels":["places-buildings"],"lessons":["bab04","bab06","bab07","bab10","bab11","bab14","bab20"],"sourceType":"workbook+topik"},{"id":"kv0148","korean":"기분","romanization":"gi-bun","english":"mood","partOfSpeech":"noun","topikLevel":1,"category":"general-core","labels":["general-core"],"lessons":["bab12","bab20"],"sourceType":"workbook+topik"},{"id":"kv0560","korean":"기숙사","romanization":"gi-suk-sa","english":"dormitory","partOfSpeech":"noun","topikLevel":2,"category":"school-study","labels":["school-study"],"lessons":["bab06","bab07","bab14","bab16","bab18","bab19","bab20"],"sourceType":"workbook+topik"},{"id":"kv0591","korean":"김밥","romanization":"gim-bap","english":"gimbap","partOfSpeech":"noun","topikLevel":2,"category":"food-drink","labels":["food-drink"],"lessons":["bab06","bab20"],"sourceType":"workbook+topik"},{"id":"kv0142","korean":"노래","romanization":"no-rae","english":"song","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab06","bab12","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0379","korean":"다리","romanization":"da-ri","english":"leg","partOfSpeech":"noun","topikLevel":1,"category":"general-core","labels":["general-core"],"lessons":["bab20"],"sourceType":"topik"},{"id":"bab20local005","korean":"딸","romanization":"ddal","english":"daughter","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0595","korean":"딸기","romanization":"ddal-gi","english":"strawberry","partOfSpeech":"noun","topikLevel":2,"category":"food-drink","labels":["food-drink"],"lessons":["bab02","bab04","bab11","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local012","korean":"떡볶이","romanization":"ddeok-bokk-i","english":"tteokbokki","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local019","korean":"떡볶이 떡","romanization":"ddeok-bokk-i ddeok","english":"tteokbokki rice cakes","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0656","korean":"매점","romanization":"mae-jeom","english":"snack bar / school store","partOfSpeech":"noun","topikLevel":2,"category":"school-study","labels":["school-study","places-buildings"],"lessons":["bab08","bab20"],"sourceType":"workbook"},{"id":"kv0537","korean":"맥주","romanization":"maek-ju","english":"beer","partOfSpeech":"noun","topikLevel":2,"category":"food-drink","labels":["food-drink"],"lessons":["bab08","bab10","bab12","bab14","bab16","bab20"],"sourceType":"workbook+topik"},{"id":"kv0550","korean":"모자","romanization":"mo-ja","english":"hat","partOfSpeech":"noun","topikLevel":2,"category":"clothing-appearance","labels":["clothing-appearance"],"lessons":["bab04","bab05","bab20"],"sourceType":"workbook+topik"},{"id":"kv0324","korean":"문","romanization":"mun","english":"door","partOfSpeech":"noun","topikLevel":1,"category":"home-household","labels":["home-household"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0226","korean":"문제","romanization":"mun-je","english":"question, problem","partOfSpeech":"noun","topikLevel":1,"category":"general-core","labels":["general-core"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0063","korean":"물","romanization":"mul","english":"water","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab02","bab05","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local028","korean":"물안경","romanization":"mul-an-gyeong","english":"swimming goggles","partOfSpeech":"noun","topikLevel":1,"category":"clothing-appearance","labels":["clothing-appearance"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0592","korean":"바나나","romanization":"ba-na-na","english":"banana","partOfSpeech":"noun","topikLevel":2,"category":"food-drink","labels":["food-drink"],"lessons":["bab02","bab03","bab05","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0112","korean":"밥","romanization":"bap","english":"cooked rice / meal","partOfSpeech":"noun","topikLevel":1,"category":"people-occupations","labels":["people-occupations","food-drink"],"lessons":["bab03","bab10","bab11","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local015","korean":"베트남 음악","romanization":"be-teu-nam eum-ak","english":"Vietnamese music","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0427","korean":"부모님","romanization":"bu-mo-nim","english":"parents","partOfSpeech":"noun","topikLevel":2,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab13","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0506","korean":"빵","romanization":"bbang","english":"bread","partOfSpeech":"noun","topikLevel":2,"category":"food-drink","labels":["food-drink","communication-media"],"lessons":["bab08","bab10","bab11","bab17","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local009","korean":"사장님","romanization":"sa-jang-nim","english":"boss / business owner (honorific)","partOfSpeech":"noun","topikLevel":1,"category":"people-occupations","labels":["people-occupations"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local002","korean":"산책","romanization":"san-chaek","english":"walk / stroll","partOfSpeech":"noun","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0497","korean":"생일","romanization":"saeng-il","english":"birthday","partOfSpeech":"noun","topikLevel":2,"category":"time-calendar","labels":["time-calendar","events-celebrations"],"lessons":["bab08","bab09","bab10","bab11","bab13","bab16","bab17","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local003","korean":"생일 파티","romanization":"saeng-il pa-ti","english":"birthday party","partOfSpeech":"noun","topikLevel":1,"category":"events-celebrations","labels":["events-celebrations"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0480","korean":"선물","romanization":"seon-mul","english":"gift / present","partOfSpeech":"noun","topikLevel":2,"category":"shopping-money","labels":["shopping-money"],"lessons":["bab13","bab20"],"sourceType":"workbook+topik"},{"id":"kv0079","korean":"선생님","romanization":"seon-saeng-nim","english":"teacher","partOfSpeech":"noun","topikLevel":1,"category":"people-occupations","labels":["people-occupations","school-study","food-drink"],"lessons":["bab01","bab02","bab06","bab08","bab11","bab13","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local006","korean":"설거지","romanization":"seol-geo-ji","english":"dishwashing / dishes","partOfSpeech":"noun","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local021","korean":"설탕","romanization":"seol-tang","english":"sugar","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local016","korean":"세계 여행","romanization":"se-gye yeo-haeng","english":"trip around the world","partOfSpeech":"noun","topikLevel":1,"category":"travel-movement","labels":["travel-movement"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local013","korean":"손님","romanization":"son-nim","english":"guest / customer","partOfSpeech":"noun","topikLevel":1,"category":"people-occupations","labels":["people-occupations"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0197","korean":"수업","romanization":"su-eop","english":"class / lesson","partOfSpeech":"noun","topikLevel":1,"category":"school-study","labels":["school-study"],"lessons":["bab08","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local011","korean":"수업 시간","romanization":"su-eop si-gan","english":"class time","partOfSpeech":"noun","topikLevel":1,"category":"school-study","labels":["school-study"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local027","korean":"수영 모자","romanization":"su-yeong mo-ja","english":"swim cap","partOfSpeech":"noun","topikLevel":1,"category":"clothing-appearance","labels":["clothing-appearance"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local026","korean":"수영복","romanization":"su-yeong-bok","english":"swimsuit","partOfSpeech":"noun","topikLevel":1,"category":"clothing-appearance","labels":["clothing-appearance"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0614","korean":"수영장","romanization":"su-yeong-jang","english":"swimming pool","partOfSpeech":"noun","topikLevel":2,"category":"places-buildings","labels":["places-buildings","hobbies-sports"],"lessons":["bab08","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0119","korean":"술","romanization":"sul","english":"alcohol / alcoholic drink","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab12","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0040","korean":"시간","romanization":"si-gan","english":"time / hour","partOfSpeech":"noun","topikLevel":1,"category":"time-calendar","labels":["time-calendar"],"lessons":["bab16","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0457","korean":"식당","romanization":"sik-dang","english":"restaurant","partOfSpeech":"noun","topikLevel":2,"category":"places-buildings","labels":["places-buildings"],"lessons":["bab03","bab04","bab07","bab08","bab10","bab19","bab20"],"sourceType":"workbook+topik"},{"id":"kv0147","korean":"신문","romanization":"sin-mun","english":"newspaper","partOfSpeech":"noun","topikLevel":1,"category":"communication-media","labels":["communication-media"],"lessons":["bab03","bab11","bab12","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local004","korean":"쌀국수","romanization":"ssal-guk-su","english":"rice noodles","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local007","korean":"아들","romanization":"a-deul","english":"son","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0061","korean":"아버지","romanization":"a-beo-ji","english":"father","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab11","bab15","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local025","korean":"양배추","romanization":"yang-bae-chu","english":"cabbage","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local022","korean":"양파","romanization":"yang-pa","english":"onion","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0043","korean":"어머니","romanization":"eo-meo-ni","english":"mother","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab11","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local023","korean":"어묵","romanization":"eo-muk","english":"fish cake","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local014","korean":"어학당","romanization":"eo-hak-dang","english":"language institute","partOfSpeech":"noun","topikLevel":1,"category":"school-study","labels":["school-study"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local017","korean":"여권","romanization":"yeo-gueon","english":"passport","partOfSpeech":"noun","topikLevel":1,"category":"travel-movement","labels":["travel-movement"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local018","korean":"여비","romanization":"yeo-bi","english":"travel money / travel expenses","partOfSpeech":"noun","topikLevel":1,"category":"travel-movement","labels":["travel-movement"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0208","korean":"여행","romanization":"yeo-haeng","english":"trip / travel","partOfSpeech":"noun","topikLevel":1,"category":"travel-movement","labels":["travel-movement"],"lessons":["bab13","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0110","korean":"영화","romanization":"yeong-hoa","english":"movie / film","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab04","bab05","bab12","bab13","bab14","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0149","korean":"옷","romanization":"os","english":"clothes","partOfSpeech":"noun","topikLevel":1,"category":"clothing-appearance","labels":["clothing-appearance"],"lessons":["bab13","bab15","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0469","korean":"요리","romanization":"yo-ri","english":"cooking / cuisine","partOfSpeech":"noun","topikLevel":2,"category":"people-occupations","labels":["people-occupations"],"lessons":["bab06","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0603","korean":"운동화","romanization":"un-dong-hoa","english":"sneakers","partOfSpeech":"noun","topikLevel":2,"category":"clothing-appearance","labels":["clothing-appearance"],"lessons":["bab06","bab11","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0125","korean":"음식","romanization":"eum-sik","english":"food","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab05","bab10","bab12","bab17","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0345","korean":"음악","romanization":"eum-ak","english":"music","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0013","korean":"일","romanization":"il","english":"work / matter / day","partOfSpeech":"noun","topikLevel":1,"category":"time-calendar","labels":["time-calendar"],"lessons":["bab05","bab07","bab08","bab09","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0169","korean":"잠","romanization":"jam","english":"sleep","partOfSpeech":"noun","topikLevel":1,"category":"general-core","labels":["general-core"],"lessons":["bab06","bab09","bab20"],"sourceType":"workbook+topik"},{"id":"kv0120","korean":"전화","romanization":"jeon-hoa","english":"telephone","partOfSpeech":"noun","topikLevel":1,"category":"communication-media","labels":["communication-media"],"lessons":["bab03","bab20"],"sourceType":"workbook+topik"},{"id":"kv0888","korean":"전화번호","romanization":"jeon-hoa-beon-ho","english":"telephone number","partOfSpeech":"noun","topikLevel":2,"category":"communication-media","labels":["communication-media"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0023","korean":"집","romanization":"jip","english":"home / house","partOfSpeech":"noun","topikLevel":1,"category":"places-buildings","labels":["places-buildings","home-household"],"lessons":["bab03","bab04","bab07","bab16","bab20"],"sourceType":"workbook+topik"},{"id":"kv0129","korean":"차","romanization":"cha","english":"tea","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab14","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local001","korean":"춤","romanization":"chum","english":"dance","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0060","korean":"친구","romanization":"chin-gu","english":"friend","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships","time-calendar"],"lessons":["bab04","bab06","bab08","bab12","bab13","bab14","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0122","korean":"커피","romanization":"keo-pi","english":"coffee","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab02","bab03","bab05","bab06","bab11","bab14","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0099","korean":"컴퓨터","romanization":"keom-pyu-teo","english":"computer","partOfSpeech":"noun","topikLevel":1,"category":"general-core","labels":["general-core"],"lessons":["bab02","bab03","bab04","bab06","bab07","bab15","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"kv0720","korean":"케이크","romanization":"ke-i-keu","english":"cake","partOfSpeech":"noun","topikLevel":2,"category":"food-drink","labels":["food-drink"],"lessons":["bab12","bab20"],"sourceType":"workbook"},{"id":"kv0202","korean":"텔레비전","romanization":"tel-re-bi-jeon","english":"television","partOfSpeech":"noun","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab03","bab05","bab06","bab14","bab20"],"sourceType":"workbook+topik"},{"id":"kv0908","korean":"파티","romanization":"pa-ti","english":"party","partOfSpeech":"noun","topikLevel":2,"category":"events-celebrations","labels":["events-celebrations"],"lessons":["bab20"],"sourceType":"topik"},{"id":"bab20local010","korean":"팝콘","romanization":"pap-kon","english":"popcorn","partOfSpeech":"noun","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0051","korean":"학교","romanization":"hak-gyo","english":"school","partOfSpeech":"noun","topikLevel":1,"category":"school-study","labels":["school-study"],"lessons":["bab03","bab04","bab06","bab07","bab12","bab15","bab16","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0150","korean":"할머니","romanization":"hal-meo-ni","english":"grandmother","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab11","bab20"],"sourceType":"workbook+topik"},{"id":"kv0175","korean":"할아버지","romanization":"hal-a-beo-ji","english":"grandfather","partOfSpeech":"noun","topikLevel":1,"category":"family-relationships","labels":["family-relationships"],"lessons":["bab11","bab20"],"sourceType":"workbook+topik"},{"id":"kv0010","korean":"가다","romanization":"ga-da","english":"to go","partOfSpeech":"verb","topikLevel":1,"category":"travel-movement","labels":["travel-movement"],"lessons":["bab03","bab04","bab06","bab09","bab10","bab11","bab13","bab14","bab15","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0177","korean":"가르치다","romanization":"ga-reu-chi-da","english":"to teach","partOfSpeech":"verb","topikLevel":1,"category":"school-study","labels":["school-study","food-drink"],"lessons":["bab03","bab04","bab06","bab09","bab11","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0338","korean":"걷다","romanization":"geot-da","english":"to walk","partOfSpeech":"verb","topikLevel":1,"category":"travel-movement","labels":["travel-movement"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0992","korean":"걸리다","romanization":"geol-ri-da","english":"to take time / be caught","partOfSpeech":"verb","topikLevel":3,"category":"time-calendar","labels":["time-calendar"],"lessons":["bab16","bab19","bab20"],"sourceType":"workbook+topik"},{"id":"kv0546","korean":"노래하다","romanization":"no-rae-ha-da","english":"to sing","partOfSpeech":"verb","topikLevel":2,"category":"verbs-actions","labels":["verbs-actions"],"lessons":["bab06","bab08","bab10","bab11","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0510","korean":"도와주다","romanization":"do-oa-ju-da","english":"to help","partOfSpeech":"verb","topikLevel":2,"category":"verbs-actions","labels":["verbs-actions"],"lessons":["bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0237","korean":"듣다","romanization":"deut-da","english":"to listen / hear","partOfSpeech":"verb","topikLevel":1,"category":"body-health","labels":["body-health","communication-media"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0116","korean":"마시다","romanization":"ma-si-da","english":"to drink","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab03","bab08","bab11","bab14","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0026","korean":"만들다","romanization":"man-deul-da","english":"to make","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab12","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"kv0029","korean":"먹다","romanization":"meok-da","english":"to eat","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab03","bab04","bab06","bab08","bab10","bab11","bab12","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0009","korean":"보다","romanization":"bo-da","english":"to see / watch","partOfSpeech":"verb","topikLevel":1,"category":"verbs-actions","labels":["verbs-actions"],"lessons":["bab03","bab04","bab06","bab11","bab13","bab14","bab20"],"sourceType":"workbook+topik"},{"id":"kv0076","korean":"사다","romanization":"sa-da","english":"to buy","partOfSpeech":"verb","topikLevel":1,"category":"shopping-money","labels":["shopping-money"],"lessons":["bab04","bab11","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local030","korean":"산책하다","romanization":"san-chaek-ha-da","english":"to take a walk","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local032","korean":"설거지하다","romanization":"seol-geo-ji-ha-da","english":"to do the dishes","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local033","korean":"요리하다","romanization":"yo-ri-ha-da","english":"to cook","partOfSpeech":"verb","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv1348","korean":"원하다","romanization":"ueon-ha-da","english":"to want","partOfSpeech":"verb","topikLevel":3,"category":"verbs-actions","labels":["verbs-actions"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0151","korean":"이야기하다","romanization":"i-ya-gi-ha-da","english":"to talk / tell a story","partOfSpeech":"verb","topikLevel":1,"category":"communication-media","labels":["communication-media"],"lessons":["bab06","bab08","bab20"],"sourceType":"workbook+topik"},{"id":"kv0172","korean":"일하다","romanization":"il-ha-da","english":"to work","partOfSpeech":"verb","topikLevel":1,"category":"verbs-actions","labels":["verbs-actions"],"lessons":["bab03","bab04","bab20"],"sourceType":"workbook+topik"},{"id":"kv0081","korean":"읽다","romanization":"ilk-da","english":"to read","partOfSpeech":"verb","topikLevel":1,"category":"communication-media","labels":["communication-media"],"lessons":["bab03","bab04","bab06","bab11","bab13","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0152","korean":"자다","romanization":"ja-da","english":"to sleep","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab06","bab09","bab11","bab15","bab20"],"sourceType":"workbook+topik"},{"id":"kv0556","korean":"전화하다","romanization":"jeon-hoa-ha-da","english":"to call / telephone","partOfSpeech":"verb","topikLevel":2,"category":"communication-media","labels":["communication-media"],"lessons":["bab03","bab06","bab11","bab17","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local031","korean":"준비하다","romanization":"jun-bi-ha-da","english":"to prepare","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0565","korean":"청소하다","romanization":"cheong-so-ha-da","english":"to clean","partOfSpeech":"verb","topikLevel":2,"category":"home-household","labels":["home-household","descriptions-qualities","daily-life-actions"],"lessons":["bab04","bab06","bab11","bab18","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local035","korean":"초대하다","romanization":"cho-dae-ha-da","english":"to invite","partOfSpeech":"verb","topikLevel":1,"category":"events-celebrations","labels":["events-celebrations"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local029","korean":"춤추다","romanization":"chum-chu-da","english":"to dance","partOfSpeech":"verb","topikLevel":1,"category":"hobbies-sports","labels":["hobbies-sports"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local034","korean":"컴퓨터하다","romanization":"keom-pyu-teo-ha-da","english":"to use the computer","partOfSpeech":"verb","topikLevel":1,"category":"communication-media","labels":["communication-media"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0001","korean":"하다","romanization":"ha-da","english":"to do","partOfSpeech":"verb","topikLevel":1,"category":"daily-life-actions","labels":["daily-life-actions"],"lessons":["bab03","bab06","bab12","bab14","bab17","bab18","bab19","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local043","korean":"가깝다","romanization":"ga-ggap-da","english":"to be near / close","partOfSpeech":"adjective","topikLevel":1,"category":"transport-directions","labels":["transport-directions"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0017","korean":"많다","romanization":"manh-da","english":"to be many / much","partOfSpeech":"adjective","topikLevel":1,"category":"descriptions-qualities","labels":["descriptions-qualities"],"lessons":["bab05","bab06","bab15","bab19","bab20"],"sourceType":"workbook+topik"},{"id":"bab20local041","korean":"맵다","romanization":"maep-da","english":"to be spicy","partOfSpeech":"adjective","topikLevel":1,"category":"food-drink","labels":["food-drink"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local042","korean":"바쁘다","romanization":"ba-bbeu-da","english":"to be busy","partOfSpeech":"adjective","topikLevel":1,"category":"descriptions-qualities","labels":["descriptions-qualities"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local040","korean":"아프다","romanization":"a-peu-da","english":"to hurt / be sick","partOfSpeech":"adjective","topikLevel":1,"category":"body-health","labels":["body-health"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local036","korean":"어렵다","romanization":"eo-ryeop-da","english":"to be difficult","partOfSpeech":"adjective","topikLevel":1,"category":"descriptions-qualities","labels":["descriptions-qualities"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local039","korean":"예쁘다","romanization":"ye-bbeu-da","english":"to be pretty","partOfSpeech":"adjective","topikLevel":1,"category":"descriptions-qualities","labels":["descriptions-qualities"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local038","korean":"좋다","romanization":"joh-da","english":"to be good","partOfSpeech":"adjective","topikLevel":1,"category":"descriptions-qualities","labels":["descriptions-qualities"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"bab20local037","korean":"춥다","romanization":"chup-da","english":"to be cold","partOfSpeech":"adjective","topikLevel":1,"category":"weather-seasons","labels":["weather-seasons"],"lessons":["bab20"],"sourceType":"local-bab20"},{"id":"kv0293","korean":"거기","romanization":"geo-gi","english":"there","partOfSpeech":"pronoun","topikLevel":1,"category":"questions-pronouns","labels":["questions-pronouns"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0046","korean":"누구","romanization":"nu-gu","english":"who","partOfSpeech":"pronoun","topikLevel":1,"category":"questions-pronouns","labels":["questions-pronouns"],"lessons":["bab11","bab20"],"sourceType":"workbook+topik"},{"id":"kv0249","korean":"무엇","romanization":"mu-eos","english":"what","partOfSpeech":"pronoun","topikLevel":1,"category":"questions-pronouns","labels":["questions-pronouns","clothing-appearance"],"lessons":["bab20"],"sourceType":"topik"},{"id":"kv0195","korean":"언제","romanization":"eon-je","english":"when","partOfSpeech":"pronoun","topikLevel":1,"category":"questions-pronouns","labels":["questions-pronouns"],"lessons":["bab08","bab09","bab11","bab19","bab20"],"sourceType":"workbook+topik"}];
     const LESSON = {
-            "title": "Bab 20",
-            "subtitle": "요리 책을 보고 있어요",
-            "description": "Describe actions in progress, combine simultaneous actions with V-(으)면서, use honorific ongoing forms, and practice ㄷ-irregular conjugation through invitation and preparation activities.",
-            "vocab": KoreanVocab.toLessonVocab(BAB20_LOCAL_VOCAB),
-            "sections": [
-                    {
-                            "id": "progressive",
-                            "title": "V-고 있다 / V-고 계시다",
-                            "label": "Actions in progress",
-                            "meaning": "Say that an action is happening now. Use 고 계시다 for an honorific subject.",
-                            "form": "Verb stem + 고 있어요 · Honorific: Verb stem + 고 계세요",
-                            "notes": "The worksheet asks “뭐 하고 있어요?” and describes what family members are doing in a scene.",
-                            "examples": [
-                                    [
-                                            "뭐 하고 있어요? 춤을 추고 있어요.",
-                                            "What are you doing? I am dancing."
-                                    ],
-                                    [
-                                            "공원에서 산책하고 있어요.",
-                                            "I am taking a walk in the park."
-                                    ],
-                                    [
-                                            "아버지는 신문을 읽고 계세요.",
-                                            "Father is reading the newspaper."
-                                    ]
-                            ],
-                            "questions": [
-                                    {
-                                            "korean": "뭐 하고 있어요?",
-                                            "english": "What are you doing?"
-                                    },
-                                    {
-                                            "korean": "춤을 추고 있어요.",
-                                            "english": "I am dancing."
-                                    },
-                                    {
-                                            "korean": "공원에서 산책하고 있어요.",
-                                            "english": "I am taking a walk in the park."
-                                    },
-                                    {
-                                            "korean": "생일 파티를 준비하고 있어요.",
-                                            "english": "I am preparing a birthday party."
-                                    },
-                                    {
-                                            "korean": "친구를 도와주고 있어요.",
-                                            "english": "I am helping a friend."
-                                    },
-                                    {
-                                            "korean": "쌀국수를 만들고 있어요.",
-                                            "english": "I am making rice noodles."
-                                    },
-                                    {
-                                            "korean": "아버지는 신문을 읽고 계세요.",
-                                            "english": "Father is reading the newspaper."
-                                    },
-                                    {
-                                            "korean": "딸은 설거지를 하고 있어요.",
-                                            "english": "The daughter is doing the dishes."
-                                    },
-                                    {
-                                            "korean": "어머니는 요리를 하고 계세요.",
-                                            "english": "Mother is cooking."
-                                    },
-                                    {
-                                            "korean": "할아버지는 텔레비전을 보고 계세요.",
-                                            "english": "Grandfather is watching television."
-                                    },
-                                    {
-                                            "korean": "아들은 컴퓨터를 하고 있어요.",
-                                            "english": "The son is using the computer."
-                                    },
-                                    {
-                                            "korean": "할머니는 차를 마시고 계세요.",
-                                            "english": "Grandmother is drinking tea."
-                                    },
-                                    {
-                                            "korean": "고양이는 잠을 자고 있어요.",
-                                            "english": "The cat is sleeping."
-                                    },
-                                    {
-                                            "korean": "어머니는 지금 뭐 하세요?",
-                                            "english": "What is Mother doing now?"
-                                    },
-                                    {
-                                            "korean": "할아버지는 지금 뭐 하세요?",
-                                            "english": "What is Grandfather doing now?"
-                                    },
-                                    {
-                                            "korean": "선생님은 지금 뭐 하세요?",
-                                            "english": "What is the teacher doing now?"
-                                    },
-                                    {
-                                            "korean": "사장님은 지금 뭐 하세요?",
-                                            "english": "What is the boss doing now?"
-                                    }
-                            ]
-                    },
-                    {
-                            "id": "simultaneous",
-                            "title": "V-(으)면서",
-                            "label": "Simultaneous actions",
-                            "meaning": "Express two actions happening at the same time: “while doing.”",
-                            "form": "Verb stem + 으면서 after a consonant · 면서 after a vowel or ㄹ",
-                            "notes": "The worksheet combines everyday activities and also practices honorific forms with -(으)시면서 and -고 계세요.",
-                            "examples": [
-                                    [
-                                            "전화하면서 밥을 먹어요.",
-                                            "I eat while talking on the phone."
-                                    ],
-                                    [
-                                            "노래하면서 청소해요.",
-                                            "I clean while singing."
-                                    ],
-                                    [
-                                            "아버지는 신문을 읽으시면서 차를 드시고 계세요.",
-                                            "Father is drinking tea while reading the newspaper."
-                                    ]
-                            ],
-                            "questions": [
-                                    {
-                                            "korean": "전화하면서 밥을 먹어요.",
-                                            "english": "I eat while talking on the phone."
-                                    },
-                                    {
-                                            "korean": "노래하면서 청소해요.",
-                                            "english": "I clean while singing."
-                                    },
-                                    {
-                                            "korean": "이야기하면서 커피를 마셔요.",
-                                            "english": "I drink coffee while talking."
-                                    },
-                                    {
-                                            "korean": "텔레비전을 보면서 빵을 먹어요.",
-                                            "english": "I eat bread while watching television."
-                                    },
-                                    {
-                                            "korean": "컴퓨터 하면서 전화해요.",
-                                            "english": "I talk on the phone while using the computer."
-                                    },
-                                    {
-                                            "korean": "술을 마시면서 노래해요.",
-                                            "english": "I sing while drinking alcohol."
-                                    },
-                                    {
-                                            "korean": "아버지는 신문을 읽으시면서 차를 드시고 계세요.",
-                                            "english": "Father is drinking tea while reading the newspaper."
-                                    },
-                                    {
-                                            "korean": "어머니는 노래하시면서 설거지를 하고 계세요.",
-                                            "english": "Mother is doing the dishes while singing."
-                                    },
-                                    {
-                                            "korean": "할아버지는 친구와 이야기하시면서 산책하고 계세요.",
-                                            "english": "Grandfather is taking a walk while talking with a friend."
-                                    },
-                                    {
-                                            "korean": "선생님은 팝콘을 드시면서 영화를 보고 계세요.",
-                                            "english": "The teacher is watching a movie while eating popcorn."
-                                    },
-                                    {
-                                            "korean": "사장님은 전화하시면서 일하고 계세요.",
-                                            "english": "The boss is working while talking on the phone."
-                                    },
-                                    {
-                                            "korean": "커피숍에서 차도 마시고 음악도 들으면서 이야기했어요.",
-                                            "english": "We talked at a coffee shop while drinking tea and listening to music."
-                                    }
-                            ]
-                    },
-                    {
-                            "id": "d-irregular",
-                            "title": "‘ㄷ’ 불규칙",
-                            "label": "ㄷ-irregular conjugation",
-                            "meaning": "Change ㄷ to ㄹ before vowel-starting endings for 듣다, 묻다, and 걷다; compare them with regular 받다 and 닫다.",
-                            "form": "듣다 → 들어요 · 묻다 → 물어요 · 걷다 → 걸어요 · no change before -습니다",
-                            "notes": "The comparison table practices -(스)ㅂ니다, -아요/어요, -(으)ㄹ까요, -아/어서, and -(으)면서.",
-                            "examples": [
-                                    [
-                                            "듣습니다 · 들어요 · 들을까요? · 들어서 · 들으면서",
-                                            "Forms of 듣다 (to listen)."
-                                    ],
-                                    [
-                                            "묻습니다 · 물어요 · 물을까요? · 물어서 · 물으면서",
-                                            "Forms of 묻다 (to ask)."
-                                    ],
-                                    [
-                                            "걷습니다 · 걸어요 · 걸을까요? · 걸어서 · 걸으면서",
-                                            "Forms of 걷다 (to walk)."
-                                    ],
-                                    [
-                                            "받습니다 · 받아요 · 받을까요? · 받아서 · 받으면서",
-                                            "받다 stays regular."
-                                    ],
-                                    [
-                                            "닫습니다 · 닫아요 · 닫을까요? · 닫아서 · 닫으면서",
-                                            "닫다 stays regular."
-                                    ]
-                            ],
-                            "questions": [
-                                    {
-                                            "korean": "커피숍에서 차도 마시고 음악도 들으면서 이야기했어요.",
-                                            "english": "We talked at a coffee shop while drinking tea and listening to music."
-                                    },
-                                    {
-                                            "korean": "기숙사에서 매점까지 걸어서 20분쯤 걸릴 거예요.",
-                                            "english": "It will take about twenty minutes to walk from the dormitory to the snack shop."
-                                    },
-                                    {
-                                            "korean": "어려우면 수업 시간에 선생님께 물어보세요.",
-                                            "english": "If it is difficult, ask the teacher during class."
-                                    },
-                                    {
-                                            "korean": "추우면 문을 닫을까요?",
-                                            "english": "If it is cold, shall we close the door?"
-                                    },
-                                    {
-                                            "korean": "부모님께 전자 사전을 받아서 기분이 좋아요.",
-                                            "english": "I feel good because I received an electronic dictionary from my parents."
-                                    },
-                                    {
-                                            "korean": "친구에게 전화번호를 물었어요.",
-                                            "english": "I asked a friend for their phone number."
-                                    },
-                                    {
-                                            "korean": "이 문제가 어려우니까 좀 가르쳐 주세요.",
-                                            "english": "This problem is difficult, so please teach me."
-                                    },
-                                    {
-                                            "korean": "저 옷이 예쁘니까 저 옷을 사세요.",
-                                            "english": "That outfit is pretty, so buy it."
-                                    },
-                                    {
-                                            "korean": "집에서 학교까지 걸어서 다리가 아파요.",
-                                            "english": "My legs hurt because I walked from home to school."
-                                    },
-                                    {
-                                            "korean": "떡볶이가 매워서 물을 많이 마셨어요.",
-                                            "english": "The tteokbokki was spicy, so I drank a lot of water."
-                                    },
-                                    {
-                                            "korean": "이번 주에는 일이 많아서 바빠요.",
-                                            "english": "I am busy this week because I have a lot of work."
-                                    },
-                                    {
-                                            "korean": "그 식당이 가까우니까 거기에서 밥 먹어요.",
-                                            "english": "That restaurant is close, so let us eat there."
-                                    }
-                            ]
-                    },
-                    {
-                            "id": "invitation-preparation",
-                            "title": "초대와 준비",
-                            "label": "Integrated planning practice",
-                            "meaning": "Plan a home invitation or activity and say what you will prepare.",
-                            "form": "N을/를 초대하다 · N을/를 준비하다 · V-(으)ㄹ 거예요 · V-(으)면서",
-                            "notes": "The final pages combine the lesson grammar in an invitation paragraph and preparation lists for travel, a party, cooking, and swimming.",
-                            "examples": [
-                                    [
-                                            "나는 다음 주말에 어학당 친구들을 집에 초대할 거예요.",
-                                            "I will invite my language-school friends to my house next weekend."
-                                    ],
-                                    [
-                                            "나는 쌀국수와 김밥을 만들 거예요. 그리고 딸기와 바나나를 준비할 거예요.",
-                                            "I will make rice noodles and gimbap. Then I will prepare strawberries and bananas."
-                                    ],
-                                    [
-                                            "나는 친구들과 같이 베트남 음악을 들으면서 음식을 먹고 게임도 하고 싶어요.",
-                                            "I want to eat food and play games with my friends while listening to Vietnamese music."
-                                    ]
-                            ],
-                            "questions": [
-                                    {
-                                            "korean": "집에 손님을 초대할 거예요.",
-                                            "english": "I am going to invite guests to my house."
-                                    },
-                                    {
-                                            "korean": "언제 초대할 거예요?",
-                                            "english": "When will you invite them?"
-                                    },
-                                    {
-                                            "korean": "누구를 초대할 거예요?",
-                                            "english": "Whom will you invite?"
-                                    },
-                                    {
-                                            "korean": "무엇을 준비할 거예요?",
-                                            "english": "What will you prepare?"
-                                    },
-                                    {
-                                            "korean": "나는 다음 주말에 어학당 친구들을 집에 초대할 거예요.",
-                                            "english": "I will invite my language-school friends to my house next weekend."
-                                    },
-                                    {
-                                            "korean": "나는 쌀국수와 김밥을 만들 거예요.",
-                                            "english": "I will make rice noodles and gimbap."
-                                    },
-                                    {
-                                            "korean": "딸기와 바나나를 준비할 거예요.",
-                                            "english": "I will prepare strawberries and bananas."
-                                    },
-                                    {
-                                            "korean": "맥주와 커피도 준비할 거예요.",
-                                            "english": "I will also prepare beer and coffee."
-                                    },
-                                    {
-                                            "korean": "나는 친구들과 같이 베트남 음악을 들으면서 음식을 먹고 게임도 하고 싶어요.",
-                                            "english": "I want to eat food and play games with my friends while listening to Vietnamese music."
-                                    },
-                                    {
-                                            "korean": "세계 여행을 갈 거예요. 무엇을 준비해요?",
-                                            "english": "I am going on a trip around the world. What should I prepare?"
-                                    },
-                                    {
-                                            "korean": "모자와 운동화를 준비해요.",
-                                            "english": "Prepare a hat and sneakers."
-                                    },
-                                    {
-                                            "korean": "여권을 준비하세요.",
-                                            "english": "Prepare your passport."
-                                    },
-                                    {
-                                            "korean": "여비를 준비하세요.",
-                                            "english": "Prepare travel money."
-                                    },
-                                    {
-                                            "korean": "생일 파티를 할 거예요. 무엇을 준비해요?",
-                                            "english": "I am going to have a birthday party. What should I prepare?"
-                                    },
-                                    {
-                                            "korean": "케이크를 준비해요.",
-                                            "english": "Prepare a cake."
-                                    },
-                                    {
-                                            "korean": "선물을 준비하세요.",
-                                            "english": "Prepare a gift."
-                                    },
-                                    {
-                                            "korean": "떡볶이를 만들 거예요. 무엇을 준비해요?",
-                                            "english": "I am going to make tteokbokki. What should I prepare?"
-                                    },
-                                    {
-                                            "korean": "떡볶이 떡, 고추장, 설탕을 준비하세요.",
-                                            "english": "Prepare tteokbokki rice cakes, gochujang, and sugar."
-                                    },
-                                    {
-                                            "korean": "양파와 어묵을 준비하세요.",
-                                            "english": "Prepare onions and fish cake."
-                                    },
-                                    {
-                                            "korean": "고춧가루와 양배추를 준비하세요.",
-                                            "english": "Prepare red chili powder and cabbage."
-                                    },
-                                    {
-                                            "korean": "수영장에 갈 거예요. 무엇을 준비해요?",
-                                            "english": "I am going to the swimming pool. What should I prepare?"
-                                    },
-                                    {
-                                            "korean": "수영복을 준비하세요.",
-                                            "english": "Prepare a swimsuit."
-                                    },
-                                    {
-                                            "korean": "수영 모자를 준비하세요.",
-                                            "english": "Prepare a swim cap."
-                                    },
-                                    {
-                                            "korean": "물안경을 준비하세요.",
-                                            "english": "Prepare swimming goggles."
-                                    }
-                            ]
-                    }
-            ]
-    };
+        "title": "Bab 14",
+        "subtitle": "잠깐 쉴까요?",
+        "description": "Make suggestions, accept plans politely, and combine multiple activities with 도 and -고.",
+        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab14")),
+        "sections": [
+                {
+                        "id": "shall-we",
+                        "title": "V-(으)ㄹ까요?",
+                        "label": "Suggestion",
+                        "meaning": "Ask whether the speaker and listener should do something together.",
+                        "form": "Stem + 을까요 after a consonant · ㄹ까요 after a vowel/ㄹ",
+                        "notes": "In this lesson the form is used mainly for shared suggestions.",
+                        "examples": [
+                                [
+                                        "우리 같이 영화 볼까요?",
+                                        "Shall we watch a movie together?"
+                                ],
+                                [
+                                        "우리 같이 도서관에서 숙제할까요?",
+                                        "Shall we do homework together at the library?"
+                                ],
+                                [
+                                        "우리 같이 등산 갈까요?",
+                                        "Shall we go hiking together?"
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "우리 같이 영화 볼까요?",
+                                        "english": "Shall we watch a movie together?"
+                                },
+                                {
+                                        "korean": "우리 같이 도서관에서 숙제할까요?",
+                                        "english": "Shall we do homework together at the library?"
+                                },
+                                {
+                                        "korean": "우리 같이 등산 갈까요?",
+                                        "english": "Shall we go hiking together?"
+                                },
+                                {
+                                        "korean": "우리 같이 맥주를 마실까요?",
+                                        "english": "Shall we drink beer together?"
+                                },
+                                {
+                                        "korean": "우리 같이 기숙사에서 생일 파티를 할까요?",
+                                        "english": "Shall we have a birthday party together in the dormitory?"
+                                },
+                                {
+                                        "korean": "우리 같이 점심을 먹을까요?",
+                                        "english": "Shall we eat lunch together?"
+                                },
+                                {
+                                        "korean": "우리 같이 공원에서 사진을 찍을까요?",
+                                        "english": "Shall we take photos together in the park?"
+                                },
+                                {
+                                        "korean": "우리 같이 산책할까요?",
+                                        "english": "Shall we take a walk together?"
+                                },
+                                {
+                                        "korean": "주말에 같이 테니스를 칠까요?",
+                                        "english": "Shall we play tennis together on the weekend?"
+                                },
+                                {
+                                        "korean": "저 식당에 갈까요?",
+                                        "english": "Shall we go to that restaurant?"
+                                },
+                                {
+                                        "korean": "오늘 오후에 한국 요리를 만들까요?",
+                                        "english": "Shall we make Korean food this afternoon?"
+                                },
+                                {
+                                        "korean": "점심을 먹고 텔레비전을 볼까요?",
+                                        "english": "Shall we watch television after lunch?"
+                                },
+                                {
+                                        "korean": "방학에 제주도에 갈까요?",
+                                        "english": "Shall we go to Jeju Island during vacation?"
+                                },
+                                {
+                                        "korean": "편의점에서 우유를 살까요?",
+                                        "english": "Shall we buy milk at the convenience store?"
+                                },
+                                {
+                                        "korean": "한라산에도 갈까요?",
+                                        "english": "Shall we also go to Hallasan?"
+                                }
+                        ]
+                },
+                {
+                        "id": "lets-formal",
+                        "title": "V-(으)ㅂ시다",
+                        "label": "Formal suggestion",
+                        "meaning": "Suggest an action with “let’s.”",
+                        "form": "Stem + 읍시다 after a consonant · ㅂ시다 after a vowel",
+                        "notes": "This form is polite and somewhat formal.",
+                        "examples": [
+                                [
+                                        "같이 공부합시다.",
+                                        "Let’s study together."
+                                ],
+                                [
+                                        "같이 점심을 먹읍시다.",
+                                        "Let’s eat lunch together."
+                                ],
+                                [
+                                        "공원에서 사진을 찍읍시다.",
+                                        "Let’s take photos in the park."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "같이 공부합시다.",
+                                        "english": "Let’s study together."
+                                },
+                                {
+                                        "korean": "같이 점심을 먹읍시다.",
+                                        "english": "Let’s eat lunch together."
+                                },
+                                {
+                                        "korean": "공원에서 사진을 찍읍시다.",
+                                        "english": "Let’s take photos in the park."
+                                },
+                                {
+                                        "korean": "같이 산책합시다.",
+                                        "english": "Let’s take a walk together."
+                                },
+                                {
+                                        "korean": "같이 커피를 마십시다.",
+                                        "english": "Let’s drink coffee together."
+                                },
+                                {
+                                        "korean": "같이 차를 마십시다.",
+                                        "english": "Let’s drink tea together."
+                                },
+                                {
+                                        "korean": "텔레비전을 봅시다.",
+                                        "english": "Let’s watch television."
+                                },
+                                {
+                                        "korean": "놀이공원에 갑시다.",
+                                        "english": "Let’s go to the amusement park."
+                                },
+                                {
+                                        "korean": "태권도를 배웁시다.",
+                                        "english": "Let’s learn taekwondo."
+                                },
+                                {
+                                        "korean": "과일도 삽시다.",
+                                        "english": "Let’s also buy fruit."
+                                },
+                                {
+                                        "korean": "맛있는 음식도 먹읍시다.",
+                                        "english": "Let’s also eat delicious food."
+                                },
+                                {
+                                        "korean": "불고기를 먹읍시다.",
+                                        "english": "Let’s eat bulgogi."
+                                },
+                                {
+                                        "korean": "냉면도 먹읍시다.",
+                                        "english": "Let’s also eat cold noodles."
+                                },
+                                {
+                                        "korean": "주말에 여행합시다.",
+                                        "english": "Let’s travel on the weekend."
+                                },
+                                {
+                                        "korean": "시내에서 쇼핑합시다.",
+                                        "english": "Let’s shop downtown."
+                                }
+                        ]
+                },
+                {
+                        "id": "lets-polite",
+                        "title": "V-아요/어요 as a response",
+                        "label": "Polite agreement",
+                        "meaning": "Accept a suggestion using the ordinary polite present form.",
+                        "form": "네, 같이 + V-아요/어요",
+                        "notes": "Context gives the present form the meaning “yes, let’s.”",
+                        "examples": [
+                                [
+                                        "네, 같이 노래해요.",
+                                        "Yes, let’s sing together."
+                                ],
+                                [
+                                        "네, 같이 테니스를 쳐요.",
+                                        "Yes, let’s play tennis together."
+                                ],
+                                [
+                                        "네, 저 식당에 가요.",
+                                        "Yes, let’s go to that restaurant."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "네, 같이 노래해요.",
+                                        "english": "Yes, let’s sing together."
+                                },
+                                {
+                                        "korean": "네, 같이 테니스를 쳐요.",
+                                        "english": "Yes, let’s play tennis together."
+                                },
+                                {
+                                        "korean": "네, 저 식당에 가요.",
+                                        "english": "Yes, let’s go to that restaurant."
+                                },
+                                {
+                                        "korean": "네, 한국 요리를 만들어요.",
+                                        "english": "Yes, let’s make Korean food."
+                                },
+                                {
+                                        "korean": "네, 점심을 먹어요.",
+                                        "english": "Yes, let’s eat lunch."
+                                },
+                                {
+                                        "korean": "네, 산책해요.",
+                                        "english": "Yes, let’s take a walk."
+                                },
+                                {
+                                        "korean": "네, 커피를 마셔요.",
+                                        "english": "Yes, let’s drink coffee."
+                                },
+                                {
+                                        "korean": "네, 공원에서 사진을 찍어요.",
+                                        "english": "Yes, let’s take photos in the park."
+                                },
+                                {
+                                        "korean": "네, 도서관에서 숙제해요.",
+                                        "english": "Yes, let’s do homework at the library."
+                                },
+                                {
+                                        "korean": "네, 제주도에 가요.",
+                                        "english": "Yes, let’s go to Jeju Island."
+                                },
+                                {
+                                        "korean": "네, 영화를 봐요.",
+                                        "english": "Yes, let’s watch a movie."
+                                },
+                                {
+                                        "korean": "네, 같이 쇼핑해요.",
+                                        "english": "Yes, let’s shop together."
+                                }
+                        ]
+                },
+                {
+                        "id": "also-and",
+                        "title": "N도 A/V-고 N도 A/V",
+                        "label": "Multiple items",
+                        "meaning": "Say that two items or activities are both included.",
+                        "form": "N도 + predicate-고 + N도 + predicate",
+                        "notes": "도 means “also,” while -고 connects the two clauses.",
+                        "examples": [
+                                [
+                                        "라면도 먹고 김밥도 먹었어요.",
+                                        "I ate ramyeon and also ate gimbap."
+                                ],
+                                [
+                                        "우유도 사고 과일도 사요.",
+                                        "I buy milk and also buy fruit."
+                                ],
+                                [
+                                        "지난 주말에 쇼핑도 하고 영화를 봤어요.",
+                                        "Last weekend I shopped and also watched a movie."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "라면도 먹고 김밥도 먹었어요.",
+                                        "english": "I ate ramyeon and also ate gimbap."
+                                },
+                                {
+                                        "korean": "우유도 사고 과일도 사요.",
+                                        "english": "I buy milk and also buy fruit."
+                                },
+                                {
+                                        "korean": "지난 주말에 쇼핑도 하고 영화를 봤어요.",
+                                        "english": "Last weekend I shopped and also watched a movie."
+                                },
+                                {
+                                        "korean": "사람들이 공원에서 그림도 그리고 사진도 찍어요.",
+                                        "english": "People draw pictures and also take photos in the park."
+                                },
+                                {
+                                        "korean": "오늘 오후에 숙제도 하고 텔레비전도 봐요.",
+                                        "english": "This afternoon I do homework and also watch television."
+                                },
+                                {
+                                        "korean": "방학에 제주도도 여행하고 한라산에도 가요.",
+                                        "english": "During vacation I travel to Jeju Island and also go to Hallasan."
+                                },
+                                {
+                                        "korean": "어머니께 꽃도 드리고 선물도 드렸어요.",
+                                        "english": "I gave Mother flowers and also gave her a gift."
+                                },
+                                {
+                                        "korean": "불고기도 먹고 냉면도 먹어요.",
+                                        "english": "We eat bulgogi and also eat cold noodles."
+                                },
+                                {
+                                        "korean": "매점에서 커피도 사고 김밥도 사요.",
+                                        "english": "We buy coffee and also buy gimbap at the snack shop."
+                                },
+                                {
+                                        "korean": "주말에 등산도 가고 산책도 해요.",
+                                        "english": "On the weekend we go hiking and also take a walk."
+                                },
+                                {
+                                        "korean": "시내에서 쇼핑도 하고 사진도 찍어요.",
+                                        "english": "Downtown we shop and also take photos."
+                                },
+                                {
+                                        "korean": "문구점에서 공책도 사고 볼펜도 사요.",
+                                        "english": "At the stationery store we buy a notebook and also a pen."
+                                }
+                        ]
+                }
+        ]
+};
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -2826,7 +2773,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     const STATES = new Map();
 
     const BAB_ID = `bab${String(Number(LESSON.title.match(/\d+/)?.[0] || 0)).padStart(2,"0")}`;
-    const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID).length ? KoreanVocab.forLesson(BAB_ID) : BAB20_LOCAL_VOCAB;
+    const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID).length ? KoreanVocab.forLesson(BAB_ID) : [];
     // Every word is listed under exactly one source. Duplicates resolve to this
     // Bab first, then the TOPIK vocabulary lists, then the other Bab lessons,
     // then the practice tests, then the extra TOPIK core list.
@@ -2894,11 +2841,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     function labelName(id){ return KoreanVocab.LABELS[id]?.name || String(id).replaceAll("-"," "); }
     function entryMatchesExercise(entry,key){ const c=configForKey(key); return !c.parts?.length || c.parts.includes(entry.partOfSpeech); }
     const EXERCISE_VOCAB=new Map();
-    // This Bab carries its own word list, so the Vocabulary Translation
-    // Practice is held to exactly the words shown in the bank above rather than
-    // to every shared word tagged bab20.
-    const BANK_KOREAN=new Set(BAB20_LOCAL_VOCAB.map(e=>e.korean));
-    function exerciseVocab(key){ if(!EXERCISE_VOCAB.has(key))EXERCISE_VOCAB.set(key,KoreanVocab.DATA.filter(e=>entryMatchesExercise(e,key)&&(key!=="vocabulary"||BANK_KOREAN.has(e.korean)))); return EXERCISE_VOCAB.get(key); }
+    function exerciseVocab(key){ if(!EXERCISE_VOCAB.has(key))EXERCISE_VOCAB.set(key,KoreanVocab.DATA.filter(e=>entryMatchesExercise(e,key))); return EXERCISE_VOCAB.get(key); }
     function compatibleVocab(key,sources=DEFAULT_SOURCES){ const allowed=sources instanceof Set?sources:new Set(sources); return exerciseVocab(key).filter(e=>allowed.has(sourceOf(e))); }
     function sourceCounts(key){ const counts=new Map(); exerciseVocab(key).forEach(e=>{ const id=sourceOf(e); counts.set(id,(counts.get(id)||0)+1); }); return counts; }
     function sourceTreeTemplate(key){

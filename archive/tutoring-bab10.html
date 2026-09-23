@@ -11,7 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>Bab 8 · 생일이 언제예요?</title>
+  <title>Bab 10 · 동생은 등산을 좋아하지 않습니다</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -1470,11 +1470,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
   <!-- Page header -->
   <header class="site-header">
    <div class="header-inner">
-    <a class="brand" href="./index.html">
+    <a class="brand" href="../index.html">
      Korean Language Resources
     </a>
     <div class="header-actions">
-     <a class="header-link" href="./index.html">
+     <a class="header-link" href="../index.html">
       Home
      </a>
     </div>
@@ -1580,9 +1580,9 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
-  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
-  <script src="./shared-vocab/korean-grammar.js?v=1.2.0"></script>
+  <script src="../shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="../shared-vocab/word-notes.js?v=1.0.0"></script>
+  <script src="../shared-vocab/korean-grammar.js?v=1.2.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1590,125 +1590,120 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 8",
-        "subtitle": "생일이 언제예요?",
-        "description": "Read and say dates, ask when something happens, use 몇 with calendar and floor units, mark dates with 에, and say that people do things together.",
-        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab08")),
+        "title": "Bab 10",
+        "subtitle": "동생은 등산을 좋아하지 않습니다",
+        "description": "Express likes and dislikes, join actions with -고, contrast ideas with -지만, use long-form negation, and talk about past events.",
+        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab10")),
         "sections": [
                 {
-                        "id": "calendar-dates",
-                        "title": "년 · 월 · 일",
-                        "label": "Calendar dates",
-                        "meaning": "Say years, months, and dates with Sino-Korean numbers.",
-                        "form": "Year + 년, month + 월, day + 일. June is 유월 and October is 시월.",
-                        "notes": "The workbook writes dates both with digits and fully in Korean. Korean spacing is ignored when answers are checked.",
+                        "id": "likes",
+                        "title": "좋아하다 and 싫어하다",
+                        "label": "Preferences",
+                        "meaning": "Express what someone likes or dislikes.",
+                        "form": "N이/가 좋다 · N을/를 좋아하다 · N을/를 싫어하다",
+                        "notes": "좋다 describes something as pleasing; 좋아하다 and 싫어하다 take an object marked with 을/를.",
                         "examples": [
                                 [
-                                        "이천십칠년 시월 십일이에요.",
-                                        "It is October 11, 2017."
+                                        "저는 바다가 좋아요.",
+                                        "I like the sea."
                                 ],
                                 [
-                                        "천구백구십구년 십이월 삼십일일이에요.",
-                                        "It is December 31, 1999."
+                                        "나는 한국 영화를 좋아해요.",
+                                        "I like Korean movies."
                                 ],
                                 [
-                                        "오월 이십사일이에요.",
-                                        "It is May 24."
+                                        "동생은 운동을 좋아하지 않아요.",
+                                        "My younger sibling does not like exercise."
                                 ]
-                        ],
-                        "generator": "b8Date"
+                        ]
                 },
                 {
-                        "id": "question-words",
-                        "title": "뭐예요? · 언제예요? · 어디예요?",
-                        "label": "Question words",
-                        "meaning": "Ask what something is, when something happens, or where something is.",
-                        "form": "N이/가 언제예요? · 여기는 어디예요? · 이건/저건 뭐예요?",
-                        "notes": "Use the question word that matches the information you need: thing, time/date, or place.",
+                        "id": "and-link",
+                        "title": "A/V-고",
+                        "label": "Connection",
+                        "meaning": "Join two actions or descriptions in one sentence.",
+                        "form": "Stem + 고",
+                        "notes": "The tense is normally shown on the final predicate.",
                         "examples": [
                                 [
-                                        "생일이 언제예요? 오월 이십사일이에요.",
-                                        "When is the birthday? It is May 24."
+                                        "노래를 하고 춤을 춰요.",
+                                        "I sing and dance."
                                 ],
                                 [
-                                        "여기는 어디예요? 도서관이에요.",
-                                        "Where is this place? It is the library."
+                                        "도서관에서 숙제를 하고 책을 읽어요.",
+                                        "I do homework and read a book at the library."
                                 ],
                                 [
-                                        "저건 뭐예요? 전자사전이에요.",
-                                        "What is that? It is an electronic dictionary."
+                                        "주말에 청소를 하고 빨래를 해요.",
+                                        "I clean and do laundry on the weekend."
                                 ]
-                        ],
-                        "generator": "b8Wh"
+                        ]
                 },
                 {
-                        "id": "myeot-counter",
-                        "title": "몇 + N",
-                        "label": "What number?",
-                        "meaning": "Use 몇 before a counting or calendar unit to ask for a number.",
-                        "form": "몇 월 며칠이에요? · 몇 층에 있어요?",
-                        "notes": "With dates, 몇 월 asks the month and 며칠 asks the date. With buildings, 몇 층 asks the floor.",
+                        "id": "contrast",
+                        "title": "A/V-지만",
+                        "label": "Contrast",
+                        "meaning": "Connect two contrasting facts.",
+                        "form": "Stem + 지만",
+                        "notes": "-지만 attaches directly to the verb or adjective stem.",
                         "examples": [
                                 [
-                                        "생일이 몇 월 며칠이에요? 유월 이십사일이에요.",
-                                        "What month and date is the birthday? It is June 24."
+                                        "여름이지만 안 더워요.",
+                                        "It is summer, but it is not hot."
                                 ],
                                 [
-                                        "영화관은 몇 층에 있어요? 사 층에 있어요.",
-                                        "What floor is the movie theater on? It is on the fourth floor."
+                                        "김치가 맵지만 좋아해요.",
+                                        "Kimchi is spicy, but I like it."
                                 ],
                                 [
-                                        "시험이 몇 월 며칠이에요? 십일월 십칠일이에요.",
-                                        "What month and date is the exam? It is November 17."
+                                        "그 식당 음식은 맛있지만 비싸요.",
+                                        "That restaurant food is delicious, but expensive."
                                 ]
-                        ],
-                        "generator": "b8Myeot"
+                        ]
                 },
                 {
-                        "id": "date-e",
-                        "title": "Time / date + 에",
-                        "label": "At / on",
-                        "meaning": "Mark when an event or action happens.",
-                        "form": "Date/day + 에 + event/action. Examples: 금요일에, 유월 오일에.",
-                        "notes": "The source uses 에 with dates and days of the week to place an action on the calendar.",
+                        "id": "long-negation",
+                        "title": "A/V-지 않다",
+                        "label": "Negation",
+                        "meaning": "Say that an action or state does not occur.",
+                        "form": "Stem + 지 않아요",
+                        "notes": "This is the longer alternative to 안 + verb/adjective.",
                         "examples": [
                                 [
-                                        "유월 오일에 우체국에 가요.",
-                                        "I go to the post office on June 5."
+                                        "공부를 하지 않아요. 잠을 자요.",
+                                        "I do not study. I sleep."
                                 ],
                                 [
-                                        "월요일에 한국어 수업이 있어요.",
-                                        "There is Korean class on Monday."
+                                        "그림을 그리지 않아요. 사진을 찍어요.",
+                                        "I do not draw. I take photos."
                                 ],
                                 [
-                                        "삼월 십구일에 소영과 함께 시장에 가요.",
-                                        "On March 19, I go to the market together with So-young."
+                                        "책을 읽지 않아요. 노래를 해요.",
+                                        "I do not read a book. I sing."
                                 ]
-                        ],
-                        "generator": "b8DateE"
+                        ]
                 },
                 {
-                        "id": "together",
-                        "title": "N와/과 같이 · N하고 같이 · N와/과 함께 · N하고 함께",
-                        "label": "Together with",
-                        "meaning": "Say that an action is done together with another person or group.",
-                        "form": "Person + 와/과 or 하고 + 같이/함께 + action.",
-                        "notes": "Use 과 after a consonant and 와 after a vowel. 하고 works after either. 같이 and 함께 both mean 'together.'",
+                        "id": "past-tense",
+                        "title": "A/V-았/었-",
+                        "label": "Past tense",
+                        "meaning": "Describe completed actions and past states.",
+                        "form": "Stem + 았어요/었어요/했어요",
+                        "notes": "Use 았 after ㅏ or ㅗ; otherwise use 었. 하다 becomes 했어요.",
                         "examples": [
                                 [
-                                        "나는 아사코하고 같이 식당에서 밥을 먹어요.",
-                                        "I eat a meal at the restaurant together with Asako."
+                                        "주말에 영화관에 갔어요.",
+                                        "I went to the movie theater on the weekend."
                                 ],
                                 [
-                                        "제니퍼는 친구와 함께 교실을 청소해요.",
-                                        "Jennifer cleans the classroom together with a friend."
+                                        "공원에서 사진을 찍었어요.",
+                                        "I took photos in the park."
                                 ],
                                 [
-                                        "티누는 오늘 투이하고 함께 도서관에서 공부해요.",
-                                        "Today Tinu studies at the library together with Thuy."
+                                        "학교 식당의 음식은 싸고 맛있었어요.",
+                                        "The school cafeteria food was inexpensive and delicious."
                                 ]
-                        ],
-                        "generator": "b8Together"
+                        ]
                 }
         ]
 };
@@ -1754,7 +1749,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // -------------------------------------------------------------------------
     // Shared vocabulary selection and universal Bab 1–10 grammar generation
     // -------------------------------------------------------------------------
-    const BAB_ID = "bab08";
+    const BAB_ID = "bab10";
     const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID);
     // Every word is listed under exactly one source. Duplicates resolve to this
     // Bab first, then the TOPIK vocabulary lists, then the other Bab lessons,
@@ -1996,26 +1991,26 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
             case "demonstratives": { a=selectedEntry(nouns); const d=pick([{k:"이건",e:"This"},{k:"그건",e:"That near you"},{k:"저건",e:"That over there"}]); form=copula(a.korean); uses=[literalUse(d.k,d.e,"pronoun","This contracted demonstrative marks distance from the speakers.",`Use ${d.k} as a complete form.`),particleUse(a,form,hasBatchim(a.korean)?"이에요":"예요","Attach the polite copula to identify the object.")]; return q(`${d.k} ${form}.`,`${d.e} is ${identityEnglish(a)}.`,[],uses,"Use 이건/그건/저건 followed by N이에요/예요."); }
             case "negativeCopula": { a=selectedEntry(nouns);b=differentEntry(nouns,a)||a;const neg=subject(a.korean);const pos=copula(b.korean);uses=[particleUse(a,neg,hasBatchim(a.korean)?"이":"가","이/가 marks the noun rejected by 아니에요."),fixedUse("아니다","Use 아니에요 after N이/가 to negate identity.","아니다 becomes 아니에요.","아니에요","not to be"),particleUse(b,pos,hasBatchim(b.korean)?"이에요":"예요","Use the copula to give the corrected identity.")];return q(`${neg} 아니에요. ${pos}.`,`It is not ${identityEnglish(a)}. It is ${identityEnglish(b)}.`,[],uses,"N이/가 아니에요 rejects an identity; N이에요/예요 supplies the correction."); }
             case "negativeProfile": { const countries=pool.filter(isCountry),jobs=pool.filter(isOccupation); const group=jobs.length>=2?jobs:countries;a=selectedEntry(group);b=differentEntry(group,a)||a;const countryMode=group===countries;const af=countryMode?`${a.korean} 사람`:a.korean,bf=countryMode?`${b.korean} 사람`:b.korean;const an=subject(af),bp=copula(bf);uses=[fixedUse("저","저 is the polite first-person pronoun.","Attach 는 to make 저는.","저는","I"),wordUse(a,an,"This is the identity being denied.",`${af} takes ${hasBatchim(af)?"이":"가"}: ${an}.`),fixedUse("아니다","Use 아니에요 for negative identity.","아니다 becomes 아니에요.","아니에요","not to be"),wordUse(b,bp,"This is the corrected profile information.",`${bf} takes ${hasBatchim(bf)?"이에요":"예요"}: ${bp}.`)]; if(countryMode)uses.push(fixedUse("사람","A country before 사람 expresses nationality.","Use Country + 사람.","사람","person")); return q(`저는 ${an} 아니에요. ${bp}.`,`I am not ${countryMode?`from ${nounEnglish(a)}`:identityEnglish(a)}. I am ${countryMode?`from ${nounEnglish(b)}`:identityEnglish(b)}.`,[],uses,"Use 저는 + N이/가 아니에요, then correct the profile with 이에요/예요."); }
-            case "present": { a=selectedEntry(verbs);form=presentPolite(a.korean);uses=[verbUse(a,form,"Conjugate the dictionary form with -아요/-어로/-해요.")];return q(`${form}.`,`I ${predicateEnglish(a)}.`,[],uses,"Use the polite-casual present ending."); }
+            case "present": { a=selectedEntry(verbs);form=presentPolite(a.korean);uses=[verbUse(a,form,"Conjugate the dictionary form with -아요/-어요/-해요.")];return q(`${form}.`,`I ${predicateEnglish(a)}.`,[],uses,"Use the polite-casual present ending."); }
             case "object": { b=selectedEntry(verbs,verb=>objectCandidatesForVerb(nouns,verb).length)||selectedEntry(verbs);a=selectedEntry(objectCandidatesForVerb(nouns,b))||selectedEntry(nouns);const of=object(a.korean),vf=presentPolite(b.korean);uses=[particleUse(a,of,hasBatchim(a.korean)?"을":"를","을/를 marks the direct object."),verbUse(b,vf,"Conjugate the action verb in polite present tense.")];return q(`${of} ${vf}.`,`I ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Mark the direct object with 을/를 and conjugate the verb."); }
             case "placeAction": { a=selectedEntry(places)||selectedEntry(nouns);c=selectedEntry(verbs,verb=>objectCandidatesForVerb(nouns,verb).some(entry=>entry.id!==a.id))||selectedEntry(verbs);b=selectedEntry(objectCandidatesForVerb(nouns,c),entry=>entry.id!==a.id)||selectedEntry(nouns,entry=>entry.id!==a.id)||a;const pf=`${a.korean}에서`,of=object(b.korean),vf=presentPolite(c.korean);uses=[wordUse(a,pf,"에서 marks the place where an action happens.",`Attach 에서: ${pf}.`),particleUse(b,of,hasBatchim(b.korean)?"을":"를","This noun is the action's object."),verbUse(c,vf,"Conjugate the action verb in polite present tense.")];return q(`${pf} ${of} ${vf}.`,`I ${predicateEnglish(c)} ${nounEnglish(b)} at ${nounEnglish(a)}.`,[],uses,"Use N에서 for the action location, then an object and verb."); }
             case "also": { b=selectedEntry(verbs,verb=>objectCandidatesForVerb(nouns,verb).length)||selectedEntry(verbs);a=selectedEntry(objectCandidatesForVerb(nouns,b))||selectedEntry(nouns);const nf=`${a.korean}도`,vf=presentPolite(b.korean);uses=[wordUse(a,nf,"도 adds the meaning ‘also/too’ and replaces the usual object particle.",`Attach 도 directly: ${nf}.`),verbUse(b,vf,"Conjugate the verb in polite present tense.")];return q(`${nf} ${vf}.`,`I also ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Attach 도 to the noun to add ‘also/too.’"); }
             case "destination": { a=selectedEntry(places)||selectedEntry(nouns);const go=Math.random()<.5;const base=go?"가다":"오다",vf=presentPolite(base),pf=`${a.korean}에`;uses=[wordUse(a,pf,"에 marks the destination.",`Attach 에: ${pf}.`),fixedUse(base,"가다 means go; 오다 means come.",`${base} becomes ${vf}.`,vf,go?"to go":"to come")];return q(`${pf} ${vf}.`,`I ${go?"go":"come"} to ${nounEnglish(a)}.`,[],uses,"Use destination + 에 + 가요/와요."); }
-            case "shortNegation": { a=selectedEntry(verbs);const vf=presentPolite(a.korean);uses=[fixedUse("안","Place 안 immediately before the conjugated verb for short negation.","안 does not change.","안","not"),verbUse(a,vf,"The verb is conjugated normally after 안.")];let korean=`안 ${vf}`,english=`I do not ${predicateEnglish(a)}`;const objectChoices=objectCandidatesForVerb(nouns,a);if(objectChoices.length){b=selectedEntry(objectChoices);const of=object(b.korean);korean=`${of} 안 ${vf}`;english+=` ${nounEnglish(b)}`;uses.unshift(particleUse(b,of,hasBatchim(b.korean)?"을":"를","This noun is the direct object."));}return q(`${korean}.`,`${english}.`,[],uses,"Put 안 before the conjugated verb."); }
+            case "shortNegation": { a=selectedEntry(verbs);const vf=presentPolite(a.korean);uses=[fixedUse("안","Place 안 immediately before the conjugated verb for short negation.","안 does not change.","안","not"),verbUse(a,vf,"The verb is conjugated normally after 안.")];let korean=`안 ${vf}`,english=`I do not ${predicateEnglish(a)}`;if(isLikelyTransitive(a)&&nouns.length){b=selectedEntry(nouns);const of=object(b.korean);korean=`${of} 안 ${vf}`;english+=` ${nounEnglish(b)}`;uses.unshift(particleUse(b,of,hasBatchim(b.korean)?"을":"를","This noun is the direct object."));}return q(`${korean}.`,`${english}.`,[],uses,"Put 안 before the conjugated verb."); }
             case "andThen": { const first=actionPhrase(pool),second=actionPhrase(pool);uses=[...(first?.uses||[]),fixedUse("그리고","그리고 joins two separate sentences in sequence.","Place 그리고 at the start of the second sentence.","그리고","and then"),...(second?.uses||[])];return q(`${first.korean}. 그리고 ${second.korean}.`,`I ${first.english}. And then I ${second.english}.`,[],uses,"Finish the first sentence, then begin the next with 그리고."); }
-            case "adjective": { b=selectedEntry(adjectives);const af=presentPolite(b.korean);uses=[verbUse(b,af,"Conjugate the adjective with -아요/-어로/-해요.")];return q(`${af}.`,`It is ${predicateEnglish(b)}.`,[],uses,"Conjugate the descriptive adjective with the polite present ending."); }
-            case "subjectAdjective": { a=selectedEntry(nouns);b=selectedEntry(adjectives);const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the subject being described."),verbUse(b,af,"Conjugate the adjective with -아요/-어로/-해요.")];return q(`${nf} ${af}.`,`The ${nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Use N이/가 followed by a polite descriptive adjective."); }
+            case "adjective":
+            case "subjectAdjective": { a=selectedEntry(nouns);b=selectedEntry(adjectives);const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the subject being described."),verbUse(b,af,"Conjugate the adjective with -아요/-어로/-해요.")];return q(`${nf} ${af}.`,`${kind==="adjective"?"It":"The "+nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Use N이/가 followed by a polite descriptive adjective."); }
             case "whatKind": { const kindNouns=nouns.filter(entry=>!isPlace(entry)&&!isPerson(entry)&&!isPosition(entry)&&!entryHasAnyLabel(entry,["time-calendar","numbers-counters"]));a=selectedEntry(kindNouns)||selectedEntry(nouns);b=selectedEntry(adjectives,entry=>!["있다","없다"].includes(entry.korean))||selectedEntry(adjectives);const of=object(a.korean),mod=adjectiveAdnominal(b.korean);uses=[fixedUse("무슨","무슨 asks what kind or category.","Place 무슨 directly before the noun.","무슨","what kind of"),particleUse(a,of,hasBatchim(a.korean)?"을":"를","The category noun is the object of 좋아하다."),wordUse(b,mod,"Use the adjective's noun-modifying form before the noun.",`${b.korean} becomes ${mod} before a noun.`),fixedUse("좋아하다","좋아하다 takes an object marked with 을/를.","좋아하다 becomes 좋아해요.","좋아해요","to like")];return q(`무슨 ${of} 좋아해요? ${mod} ${of} 좋아해요.`,`What kind of ${nounEnglish(a)} do you like? I like ${predicateEnglish(b)} ${nounEnglish(a)}.`,[],uses,"Use 무슨 + noun for the question and an adjective modifier in the answer."); }
             case "bieup": { a=selectedEntry(nouns);b=selectedEntry(adjectives,entry=>BIEUP_IRREGULAR.has(entry.korean));const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the described subject."),verbUse(b,af,"For a ㅂ-irregular adjective, ㅂ changes before the vowel-initial polite ending.",`${b.korean} becomes ${af}.`)];return q(`${nf} ${af}.`,`The ${nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Apply the ㅂ-irregular change, then add the polite ending."); }
-            case "weather": { a=selectedEntry(pool,isSeason)||literalUse("오늘","today","noun");b=weatherEntry(pool)||selectedEntry(adjectives);const af=presentPolite(b.korean);uses=[];if(a.id)uses.push(wordUse(a,a.korean,"This word sets the season or time context.",`Use ${a.korean} before 날씨.`));else uses.push(a);uses.push(fixedUse("날씨","날씨 is marked with 가 in the question.","날씨 + 가 = 날씨가.","날씨가","weather"),fixedUse("어떻다","어때요 asks how something is.","어떻다 becomes 어때요.","어때요","how is it"),verbUse(b,af,"Conjugate the weather adjective in polite present tense."));const context=a.korean==="오늘"?"today":`in ${nounEnglish(a)}`;return q(`${a.korean} 날씨가 어때요? ${af}.`,`How is the weather ${context}? It is ${predicateEnglish(b)}.`,[],uses,"Ask with 날씨가 어때요? and answer with a descriptive adjective."); }
+            case "weather": { a=selectedEntry(pool,isSeason)||literalUse("오늘","today","noun");b=weatherEntry(pool)||selectedEntry(adjectives);const af=presentPolite(b.korean);uses=[];if(a.id)uses.push(wordUse(a,a.korean,"This word sets the season or time context.",`Use ${a.korean} before 날씨.`));else uses.push(a);uses.push(fixedUse("날씨","날씨 is marked with 가 in the question.","날씨 + 가 = 날씨가.","날씨가","weather"),fixedUse("어떻다","어때요 asks how something is.","어떻다 becomes 어때요.","어때요","how is it"),verbUse(b,af,"Conjugate the weather adjective in polite present tense."));return q(`${a.korean} 날씨가 어때요? ${af}.`,`How is the weather in ${nounEnglish(a)}? It is ${predicateEnglish(b)}.`,[],uses,"Ask with 날씨가 어때요? and answer with a descriptive adjective."); }
             case "formal": { a=selectedEntry(predicates);const question=Math.random()<.5;form=formalPredicate(a.korean,question);uses=[verbUse(a,form,question?"Use the formal polite question ending -(스)ㅂ니까?":"Use the formal polite statement ending -(스)ㅂ니다.")];const subject=a.partOfSpeech==="adjective"?"It":"I";return q(`${form}${question?"?":"."}`,`${question?(a.partOfSpeech==="adjective"?"Is it":"Do you"):(subject)} ${predicateEnglish(a)}${question?"?":"."}`,[],uses,"Choose -(스)ㅂ니다 for a statement or -(스)ㅂ니까? for a question."); }
-            case "clauseLink": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -고 to link the first predicate."),verbUse(b,bf,"Only the final predicate receives the sentence-final polite ending.")];const eng=a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`;return q(`${af} ${bf}.`,eng,[],uses,"Attach -고 to the first predicate and conjugate the final predicate normally."); }
-            case "formalCopula": { const identityNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(identityNouns)||selectedEntry(nouns);b=differentEntry(identityNouns,a)||differentEntry(nouns,a)||a;const bn=subject(b.korean);uses=[fixedUse("이것","이것은 marks the item being identified.","이것 + 은 = 이것은.","이것은","this"),wordUse(b,`${b.korean}입니까`,"입니까? asks a formal identity question.",`Attach 입니까 directly: ${b.korean}입니까?`),wordUse(b,bn,"이/가 marks the identity being denied before 아닙니다.",`${b.korean} takes ${hasBatchim(b.korean)?"이":"가"}: ${bn}.`),fixedUse("아니다","아닙니다 is the formal negative copula.","아니다 becomes 아닙니다.","아닙니다","not to be"),wordUse(a,`${a.korean}입니다`,"입니다 is the formal affirmative copula.",`Attach 입니다 directly: ${a.korean}입니다.`)];return q(`이것은 ${b.korean}입니까? 아니요, ${bn} 아닙니다. ${a.korean}입니다.`,`Is this ${identityEnglish(b)}? No, it is not ${identityEnglish(b)}. It is ${identityEnglish(a)}.`,[],uses,"Use 입니까? for the question, 아닙니다 for negation, and 입니다 for affirmation."); }
+            case "clauseLink": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||differentEntry(predicates,a)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -고 to link the first predicate."),verbUse(b,bf,"Only the final predicate receives the sentence-final polite ending.")];const eng=a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`;return q(`${af} ${bf}.`,eng,[],uses,"Attach -고 to the first predicate and conjugate the final predicate normally."); }
+            case "formalCopula": { const identityNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(identityNouns)||selectedEntry(nouns);b=differentEntry(identityNouns,a)||differentEntry(nouns,a)||a;const bn=subject(b.korean);uses=[fixedUse("이것","이것은 marks the item being identified.","이것 + 은 = 이것은.","이것은","this"),wordUse(b,`${b.korean}입니까`,"입니까? asks a formal identity question.",`Attach 입니까 directly: ${b.korean}입니까?`),wordUse(b,bn,"이/가 marks the identity being denied before 아닙니다.",`${b.korean} takes ${hasBatchim(b.korean)?"이":"가"}: ${bn}.`),fixedUse("아니다","아닙니다 is the formal negative copula.","아니다 becomes 아닙니다.","아닙니다","not to be"),wordUse(a,`${a.korean}입니다`,"입니다 is the formal affirmative copula.",`Attach 입니다 directly: ${a.korean}입니다.`)];return q(`이것은 ${b.korean}입니까? 아니요, ${bn} 아닙니다. ${a.korean}입니다.`,`Is this ${identityEnglish(b)}? No, it is not. It is ${identityEnglish(a)}.`,[],uses,"Use 입니까? for the question, 아닙니다 for negation, and 입니다 for affirmation."); }
             case "numbers": { const num=1+Math.floor(Math.random()*99999),kor=compactSino(num);uses=[literalUse(kor,num.toLocaleString("en-US"),"numeral","Read the number with Sino-Korean number units.",`The generated number is ${kor}.`)];return q(kor,num.toLocaleString("en-US"),[],uses,"Read or write the generated Sino-Korean number."); }
             case "location": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(contentNouns)||selectedEntry(nouns);b=differentEntry(contentNouns,a)||differentEntry(nouns,a)||a;c=selectedEntry(positions);const at=topic(a.korean),cf=`${c.korean}에`,exists=Math.random()<.8;uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the item being located."),wordUse(b,b.korean,"This noun is the spatial reference point.",`Use ${b.korean} before the position word.`),wordUse(c,cf,"The position noun is followed by 에.",`Attach 에: ${cf}.`),fixedUse(exists?"있다":"없다","있어요 expresses existence; 없어요 expresses absence.",`${exists?"있다":"없다"} becomes ${exists?"있어요":"없어요"}.`,exists?"있어요":"없어요",exists?"to exist":"not to exist")];return q(`${at} ${b.korean} ${cf} ${exists?"있어요":"없어요"}.`,`The ${nounEnglish(a)} is ${exists?"":"not "}${nounEnglish(c)} the ${nounEnglish(b)}.`,[],uses,"Use reference noun + position + 에 + 있어요/없어요."); }
             case "nounAnd": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(contentNouns)||selectedEntry(nouns);b=differentEntry(contentNouns,a)||differentEntry(nouns,a)||a;const first=andFormal(a.korean),second=subject(b.korean),alt=`${a.korean}하고 ${second} 있어요`;uses=[wordUse(a,first,"와/과 joins the first noun to the next noun.",`${a.korean} takes ${hasBatchim(a.korean)?"과":"와"}: ${first}.`),particleUse(b,second,hasBatchim(b.korean)?"이":"가","이/가 marks the joined noun phrase as the subject."),fixedUse("있다","있어요 states that the two things exist or are present.","있다 becomes 있어요.","있어요","to exist")];return q(`${first} ${second} 있어요.`,`There are ${nounEnglish(a)} and ${nounEnglish(b)}.`,[`${alt}.`],uses,"Join nouns with 와/과 or 하고; no additional vocabulary type is required."); }
-            case "locationTopic": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(places)||selectedEntry(contentNouns)||selectedEntry(nouns);b=selectedEntry(positions);c=differentEntry(contentNouns,a)||differentEntry(nouns,a)||selectedEntry(nouns);const loc=`${b.korean}에는`,sub=subject(c.korean);uses=[wordUse(a,a.korean,"This noun is the spatial reference point.",`Use ${a.korean} before the position word.`),wordUse(b,loc,"에는 combines location 에 with contrastive topic 는.",`${b.korean} + 에는 = ${loc}.`),particleUse(c,sub,hasBatchim(c.korean)?"이":"가","이/가 marks what exists there."),fixedUse("있다","있어요 expresses existence.","있다 becomes 있어요.","있어요","to exist")];return q(`${a.korean} ${loc} ${sub} 있어요.`,`As for the area ${nounEnglish(b)} the ${nounEnglish(a)}, there is ${nounEnglish(c)}.`,[],uses,"Use position + 에는 as the contrastive location, then N이/가 있어요."); }
-            case "possessive": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(pool,isPerson)||selectedEntry(contentNouns)||selectedEntry(pool,ownerLike);b=selectedEntry(contentNouns,entry=>entry.id!==a.id)||selectedEntry(contentNouns)||selectedEntry(nouns);const pronounForm=a.korean==="저"?"제":a.korean==="나"?"내":a.korean==="너"?"네":"",af=pronounForm||`${a.korean}의`,bp=copula(b.korean),ownerEnglish=a.korean==="저"||a.korean==="나"?"my":a.korean==="너"?"your":`${nounEnglish(a)}'s`;uses=[wordUse(a,af,pronounForm?"Use the contracted possessive form for this pronoun.":"의 connects an owner to the possessed noun.",pronounForm?`${a.korean} becomes ${af} before a possessed noun.`:`Attach 의: ${af}.`),wordUse(b,bp,"The possessed noun is identified with 이에요/예요.",`${b.korean} becomes ${bp}.`),fixedUse("이것","이것은 introduces the possessed item as the topic.","이것 + 은 contracts naturally as 이것은.","이것은","this thing")];return q(`이것은 ${af} ${bp}.`,`This is ${ownerEnglish} ${nounEnglish(b)}.`,[],uses,"Use owner + 의, or 제/내/네, before the possessed noun."); }
+            case "locationTopic": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(places)||selectedEntry(contentNouns)||selectedEntry(nouns);b=selectedEntry(positions);c=differentEntry(contentNouns,a)||differentEntry(nouns,a)||selectedEntry(nouns);const loc=`${b.korean}에는`,sub=subject(c.korean);uses=[wordUse(a,a.korean,"This noun is the spatial reference point.",`Use ${a.korean} before the position word.`),wordUse(b,loc,"에는 combines location 에 with contrastive topic 는.",`${b.korean} + 에는 = ${loc}.`),particleUse(c,sub,hasBatchim(c.korean)?"이":"가","이/가 marks what exists there."),fixedUse("있다","있어요 expresses existence.","있다 becomes 있어요.","있어요","to exist")];return q(`${a.korean} ${loc} ${sub} 있어요.`,`As for ${nounEnglish(b)} the ${nounEnglish(a)}, there is ${nounEnglish(c)}.`,[],uses,"Use position + 에는 as the contrastive location, then N이/가 있어요."); }
+            case "possessive": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(pool,isPerson)||selectedEntry(contentNouns)||selectedEntry(pool,ownerLike);b=selectedEntry(contentNouns,entry=>entry.id!==a.id)||selectedEntry(contentNouns)||selectedEntry(nouns);const af=`${a.korean}의`,bp=copula(b.korean);uses=[wordUse(a,af,"의 connects an owner to the possessed noun.",`Attach 의: ${af}.`),wordUse(b,bp,"The possessed noun is identified with 이에요/예요.",`${b.korean} becomes ${bp}.`),fixedUse("이것","이것은 introduces the possessed item as the topic.","이것 + 은 contracts naturally as 이것은.","이것은","this thing")];return q(`이것은 ${af} ${bp}.`,`This is ${nounEnglish(a)}'s ${nounEnglish(b)}.`,[],uses,"Use owner + 의 + possessed noun."); }
             case "b8Date": { const m=pick(MONTHS),d=1+Math.floor(Math.random()*28),withYear=Math.random()<.55,y=1940+Math.floor(Math.random()*87);const date=datePhrase(m,d),kor=withYear?`${compactSino(y)}년 ${date}이에요.`:`${date}이에요.`;uses=[literalUse(m.k,m.e,"calendar word","This is the Korean month name.",`Use ${m.k} for ${m.e}.`),literalUse(`${compactSino(d)}일`,`${d}th day`,"date counter","일 marks the day of the month.",`Day ${d} is ${compactSino(d)}일.`),fixedUse("이다","Attach 이에요 after the date expression.","The date ends in a final consonant, so use 이에요.","이에요","to be")];if(withYear)uses.unshift(literalUse(`${compactSino(y)}년`,String(y),"year expression","년 marks a year.",`${y} is ${compactSino(y)}년.`));return q(kor,withYear?`It is ${m.e} ${d}, ${y}.`:`It is ${m.e} ${d}.`,[],uses,"Read the year, month, and date with 년, 월, and 일."); }
             case "b8Wh": { const mode=Math.floor(Math.random()*3);if(mode===0){a=selectedEntry(nouns,isEvent)||selectedEntry(nouns);const m=pick(MONTHS),d=1+Math.floor(Math.random()*28),sf=subject(a.korean);uses=[particleUse(a,sf,hasBatchim(a.korean)?"이":"가","이/가 marks the event whose date is asked."),fixedUse("언제","언제 asks when.","언제 does not change.","언제","when"),literalUse(datePhrase(m,d),`${m.e} ${d}`,"date","Answer with a month and day.",`${m.k} + ${compactSino(d)}일.`)];return q(`${sf} 언제예요? ${datePhrase(m,d)}이에요.`,`When is the ${nounEnglish(a)}? It is ${m.e} ${d}.`,[],uses,"Use 언제예요? for an event date.");}if(mode===1){a=selectedEntry(places)||selectedEntry(nouns);form=copula(a.korean);uses=[fixedUse("여기","여기 means this place/here.","여기 + 는 = 여기는.","여기는","here"),fixedUse("어디","어디 asks where.","Use 어디예요? as the location question.","어디예요","where"),wordUse(a,form,"Identify the place with 이에요/예요.",`${a.korean} becomes ${form}.`)];return q(`여기는 어디예요? ${form}.`,`Where is this place? It is ${identityEnglish(a)}.`,[],uses,"Ask 어디예요? and answer with the place noun plus copula.");}a=selectedEntry(nouns);form=copula(a.korean);uses=[fixedUse("저것","저건 refers to that thing over there.","저것 + 은 contracts to 저건.","저건","that over there"),fixedUse("뭐","뭐예요? asks what something is.","Use 뭐예요? as a fixed question.","뭐예요","what"),wordUse(a,form,"Identify the object with 이에요/예요.",`${a.korean} becomes ${form}.`)];return q(`저건 뭐예요? 저건 ${form}.`,`What is that over there? It is ${identityEnglish(a)}.`,[],uses,"Ask 뭐예요? and identify the object."); }
             case "b8Myeot": { if(Math.random()<.62){a=selectedEntry(nouns,isEvent)||selectedEntry(nouns);const m=pick(MONTHS),d=1+Math.floor(Math.random()*28),sf=subject(a.korean);uses=[particleUse(a,sf,hasBatchim(a.korean)?"이":"가","이/가 marks the event."),fixedUse("몇","몇 asks how many/which number before a counter.","Use 몇 월 며칠 as a fixed date question.","몇 월 며칠","what month and date"),literalUse(datePhrase(m,d),`${m.e} ${d}`,"date","Answer with month + day.",`${m.k} ${compactSino(d)}일.`)];return q(`${sf} 몇 월 며칠이에요? ${datePhrase(m,d)}이에요.`,`What month and date is the ${nounEnglish(a)}? It is ${m.e} ${d}.`,[],uses,"Use 몇 before 월 and 며칠 to ask the date.");}a=selectedEntry(places)||selectedEntry(nouns);const floor=1+Math.floor(Math.random()*8),at=topic(a.korean),floorForm=`${compactSino(floor)} 층`;uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the place being located."),fixedUse("몇","몇 asks which numbered floor.","Use 몇 층.","몇 층","what floor"),literalUse(floorForm,`floor ${floor}`,"counter phrase","층 counts floors.",`${floor} is ${floorForm}.`)];return q(`${at} 몇 층에 있어요? ${floorForm}에 있어요.`,`What floor is the ${nounEnglish(a)} on? It is on floor ${floor}.`,[],uses,"Use 몇 + counter and answer with number + counter + 에."); }
@@ -2027,8 +2022,8 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
             case "b9FromTo": { const mode=Math.floor(Math.random()*4),act=selectedEntry(verbs)||sharedEntry("공부하다");let start,end,engStart,engEnd;if(mode===0){const sh=1+Math.floor(Math.random()*8),eh=sh+1+Math.floor(Math.random()*(12-sh));start=clockPhrase(sh);end=clockPhrase(eh);engStart=englishClock(sh);engEnd=englishClock(eh);}else if(mode===1){const si=Math.floor(Math.random()*5),ei=si+1+Math.floor(Math.random()*(6-si));start=WEEKDAYS[si].k;end=WEEKDAYS[ei].k;engStart=WEEKDAYS[si].e;engEnd=WEEKDAYS[ei].e;}else if(mode===2){const m=pick(MONTHS),sd=1+Math.floor(Math.random()*14),ed=sd+1+Math.floor(Math.random()*(28-sd));start=`${m.k} ${compactSino(sd)}일`;end=`${m.k} ${compactSino(ed)}일`;engStart=`${m.e} ${sd}`;engEnd=`${m.e} ${ed}`;}else{const sy=2000+Math.floor(Math.random()*20),ey=sy+1+Math.floor(Math.random()*6);start=`${compactSino(sy)}년`;end=`${compactSino(ey)}년`;engStart=String(sy);engEnd=String(ey);}const vf=presentPolite(act.korean);uses=[literalUse(`${start}부터`,engStart,"range start","부터 marks the beginning of a range.",`Attach 부터: ${start}부터.`),literalUse(`${end}까지`,engEnd,"range end","까지 marks the end of a range.",`Attach 까지: ${end}까지.`),verbUse(act,vf,"Conjugate the action in polite present tense.")];return q(`${start}부터 ${end}까지 ${vf}.`,`I ${predicateEnglish(act)} from ${engStart} to ${engEnd}.`,[],uses,"Use N부터 for the start and N까지 for the end."); }
             case "b9RangeQ": { const mode=Math.floor(Math.random()*3);if(mode===0){const h=1+Math.floor(Math.random()*12),clock=clockPhrase(h);uses=[fixedUse("몇","몇 시부터 asks from what time.","Use 몇 시부터.","몇 시부터","from what time"),literalUse(`${clock}부터`,englishClock(h),"range start","부터 marks the starting time.",`Attach 부터: ${clock}부터.`),fixedUse("수업","수업을 해요 means have class.","수업 + 을 + 해요.","수업을 해요","class")];return q(`몇 시부터 수업을 해요? ${clock}부터 수업을 해요.`,`From what time do you have class? I have class from ${englishClock(h)}.`,[],uses,"Ask with 몇 시부터 and answer with Time + 부터.");}if(mode===1){const wd=pick(WEEKDAYS);uses=[fixedUse("언제","언제까지 asks until when.","Attach 까지 to 언제 in the question.","언제까지","until when"),literalUse(`${wd.k}까지`,wd.e,"range end","까지 marks the ending day.",`Attach 까지: ${wd.k}까지.`),fixedUse("시험","시험이 있어요 means there is an exam.","시험 + 이 + 있어요.","시험이 있어요","exam")];return q(`언제까지 시험이 있어요? ${wd.k}까지 시험이 있어요.`,`Until when is there an exam? There is an exam until ${wd.e}.`,[],uses,"Ask 언제까지 and answer with day + 까지.");}const sh=10+Math.floor(Math.random()*2),sm=pick([0,30]),eh=Math.min(12,sh+1),start=clockPhrase(sh,sm),end=clockPhrase(eh,sm);uses=[fixedUse("몇","몇 시부터 몇 시까지 asks the full time range.","Use the complete range question.","몇 시부터 몇 시까지","from what time to what time"),literalUse(`${start}부터`,englishClock(sh,sm),"range start","부터 marks the starting time.",`Use ${start}부터.`),literalUse(`${end}까지`,englishClock(eh,sm),"range end","까지 marks the ending time.",`Use ${end}까지.`),fixedUse("점심시간","점심시간이에요 identifies the lunch period.","Attach 이에요.","점심시간이에요","lunch time")];return q(`몇 시부터 몇 시까지 점심시간이에요? ${start}부터 ${end}까지 점심시간이에요.`,`From what time to what time is lunch? Lunch is from ${englishClock(sh,sm)} to ${englishClock(eh,sm)}.`,[],uses,"Use 부터 and 까지 to define both ends of the range."); }
             case "likes": { a=selectedEntry(nouns);const like=Math.random()<.65,base=like?"좋아하다":"싫어하다",vf=presentPolite(base),of=object(a.korean);uses=[particleUse(a,of,hasBatchim(a.korean)?"을":"를",`${base} takes a direct object marked with 을/를.`),fixedUse(base,`${base} expresses a preference and takes 을/를.`,`${base} becomes ${vf}.`,vf,like?"to like":"to dislike")];return q(`${of} ${vf}.`,`I ${like?"like":"dislike"} ${nounEnglish(a)}.`,[],uses,"Mark the preferred item with 을/를, then use 좋아해요 or 싫어해요."); }
-            case "and-link": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Add -고 to the first predicate."),verbUse(b,bf,"Conjugate the final predicate in polite present tense.")];return q(`${af} ${bf}.`,a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`,[],uses,"Use A/V-고 to join the predicates."); }
-            case "contrast": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||a;const af=contrastJiman(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -지만 to introduce a contrast."),verbUse(b,bf,"Conjugate the second predicate normally.")];return q(`${af} ${bf}.`,a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)}, but ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)}, but I ${predicateEnglish(b)}.`,[],uses,"Use A/V-지만 on the first predicate to express contrast."); }
+            case "and-link": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||differentEntry(predicates,a)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Add -고 to the first predicate."),verbUse(b,bf,"Conjugate the final predicate in polite present tense.")];return q(`${af} ${bf}.`,a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`,[],uses,"Use A/V-고 to join the predicates."); }
+            case "contrast": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||differentEntry(predicates,a)||a;const af=contrastJiman(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -지만 to introduce a contrast."),verbUse(b,bf,"Conjugate the second predicate normally.")];return q(`${af} ${bf}.`,a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)}, but ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)}, but I ${predicateEnglish(b)}.`,[],uses,"Use A/V-지만 on the first predicate to express contrast."); }
             case "long-negation": { a=selectedEntry(predicates);form=longNegative(a.korean);uses=[verbUse(a,form,"Remove 다 and add -지 않아요 for long-form negation.")];return q(`${form}.`,a.partOfSpeech==="adjective"?`It is not ${predicateEnglish(a)}.`:`I do not ${predicateEnglish(a)}.`,[],uses,"Use A/V-지 않아요."); }
             case "past-tense": { a=selectedEntry(predicates);form=pastPolite(a.korean);uses=[verbUse(a,form,"Conjugate the predicate with the polite past ending -았/었어요.")];return q(`${form}.`,a.partOfSpeech==="adjective"?`It was ${predicateEnglish(a)}.`:`I ${predicateEnglish(a)} in the past.`,[],uses,"Use the past tense -았/었어요."); }
             default: { a=selectedEntry(pool)||selectedEntry(SHARED_LESSON_VOCAB);return q(a.korean,cleanEnglish(a),[],[wordUse(a,a.korean,"Use the shared-vocabulary base form.",`The form is ${a.korean}.`)],section?.form||"Translate the selected vocabulary item."); }
@@ -2162,7 +2157,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
         const setupText = key === "vocabulary"
           ? "Choose which of this lesson's vocabulary categories to test, plus the quiz mode, question count, and both languages."
           : "Choose the vocabulary sources and word groups allowed in generated sentences, then configure the quiz.";
-        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label>${countFieldTemplate(key, defaultCount)}<label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Click a term to toggle its hint popover, then select a hint level.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
+        return `<article class="exercise" id="ex-${esc(key)}"><div class="exercise-head"><div class="exercise-head-copy"><span class="exercise-kicker">Translation</span><h3>${esc(title)}</h3><p>${esc(description)}</p></div><div class="score score-breakdown">Not started</div></div><div class="exercise-body"><div class="exercise-menu"><h4>Exercise setup</h4><p>${setupText}</p>${vocabPickerTemplate(key)}<div class="exercise-menu-grid"><label>Mode<select class="menu-mode"><option value="typed">Typed</option><option value="mc">Multiple choice</option></select></label>${countFieldTemplate(key, defaultCount)}<label>Question language<select class="menu-q"><option value="english">English</option><option value="romanization">Romanization</option><option value="korean">Korean</option></select></label><label>Answer language<select class="menu-a"><option value="korean">Korean</option><option value="romanization">Romanization</option><option value="english">English</option></select></label></div><label class="exercise-option"><input class="menu-repeat-wrong" type="checkbox"><span>Repeat question if wrong</span></label><div class="exercise-menu-actions"><button class="btn secondary prepare" type="button">Generate question preview</button><button class="btn primary begin-direct" type="button">Begin exercise</button></div><section class="question-preview hidden" aria-live="polite"><div><h5>Words in this question set</h5><p>The generated set is frozen until you regenerate it. These are the exact vocabulary bases and forms that can appear in the prompts, answers, and multiple-choice options.</p></div><div class="preview-summary"></div><div class="preview-word-list"></div><div class="preview-actions"><button class="btn secondary regenerate" type="button">Regenerate questions</button><button class="btn primary begin-exercise" type="button">Begin exercise</button></div></section></div><div class="live hidden"><div class="runtime-bar"><button class="end-early-btn" type="button">End exercise early</button></div><div class="status"><span class="count"></span><span class="mode-label"></span></div><div class="progress" role="progressbar" aria-label="Exercise progress"><div></div></div><div class="prompt-label"></div><div class="prompt"></div><p class="prompt-hint-legend">Thickly underlined terms have optional hints. Click a term, then select a level to reveal it.</p><section class="vocab-assistant"><div class="assistant-heading"><p class="assistant-status">No assistance used on this question.</p><small>Opening a popover alone does not count as assistance.</small></div><div class="assistant-answer-row"><button class="btn secondary reveal-answer" type="button">Reveal answer</button><div class="revealed-answer hidden"></div></div></section><div class="zone"></div><div class="feedback" aria-live="polite"></div><button class="btn warning next hidden" type="button">Next</button></div><div class="finish"><h4>Exercise complete</h4><p class="summary"></p><section class="personalized-vocab"><h5>Your vocabulary review</h5><p>Words shown here were looked up, exposed through Reveal answer, or appeared in a question answered incorrectly.</p><div class="personalized-vocab-list"></div></section><div class="review"></div><div class="finish-actions"><button class="btn primary restart-same" type="button">Restart exercise</button><button class="btn secondary change-setup" type="button">Change setup</button></div></div></div></article>`;
     }
     // -------------------------------------------------------------------------
     // Theme, rendering, and event wiring
@@ -2656,8 +2651,6 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
         addVariant(english.replace(/^be\s+/i, ""));
         addVariant(english.replace(/^(?:a|an|the)\s+/i, ""));
 
-        // Apply article removal again after infinitive/copular cleanup so entries
-        // such as “to be a student” can match the visible word “student.”
         [...variants].forEach(value => {
             addVariant(value.replace(/^(?:a|an|the)\s+/i, ""));
             addVariant(value.replace(/^be\s+/i, ""));
@@ -2748,7 +2741,6 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
                 }
             };
 
-            // Handle X close button specifically
             const closeBtn = token.querySelector(".popover-close-btn");
             if (closeBtn) {
                 closeBtn.addEventListener("click", event => {
@@ -2761,7 +2753,6 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
                 });
             }
 
-            // Handle clicks inside the popover to bring it to front
             if (popover) {
                 popover.addEventListener("click", event => {
                     event.stopPropagation();
@@ -2769,7 +2760,6 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
                 });
             }
 
-            // Handle word token click toggle
             token.addEventListener("click", event => {
                 if (event.target.closest(".hint-step")) return;
                 event.stopPropagation();

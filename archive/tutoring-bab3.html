@@ -11,7 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>Bab 4 · 어디에 가요?</title>
+  <title>Bab 3 · 한국어 책을 읽어요</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -1470,11 +1470,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
   <!-- Page header -->
   <header class="site-header">
    <div class="header-inner">
-    <a class="brand" href="./index.html">
+    <a class="brand" href="../index.html">
      Korean Language Resources
     </a>
     <div class="header-actions">
-     <a class="header-link" href="./index.html">
+     <a class="header-link" href="../index.html">
       Home
      </a>
     </div>
@@ -1580,9 +1580,9 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
-  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
-  <script src="./shared-vocab/korean-grammar.js?v=1.2.0"></script>
+  <script src="../shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="../shared-vocab/word-notes.js?v=1.0.0"></script>
+  <script src="../shared-vocab/korean-grammar.js?v=1.2.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1590,79 +1590,102 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 4",
-        "subtitle": "어디에 가요?",
-        "description": "Talk about destinations, short negation with 안, and linking sentences with 그리고.",
-        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab04")),
+        "title": "Bab 3",
+        "subtitle": "한국어 책을 읽어요",
+        "description": "Build polite present-tense action sentences with 을/를, 에서, and 도.",
+        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab03")),
         "sections": [
             {
-                "id": "destination",
-                "title": "N에 가다 / 오다",
-                "label": "Destination",
-                "meaning": "Mark the destination of movement with 에.",
-                "form": "Place + 에 + 가요/와요. Use 가요 for movement away from the speaker’s reference point and 와요 for movement toward it.",
-                "notes": "Destination 에 is different from action-place 에서.",
+                "id": "present",
+                "title": "V-아요/어요/해요",
+                "label": "Polite present",
+                "meaning": "Conjugate dictionary-form action verbs into the everyday polite present.",
+                "form": "Remove 다. Use -아요 after ㅏ/ㅗ, -어요 after other vowels, and -해요 for 하다 verbs. Common contractions include 보다→봐요, 오다→와요, 마시다→마셔요.",
+                "notes": "The source teaches the three major patterns separately before combining them with objects.",
                 "examples": [
                     [
-                        "학교에 가요.",
-                        "I go to school."
+                        "먹다 → 먹어요",
+                        "to eat → eat(s)"
                     ],
                     [
-                        "집에 와요.",
-                        "I come home."
+                        "보다 → 봐요",
+                        "to watch → watch(es)"
                     ],
                     [
-                        "은행에 가요?",
-                        "Do you go to the bank?"
+                        "공부하다 → 공부해요",
+                        "to study → study/studies"
                     ]
                 ],
-                "generator": "destination"
+                "generator": "present"
             },
             {
-                "id": "short-negation",
-                "title": "안 + V",
-                "label": "Short negation",
-                "meaning": "Place 안 immediately before an action verb to say the action does not happen.",
-                "form": "안 + conjugated verb: 안 가요, 안 먹어요. With noun+하다 expressions, the source commonly puts 안 before 하다: 운동을 안 해요.",
-                "notes": "For destination phrases, place 안 before the movement verb: 학교에 안 와요.",
+                "id": "object",
+                "title": "N을/를 + V",
+                "label": "Object particle",
+                "meaning": "Mark the noun directly affected by an action.",
+                "form": "Use 을 after a final consonant and 를 after a vowel.",
+                "notes": "The particle attaches to the noun, while the verb still receives its polite ending.",
                 "examples": [
                     [
-                        "안 가요.",
-                        "I do not go."
+                        "밥을 먹어요.",
+                        "I eat a meal."
                     ],
                     [
-                        "밥을 안 먹어요.",
-                        "I do not eat."
+                        "커피를 마셔요.",
+                        "I drink coffee."
                     ],
                     [
-                        "운동을 안 해요.",
-                        "I do not exercise."
+                        "한국어를 공부해요.",
+                        "I study Korean."
                     ]
                 ],
-                "generator": "shortNegation"
+                "generator": "object"
             },
             {
-                "id": "and-then",
-                "title": "그리고",
-                "label": "And / then",
-                "meaning": "Connect two complete sentences or ideas in sequence.",
-                "form": "Sentence 1. 그리고 Sentence 2.",
-                "notes": "Unlike -고, 그리고 begins a new sentence. It is useful when each idea is stated independently.",
+                "id": "place-action",
+                "title": "N에서",
+                "label": "Place of action",
+                "meaning": "Mark the place where an action happens.",
+                "form": "Place + 에서 + object + action verb.",
+                "notes": "Do not confuse 에서 with destination 에. 에서 answers 어디에서? for an activity.",
                 "examples": [
                     [
-                        "밥을 먹어요. 그리고 커피를 마셔요.",
-                        "I eat, and then I drink coffee."
+                        "식당에서 밥을 먹어요.",
+                        "I eat at a restaurant."
                     ],
                     [
-                        "한국어를 공부해요. 그리고 친구와 이야기해요.",
-                        "I study Korean, and I talk with a friend."
+                        "집에서 텔레비전을 봐요.",
+                        "I watch television at home."
                     ],
                     [
-                        "공원에 가요. 그리고 산책해요.",
-                        "I go to the park. Then I walk."
+                        "도서관에서 책을 읽어요.",
+                        "I read at the library."
                     ]
                 ],
-                "generator": "andThen"
+                "generator": "placeAction"
+            },
+            {
+                "id": "also",
+                "title": "N도",
+                "label": "Also / too",
+                "meaning": "Add the meaning “also” or “too” to a noun.",
+                "form": "Attach 도 directly to the noun. When it replaces 은/는, 이/가, or 을/를, do not keep both particles.",
+                "notes": "Correct: 빵도 먹어요. Incorrect: 빵을도 먹어요.",
+                "examples": [
+                    [
+                        "린 씨도 중국 사람이에요.",
+                        "Lin is Chinese too."
+                    ],
+                    [
+                        "일본어도 배워요.",
+                        "I learn Japanese too."
+                    ],
+                    [
+                        "신문도 읽어요.",
+                        "I read a newspaper too."
+                    ]
+                ],
+                "generator": "also"
             }
         ]
     };
@@ -1708,7 +1731,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // -------------------------------------------------------------------------
     // Shared vocabulary selection and universal Bab 1–10 grammar generation
     // -------------------------------------------------------------------------
-    const BAB_ID = "bab04";
+    const BAB_ID = "bab03";
     const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID);
     // Every word is listed under exactly one source. Duplicates resolve to this
     // Bab first, then the TOPIK vocabulary lists, then the other Bab lessons,

@@ -11,7 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>Bab 14 · 잠깐 쉴까요?</title>
+  <title>Bab 17 · 버스를 타고 가려고 합니다</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -1209,11 +1209,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
   <!-- Page header -->
   <header class="site-header">
    <div class="header-inner">
-    <a class="brand" href="./index.html">
+    <a class="brand" href="../index.html">
      Korean Language Resources
     </a>
     <div class="header-actions">
-     <a class="header-link" href="./index.html">
+     <a class="header-link" href="../index.html">
       Home
      </a>
     </div>
@@ -1319,8 +1319,8 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
-  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
+  <script src="../shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="../shared-vocab/word-notes.js?v=1.0.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1328,320 +1328,392 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 14",
-        "subtitle": "잠깐 쉴까요?",
-        "description": "Make suggestions, accept plans politely, and combine multiple activities with 도 and -고.",
-        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab14")),
+        "title": "Bab 17",
+        "subtitle": "버스를 타고 가려고 합니다",
+        "description": "Give directions, mark destinations and routes, express intentions with -(으)려고 하다, and make polite requests with -아/어 주세요.",
+        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab17")),
         "sections": [
                 {
-                        "id": "shall-we",
-                        "title": "V-(으)ㄹ까요?",
-                        "label": "Suggestion",
-                        "meaning": "Ask whether the speaker and listener should do something together.",
-                        "form": "Stem + 을까요 after a consonant · ㄹ까요 after a vowel/ㄹ",
-                        "notes": "In this lesson the form is used mainly for shared suggestions.",
+                        "id": "directions",
+                        "title": "Direction expressions",
+                        "label": "Giving directions",
+                        "meaning": "Tell someone to go left, right, straight, or across a road.",
+                        "form": "Direction + 으로/로 + 가다 · Place에서 + direction expression",
+                        "notes": "Use 로 after a vowel or ㄹ, and 으로 after most other consonants.",
                         "examples": [
                                 [
-                                        "우리 같이 영화 볼까요?",
-                                        "Shall we watch a movie together?"
+                                        "왼쪽으로 가세요.",
+                                        "Please go to the left."
                                 ],
                                 [
-                                        "우리 같이 도서관에서 숙제할까요?",
-                                        "Shall we do homework together at the library?"
+                                        "오른쪽으로 가세요.",
+                                        "Please go to the right."
                                 ],
                                 [
-                                        "우리 같이 등산 갈까요?",
-                                        "Shall we go hiking together?"
+                                        "직진하세요.",
+                                        "Please go straight."
                                 ]
                         ],
                         "questions": [
                                 {
-                                        "korean": "우리 같이 영화 볼까요?",
-                                        "english": "Shall we watch a movie together?"
+                                        "korean": "왼쪽으로 가세요.",
+                                        "english": "Please go to the left."
                                 },
                                 {
-                                        "korean": "우리 같이 도서관에서 숙제할까요?",
-                                        "english": "Shall we do homework together at the library?"
+                                        "korean": "오른쪽으로 가세요.",
+                                        "english": "Please go to the right."
                                 },
                                 {
-                                        "korean": "우리 같이 등산 갈까요?",
-                                        "english": "Shall we go hiking together?"
+                                        "korean": "직진하세요.",
+                                        "english": "Please go straight."
                                 },
                                 {
-                                        "korean": "우리 같이 맥주를 마실까요?",
-                                        "english": "Shall we drink beer together?"
+                                        "korean": "똑바로 가세요.",
+                                        "english": "Please go straight."
                                 },
                                 {
-                                        "korean": "우리 같이 기숙사에서 생일 파티를 할까요?",
-                                        "english": "Shall we have a birthday party together in the dormitory?"
+                                        "korean": "횡단보도를 건너세요.",
+                                        "english": "Please cross the crosswalk."
                                 },
                                 {
-                                        "korean": "우리 같이 점심을 먹을까요?",
-                                        "english": "Shall we eat lunch together?"
+                                        "korean": "여기에서 똑바로 가세요.",
+                                        "english": "Please go straight from here."
                                 },
                                 {
-                                        "korean": "우리 같이 공원에서 사진을 찍을까요?",
-                                        "english": "Shall we take photos together in the park?"
+                                        "korean": "사거리에서 오른쪽으로 가세요.",
+                                        "english": "Please turn right at the intersection."
                                 },
                                 {
-                                        "korean": "우리 같이 산책할까요?",
-                                        "english": "Shall we take a walk together?"
+                                        "korean": "다음 사거리에서 왼쪽으로 가세요.",
+                                        "english": "Please turn left at the next intersection."
                                 },
                                 {
-                                        "korean": "주말에 같이 테니스를 칠까요?",
-                                        "english": "Shall we play tennis together on the weekend?"
+                                        "korean": "백화점은 오른쪽에 있어요.",
+                                        "english": "The department store is on the right."
                                 },
                                 {
-                                        "korean": "저 식당에 갈까요?",
-                                        "english": "Shall we go to that restaurant?"
+                                        "korean": "길을 건너서 왼쪽으로 가세요.",
+                                        "english": "Cross the road and go left."
                                 },
                                 {
-                                        "korean": "오늘 오후에 한국 요리를 만들까요?",
-                                        "english": "Shall we make Korean food this afternoon?"
+                                        "korean": "횡단보도에서 길을 건너세요.",
+                                        "english": "Cross the road at the crosswalk."
                                 },
                                 {
-                                        "korean": "점심을 먹고 텔레비전을 볼까요?",
-                                        "english": "Shall we watch television after lunch?"
-                                },
-                                {
-                                        "korean": "방학에 제주도에 갈까요?",
-                                        "english": "Shall we go to Jeju Island during vacation?"
-                                },
-                                {
-                                        "korean": "편의점에서 우유를 살까요?",
-                                        "english": "Shall we buy milk at the convenience store?"
-                                },
-                                {
-                                        "korean": "한라산에도 갈까요?",
-                                        "english": "Shall we also go to Hallasan?"
+                                        "korean": "역 앞에서 오른쪽으로 가세요.",
+                                        "english": "Go right in front of the station."
                                 }
                         ]
                 },
                 {
-                        "id": "lets-formal",
-                        "title": "V-(으)ㅂ시다",
-                        "label": "Formal suggestion",
-                        "meaning": "Suggest an action with “let’s.”",
-                        "form": "Stem + 읍시다 after a consonant · ㅂ시다 after a vowel",
-                        "notes": "This form is polite and somewhat formal.",
+                        "id": "destination-euro",
+                        "title": "N(으)로 for destination",
+                        "label": "Destination",
+                        "meaning": "Mark the direction or destination toward which something moves.",
+                        "form": "N + 으로 after a consonant · 로 after a vowel/ㄹ",
+                        "notes": "The same particle can also mark a means of transportation; context determines the meaning.",
                         "examples": [
                                 [
-                                        "같이 공부합시다.",
-                                        "Let’s study together."
+                                        "이 버스는 학교로 가요.",
+                                        "This bus goes to school."
                                 ],
                                 [
-                                        "같이 점심을 먹읍시다.",
-                                        "Let’s eat lunch together."
+                                        "이 비행기는 중국으로 가요.",
+                                        "This airplane goes to China."
                                 ],
                                 [
-                                        "공원에서 사진을 찍읍시다.",
-                                        "Let’s take photos in the park."
+                                        "이 기차는 서울로 가요.",
+                                        "This train goes to Seoul."
                                 ]
                         ],
                         "questions": [
                                 {
-                                        "korean": "같이 공부합시다.",
-                                        "english": "Let’s study together."
+                                        "korean": "이 버스는 학교로 가요.",
+                                        "english": "This bus goes to school."
                                 },
                                 {
-                                        "korean": "같이 점심을 먹읍시다.",
-                                        "english": "Let’s eat lunch together."
+                                        "korean": "이 비행기는 중국으로 가요.",
+                                        "english": "This airplane goes to China."
                                 },
                                 {
-                                        "korean": "공원에서 사진을 찍읍시다.",
-                                        "english": "Let’s take photos in the park."
+                                        "korean": "이 기차는 서울로 가요.",
+                                        "english": "This train goes to Seoul."
                                 },
                                 {
-                                        "korean": "같이 산책합시다.",
-                                        "english": "Let’s take a walk together."
+                                        "korean": "이 배는 부산으로 가요.",
+                                        "english": "This ship goes to Busan."
                                 },
                                 {
-                                        "korean": "같이 커피를 마십시다.",
-                                        "english": "Let’s drink coffee together."
+                                        "korean": "이번 여행은 경주로 갈 거예요.",
+                                        "english": "We will go to Gyeongju on this trip."
                                 },
                                 {
-                                        "korean": "같이 차를 마십시다.",
-                                        "english": "Let’s drink tea together."
+                                        "korean": "주말에 산으로 가고 싶어요.",
+                                        "english": "I want to go to the mountains on the weekend."
                                 },
                                 {
-                                        "korean": "텔레비전을 봅시다.",
-                                        "english": "Let’s watch television."
+                                        "korean": "택시 기사님, 백화점으로 가 주세요.",
+                                        "english": "Driver, please go to the department store."
                                 },
                                 {
-                                        "korean": "놀이공원에 갑시다.",
-                                        "english": "Let’s go to the amusement park."
+                                        "korean": "버스가 시내로 가요.",
+                                        "english": "The bus goes downtown."
                                 },
                                 {
-                                        "korean": "태권도를 배웁시다.",
-                                        "english": "Let’s learn taekwondo."
+                                        "korean": "친구와 제주도로 여행을 가요.",
+                                        "english": "I travel to Jeju Island with a friend."
                                 },
                                 {
-                                        "korean": "과일도 삽시다.",
-                                        "english": "Let’s also buy fruit."
+                                        "korean": "기차가 부산으로 출발해요.",
+                                        "english": "The train departs for Busan."
                                 },
                                 {
-                                        "korean": "맛있는 음식도 먹읍시다.",
-                                        "english": "Let’s also eat delicious food."
+                                        "korean": "비행기가 미국으로 가요.",
+                                        "english": "The airplane goes to the United States."
                                 },
                                 {
-                                        "korean": "불고기를 먹읍시다.",
-                                        "english": "Let’s eat bulgogi."
-                                },
-                                {
-                                        "korean": "냉면도 먹읍시다.",
-                                        "english": "Let’s also eat cold noodles."
-                                },
-                                {
-                                        "korean": "주말에 여행합시다.",
-                                        "english": "Let’s travel on the weekend."
-                                },
-                                {
-                                        "korean": "시내에서 쇼핑합시다.",
-                                        "english": "Let’s shop downtown."
+                                        "korean": "자전거로 학교에 가요.",
+                                        "english": "I go to school by bicycle."
                                 }
                         ]
                 },
                 {
-                        "id": "lets-polite",
-                        "title": "V-아요/어요 as a response",
-                        "label": "Polite agreement",
-                        "meaning": "Accept a suggestion using the ordinary polite present form.",
-                        "form": "네, 같이 + V-아요/어요",
-                        "notes": "Context gives the present form the meaning “yes, let’s.”",
+                        "id": "route-particles",
+                        "title": "N에서 · N까지 · N(으)로",
+                        "label": "Route particles",
+                        "meaning": "Combine starting point, endpoint, and means of travel.",
+                        "form": "Start에서 + endpoint까지 + transportation(으)로",
+                        "notes": "에서 marks the origin, 까지 the endpoint, and (으)로 the means.",
                         "examples": [
                                 [
-                                        "네, 같이 노래해요.",
-                                        "Yes, let’s sing together."
+                                        "이번 방학에는 배로 제주도에 여행 가고 싶어요.",
+                                        "I want to travel to Jeju Island by ship during this vacation."
                                 ],
                                 [
-                                        "네, 같이 테니스를 쳐요.",
-                                        "Yes, let’s play tennis together."
+                                        "팀 씨는 지난달에 미국에서 왔어요.",
+                                        "Tim came from the United States last month."
                                 ],
                                 [
-                                        "네, 저 식당에 가요.",
-                                        "Yes, let’s go to that restaurant."
+                                        "한국에서 호주까지 비행기로 얼마나 걸려요?",
+                                        "How long does it take by airplane from Korea to Australia?"
                                 ]
                         ],
                         "questions": [
                                 {
-                                        "korean": "네, 같이 노래해요.",
-                                        "english": "Yes, let’s sing together."
+                                        "korean": "이번 방학에는 배로 제주도에 여행 가고 싶어요.",
+                                        "english": "I want to travel to Jeju Island by ship during this vacation."
                                 },
                                 {
-                                        "korean": "네, 같이 테니스를 쳐요.",
-                                        "english": "Yes, let’s play tennis together."
+                                        "korean": "팀 씨는 지난달에 미국에서 왔어요.",
+                                        "english": "Tim came from the United States last month."
                                 },
                                 {
-                                        "korean": "네, 저 식당에 가요.",
-                                        "english": "Yes, let’s go to that restaurant."
+                                        "korean": "한국에서 호주까지 비행기로 얼마나 걸려요?",
+                                        "english": "How long does it take by airplane from Korea to Australia?"
                                 },
                                 {
-                                        "korean": "네, 한국 요리를 만들어요.",
-                                        "english": "Yes, let’s make Korean food."
+                                        "korean": "내일 일이 많으니까 오전 8시까지 회사에 오십시오.",
+                                        "english": "There is a lot of work tomorrow, so please come to the office by 8 a.m."
                                 },
                                 {
-                                        "korean": "네, 점심을 먹어요.",
-                                        "english": "Yes, let’s eat lunch."
+                                        "korean": "요즘은 버스를 타지 않고 자전거로 학교에 다닙니다.",
+                                        "english": "These days I commute to school by bicycle instead of taking the bus."
                                 },
                                 {
-                                        "korean": "네, 산책해요.",
-                                        "english": "Yes, let’s take a walk."
+                                        "korean": "서울에서 부산까지 기차로 가요.",
+                                        "english": "I go from Seoul to Busan by train."
                                 },
                                 {
-                                        "korean": "네, 커피를 마셔요.",
-                                        "english": "Yes, let’s drink coffee."
+                                        "korean": "공항에서 학교까지 택시로 가요.",
+                                        "english": "I go from the airport to school by taxi."
                                 },
                                 {
-                                        "korean": "네, 공원에서 사진을 찍어요.",
-                                        "english": "Yes, let’s take photos in the park."
+                                        "korean": "기숙사에서 시장까지 걸어서 가요.",
+                                        "english": "I walk from the dormitory to the market."
                                 },
                                 {
-                                        "korean": "네, 도서관에서 숙제해요.",
-                                        "english": "Yes, let’s do homework at the library."
+                                        "korean": "부산에서 제주도까지 배로 가요.",
+                                        "english": "I go from Busan to Jeju Island by ship."
                                 },
                                 {
-                                        "korean": "네, 제주도에 가요.",
-                                        "english": "Yes, let’s go to Jeju Island."
+                                        "korean": "역에서 회사까지 버스로 갑니다.",
+                                        "english": "I go from the station to the office by bus."
                                 },
                                 {
-                                        "korean": "네, 영화를 봐요.",
-                                        "english": "Yes, let’s watch a movie."
+                                        "korean": "학교에서 시내까지 자전거로 가요.",
+                                        "english": "I go from school to downtown by bicycle."
                                 },
                                 {
-                                        "korean": "네, 같이 쇼핑해요.",
-                                        "english": "Yes, let’s shop together."
+                                        "korean": "오후 6시까지 집에 오세요.",
+                                        "english": "Please come home by 6 p.m."
                                 }
                         ]
                 },
                 {
-                        "id": "also-and",
-                        "title": "N도 A/V-고 N도 A/V",
-                        "label": "Multiple items",
-                        "meaning": "Say that two items or activities are both included.",
-                        "form": "N도 + predicate-고 + N도 + predicate",
-                        "notes": "도 means “also,” while -고 connects the two clauses.",
+                        "id": "intention",
+                        "title": "V-(으)려고 하다",
+                        "label": "Intention",
+                        "meaning": "Express an intention or plan to do something.",
+                        "form": "Stem + 으려고 하다 after a consonant · 려고 하다 after a vowel/ㄹ",
+                        "notes": "This form focuses on intention rather than a fixed future fact.",
                         "examples": [
                                 [
-                                        "라면도 먹고 김밥도 먹었어요.",
-                                        "I ate ramyeon and also ate gimbap."
+                                        "친구를 만나려고 해요.",
+                                        "I intend to meet a friend."
                                 ],
                                 [
-                                        "우유도 사고 과일도 사요.",
-                                        "I buy milk and also buy fruit."
+                                        "스키장에 가서 스키를 타려고 해요.",
+                                        "I intend to go to a ski resort and ski."
                                 ],
                                 [
-                                        "지난 주말에 쇼핑도 하고 영화를 봤어요.",
-                                        "Last weekend I shopped and also watched a movie."
+                                        "빵을 먹고 우유를 마시려고 해요.",
+                                        "I intend to eat bread and drink milk."
                                 ]
                         ],
                         "questions": [
                                 {
-                                        "korean": "라면도 먹고 김밥도 먹었어요.",
-                                        "english": "I ate ramyeon and also ate gimbap."
+                                        "korean": "친구를 만나려고 해요.",
+                                        "english": "I intend to meet a friend."
                                 },
                                 {
-                                        "korean": "우유도 사고 과일도 사요.",
-                                        "english": "I buy milk and also buy fruit."
+                                        "korean": "스키장에 가서 스키를 타려고 해요.",
+                                        "english": "I intend to go to a ski resort and ski."
                                 },
                                 {
-                                        "korean": "지난 주말에 쇼핑도 하고 영화를 봤어요.",
-                                        "english": "Last weekend I shopped and also watched a movie."
+                                        "korean": "빵을 먹고 우유를 마시려고 해요.",
+                                        "english": "I intend to eat bread and drink milk."
                                 },
                                 {
-                                        "korean": "사람들이 공원에서 그림도 그리고 사진도 찍어요.",
-                                        "english": "People draw pictures and also take photos in the park."
+                                        "korean": "부모님께 편지를 쓰려고 해요.",
+                                        "english": "I intend to write a letter to my parents."
                                 },
                                 {
-                                        "korean": "오늘 오후에 숙제도 하고 텔레비전도 봐요.",
-                                        "english": "This afternoon I do homework and also watch television."
+                                        "korean": "일본 음식을 만들려고 해요.",
+                                        "english": "I intend to make Japanese food."
                                 },
                                 {
-                                        "korean": "방학에 제주도도 여행하고 한라산에도 가요.",
-                                        "english": "During vacation I travel to Jeju Island and also go to Hallasan."
+                                        "korean": "이 옷을 아버지께 드리려고 해요.",
+                                        "english": "I intend to give this outfit to my father."
                                 },
                                 {
-                                        "korean": "어머니께 꽃도 드리고 선물도 드렸어요.",
-                                        "english": "I gave Mother flowers and also gave her a gift."
+                                        "korean": "날씨가 더워서 수영장에 가려고 해요.",
+                                        "english": "It is hot, so I intend to go to the swimming pool."
                                 },
                                 {
-                                        "korean": "불고기도 먹고 냉면도 먹어요.",
-                                        "english": "We eat bulgogi and also eat cold noodles."
+                                        "korean": "사람이 많아서 내일 영화관에 가려고 해요.",
+                                        "english": "There are many people, so I intend to go to the movie theater tomorrow."
                                 },
                                 {
-                                        "korean": "매점에서 커피도 사고 김밥도 사요.",
-                                        "english": "We buy coffee and also buy gimbap at the snack shop."
+                                        "korean": "눈이 와서 오늘은 친구와 놀려고 해요.",
+                                        "english": "It is snowing, so I intend to spend time with a friend today."
                                 },
                                 {
-                                        "korean": "주말에 등산도 가고 산책도 해요.",
-                                        "english": "On the weekend we go hiking and also take a walk."
+                                        "korean": "KTX가 비싸서 버스를 타고 가려고 해요.",
+                                        "english": "KTX is expensive, so I intend to take a bus."
                                 },
                                 {
-                                        "korean": "시내에서 쇼핑도 하고 사진도 찍어요.",
-                                        "english": "Downtown we shop and also take photos."
+                                        "korean": "친구의 생일 파티를 하려고 해요.",
+                                        "english": "I intend to have a friend’s birthday party."
                                 },
                                 {
-                                        "korean": "문구점에서 공책도 사고 볼펜도 사요.",
-                                        "english": "At the stationery store we buy a notebook and also a pen."
+                                        "korean": "생일 축하 카드를 쓰려고 해요.",
+                                        "english": "I intend to write a birthday card."
+                                },
+                                {
+                                        "korean": "사진을 찍으려고 해요.",
+                                        "english": "I intend to take photos."
+                                },
+                                {
+                                        "korean": "올해 운동하려고 해요.",
+                                        "english": "I intend to exercise this year."
+                                },
+                                {
+                                        "korean": "책을 많이 읽으려고 해요.",
+                                        "english": "I intend to read many books."
+                                },
+                                {
+                                        "korean": "열심히 공부하려고 해요.",
+                                        "english": "I intend to study hard."
+                                }
+                        ]
+                },
+                {
+                        "id": "request",
+                        "title": "V-아/어 주세요",
+                        "label": "Polite request",
+                        "meaning": "Ask someone politely to do an action for you.",
+                        "form": "Verb stem + 아/어 주세요",
+                        "notes": "하다 becomes 해 주세요; 주다 here adds the sense of doing the action for someone.",
+                        "examples": [
+                                [
+                                        "창문 좀 열어 주세요.",
+                                        "Please open the window."
+                                ],
+                                [
+                                        "김밥을 만들어 주세요.",
+                                        "Please make gimbap."
+                                ],
+                                [
+                                        "노래해 주세요.",
+                                        "Please sing."
+                                ]
+                        ],
+                        "questions": [
+                                {
+                                        "korean": "창문 좀 열어 주세요.",
+                                        "english": "Please open the window."
+                                },
+                                {
+                                        "korean": "김밥을 만들어 주세요.",
+                                        "english": "Please make gimbap."
+                                },
+                                {
+                                        "korean": "노래해 주세요.",
+                                        "english": "Please sing."
+                                },
+                                {
+                                        "korean": "여기에 이름과 전화번호를 써 주세요.",
+                                        "english": "Please write your name and phone number here."
+                                },
+                                {
+                                        "korean": "아이가 자요. 조용히 해 주세요.",
+                                        "english": "The child is sleeping. Please be quiet."
+                                },
+                                {
+                                        "korean": "길을 좀 가르쳐 주세요.",
+                                        "english": "Please show me the way."
+                                },
+                                {
+                                        "korean": "가방이 너무 무거워요. 좀 도와주세요.",
+                                        "english": "The bag is too heavy. Please help me."
+                                },
+                                {
+                                        "korean": "여기에 앉아서 기다려 주세요.",
+                                        "english": "Please sit here and wait."
+                                },
+                                {
+                                        "korean": "시장에 가서 과일을 좀 사 주세요.",
+                                        "english": "Please go to the market and buy some fruit."
+                                },
+                                {
+                                        "korean": "생일 축하 카드를 써 주세요.",
+                                        "english": "Please write a birthday card."
+                                },
+                                {
+                                        "korean": "음식을 만들어 주세요.",
+                                        "english": "Please make food."
+                                },
+                                {
+                                        "korean": "사진을 찍어 주세요.",
+                                        "english": "Please take a photo."
+                                },
+                                {
+                                        "korean": "피아노를 쳐 주세요.",
+                                        "english": "Please play the piano."
+                                },
+                                {
+                                        "korean": "백화점으로 가 주세요.",
+                                        "english": "Please go to the department store."
                                 }
                         ]
                 }

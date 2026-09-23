@@ -11,7 +11,7 @@ catch (_) { } })();
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <meta content="Interactive Korean lesson study guide" name="description"/>
-  <title>Bab 9 · 태권도 수업은 몇 시에 시작해요?</title>
+  <title>Bab 5 · 무슨 계절을 좋아해요?</title>
   <style>
    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -917,7 +917,6 @@ tbody tr:last-child td {
   font-size: .76rem;
   font-weight: 700;
 }
-
 html[data-theme=light] .vocab-category > summary .vocab-category-count {
   color: #FFFFFF;
   opacity: 1;
@@ -1470,11 +1469,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
   <!-- Page header -->
   <header class="site-header">
    <div class="header-inner">
-    <a class="brand" href="./index.html">
+    <a class="brand" href="../index.html">
      Korean Language Resources
     </a>
     <div class="header-actions">
-     <a class="header-link" href="./index.html">
+     <a class="header-link" href="../index.html">
       Home
      </a>
     </div>
@@ -1520,7 +1519,11 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
         Grouped by part of speech
        </h3>
        <p>
-        The table lists vocabulary from this Bab lesson. Additional TOPIK words may appear in generated grammar sentences without being added here. Words are grouped by part of speech, following the Korean divisions where they differ from English — descriptive verbs, 관형사 determiners, counters, and particles each keep their own group. Open the ＋ beside a word for a usage note and an example sentence showing how it is conjugated or marked.
+        Words from this Bab lesson are sorted into parts of speech, following the Korean divisions where they differ from English — descriptive verbs, 관형사 determiners, counters, and particles each keep their own group. Open the
+        <strong>
+         ＋
+        </strong>
+        beside a word for a usage note and an example sentence showing how it is conjugated or marked. Additional TOPIK words may appear in generated grammar sentences without being added here.
        </p>
       </article>
       <article class="guide-card">
@@ -1580,9 +1583,9 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     ↑
    </a>
   </div>
-  <script src="./shared-vocab/shared-vocab.js?v=1.2.0"></script>
-  <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
-  <script src="./shared-vocab/korean-grammar.js?v=1.2.0"></script>
+  <script src="../shared-vocab/shared-vocab.js?v=1.2.0"></script>
+  <script src="../shared-vocab/word-notes.js?v=1.0.0"></script>
+  <script src="../shared-vocab/korean-grammar.js?v=1.2.0"></script>
   <script>
    (() => {
     "use strict";
@@ -1590,128 +1593,128 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // Lesson content
     // -------------------------------------------------------------------------
     const LESSON = {
-        "title": "Bab 9",
-        "subtitle": "태권도 수업은 몇 시에 시작해요?",
-        "description": "Tell clock time with native-Korean hours and Sino-Korean minutes, say when actions happen, connect actions with -고, and express ranges with 부터 and 까지.",
-        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab09")),
+        "title": "Bab 5",
+        "subtitle": "무슨 계절을 좋아해요?",
+        "description": "Describe nouns with adjectives, ask 무슨 + noun questions, and practice ㅂ-irregular forms and weather.",
+        "vocab": KoreanVocab.toLessonVocab(KoreanVocab.forLesson("bab05")),
         "sections": [
-                {
-                        "id": "clock-time",
-                        "title": "Native-Korean hours · Sino-Korean minutes",
-                        "label": "Clock time",
-                        "meaning": "Tell the time using native-Korean number forms for hours and Sino-Korean numbers for minutes.",
-                        "form": "한/두/세/네/다섯... + 시; Sino-Korean number + 분. 반 can mean :30.",
-                        "notes": "Before 시, 하나/둘/셋/넷 change to 한/두/세/네. Twelve o'clock is 열두 시.",
-                        "examples": [
-                                [
-                                        "세 시 오 분이에요.",
-                                        "It is 3:05."
-                                ],
-                                [
-                                        "한 시 반이에요.",
-                                        "It is 1:30."
-                                ],
-                                [
-                                        "열한 시 사십오 분이에요.",
-                                        "It is 11:45."
-                                ]
-                        ],
-                        "generator": "b9Clock"
-                },
-                {
-                        "id": "time-e",
-                        "title": "몇 시에 · Time + 에",
-                        "label": "At what time?",
-                        "meaning": "Ask when an action happens and mark the clock time with 에.",
-                        "form": "몇 시에 + action? · Time + 에 + action.",
-                        "notes": "The source combines a clock expression with ordinary present-tense verbs.",
-                        "examples": [
-                                [
-                                        "몇 시에 수영해요? 열한 시에 수영해요.",
-                                        "What time do you swim? I swim at 11:00."
-                                ],
-                                [
-                                        "몇 시에 도서관에 가요? 세 시 십 분에 도서관에 가요.",
-                                        "What time do you go to the library? I go at 3:10."
-                                ],
-                                [
-                                        "몇 시에 생일 파티가 끝나요? 열 시 오십 분에 끝나요.",
-                                        "What time does the birthday party end? It ends at 10:50."
-                                ]
-                        ],
-                        "generator": "b9TimeE"
-                },
-                {
-                        "id": "clause-go",
-                        "title": "S-고 S",
-                        "label": "And / then",
-                        "meaning": "Connect two actions or descriptions in one sentence.",
-                        "form": "Verb/adjective stem + 고 + second clause.",
-                        "notes": "The first clause uses -고 instead of a final polite ending. The final clause carries the sentence ending.",
-                        "examples": [
-                                [
-                                        "이를 닦고 세수해요.",
-                                        "I brush my teeth and wash my face."
-                                ],
-                                [
-                                        "손을 씻고 밥을 먹어요.",
-                                        "I wash my hands and eat a meal."
-                                ],
-                                [
-                                        "샤워하고 잠을 자요.",
-                                        "I shower and sleep."
-                                ]
-                        ],
-                        "generator": "b9Go"
-                },
-                {
-                        "id": "from-to",
-                        "title": "N부터 N까지",
-                        "label": "From · until",
-                        "meaning": "Mark the starting and ending point of a time, day, date, month, or year range.",
-                        "form": "Start + 부터 + end + 까지.",
-                        "notes": "The same pattern works with clock times, weekdays, calendar dates, months, and years.",
-                        "examples": [
-                                [
-                                        "월요일부터 수요일까지",
-                                        "from Monday to Wednesday"
-                                ],
-                                [
-                                        "오전 여덟 시부터 오후 두 시까지",
-                                        "from 8:00 A.M. to 2:00 P.M."
-                                ],
-                                [
-                                        "시월 칠일부터 시월 십이일까지 여행을 가요.",
-                                        "I travel from October 7 to October 12."
-                                ]
-                        ],
-                        "generator": "b9FromTo"
-                },
-                {
-                        "id": "range-questions",
-                        "title": "몇 시부터 몇 시까지 · 언제까지 · 몇 월부터",
-                        "label": "Range questions",
-                        "meaning": "Ask for the starting point, ending point, or full range.",
-                        "form": "몇 시부터...? · 언제까지...? · 몇 시부터 몇 시까지...?",
-                        "notes": "The question word changes depending on which boundary you need to know.",
-                        "examples": [
-                                [
-                                        "몇 시부터 수업을 해요? 아홉 시부터 수업을 해요.",
-                                        "From what time do you have class? From 9:00."
-                                ],
-                                [
-                                        "언제까지 시험이 있어요? 수요일까지 시험이 있어요.",
-                                        "Until when are there exams? Until Wednesday."
-                                ],
-                                [
-                                        "몇 시부터 몇 시까지 점심시간이에요? 열두 시 삼십 분부터 한 시 삼십 분까지 점심시간이에요.",
-                                        "From what time to what time is lunch? From 12:30 to 1:30."
-                                ]
-                        ],
-                        "generator": "b9RangeQ"
-                }
+            {
+                "id": "adjectives",
+                "title": "A-아요/어요",
+                "label": "Descriptive verbs",
+                "meaning": "Conjugate Korean adjectives in the same polite present system used for action verbs.",
+                "form": "Remove 다 and attach -아요/어요/해요 according to the stem.",
+                "notes": "Korean adjectives behave like verbs and can end a sentence without a separate word for “is.”",
+                "examples": [
+                    [
+                        "맛있어요.",
+                        "It is delicious."
+                    ],
+                    [
+                        "교실이 넓어요.",
+                        "The classroom is spacious."
+                    ],
+                    [
+                        "모자가 싸요.",
+                        "The hat is cheap."
+                    ]
+                ],
+                "generator": "adjective"
+            },
+            {
+                "id": "subject-adjective",
+                "title": "N이/가 + adjective",
+                "label": "Subject particle",
+                "meaning": "Mark the noun being described with 이/가.",
+                "form": "Use 이 after a final consonant and 가 after a vowel.",
+                "notes": "This section contrasts focused/new subjects with topic 은/는 from earlier lessons.",
+                "examples": [
+                    [
+                        "영화가 재미있어요.",
+                        "The movie is interesting."
+                    ],
+                    [
+                        "교실이 넓어요.",
+                        "The classroom is spacious."
+                    ],
+                    [
+                        "날씨가 시원해요.",
+                        "The weather is cool."
+                    ]
+                ],
+                "generator": "subjectAdjective"
+            },
+            {
+                "id": "what-kind",
+                "title": "무슨 + N",
+                "label": "What kind of",
+                "meaning": "Ask for the category or type of a noun.",
+                "form": "무슨 + noun + particle + verb/adjective.",
+                "notes": "무슨 does not change. The noun after it still takes the particle required by the sentence.",
+                "examples": [
+                    [
+                        "무슨 운동을 좋아해요?",
+                        "What sport do you like?"
+                    ],
+                    [
+                        "무슨 책을 읽어요?",
+                        "What kind of book do you read?"
+                    ],
+                    [
+                        "무슨 차를 마셔요?",
+                        "What tea do you drink?"
+                    ]
+                ],
+                "generator": "whatKind"
+            },
+            {
+                "id": "bieup-irregular",
+                "title": "ㅂ 불규칙",
+                "label": "ㅂ irregular",
+                "meaning": "Many stems ending in ㅂ drop ㅂ and add 워 before -어요.",
+                "form": "덥다→더워요, 춥다→추워요, 어렵다→어려워요. Some words remain regular, including 좁다→좁아요 and 입다→입어요.",
+                "notes": "The material explicitly separates regular exceptions from the common irregular pattern.",
+                "examples": [
+                    [
+                        "무겁다 → 무거워요",
+                        "heavy"
+                    ],
+                    [
+                        "가깝다 → 가까워요",
+                        "near"
+                    ],
+                    [
+                        "좁다 → 좁아요",
+                        "narrow (regular exception)"
+                    ]
+                ],
+                "generator": "bieup"
+            },
+            {
+                "id": "weather",
+                "title": "날씨가 어때요?",
+                "label": "Weather",
+                "meaning": "Ask and answer how the weather is.",
+                "form": "Place/topic + 날씨가 어때요? Answer with a weather adjective or event: 맑아요, 비가 와요, 바람이 불어요.",
+                "notes": "Two conditions can be linked with -고, as in 바람이 불고 비가 와요.",
+                "examples": [
+                    [
+                        "날씨가 어때요?",
+                        "How is the weather?"
+                    ],
+                    [
+                        "눈이 와요.",
+                        "It is snowing."
+                    ],
+                    [
+                        "바람이 불고 비가 와요.",
+                        "It is windy and raining."
+                    ]
+                ],
+                "generator": "weather"
+            }
         ]
-};
+    };
     // -------------------------------------------------------------------------
     // Shared page state and small utilities
     // -------------------------------------------------------------------------
@@ -1727,7 +1730,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     } return b; };
     const romanizeKorean = KoreanVocab.romanize;
     function hasBatchim(text) { const chars = [...String(text)].filter(ch => { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; }); return !!chars.length && ((chars.at(-1).charCodeAt(0) - 0xAC00) % 28 !== 0); }
-    const topic = n => n + (hasBatchim(n) ? "은" : "는"), subject = n => n + (hasBatchim(n) ? "이" : "가"), object = n => n + (hasBatchim(n) ? "을" : "를"), andFormal = n => n + (hasBatchim(n) ? "과" : "와"), copula = n => n + (hasBatchim(n) ? "이에요" : "예요"), negativeN = n => n + (hasBatchim(n) ? "이" : "가");
+    const topic = n => n + (hasBatchim(n) ? "은" : "는"), subject = n => n + (hasBatchim(n) ? "이" : "가"), object = n => n + (hasBatchim(n) ? "을" : "를"), andFormal = n => n + (hasBatchim(n) ? "과" : "와"), copula = n => n + (hasBatchim(n) ? "이에" : "예") + "요", negativeN = n => n + (hasBatchim(n) ? "이" : "가");
     const article = e => /^[aeiou]/i.test(e) ? `an ${e}` : `a ${e}`;
     function dedupeUses(uses = []) {
         const merged = new Map();
@@ -1754,7 +1757,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
     // -------------------------------------------------------------------------
     // Shared vocabulary selection and universal Bab 1–10 grammar generation
     // -------------------------------------------------------------------------
-    const BAB_ID = "bab09";
+    const BAB_ID = "bab05";
     const SHARED_LESSON_VOCAB = KoreanVocab.forLesson(BAB_ID);
     // Every word is listed under exactly one source. Duplicates resolve to this
     // Bab first, then the TOPIK vocabulary lists, then the other Bab lessons,
@@ -2009,7 +2012,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
             case "bieup": { a=selectedEntry(nouns);b=selectedEntry(adjectives,entry=>BIEUP_IRREGULAR.has(entry.korean));const nf=subject(a.korean),af=presentPolite(b.korean);uses=[particleUse(a,nf,hasBatchim(a.korean)?"이":"가","이/가 marks the described subject."),verbUse(b,af,"For a ㅂ-irregular adjective, ㅂ changes before the vowel-initial polite ending.",`${b.korean} becomes ${af}.`)];return q(`${nf} ${af}.`,`The ${nounEnglish(a)} is ${predicateEnglish(b)}.`,[],uses,"Apply the ㅂ-irregular change, then add the polite ending."); }
             case "weather": { a=selectedEntry(pool,isSeason)||literalUse("오늘","today","noun");b=weatherEntry(pool)||selectedEntry(adjectives);const af=presentPolite(b.korean);uses=[];if(a.id)uses.push(wordUse(a,a.korean,"This word sets the season or time context.",`Use ${a.korean} before 날씨.`));else uses.push(a);uses.push(fixedUse("날씨","날씨 is marked with 가 in the question.","날씨 + 가 = 날씨가.","날씨가","weather"),fixedUse("어떻다","어때요 asks how something is.","어떻다 becomes 어때요.","어때요","how is it"),verbUse(b,af,"Conjugate the weather adjective in polite present tense."));const context=a.korean==="오늘"?"today":`in ${nounEnglish(a)}`;return q(`${a.korean} 날씨가 어때요? ${af}.`,`How is the weather ${context}? It is ${predicateEnglish(b)}.`,[],uses,"Ask with 날씨가 어때요? and answer with a descriptive adjective."); }
             case "formal": { a=selectedEntry(predicates);const question=Math.random()<.5;form=formalPredicate(a.korean,question);uses=[verbUse(a,form,question?"Use the formal polite question ending -(스)ㅂ니까?":"Use the formal polite statement ending -(스)ㅂ니다.")];const subject=a.partOfSpeech==="adjective"?"It":"I";return q(`${form}${question?"?":"."}`,`${question?(a.partOfSpeech==="adjective"?"Is it":"Do you"):(subject)} ${predicateEnglish(a)}${question?"?":"."}`,[],uses,"Choose -(스)ㅂ니다 for a statement or -(스)ㅂ니까? for a question."); }
-            case "clauseLink": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Remove 다 and add -고 to link the first predicate."),verbUse(b,bf,"Only the final predicate receives the sentence-final polite ending.")];const eng=a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`;return q(`${af} ${bf}.`,eng,[],uses,"Attach -고 to the first predicate and conjugate the final predicate normally."); }
+            case "clauseLink": { a=selectedEntry(predicates);b=differentEntry(predicates,a,entry=>entry.partOfSpeech===a.partOfSpeech)||a;const af=connectiveGo(a.korean),bf=presentPolite(b.korean);uses=[verbUse(a,af,"Add -고 to the first predicate."),verbUse(b,bf,"Only the final predicate receives the sentence-final polite ending.")];const eng=a.partOfSpeech==="adjective"?`It is ${predicateEnglish(a)} and ${predicateEnglish(b)}.`:`I ${predicateEnglish(a)} and ${predicateEnglish(b)}.`;return q(`${af} ${bf}.`,eng,[],uses,"Attach -고 to the first predicate and conjugate the final predicate normally."); }
             case "formalCopula": { const identityNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(identityNouns)||selectedEntry(nouns);b=differentEntry(identityNouns,a)||differentEntry(nouns,a)||a;const bn=subject(b.korean);uses=[fixedUse("이것","이것은 marks the item being identified.","이것 + 은 = 이것은.","이것은","this"),wordUse(b,`${b.korean}입니까`,"입니까? asks a formal identity question.",`Attach 입니까 directly: ${b.korean}입니까?`),wordUse(b,bn,"이/가 marks the identity being denied before 아닙니다.",`${b.korean} takes ${hasBatchim(b.korean)?"이":"가"}: ${bn}.`),fixedUse("아니다","아닙니다 is the formal negative copula.","아니다 becomes 아닙니다.","아닙니다","not to be"),wordUse(a,`${a.korean}입니다`,"입니다 is the formal affirmative copula.",`Attach 입니다 directly: ${a.korean}입니다.`)];return q(`이것은 ${b.korean}입니까? 아니요, ${bn} 아닙니다. ${a.korean}입니다.`,`Is this ${identityEnglish(b)}? No, it is not ${identityEnglish(b)}. It is ${identityEnglish(a)}.`,[],uses,"Use 입니까? for the question, 아닙니다 for negation, and 입니다 for affirmation."); }
             case "numbers": { const num=1+Math.floor(Math.random()*99999),kor=compactSino(num);uses=[literalUse(kor,num.toLocaleString("en-US"),"numeral","Read the number with Sino-Korean number units.",`The generated number is ${kor}.`)];return q(kor,num.toLocaleString("en-US"),[],uses,"Read or write the generated Sino-Korean number."); }
             case "location": { const contentNouns=nouns.filter(entry=>!isPosition(entry));a=selectedEntry(contentNouns)||selectedEntry(nouns);b=differentEntry(contentNouns,a)||differentEntry(nouns,a)||a;c=selectedEntry(positions);const at=topic(a.korean),cf=`${c.korean}에`,exists=Math.random()<.8;uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the item being located."),wordUse(b,b.korean,"This noun is the spatial reference point.",`Use ${b.korean} before the position word.`),wordUse(c,cf,"The position noun is followed by 에.",`Attach 에: ${cf}.`),fixedUse(exists?"있다":"없다","있어요 expresses existence; 없어요 expresses absence.",`${exists?"있다":"없다"} becomes ${exists?"있어요":"없어요"}.`,exists?"있어요":"없어요",exists?"to exist":"not to exist")];return q(`${at} ${b.korean} ${cf} ${exists?"있어요":"없어요"}.`,`The ${nounEnglish(a)} is ${exists?"":"not "}${nounEnglish(c)} the ${nounEnglish(b)}.`,[],uses,"Use reference noun + position + 에 + 있어요/없어요."); }
@@ -2022,7 +2025,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
             case "b8DateE": { const useDate=Math.random()<.6,m=pick(MONTHS),d=1+Math.floor(Math.random()*28),weekday=pick(WEEKDAYS),act=actionPhrase(pool);const time=useDate?datePhrase(m,d):weekday.k,timeE=`${time}에`;uses=[literalUse(time,useDate?`${m.e} ${d}`:weekday.e,"time expression","에 marks when the action happens.",`Attach 에: ${timeE}.`,timeE),...(act?.uses||[])];return q(`${timeE} ${act.korean}.`,`On ${useDate?`${m.e} ${d}`:weekday.e}, I ${act.english}.`,[],uses,"Attach 에 to the date or weekday, then state the action."); }
             case "b8Together": { const people=pool.filter(isPerson);a=selectedEntry(people)||selectedEntry(pool,ownerLike);b=differentEntry(people,a)||differentEntry(pool,a,ownerLike)||a;const act=actionPhrase(pool),together=Math.random()<.5?"같이":"함께",partner=Math.random()<.5?`${b.korean}하고`:andFormal(b.korean),at=topic(a.korean);uses=[particleUse(a,at,hasBatchim(a.korean)?"은":"는","은/는 marks the main person."),wordUse(b,partner,"하고 or 와/과 joins the partner.",`Use ${partner}.`),fixedUse(together,"같이 and 함께 mean together.",`${together} does not change.`,together,"together"),...(act?.uses||[])];return q(`${at} ${partner} ${together} ${act.korean}.`,`${nounEnglish(a)} and ${nounEnglish(b)} ${act.english} together.`,[],uses,"Join the partner with 하고/와/과, then add 같이 or 함께."); }
             case "b9Clock": { const h=1+Math.floor(Math.random()*12),min=pick([0,5,10,15,20,25,30,35,40,45,50,55]),period=Math.random()<.35?pick(["오전","오후"]):"",clock=clockPhrase(h,min,period);uses=[literalUse(clock,englishClock(h,min,period),"time expression","Native-Korean numbers count hours; Sino-Korean numbers count minutes.",`The generated clock form is ${clock}.`),fixedUse("이다","Attach 이에요 after the complete time expression.","The time expression takes 이에요.","이에요","to be")];return q(`${clock}이에요.`,`It is ${englishClock(h,min,period)}.`,[],uses,"Use native-Korean hours and Sino-Korean minutes."); }
-            case "b9TimeE": { const h=1+Math.floor(Math.random()*12),min=pick([0,10,20,30,40,50]),clock=clockPhrase(h,min),act=actionPhrase(pool);uses=[fixedUse("몇","몇 시 asks what time.","Use 몇 시에 before an action question.","몇 시에","what time"),...(act?.uses||[]),literalUse(`${clock}에`,englishClock(h,min),"time expression","에 marks the time of the action.",`Attach 에: ${clock}에.`)];return q(`몇 시에 ${act.korean}? ${clock}에 ${act.korean}.`,`What time do you ${act.english}? I ${act.english} at ${englishClock(h,min)}.`,[],uses,"Ask 몇 시에 and answer with Time + 에."); }
+            case "b9TimeE": { const h=1+Math.floor(Math.random()*12),min=pick([0,10,20,30,40,50]),clock=clockPhrase(h,min),act=actionPhrase(pool);uses=[fixedUse("몇","몇 시부터 asks from what time.", "Use 몇 시에 before an action question.","몇 시에","what time"),...(act?.uses||[]),literalUse(`${clock}에`,englishClock(h,min),"time expression","에 marks the time of the action.",`Attach 에: ${clock}에.`)];return q(`몇 시에 ${act.korean}? ${clock}에 ${act.korean}.`,`What time do you ${act.english}? I ${act.english} at ${englishClock(h,min)}.`,[],uses,"Ask 몇 시에 and answer with Time + 에."); }
             case "b9Go": { const first=actionPhrase(pool,true),second=actionPhrase(pool,false);uses=[...(first?.uses||[]),...(second?.uses||[])];return q(`${first.korean} ${second.korean}.`,`I ${first.english} and ${second.english}.`,[],uses,"Attach -고 to the first action; conjugate the second action normally."); }
             case "b9FromTo": { const mode=Math.floor(Math.random()*4),act=selectedEntry(verbs)||sharedEntry("공부하다");let start,end,engStart,engEnd;if(mode===0){const sh=1+Math.floor(Math.random()*8),eh=sh+1+Math.floor(Math.random()*(12-sh));start=clockPhrase(sh);end=clockPhrase(eh);engStart=englishClock(sh);engEnd=englishClock(eh);}else if(mode===1){const si=Math.floor(Math.random()*5),ei=si+1+Math.floor(Math.random()*(6-si));start=WEEKDAYS[si].k;end=WEEKDAYS[ei].k;engStart=WEEKDAYS[si].e;engEnd=WEEKDAYS[ei].e;}else if(mode===2){const m=pick(MONTHS),sd=1+Math.floor(Math.random()*14),ed=sd+1+Math.floor(Math.random()*(28-sd));start=`${m.k} ${compactSino(sd)}일`;end=`${m.k} ${compactSino(ed)}일`;engStart=`${m.e} ${sd}`;engEnd=`${m.e} ${ed}`;}else{const sy=2000+Math.floor(Math.random()*20),ey=sy+1+Math.floor(Math.random()*6);start=`${compactSino(sy)}년`;end=`${compactSino(ey)}년`;engStart=String(sy);engEnd=String(ey);}const vf=presentPolite(act.korean);uses=[literalUse(`${start}부터`,engStart,"range start","부터 marks the beginning of a range.",`Attach 부터: ${start}부터.`),literalUse(`${end}까지`,engEnd,"range end","까지 marks the end of a range.",`Attach 까지: ${end}까지.`),verbUse(act,vf,"Conjugate the action in polite present tense.")];return q(`${start}부터 ${end}까지 ${vf}.`,`I ${predicateEnglish(act)} from ${engStart} to ${engEnd}.`,[],uses,"Use N부터 for the start and N까지 for the end."); }
             case "b9RangeQ": { const mode=Math.floor(Math.random()*3);if(mode===0){const h=1+Math.floor(Math.random()*12),clock=clockPhrase(h);uses=[fixedUse("몇","몇 시부터 asks from what time.","Use 몇 시부터.","몇 시부터","from what time"),literalUse(`${clock}부터`,englishClock(h),"range start","부터 marks the starting time.",`Attach 부터: ${clock}부터.`),fixedUse("수업","수업을 해요 means have class.","수업 + 을 + 해요.","수업을 해요","class")];return q(`몇 시부터 수업을 해요? ${clock}부터 수업을 해요.`,`From what time do you have class? I have class from ${englishClock(h)}.`,[],uses,"Ask with 몇 시부터 and answer with Time + 부터.");}if(mode===1){const wd=pick(WEEKDAYS);uses=[fixedUse("언제","언제까지 asks until when.","Attach 까지 to 언제 in the question.","언제까지","until when"),literalUse(`${wd.k}까지`,wd.e,"range end","까지 marks the ending day.",`Attach 까지: ${wd.k}까지.`),fixedUse("시험","시험이 있어요 means there is an exam.","시험 + 이 + 있어요.","시험이 있어요","exam")];return q(`언제까지 시험이 있어요? ${wd.k}까지 시험이 있어요.`,`Until when is there an exam? There is an exam until ${wd.e}.`,[],uses,"Ask 언제까지 and answer with day + 까지.");}const sh=10+Math.floor(Math.random()*2),sm=pick([0,30]),eh=Math.min(12,sh+1),start=clockPhrase(sh,sm),end=clockPhrase(eh,sm);uses=[fixedUse("몇","몇 시부터 몇 시까지 asks the full time range.","Use the complete range question.","몇 시부터 몇 시까지","from what time to what time"),literalUse(`${start}부터`,englishClock(sh,sm),"range start","부터 marks the starting time.",`Use ${start}부터.`),literalUse(`${end}까지`,englishClock(eh,sm),"range end","까지 marks the ending time.",`Use ${end}까지.`),fixedUse("점심시간","점심시간이에요 identifies the lunch period.","Attach 이에요.","점심시간이에요","lunch time")];return q(`몇 시부터 몇 시까지 점심시간이에요? ${start}부터 ${end}까지 점심시간이에요.`,`From what time to what time is lunch? Lunch is from ${englishClock(sh,sm)} to ${englishClock(eh,sm)}.`,[],uses,"Use 부터 and 까지 to define both ends of the range."); }
@@ -2746,6 +2749,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
                 }
             };
 
+            // Handle X close button specifically
             const closeBtn = token.querySelector(".popover-close-btn");
             if (closeBtn) {
                 closeBtn.addEventListener("click", event => {
@@ -2758,6 +2762,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
                 });
             }
 
+            // Handle clicks inside the popover to bring it to front
             if (popover) {
                 popover.addEventListener("click", event => {
                     event.stopPropagation();
@@ -2765,6 +2770,7 @@ html[data-theme=light] .word-note-example .roman { color: #28468A; opacity: 1; }
                 });
             }
 
+            // Handle word token click toggle
             token.addEventListener("click", event => {
                 if (event.target.closest(".hint-step")) return;
                 event.stopPropagation();

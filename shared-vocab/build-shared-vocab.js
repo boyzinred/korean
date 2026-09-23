@@ -5,7 +5,7 @@
  *
  * Inputs
  *   shared-vocab.csv                             existing curated records (base)
- *   tutoring-topik-i-vocab.html                  TOPIK vocabulary reference
+ *   archive/tutoring-topik-i-vocab.html          TOPIK vocabulary reference
  *   tutoring-topik-ii-level-3-vocab.html         TOPIK vocabulary reference
  *   tutoring-topik-ii-level-4-vocab.html         TOPIK vocabulary reference
  *   tutoring-topik-ii-level-5-vocab.html         TOPIK vocabulary reference
@@ -94,15 +94,18 @@ const SOURCE_GROUPS = [
   }
 ];
 
+// Two of the pages read below now live in archive/ — they are off the landing
+// page but their vocabulary is still part of the shared library, so the build
+// still reads them where they sit.
 const TOPIK_VOCAB_FILES = [
-  { id: "topik1-vocab", file: "tutoring-topik-i-vocab.html", label: "TOPIK I vocabulary", level: 1 },
+  { id: "topik1-vocab", file: "archive/tutoring-topik-i-vocab.html", label: "TOPIK I vocabulary", level: 1 },
   { id: "topik2-level3-vocab", file: "tutoring-topik-ii-level-3-vocab.html", label: "TOPIK II level 3 vocabulary", level: 3 },
   { id: "topik2-level4-vocab", file: "tutoring-topik-ii-level-4-vocab.html", label: "TOPIK II level 4 vocabulary", level: 4 },
   { id: "topik2-level5-vocab", file: "tutoring-topik-ii-level-5-vocab.html", label: "TOPIK II level 5 vocabulary", level: 5 }
 ];
 
 const TEST_LIBRARY_FILE = "tutoring-topik-multiple-choice-test-library.html";
-const LOCAL_LESSON_FILE = "tutoring-bab20.html";
+const LOCAL_LESSON_FILE = "archive/tutoring-bab20.html";
 const LOCAL_LESSON_CONST = "BAB20_LOCAL_VOCAB";
 const LOCAL_LESSON_ID = "bab20";
 const TEST_SOURCE_PREFIX = "test-";
@@ -503,7 +506,9 @@ function build() {
     id,
     label: `Bab ${Number(id.replace("bab", ""))}`,
     group: "bab",
-    file: `tutoring-${id.replace(/^bab0?/, "bab")}.html`
+    // The Bab lessons live in archive/ now, off the landing page but still
+    // the source these words came from.
+    file: `archive/tutoring-${id.replace(/^bab0?/, "bab")}.html`
   }));
   const sources = [
     ...TOPIK_VOCAB_FILES.map(f => ({ id: f.id, label: f.label, group: "topik-vocab", file: f.file })),
