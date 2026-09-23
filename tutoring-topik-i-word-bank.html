@@ -1166,7 +1166,7 @@ html[data-theme='dark'] th {
    unreadable on the white table. Romanization gets the deep blue instead. */
 html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
-.familiarity-cell { min-width: 7rem; }
+.familiarity-cell { min-width: 8.4rem; }
 .familiarity-stars {
   display: inline-flex;
   gap: .1875rem;
@@ -1188,9 +1188,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   line-height: 1;
 }
 .familiarity-star:hover { transform: scale(1.12); }
-/* A rating lights the stars up to it: the first at one star, both at two. */
+/* A rating lights the stars up to it, and no further. */
 .familiarity-stars[data-level="1"] .familiarity-star[data-level="1"],
-.familiarity-stars[data-level="2"] .familiarity-star { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="2"],
+.familiarity-stars[data-level="3"] .familiarity-star { color: var(--accent); }
 
 .section-meta {
   margin: 0 0 20px;
@@ -1690,7 +1692,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 .expr-row .hangul { font-size: 1.05rem; }
 /* A second star colour, so a word's own rating never reads as a sentence's. */
 .familiarity-stars.expr[data-level="1"] .familiarity-star[data-level="1"],
-.familiarity-stars.expr[data-level="2"] .familiarity-star { color: var(--secondary); }
+.familiarity-stars.expr[data-level="2"] .familiarity-star[data-level="1"],
+.familiarity-stars.expr[data-level="2"] .familiarity-star[data-level="2"],
+.familiarity-stars.expr[data-level="3"] .familiarity-star { color: var(--secondary); }
 .ref-section.hide-expressions .expr-row,
 .ref-section.hide-expressions .expr-row + .vocab-note-row { display: none; }
 /* The register variants, shown only where they differ from the polite form. */
@@ -1823,6 +1827,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <p><strong>Run 1, the new batch.</strong> Tick today's day only. Tick <em>Korean</em> for the question language and <em>English</em> for the answer. Leave &ldquo;Retry a word until it is right&rdquo; on. 50 words.</p>
             <p><strong>Run 2, the review.</strong> Tick four boxes &mdash; the days <strong>1, 3, 7 and 16 back</strong> &mdash; and leave today's unticked. Tick <em>English</em> for the question language and <em>Korean</em> for the answer, because recall is the direction that fails first. (Tick more than one box on either side and the run mixes directions, telling you on every question which language to answer in.) Set <em>Word limit</em> to 60 so a ~200 word pool becomes a random 60, and put 15 in <em>Timer in minutes</em>.</p>
             <p>On day 20 that is: run 1 = day 20; run 2 = days 19, 17, 13 and 4. Early on there is nothing 16 back, so tick only the boxes that exist.</p>
+            <p><strong>Either run can be spaced instead.</strong> Set <em>How it repeats</em> to <em>Spaced</em> and the run stops counting repetitions: a word leaves it once you have answered it right three times, a miss drops it a rung and brings it round sooner, and the stars are written by what the run finds rather than by hand. The review run is where it pays &mdash; words already at three stars are asked once and drop out, so the time goes to the ones that have slipped.</p>
           </details>
           <details class="guide-card" open>
             <summary><h3>Days 28&ndash;41 &mdash; Consolidate</h3></summary>
@@ -1977,6 +1982,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
+  <script src="./shared-vocab/spaced-session.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
   <script>
@@ -2362,7 +2368,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // ------------------------------------------------------ progress storage
-    const FAMILIARITY_KEY = "topikIFamiliarityV1";
+    // V2 stores a record rather than a bare number, because a star now has to
+    // say where it came from: the level, the day the word was last carried
+    // through a spaced run without a miss, and whether a person set it by hand.
+    const FAMILIARITY_KEY = "topikIFamiliarityV2";
+    const FAMILIARITY_KEY_V1 = "topikIFamiliarityV1";
     const BLUR_KEY = "topikIBlurV1";
 
     function loadObject(key) {
@@ -2373,12 +2383,70 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
     }
 
-    const familiarity = loadObject(FAMILIARITY_KEY);
+    // Three stars, and each one means something a run can actually establish:
+    //
+    //   ★     the word was carried to the end of a spaced run, but you missed
+    //         it at least once on the way
+    //   ★★    carried clean — right every time it came round
+    //   ★★★   carried clean on a later day than the last clean run, which is
+    //         the one thing an evening of cramming cannot fake
+    //
+    // Every rung can still be set by hand, and a hand-set star is never taken
+    // down by an exercise — only stars a run awarded can fall.
+    const MAX_STAR = 3;
+    const STAR_LABELS = ["Mark as shaky", "Mark as learning", "Mark as familiar"];
 
-    // Two stars: one for a word that is coming along, two for one that is
-    // known. Ratings saved when the scale ran to three still load, clamped.
-    const ratingOf = id => Math.min(2, Math.max(0, Number(familiarity[id]) || 0));
-    const STAR_LABELS = ["Mark as coming along", "Mark as familiar"];
+    // V1 held one number per word on a two-star scale where two meant known.
+    // Two becomes three here, so a word marked familiar stays familiar rather
+    // than being silently demoted to the middle of a longer scale, and every
+    // migrated rating counts as hand-set, because that is what it was.
+    function loadFamiliarity() {
+      const saved = loadObject(FAMILIARITY_KEY);
+      if (Object.keys(saved).length) return saved;
+      const legacy = loadObject(FAMILIARITY_KEY_V1);
+      const moved = {};
+      Object.keys(legacy).forEach(id => {
+        const level = Math.min(MAX_STAR, Math.max(0, Number(legacy[id]) || 0));
+        if (level) moved[id] = { l: level >= 2 ? MAX_STAR : level, m: true };
+      });
+      if (Object.keys(moved).length) saveObject(FAMILIARITY_KEY, moved);
+      return moved;
+    }
+
+    const familiarity = loadFamiliarity();
+    const entryOf = id => {
+      const held = familiarity[id];
+      if (!held || typeof held !== "object") return { l: Math.min(MAX_STAR, Math.max(0, Number(held) || 0)) };
+      return held;
+    };
+    const ratingOf = id => Math.min(MAX_STAR, Math.max(0, Number(entryOf(id).l) || 0));
+    // The day the word was last carried clean, which is what the third star
+    // waits for. Nothing else is stored against a word.
+    const cleanDayOf = id => entryOf(id).d || "";
+    const isManual = id => Boolean(entryOf(id).m);
+
+    // The one way a rating is written. `manual` marks a star a person chose,
+    // and `cleanDay` is stamped by a spaced run that carried the word without
+    // a miss.
+    function setRating(id, level, options) {
+      const settings = options || {};
+      const safe = Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
+      const held = entryOf(id);
+      const day = settings.cleanDay || held.d || "";
+      if (!safe && !day) delete familiarity[id];
+      else {
+        const record = { l: safe };
+        if (day) record.d = day;
+        if (settings.manual !== undefined ? settings.manual : held.m) record.m = true;
+        familiarity[id] = record;
+      }
+      saveObject(FAMILIARITY_KEY, familiarity);
+    }
+
+    const today = () => {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    };
     const blurState = loadObject(BLUR_KEY);
 
     // Sort is saved per section id, the same way blur is, so one day can sit in
@@ -2586,7 +2654,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     function paintRating(group, level) {
-      const safe = Math.min(2, Math.max(0, Number(level) || 0));
+      const safe = Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
       group.dataset.level = String(safe);
       group.querySelectorAll(".familiarity-star").forEach(button => {
         button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe));
@@ -2594,11 +2662,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     function paintAllRatings(scope) {
-      scope.querySelectorAll(".familiarity-stars").forEach(group => paintRating(group, familiarity[group.dataset.wordKey] || 0));
+      scope.querySelectorAll(".familiarity-stars").forEach(group => paintRating(group, ratingOf(group.dataset.wordKey)));
       syncStarToggles();
     }
 
-    const isStarred = id => ratingOf(id) === 2;
+    const isStarred = id => ratingOf(id) === MAX_STAR;
 
     // A section's words plus the expressions hanging off them: a word's
     // expressions carry their own star and go wherever the word goes.
@@ -2612,9 +2680,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // One switch for the stars, the way expressions have one: it fills the
-    // section to both stars while anything in it is short of them, and clears
-    // it once everything has both. Pressing it just does the thing and renames
-    // itself.
+    // section to all three while anything in it is short of them, and clears it
+    // once everything is full. Pressing it just does the thing and renames
+    // itself. Stars set this way are hand-set, so no run takes them down.
     function starsFull(group) {
       const ids = starIds(group);
       return Boolean(ids.length) && ids.every(isStarred);
@@ -2733,9 +2801,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           const group = star.closest(".familiarity-stars");
           const chosen = Number(star.dataset.level);
           const next = Number(group.dataset.level || 0) === chosen ? 0 : chosen;
-          if (next) familiarity[group.dataset.wordKey] = next;
-          else delete familiarity[group.dataset.wordKey];
-          saveObject(FAMILIARITY_KEY, familiarity);
+          setRating(group.dataset.wordKey, next, { manual: true });
           paintRating(group, next);
           syncStarToggles();
           return;
@@ -2762,11 +2828,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           if (!group) return;
           const ids = starIds(group);
           const filling = !starsFull(group);
-          ids.forEach(id => {
-            if (filling) familiarity[id] = 2;
-            else delete familiarity[id];
-          });
-          saveObject(FAMILIARITY_KEY, familiarity);
+          ids.forEach(id => setRating(id, filling ? MAX_STAR : 0, { manual: true }));
           paintAllRatings(container);
           return;
         }
@@ -2957,8 +3019,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     const FAMILIARITY_FILTERS = [
       { id: "all", label: "All words" },
       { id: "unfamiliar", label: "Unfamiliar words (no star)", level: 0, phrase: "unstarred" },
-      { id: "learning", label: "Learning words (one star)", level: 1, phrase: "at one star" },
-      { id: "familiar", label: "Familiar words (two stars)", level: 2, phrase: "at two stars" }
+      { id: "shaky", label: "Shaky words (one star)", level: 1, phrase: "at one star" },
+      { id: "learning", label: "Learning words (two stars)", level: 2, phrase: "at two stars" },
+      { id: "familiar", label: "Familiar words (three stars)", level: 3, phrase: "at three stars" }
     ];
     const FAMILIARITY_BY_ID = new Map(FAMILIARITY_FILTERS.map(filter => [filter.id, filter]));
 
@@ -3084,11 +3147,16 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             ${langBlock(id, "qlang", "Question language", "english")}
             ${langBlock(id, "alang", "Answer language", "korean")}
             ${familiarityBlock(id)}
+            <label>How it repeats<select id="menu-mode-${id}">
+              <option value="regular">Regular — a fixed number of times</option>
+              <option value="spaced">Spaced — until each word sticks</option>
+            </select></label>
             <label>Repetitions<select id="menu-multiplier-${id}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}× each word</option>`).join("")}</select></label>
             <label>Word limit<small class="menu-count-note">0 keeps every selected word</small><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
             <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
             <label style="align-content: end;"><span style="display: flex; align-items: center; gap: 9px; text-transform: none; letter-spacing: 0; font-size: .84rem;"><input id="menu-repeat-${id}" type="checkbox" checked style="width: 1.1rem; height: 1.1rem;">Retry a word until it is right</span></label>
           </div>
+          <p class="menu-summary" id="menu-mode-note-${id}"></p>
           <div class="menu-summary" id="menu-count-${id}"></div>
           <p class="menu-error hidden" id="menu-error-${id}">${esc(exercise.emptyMessage)}</p>
           <div class="exercise-menu-actions">
@@ -3133,6 +3201,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <div class="finish-panel" id="finish-${id}">
               <span class="prompt-label" id="finish-kicker-${id}">Exercise complete</span>
               <p class="finish-headline" id="final-score-${id}"></p>
+              <p class="menu-summary hidden" id="stars-${id}"></p>
               <div class="finish-block export-block hidden" id="export-${id}">
                 <div class="export-head">
                   <h4>Words to review</h4>
@@ -3170,11 +3239,45 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       attachExerciseListeners();
     }
 
+    const runMode = exerciseId =>
+      document.getElementById(`menu-mode-${exerciseId}`)?.value === "spaced" ? "spaced" : "regular";
+
+    // Where a word joins the ladder, and so how much of a run it costs: three
+    // right answers for one you have never carried, two once it has been
+    // carried clean, one for a word already at three stars. One star buys
+    // nothing, because one star is the rung for a word you had to fish for.
+    // Anything missed on the way adds to the total.
+    const SPACED_RUNGS = 3;
+    const startingBox = item =>
+      Math.max(0, Math.min(SPACED_RUNGS - 1, ratingOf(item.id) - 1));
+    const shortestSpacedRun = words =>
+      words.reduce((sum, item) => sum + (SPACED_RUNGS - startingBox(item)), 0);
+
+    // The Repetitions box and the retry switch belong to the regular run: a
+    // spaced run decides how often a word comes back, and asking a missed word
+    // again on the spot is the opposite of spacing it.
+    function paintModeNote(exerciseId) {
+      const spaced = runMode(exerciseId) === "spaced";
+      const note = document.getElementById(`menu-mode-note-${exerciseId}`);
+      const multiplier = document.getElementById(`menu-multiplier-${exerciseId}`);
+      const repeat = document.getElementById(`menu-repeat-${exerciseId}`);
+      if (!note) return;
+      [multiplier, repeat].forEach(control => {
+        if (!control) return;
+        control.disabled = spaced;
+        control.closest("label").style.opacity = spaced ? ".45" : "";
+      });
+      note.textContent = spaced
+        ? "A word leaves the run once you have answered it right three times, and each right answer sends it further back in the queue. A miss drops it a rung and brings it round sooner. Stars follow what the run finds: one for a word you got there in the end, two for one you never missed, three for one you carried clean on a later day than the last time. Repetitions and the retry switch are the regular run's, so they sit this one out."
+        : "Every word is asked the same number of times, in the order the run shuffled them into. Nothing is written to the stars.";
+    }
+
     function refreshCount(exerciseId) {
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       const target = document.getElementById(`menu-count-${exerciseId}`);
       if (!exercise || !target) return;
       if (exercise.beforeCount) exercise.beforeCount();
+      paintModeNote(exerciseId);
       const chosen = exercise.select();
       const words = selectedItems(exerciseId);
       const multiplier = Number(document.getElementById(`menu-multiplier-${exerciseId}`)?.value) || 1;
@@ -3186,9 +3289,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         ? `Nothing ${FAMILIARITY_BY_ID.get(choice).phrase} in this selection`
         : "Nothing selected";
       target.classList.toggle("empty", used === 0);
-      target.textContent = used === 0
-        ? `${nothing}${note}`
-        : `${used} item${used === 1 ? "" : "s"} selected · ${used * multiplier} question${used * multiplier === 1 ? "" : "s"}${cap > 0 && words.length > cap ? ` · sampled from ${words.length}` : ""}${note}`;
+      if (used === 0) { target.textContent = `${nothing}${note}`; return; }
+      // A spaced run has no length until it is run, so the menu quotes the
+      // floor — what it costs with nothing going wrong — rather than a total
+      // it cannot know.
+      const sampled = cap > 0 && words.length > cap ? ` · sampled from ${words.length}` : "";
+      if (runMode(exerciseId) === "spaced") {
+        const floor = shortestSpacedRun(cap > 0 ? words.slice(0, cap) : words);
+        target.textContent = `${used} item${used === 1 ? "" : "s"} selected · ${floor} questions at best, more for anything you miss${sampled}${note}`;
+        return;
+      }
+      target.textContent = `${used} item${used === 1 ? "" : "s"} selected · ${used * multiplier} question${used * multiplier === 1 ? "" : "s"}${sampled}${note}`;
     }
 
     function attachExerciseListeners() {
@@ -3284,7 +3395,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`).value) || 0);
       if (cap > 0 && words.length > cap) words = words.slice(0, cap);
 
-      const multiplier = Math.max(1, Number(document.getElementById(`menu-multiplier-${exerciseId}`).value) || 1);
+      const mode = runMode(exerciseId);
+      const multiplier = mode === "spaced"
+        ? 1
+        : Math.max(1, Number(document.getElementById(`menu-multiplier-${exerciseId}`).value) || 1);
       const pool = [];
       for (let round = 0; round < multiplier; round++) words.forEach(word => pool.push(word));
 
@@ -3309,6 +3423,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       clearTimer(STATES.get(exerciseId));
       const state = {
         exerciseId,
+        mode,
         pool: words,
         questions: spacedOrder(tagged, word => questionKeys(word, word.questionMode, word.answerMode)),
         index: 0,
@@ -3319,14 +3434,36 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         currentHadWrong: false,
         retryCurrent: false,
         finished: false,
-        repeatWrong: document.getElementById(`menu-repeat-${exerciseId}`).checked,
+        // A spaced run brings a missed word round again by itself, so the retry
+        // switch is the regular run's alone.
+        repeatWrong: mode === "regular" && document.getElementById(`menu-repeat-${exerciseId}`).checked,
         questionModes,
         answerModes,
+        pairs,
         questionMode: pairs[0].q,
         answerMode: pairs[0].a,
         timer: null,
         label: `${exercise.title} · ${words.length} words`
       };
+
+      if (mode === "spaced") {
+        // The star a word already carries is the rung it starts on, so a run
+        // over words you know is one clean pass and a run over new ones is
+        // three. The cap is a ceiling for a night when nothing is going in —
+        // the timer and End exercise are the other two ways out.
+        state.session = window.SpacedSession.create({
+          items: words.map(item => ({ id: item.id, item, box: startingBox(item) })),
+          retireAt: SPACED_RUNGS,
+          cap: Math.max(20, words.length * 6)
+        });
+        state.stars = { raised: 0, lowered: 0, clean: 0 };
+        state.card = null;
+        // The verdict waits until the question is left rather than being
+        // applied the moment it is answered, so Count as correct still has
+        // something to correct.
+        state.pending = null;
+      }
+
       STATES.set(exerciseId, state);
 
       document.getElementById(`menu-${exerciseId}`).classList.add("hidden");
@@ -3353,13 +3490,34 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       showQuestion(exerciseId);
     }
 
+    // What is on the screen: the next card in a spaced run, or the question at
+    // the index in a regular one.
+    function currentItem(state) {
+      if (state.mode === "spaced") return state.card ? state.card.item : null;
+      return state.questions[state.index];
+    }
+
     function showQuestion(exerciseId, isRetry = false) {
       const state = STATES.get(exerciseId);
-      if (!state || state.finished || !state.questions.length) return;
-      const item = state.questions[state.index];
-      // Mixed runs change direction question by question.
-      state.questionMode = item.questionMode;
-      state.answerMode = item.answerMode;
+      if (!state || state.finished) return;
+      if (state.mode === "spaced") {
+        if (!isRetry) {
+          state.card = state.session.next();
+          if (!state.card) { finish(exerciseId, "Completed"); return; }
+          // A spaced run draws its direction per question the way a mixed
+          // regular run does, so a word is not always asked the same way round.
+          const pair = state.pairs[Math.floor(Math.random() * state.pairs.length)];
+          state.questionMode = pair.q;
+          state.answerMode = pair.a;
+        }
+      } else if (!state.questions.length) return;
+      const item = currentItem(state);
+      if (!item) return;
+      if (state.mode === "regular") {
+        // Mixed runs change direction question by question.
+        state.questionMode = item.questionMode;
+        state.answerMode = item.answerMode;
+      }
       state.answered = false;
       if (!isRetry) {
         state.currentAttempts = [];
@@ -3367,10 +3525,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         state.retryCurrent = false;
       }
 
-      document.getElementById(`question-number-${exerciseId}`).textContent =
-        `Question ${state.index + 1} / ${state.questions.length}${isRetry ? " · retry" : ""}`;
+      // A regular run counts questions, because it knows how many there are. A
+      // spaced one counts words off instead: the questions are however many it
+      // takes, and what is actually being got through is the batch.
+      const stats = state.mode === "spaced" ? state.session.stats() : null;
+      document.getElementById(`question-number-${exerciseId}`).textContent = stats
+        ? `${stats.retired} of ${stats.total} words done · ${stats.live} to go · question ${stats.asked}`
+        : `Question ${state.index + 1} / ${state.questions.length}${isRetry ? " · retry" : ""}`;
       document.getElementById(`score-${exerciseId}`).textContent = `Score: ${state.score}`;
-      const percent = (state.index / state.questions.length) * 100;
+      const percent = stats
+        ? (stats.retired / stats.total) * 100
+        : (state.index / state.questions.length) * 100;
       const bar = document.getElementById(`progress-${exerciseId}`);
       bar.style.width = `${percent}%`;
       bar.parentElement.setAttribute("aria-valuenow", String(Math.round(percent)));
@@ -3434,7 +3599,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     function answer(exerciseId, userAnswer) {
       const state = STATES.get(exerciseId);
       if (!state || state.answered || state.finished) return;
-      const item = state.questions[state.index];
+      const item = currentItem(state);
+      if (!item) return;
       const correct = isCorrect(state.pool, item, state.questionMode, state.answerMode, userAnswer);
       const feedback = document.getElementById(`feedback-${exerciseId}`);
       state.answered = true;
@@ -3458,16 +3624,91 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         }
       }
 
+      if (state.mode === "spaced") state.pending = correct;
+
       document.getElementById(`score-${exerciseId}`).textContent = `Score: ${state.score}`;
       const input = document.getElementById(`input-${exerciseId}`);
       input.readOnly = true;
       document.getElementById(`check-${exerciseId}`).disabled = true;
       const next = document.querySelector(`[data-next="${exerciseId}"]`);
-      next.textContent = state.retryCurrent
-        ? "Retry question"
-        : (state.index === state.questions.length - 1 ? "Finish" : "Next");
+      // In a spaced run the last question is the one that takes the last word
+      // off the top, which is knowable a moment before the ladder is told.
+      const lastOne = state.mode === "spaced"
+        ? correct && state.session.stats().live === 1 && state.card.box + 1 >= SPACED_RUNGS
+        : state.index === state.questions.length - 1;
+      next.textContent = state.retryCurrent ? "Retry question" : (lastOne ? "Finish" : "Next");
       next.classList.remove("hidden");
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
+    }
+
+    // What a word is worth once the run is done with it. Clean on a day of its
+    // own is the top rung, clean for the first time — or twice in one sitting —
+    // is the middle one, and anything you had to fish for is the bottom.
+    function starEarned(clean, lastCleanDay, stamp) {
+      if (!clean) return 1;
+      return lastCleanDay && lastCleanDay !== stamp ? MAX_STAR : 2;
+    }
+
+    // And where that leaves the star it already had. Three rules:
+    //
+    //   a run may only raise a star on the strength of an answer given in
+    //     Korean, since the higher rungs are meant to mean production;
+    //   only a miss can take a star down, and it takes it down one rung rather
+    //     than resetting it — carrying a three-star word clean a second time in
+    //     one evening proves less than the third star did, but it disproves
+    //     nothing, and must not cost the word anything;
+    //   a star set by hand is left exactly where it was put.
+    function starAfter(level, earned, options) {
+      if (earned > level) return options.produced ? earned : level;
+      if (earned === 1 && level > 1) return options.manual ? level : level - 1;
+      return level;
+    }
+
+    // Writing what a finished card is worth to the word's star. `clean` is the
+    // run's verdict: a word it never had to ask twice.
+    function settleStar(state, card, clean) {
+      const id = card.item.id;
+      const level = ratingOf(id);
+      const stamp = today();
+      const earned = starEarned(clean, cleanDayOf(id), stamp);
+      const next = starAfter(level, earned, { produced: card.produced, manual: isManual(id) });
+
+      if (clean) state.stars.clean += 1;
+      if (next > level) state.stars.raised += 1;
+      if (next < level) state.stars.lowered += 1;
+      setRating(id, next, {
+        cleanDay: clean ? stamp : "",
+        manual: next === level ? undefined : false
+      });
+    }
+
+    // The words a run never got to the top of the ladder — because the timer
+    // went, because it was ended early, or because it ran to its ceiling. A
+    // word that was asked and missed and never came good is exactly the kind
+    // the stars are supposed to catch, so it is settled here rather than being
+    // let off for the run having stopped underneath it. A word that was never
+    // asked at all is left alone.
+    function settleUnfinished(state) {
+      state.session.cards.forEach(card => {
+        if (card.retired || !card.seen || !card.missed) return;
+        settleStar(state, card, false);
+      });
+    }
+
+    // Carrying the card up or down the ladder, and — when it comes off the top
+    // — writing what the run found to the word's stars.
+    //
+    // Only an answer given in Korean can raise a star. Reading 사람 and typing
+    // "person" is a different thing from being asked for the word and producing
+    // it, and the higher rungs are meant to mean the second. A miss in any
+    // direction can still bring a star down.
+    function gradeCard(state, correct) {
+      const card = state.card;
+      state.pending = null;
+      if (!card || card.retired) return;
+      if (correct && state.answerMode === "korean") card.produced = true;
+      const outcome = state.session.grade(card, correct);
+      if (outcome.retired) settleStar(state, card, card.missed === 0);
     }
 
     // A typed answer can be right in a way the checker cannot see: another
@@ -3481,13 +3722,16 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       if (state.retryCurrent) {
         // The word was on its way back round, so no result was recorded yet.
         state.retryCurrent = false;
-        pushResult(state, state.questions[state.index], attempt ? attempt.userAnswer : "", true, false);
+        pushResult(state, currentItem(state), attempt ? attempt.userAnswer : "", true, false);
       }
       const result = state.results[state.results.length - 1];
       if (result) {
         result.correct = true;
         result.selfMarked = true;
       }
+      // The ladder has not been told anything yet, so it hears the corrected
+      // verdict rather than the checker's.
+      if (state.mode === "spaced") state.pending = true;
       state.score += 1;
       document.getElementById(`score-${exerciseId}`).textContent = `Score: ${state.score}`;
       advance(exerciseId);
@@ -3497,6 +3741,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const state = STATES.get(exerciseId);
       if (!state) return;
       if (state.retryCurrent) { showQuestion(exerciseId, true); return; }
+      // A spaced run ends when the queue does, which showQuestion finds out by
+      // asking for a card and being handed nothing.
+      if (state.mode === "spaced") {
+        if (state.pending !== null) gradeCard(state, state.pending);
+        showQuestion(exerciseId);
+        return;
+      }
       if (state.index >= state.questions.length - 1) { finish(exerciseId, "Completed"); return; }
       state.index += 1;
       showQuestion(exerciseId);
@@ -3505,9 +3756,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     function finish(exerciseId, reason) {
       const state = STATES.get(exerciseId);
       if (!state || state.finished) return;
+      // A question answered and never left — the timer ran out on the feedback,
+      // or the run was ended there — still counts on the ladder.
+      if (state.mode === "spaced" && state.pending !== null) gradeCard(state, state.pending);
+      if (state.mode === "spaced") settleUnfinished(state);
       // A word still mid-retry when the timer runs out counts as missed.
       if (state.retryCurrent && state.currentAttempts.length) {
-        const item = state.questions[state.index];
+        const item = currentItem(state);
         pushResult(state, item, state.currentAttempts[state.currentAttempts.length - 1].userAnswer, false, false);
         state.retryCurrent = false;
       }
@@ -3528,9 +3783,30 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       document.getElementById(`finish-kicker-${exerciseId}`).textContent =
         reason === "Completed" ? "Exercise complete" : reason;
       document.getElementById(`score-${exerciseId}`).textContent = answered ? `${percent}%` : "—";
+      const stats = state.mode === "spaced" ? state.session.stats() : null;
+      const tail = stats
+        ? `${stats.retired} of ${stats.total} words carried through in ${stats.asked} question${stats.asked === 1 ? "" : "s"} · ${directionLabel(state)}`
+        : `${answered} of ${state.questions.length} questions completed · ${directionLabel(state)}`;
       document.getElementById(`final-score-${exerciseId}`).innerHTML = answered
-        ? `First-try score <strong>${state.score} / ${answered}</strong><span class="finish-sub">${answered} of ${state.questions.length} questions completed · ${directionLabel(state)}</span>`
+        ? `First-try score <strong>${state.score} / ${answered}</strong><span class="finish-sub">${esc(tail)}</span>`
         : "No questions were answered.";
+
+      // What the run wrote to the tables above, said plainly, because a star
+      // moving on its own is the sort of thing a page should own up to.
+      const starNote = document.getElementById(`stars-${exerciseId}`);
+      if (state.mode === "spaced" && stats) {
+        const moved = [];
+        if (state.stars.raised) moved.push(`${state.stars.raised} raised`);
+        if (state.stars.lowered) moved.push(`${state.stars.lowered} lowered`);
+        starNote.classList.remove("hidden");
+        starNote.innerHTML = stats.asked
+          ? `<strong>Stars</strong> — ${state.stars.clean} of ${stats.total} carried clean · ${moved.length ? esc(moved.join(", ")) : "nothing moved"}. Only an answer given in Korean can raise a star; only a miss can lower one, by a rung; a star you set by hand stays where you put it.`
+          : "<strong>Stars</strong> — nothing was asked, so nothing moved.";
+        paintAllRatings(document.getElementById("referenceTables"));
+      } else {
+        starNote.classList.add("hidden");
+        starNote.innerHTML = "";
+      }
 
       renderExport(exerciseId, state);
       document.getElementById(`review-${exerciseId}`).innerHTML = answered ? `
