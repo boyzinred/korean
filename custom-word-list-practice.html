@@ -982,13 +982,17 @@ th {
 .exercise-menu p { margin: 0; opacity: .82; }
 .exercise-menu-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
-.exercise-menu label {
+.exercise-menu-grid label > select,
+.exercise-menu-grid label > input { width: 100%; height: 56px; min-width: 0; }
+.exercise-menu-grid .wide { grid-column: span 2; }
+.exercise-menu-grid label {
   display: grid;
+  grid-template-rows: auto 56px;
   gap: 7px;
-  align-content: space-between;
+  align-content: end;
   font-size: .76rem;
   font-weight: 800;
   letter-spacing: .07em;
@@ -1032,8 +1036,12 @@ th {
   border-radius: var(--radius-md);
   font-weight: 800;
 }
+@media (max-width: 1000px) {
+  .exercise-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 680px) {
   .exercise-menu-grid { grid-template-columns: 1fr; }
+  .exercise-menu-grid .wide { grid-column: span 1; }
   .exercise-menu-actions,
   .runtime-bar { align-items: stretch; flex-direction: column; }
   .exercise-menu-actions .btn,
@@ -1041,8 +1049,7 @@ th {
   .end-early-btn { width: 100%; }
 }
 
-.exercise-option,
-.master-section-option {
+.exercise-option {
   display: flex !important;
   align-items: center;
   gap: 10px;
@@ -1056,8 +1063,7 @@ th {
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
-.exercise-option input,
-.master-section-option input {
+.exercise-option input {
   width: 20px;
   min-height: 20px;
   height: 20px;
@@ -1065,33 +1071,70 @@ th {
   margin: 0;
   padding: 0;
 }
-.master-section-picker {
+.exercise-option small { display: block; font-weight: 600; opacity: .74; }
+.exercise-option input { accent-color: var(--secondary); }
+.option-stack { display: grid; gap: 8px; }
+.lang-picks {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.group-picker {
+  min-width: 0;
+  margin: 0;
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 }
-.master-section-picker legend {
+.group-picker legend {
   padding: 0 8px;
   font-size: .76rem;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.master-section-grid {
+.group-picker .menu-note {
+  margin: 4px 0 0;
+  font-size: .84rem;
+  font-weight: 800;
+  opacity: .78;
+}
+.group-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-top: 8px;
 }
-.master-section-actions {
+/* Seventeen parts of speech and twenty-one topics would run to a dozen rows
+   at two across, so the long lists fill the width instead. */
+.group-grid.many { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.group-grid.days { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+/* The column reader is two fields and then three, so its rows are sized to
+   what they hold rather than to the four-across grid below them. */
+.exercise-menu-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.exercise-menu-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.group-picker > .exercise-menu-grid,
+.group-picker > .menu-summary { margin-top: 12px; }
+.group-picker .paste-box { margin-top: 8px; }
+.group-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
-.master-section-actions .btn {
+.group-actions .btn {
   min-height: 40px;
   width: auto;
+  padding: 0 14px;
+  font-size: .78rem;
+}
+.group-actions .ref-filter { flex: 0 0 88px; min-height: 40px; }
+.menu-note {
+  margin: 0;
+  font-size: .84rem;
+  font-weight: 800;
+  opacity: .78;
 }
 .menu-error {
   margin-top: 8px !important;
@@ -1099,8 +1142,9 @@ th {
   font-weight: 800;
 }
 @media (max-width: 680px) {
-  .master-section-grid { grid-template-columns: 1fr; }
-  .master-section-actions .btn { width: 100%; }
+  .group-grid, .group-grid.many { grid-template-columns: 1fr; }
+  .exercise-menu-grid.two, .exercise-menu-grid.three { grid-template-columns: 1fr; }
+  .group-grid.days { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
 }
 
 
@@ -1122,48 +1166,6 @@ th {
   font-weight: 800;
 }
 .stat-chip strong { font-size: 1.05rem; }
-
-/* Checkbox pickers: parts of speech, topics, and the 40 study days. */
-.picker { display: grid; gap: 10px; }
-.picker-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.picker-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.picker-actions .btn { min-height: 38px; padding: 0 12px; font-size: .78rem; }
-.option-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 8px;
-}
-.option-grid.days { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
-.option {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 12px;
-  color: var(--surface-text);
-  background: var(--surface-muted);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  font-size: .8rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: none;
-  cursor: pointer;
-  transition: var(--transition);
-}
-.option:hover { border-color: var(--primary); }
-.option:has(input:checked) {
-  color: #192B5D;
-  background: var(--primary);
-  border-color: var(--primary);
-}
-.option input { width: 1.1rem; height: 1.1rem; margin: 0; flex: none; accent-color: var(--secondary); }
-.option .option-count { margin-left: auto; opacity: .7; font-size: .72rem; font-variant-numeric: tabular-nums; }
 
 /* Free-text paste box for the custom exercise. */
 .paste-box {
@@ -1303,10 +1305,6 @@ th {
   text-transform: uppercase;
 }
 
-@media (max-width: 680px) {
-  .option-grid { grid-template-columns: 1fr; }
-  .option-grid.days { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
-}
 </style>
 <body id="top">
   <header class="site-header">
@@ -1561,29 +1559,31 @@ th {
         title: "Paste Your Own List",
         blurb: "Paste a word list from anywhere — a missed-words export from a vocabulary page, a page of your notes, a column out of a spreadsheet — then tell the page how to read it: which character separates the columns, and what each column holds. Bullets, numbering, and lines starting with # are ignored, so a missed-words export pastes in as-is.",
         picker: () => `
-          <div class="picker">
-            <div class="picker-head">
-              <span class="control-label">Your word list</span>
-              <div class="picker-actions">
-                <button class="btn secondary" type="button" id="custom-clear">Clear</button>
-              </div>
-            </div>
+          <fieldset class="group-picker">
+            <legend>Your word list</legend>
+            <label class="sr-only" for="custom-input">Word list</label>
             <textarea class="paste-box" id="custom-input" spellcheck="false" placeholder="to be absurd, preposterous / hoang-dang-ha-da / 황당하다&#10;to steal / hum-chi-da / 훔치다&#10;ventilation / 환기"></textarea>
-          </div>
-          <div class="picker">
-            <span class="control-label">How to read the columns</span>
-            <div class="exercise-menu-grid">
+            <div class="group-actions">
+              <button class="btn secondary" type="button" id="custom-clear">Clear</button>
+            </div>
+          </fieldset>
+          <fieldset class="group-picker">
+            <legend>How to read the columns</legend>
+            <p class="menu-note">Auto-detect reads the columns itself. Pick a separator by hand and the column boxes come alive.</p>
+            <div class="exercise-menu-grid two">
               <label>Column separator<select id="custom-sep">
                 ${SEPARATORS.map(sep => `<option value="${esc(sep.key)}">${esc(sep.label)}</option>`).join("")}
               </select></label>
-              <label>Other separator<small class="menu-count-note">Used when the separator is set to Other</small><input id="custom-sep-other" type="text" maxlength="4" value="" placeholder="e.g. =" disabled></label>
+              <label><span>Other separator <small class="menu-count-note">when set to Other</small></span><input id="custom-sep-other" type="text" maxlength="4" value="" placeholder="e.g. =" disabled></label>
+            </div>
+            <div class="exercise-menu-grid three">
               ${[1, 2, 3].map(n => `
                 <label>Column ${n}<select id="custom-col${n}" disabled>
                   ${COLUMN_FIELDS.map(field => `<option value="${esc(field.key)}"${field.key === CUSTOM_DEFAULT_COLUMNS[n - 1] ? " selected" : ""}>${esc(field.label)}</option>`).join("")}
                 </select></label>`).join("")}
             </div>
             <div class="menu-summary" id="custom-preview"></div>
-          </div>`,
+          </fieldset>`,
         select: () => parsedCustom().words,
         emptyMessage: "Paste at least one line containing a Korean word.",
         onRender: () => {
@@ -1826,6 +1826,22 @@ th {
     // goes back to setup.
     const STATES = new Map();
 
+    // One language per side, picked from rows the way the reading pages pick
+    // theirs. Radios rather than boxes: this page asks each word one way.
+    function langBlock(exerciseId, side, label, defaultKey) {
+      return `
+        <fieldset class="group-picker">
+          <legend>${esc(label)}</legend>
+          <div class="group-grid">
+            ${MODES.map(mode => `
+              <label class="exercise-option">
+                <input type="radio" name="menu-${side}-${exerciseId}" value="${mode.key}"${mode.key === defaultKey ? " checked" : ""}>
+                <span>${mode.label}</span>
+              </label>`).join("")}
+          </div>
+        </fieldset>`;
+    }
+
     function menuMarkup(exercise) {
       const id = exercise.id;
       return `
@@ -1833,13 +1849,20 @@ th {
           <h4>Set up the exercise</h4>
           <p>${esc(exercise.blurb)}</p>
           ${exercise.picker()}
-          <div class="exercise-menu-grid">
-            <label>Question language<select id="menu-question-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "english" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
-            <label>Answer language<select id="menu-answer-${id}">${MODES.map(mode => `<option value="${mode.key}"${mode.key === "korean" ? " selected" : ""}>${mode.label}</option>`).join("")}</select></label>
+          <div class="lang-picks">
+            ${langBlock(id, "question", "Question shows", "english")}
+            ${langBlock(id, "answer", "Answer in", "korean")}
+          </div>
+          <div class="exercise-menu-grid three">
             <label>Repetitions<select id="menu-multiplier-${id}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}× each word</option>`).join("")}</select></label>
-            <label>Word limit<small class="menu-count-note">0 keeps every selected word</small><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
-            <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
-            <label style="align-content: end;"><span style="display: flex; align-items: center; gap: 9px; text-transform: none; letter-spacing: 0; font-size: .84rem;"><input id="menu-repeat-${id}" type="checkbox" checked style="width: 1.1rem; height: 1.1rem;">Retry a word until it is right</span></label>
+            <label><span>Word limit <small class="menu-count-note">0 keeps all</small></span><input id="menu-cap-${id}" type="number" min="0" step="5" value="0"></label>
+            <label><span>Timer, minutes <small class="menu-count-note">0 = untimed</small></span><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
+          </div>
+          <div class="option-stack">
+            <label class="exercise-option">
+              <input id="menu-repeat-${id}" type="checkbox" checked>
+              <span>Retry a word until it is right<small>A miss comes back, answer hidden, until you get it. The score still counts the first try.</small></span>
+            </label>
           </div>
           <div class="menu-summary" id="menu-count-${id}"></div>
           <p class="menu-error hidden" id="menu-error-${id}">${esc(exercise.emptyMessage)}</p>
@@ -2024,8 +2047,8 @@ th {
       for (let round = 0; round < multiplier; round++) words.forEach(word => pool.push(word));
 
       // The modes decide what a question looks like, so the ordering needs them.
-      const questionMode = document.getElementById(`menu-question-${exerciseId}`).value;
-      const answerMode = document.getElementById(`menu-answer-${exerciseId}`).value;
+      const questionMode = document.querySelector(`input[name="menu-question-${exerciseId}"]:checked`).value;
+      const answerMode = document.querySelector(`input[name="menu-answer-${exerciseId}"]:checked`).value;
 
       // Only this exercise's previous run is discarded; the others keep theirs.
       clearTimer(STATES.get(exerciseId));
