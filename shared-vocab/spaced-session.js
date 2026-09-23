@@ -27,7 +27,19 @@
 
     session.next()              -> a card, or null when the run is over
     session.grade(card, true)   -> { retired, box }
-    session.stats()             -> { total, retired, live, asked, cap }
+    session.stats()             -> { total, retired, live, asked, cap,
+                                     climbed, needed, started, nearly }
+
+  climbed and needed are the run measured in rungs rather than in words, which
+  is the only honest way to show how far through it you are. Words retire in a
+  clump near the end — every card climbs at much the same rate, so a fifty-word
+  run finishes its first word around question sixty and its last ten in the
+  final twenty — and a bar drawn on retirements alone sits at nothing for a
+  third of the run while the work is plainly being done.
+
+  started and nearly split the words still in the run: how many have climbed at
+  all, and how many are one right answer from leaving. Between them they give a
+  page something that moves on the second question rather than on the sixtieth.
 
   A card
   ------
@@ -85,6 +97,7 @@
       /* A card never starts on the rung that would retire it unasked: a word
          the page already considers known still has to be answered once. */
       box: Math.max(0, Math.min(retireAt - 1, Number(entry.box) || 0)),
+      from: Math.max(0, Math.min(retireAt - 1, Number(entry.box) || 0)),
       /* Every card starts already waiting, one question apart, rather than all
          at zero. That puts the whole run on one timeline: a word missed at
          question seven comes back at question nine, ahead of the words that
@@ -168,12 +181,30 @@
 
     function stats() {
       const alive = live();
+      let climbed = 0;
+      let needed = 0;
+      let started = 0;
+      let nearly = 0;
+      cards.forEach(card => {
+        needed += retireAt - card.from;
+        /* A card that slipped back below where it started has climbed nothing,
+           rather than owing the run a negative amount of work. */
+        climbed += Math.max(0, Math.min(retireAt, card.box) - card.from);
+      });
+      alive.forEach(card => {
+        if (card.box >= retireAt - 1) nearly += 1;
+        else if (card.box > card.from) started += 1;
+      });
       return {
         total: cards.length,
         retired: cards.length - alive.length,
         live: alive.length,
         asked,
-        cap
+        cap,
+        climbed,
+        needed,
+        started,
+        nearly
       };
     }
 
@@ -182,6 +213,7 @@
     function shortestRun() {
       return cards.reduce((sum, card) => sum + (retireAt - card.box), 0);
     }
+
 
     return { cards, next, grade, stats, shortestRun };
   }

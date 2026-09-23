@@ -3526,15 +3526,24 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       }
 
       // A regular run counts questions, because it knows how many there are. A
-      // spaced one counts words off instead: the questions are however many it
-      // takes, and what is actually being got through is the batch.
+      // spaced one has no total to count towards, so it says where it has got
+      // to: the question it is on, how many words are finished with, and how
+      // many are one right answer from being finished with.
+      //
+      // The bar behind it is drawn on rungs rather than on words. Words retire
+      // in a clump near the end — every card climbs at much the same rate — so
+      // a bar drawn on retirements sits at nothing through the first third of a
+      // run and then fills in a rush, which reads as a broken bar rather than
+      // as a long climb.
       const stats = state.mode === "spaced" ? state.session.stats() : null;
       document.getElementById(`question-number-${exerciseId}`).textContent = stats
-        ? `${stats.retired} of ${stats.total} words done · ${stats.live} to go · question ${stats.asked}`
+        ? `Question ${stats.asked} · ${stats.retired} of ${stats.total} words done`
+          + (stats.nearly ? ` · ${stats.nearly} one answer away` : "")
+          + (stats.started ? ` · ${stats.started} under way` : "")
         : `Question ${state.index + 1} / ${state.questions.length}${isRetry ? " · retry" : ""}`;
       document.getElementById(`score-${exerciseId}`).textContent = `Score: ${state.score}`;
       const percent = stats
-        ? (stats.retired / stats.total) * 100
+        ? (stats.needed ? (stats.climbed / stats.needed) * 100 : 100)
         : (state.index / state.questions.length) * 100;
       const bar = document.getElementById(`progress-${exerciseId}`);
       bar.style.width = `${percent}%`;
