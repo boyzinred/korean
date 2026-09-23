@@ -1553,6 +1553,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 /* The mix sliders. One row per ticked day, saying how much of the run that day
    is to fill — the number on the right is the share it works out to once every
    other slider is taken into account, so the column always adds up to 100%. */
+/* The note under the mode select: one line for the regular run, a short list
+   for the spaced one, because four rules read as four rules and not as a
+   paragraph to wade through. */
+.mode-note ul {
+  margin: 4px 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 3px;
+}
+.mode-note li { line-height: 1.5; }
+
 .mix-grid { display: grid; gap: 8px; }
 .mix-row {
   display: grid;
@@ -1982,7 +1993,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
-  <script src="./shared-vocab/spaced-session.js?v=1.0.0"></script>
+  <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
   <script>
@@ -3156,7 +3167,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <label>Timer in minutes<small class="menu-count-note">0 = untimed</small><input id="menu-timer-${id}" type="number" min="0" step="0.5" value="0"></label>
             <label style="align-content: end;"><span style="display: flex; align-items: center; gap: 9px; text-transform: none; letter-spacing: 0; font-size: .84rem;"><input id="menu-repeat-${id}" type="checkbox" checked style="width: 1.1rem; height: 1.1rem;">Retry a word until it is right</span></label>
           </div>
-          <p class="menu-summary" id="menu-mode-note-${id}"></p>
+          <div class="menu-summary mode-note" id="menu-mode-note-${id}"></div>
           <div class="menu-summary" id="menu-count-${id}"></div>
           <p class="menu-error hidden" id="menu-error-${id}">${esc(exercise.emptyMessage)}</p>
           <div class="exercise-menu-actions">
@@ -3267,8 +3278,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         control.disabled = spaced;
         control.closest("label").style.opacity = spaced ? ".45" : "";
       });
-      note.textContent = spaced
-        ? "A word leaves the run once you have answered it right three times, and each right answer sends it further back in the queue. A miss drops it a rung and brings it round sooner. Stars follow what the run finds: one for a word you got there in the end, two for one you never missed, three for one you carried clean on a later day than the last time. Repetitions and the retry switch are the regular run's, so they sit this one out."
+      note.innerHTML = spaced
+        ? `<ul>
+            <li>Three right answers and a word leaves the run; each one sends it further back in the queue.</li>
+            <li>A miss drops it a rung and brings it round sooner.</li>
+            <li>Stars: ★ got there in the end · ★★ never missed · ★★★ clean on a later day than the last.</li>
+            <li>Only an answer in Korean can raise a star. Repetitions and the retry switch sit this one out.</li>
+          </ul>`
         : "Every word is asked the same number of times, in the order the run shuffled them into. Nothing is written to the stars.";
     }
 
@@ -3650,37 +3666,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
     }
 
-    // What a word is worth once the run is done with it. Clean on a day of its
-    // own is the top rung, clean for the first time — or twice in one sitting —
-    // is the middle one, and anything you had to fish for is the bottom.
-    function starEarned(clean, lastCleanDay, stamp) {
-      if (!clean) return 1;
-      return lastCleanDay && lastCleanDay !== stamp ? MAX_STAR : 2;
-    }
-
-    // And where that leaves the star it already had. Three rules:
-    //
-    //   a run may only raise a star on the strength of an answer given in
-    //     Korean, since the higher rungs are meant to mean production;
-    //   only a miss can take a star down, and it takes it down one rung rather
-    //     than resetting it — carrying a three-star word clean a second time in
-    //     one evening proves less than the third star did, but it disproves
-    //     nothing, and must not cost the word anything;
-    //   a star set by hand is left exactly where it was put.
-    function starAfter(level, earned, options) {
-      if (earned > level) return options.produced ? earned : level;
-      if (earned === 1 && level > 1) return options.manual ? level : level - 1;
-      return level;
-    }
-
-    // Writing what a finished card is worth to the word's star. `clean` is the
+    // Writing what a finished card is worth to the word's star. What it is
+    // worth, and what that does to the star it has, are SpacedSession.stars —
+    // the same two rules the reading pages settle their runs with. `clean` is the
     // run's verdict: a word it never had to ask twice.
     function settleStar(state, card, clean) {
       const id = card.item.id;
       const level = ratingOf(id);
       const stamp = today();
-      const earned = starEarned(clean, cleanDayOf(id), stamp);
-      const next = starAfter(level, earned, { produced: card.produced, manual: isManual(id) });
+      const earned = window.SpacedSession.stars.earned(clean, cleanDayOf(id), stamp);
+      const next = window.SpacedSession.stars.after(level, earned,
+        { produced: card.produced, manual: isManual(id) });
 
       if (clean) state.stars.clean += 1;
       if (next > level) state.stars.raised += 1;

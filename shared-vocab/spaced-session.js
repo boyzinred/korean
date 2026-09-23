@@ -52,6 +52,18 @@
           word was carried clean
 
   Cards are plain objects and the page is free to hang its own fields on them.
+
+  The stars
+  ---------
+  A page decides for itself what a finished card is worth, but all three pages
+  that use this decide it the same way, so the two rules live here rather than
+  in three copies:
+
+    SpacedSession.stars.earned(clean, lastCleanDay, today)  -> 1, 2 or 3
+    SpacedSession.stars.after(level, earned, { produced, manual })  -> the level
+
+  What a page still owns is its own store: which word the card was, where the
+  rating is kept, and when it is written.
 */
 (function (global) {
   "use strict";
@@ -218,5 +230,37 @@
     return { cards, next, grade, stats, shortestRun };
   }
 
-  global.SpacedSession = { create };
+  /* What a word is worth once a run is done with it. Clean on a day of its own
+     is the top rung, clean for the first time — or twice in one sitting — is
+     the middle one, and anything that had to be fished for is the bottom. The
+     day is the only thing a run remembers about a word between sittings, and
+     the only thing an evening of cramming cannot fake. */
+  function starEarned(clean, lastCleanDay, stamp) {
+    if (!clean) return 1;
+    return lastCleanDay && lastCleanDay !== stamp ? STAR_RUNGS : 2;
+  }
+
+  /* And where that leaves the star the word already had. Three rules:
+
+       a run may only raise a star on the strength of an answer given in the
+         language being learnt, since the higher rungs are meant to mean
+         production rather than recognition;
+       only a miss can take a star down, and it takes it down one rung rather
+         than resetting it — carrying a three-star word clean a second time in
+         one evening proves less than the third star did, but it disproves
+         nothing, and must not cost the word anything;
+       a star set by hand is left exactly where it was put. */
+  function starAfter(level, earned, options) {
+    const settings = options || {};
+    if (earned > level) return settings.produced ? earned : level;
+    if (earned === 1 && level > 1) return settings.manual ? level : level - 1;
+    return level;
+  }
+
+  const STAR_RUNGS = 3;
+
+  global.SpacedSession = {
+    create,
+    stars: { earned: starEarned, after: starAfter, RUNGS: STAR_RUNGS }
+  };
 })(window);

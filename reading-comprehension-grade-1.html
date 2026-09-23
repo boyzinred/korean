@@ -572,7 +572,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 
 /* The star pill sits in the middle of its column, header and all, so a
    column of them reads as one line instead of a ragged left edge. */
-.familiarity-head, .familiarity-cell { min-width: 5.5rem; text-align: center; vertical-align: middle; }
+.familiarity-head, .familiarity-cell { min-width: 7rem; text-align: center; vertical-align: middle; }
 /* Same trick as the ＋ column: no line box in the cell, and the pill lines up
    on its middle rather than on a baseline the stars do not really have. */
 .familiarity-cell { line-height: 0; }
@@ -600,7 +600,9 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
 .familiarity-star:hover { transform: scale(1.12); }
 /* A rating lights the stars up to it: the first at one star, both at two. */
 .familiarity-stars[data-level="1"] .familiarity-star[data-level="1"],
-.familiarity-stars[data-level="2"] .familiarity-star { color: var(--accent); }
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="2"],
+.familiarity-stars[data-level="3"] .familiarity-star { color: var(--accent); }
 
 .lang-picks {
   display: grid;
@@ -958,6 +960,17 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
 /* The mix sliders. One row per ticked passage, saying how much of the run that
    passage is to fill — the number on the right is the share it works out to
    once every other slider is counted in, so the column always adds to 100%. */
+/* The note under the mode select: one line for the regular run, a short list
+   for the spaced one, because four rules read as four rules and not as a
+   paragraph to wade through. */
+.mode-note ul {
+  margin: 4px 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 3px;
+}
+.mode-note li { line-height: 1.5; }
+
 .mix-grid { display: grid; gap: 8px; margin-top: 8px; }
 .mix-row {
   display: grid;
@@ -1512,8 +1525,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                   <select class="menu-familiarity">
                     <option value="all" selected>All words</option>
                     <option value="unfamiliar">Unfamiliar words (no star)</option>
-                    <option value="learning">Learning words (one star)</option>
-                    <option value="familiar">Familiar words (two stars)</option>
+                    <option value="shaky">Shaky words (one star)</option>
+                    <option value="learning">Learning words (two stars)</option>
+                    <option value="familiar">Familiar words (three stars)</option>
+                  </select>
+                </label>
+                <label>How it repeats
+                  <select class="menu-run">
+                    <option value="regular" selected>Regular &mdash; a fixed number of times</option>
+                    <option value="spaced">Spaced &mdash; until each word sticks</option>
                   </select>
                 </label>
                 <label>Mode
@@ -1551,6 +1571,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                   </div>
                 </fieldset>
               </div>
+              <div class="wordbank-count mode-note vocab-mode-note"></div>
               <p class="wordbank-count">Tick one box on each side for a run that always goes the same way. Tick more than one and the run mixes directions, and every question says which script to answer in.</p>
 
               <label class="exercise-option" style="margin-top:12px;">
@@ -1939,6 +1960,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   <script src="./shared-vocab/reading-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/korean-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
+  <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
   <script>
   (() => {
@@ -3758,12 +3780,78 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     /* -----------------------------------------------------------------------
        Word bank: grouped tables, blurring, and star ratings
     ----------------------------------------------------------------------- */
-    const FAMILIARITY_KEY = "koreanReadingFamiliarity:v1";
+    /* V2 stores a record rather than a bare number, because a star now has to
+       say where it came from: the level, the day the word was last carried
+       through a spaced run without a miss, and whether a person set it by
+       hand. */
+    const FAMILIARITY_KEY = "koreanReadingFamiliarity:v2";
+    const FAMILIARITY_KEY_V1 = "koreanReadingFamiliarity:v1";
+    const MAX_STAR = 3;
     let familiarity = {};
     try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
+    /* V1 held one number per word on a two-star scale where two meant known.
+       Two becomes three here, so a word marked familiar stays familiar rather
+       than being silently demoted to the middle of a longer scale, and every
+       migrated rating counts as hand-set, because that is what it was. */
+    if (!Object.keys(familiarity).length) {
+      let legacy = {};
+      try { legacy = JSON.parse(localStorage.getItem(FAMILIARITY_KEY_V1) || "{}") || {}; } catch (_) { legacy = {}; }
+      Object.keys(legacy).forEach(id => {
+        const level = Math.min(3, Math.max(0, Number(legacy[id]) || 0));
+        if (level) familiarity[id] = { l: level >= 2 ? 3 : level, m: true };
+      });
+      if (Object.keys(familiarity).length) {
+        try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
+      }
+    }
     /* Two stars: one for a word that is coming along, two for one that is
        known. Ratings saved when the scale ran to three still load, clamped. */
-    function ratingOf(id) { return Math.min(2, Math.max(0, Number(familiarity[id]) || 0)); }
+    /* Three stars, and each one means something a run can establish rather
+       than something you assert:
+
+         ★     carried to the end of a spaced run, but missed on the way
+         ★★    carried clean — right every time it came round
+         ★★★   carried clean on a later day than the last clean run
+
+       Every rung can still be set by hand, and a hand-set star is never taken
+       down by a run — only stars a run awarded can fall. */
+    function entryOf(id) {
+      const held = familiarity[id];
+      if (!held || typeof held !== "object") {
+        return { l: Math.min(MAX_STAR, Math.max(0, Number(held) || 0)) };
+      }
+      return held;
+    }
+    function ratingOf(id) { return Math.min(MAX_STAR, Math.max(0, Number(entryOf(id).l) || 0)); }
+    /* The day the word was last carried clean, which is what the third star
+       waits for. Nothing else is stored against a word. */
+    const cleanDayOf = id => entryOf(id).d || "";
+    const isManual = id => Boolean(entryOf(id).m);
+
+    /* The one way a rating is written. `manual` marks a star a person chose,
+       and `cleanDay` is stamped by a spaced run that carried the word without
+       a miss. */
+    function setRating(id, level, options) {
+      const settings = options || {};
+      const safe = Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
+      const held = entryOf(id);
+      const day = settings.cleanDay || held.d || "";
+      if (!safe && !day) delete familiarity[id];
+      else {
+        const record = { l: safe };
+        if (day) record.d = day;
+        if (settings.manual !== undefined ? settings.manual : held.m) record.m = true;
+        familiarity[id] = record;
+      }
+      saveFamiliarity();
+    }
+
+    function todayStamp() {
+      const now = new Date();
+      return now.getFullYear() + "-"
+        + String(now.getMonth() + 1).padStart(2, "0") + "-"
+        + String(now.getDate()).padStart(2, "0");
+    }
 
     /* The rungs the Familiarity menus filter on, with the wording the empty
        notes use for each. */
@@ -3771,6 +3859,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       unfamiliar: { level: 0, adjective: "unstarred", phrase: "unstarred" },
       learning: { level: 1, adjective: "one-star", phrase: "at one star" },
       familiar: { level: 2, adjective: "two-star", phrase: "at two stars" }
+    };
+    /* The word bank runs to three stars now, and the grammar bank still runs
+       to two, so the vocabulary test filters on its own map rather than on the
+       one above. */
+    const WORD_STAR_FILTERS = {
+      unfamiliar: { level: 0, adjective: "unstarred", phrase: "unstarred" },
+      shaky: { level: 1, adjective: "one-star", phrase: "at one star" },
+      learning: { level: 2, adjective: "two-star", phrase: "at two stars" },
+      familiar: { level: 3, adjective: "three-star", phrase: "at three stars" }
     };
     function saveFamiliarity() {
       try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
@@ -4018,8 +4115,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group"'
           + ' aria-label="Familiarity for ' + esc(entry.ko) + '">'
           + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
-          + ' aria-label="Mark as coming along">★</button>'
+          + ' aria-label="Mark as shaky">★</button>'
           + '<button class="familiarity-star" type="button" data-level="2" aria-pressed="false"'
+          + ' aria-label="Mark as learning">★</button>'
+          + '<button class="familiarity-star" type="button" data-level="3" aria-pressed="false"'
           + ' aria-label="Mark as familiar">★</button>'
           + '</div></td></tr>';
 
@@ -4079,7 +4178,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
       /* ---- stars ----------------------------------------------------------- */
       function paintRating(group, level) {
-        const safe = Math.min(2, Math.max(0, Number(level) || 0));
+        const safe = Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
         group.dataset.level = String(safe);
         group.querySelectorAll(".familiarity-star").forEach(button =>
           button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
@@ -4098,7 +4197,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
          clears it once every word has both. Pressing it just does the thing and
          renames itself. */
       function starsFull(group) {
-        return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === 2);
+        return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === MAX_STAR);
       }
       function syncStarToggle(section) {
         const button = section.querySelector(".star-toggle");
@@ -4185,11 +4284,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
           if (!group) return;
           const filling = !starsFull(group);
-          group.words.forEach(entry => {
-            if (filling) familiarity[entry.id] = 2;
-            else delete familiarity[entry.id];
-          });
-          saveFamiliarity();
+          group.words.forEach(entry => setRating(entry.id, filling ? MAX_STAR : 0, { manual: true }));
           repaintRatings();
           return;
         }
@@ -4210,9 +4305,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           const group = star.closest(".familiarity-stars");
           const chosen = Number(star.dataset.level) || 0;
           const next = Number(group.dataset.level) === chosen ? 0 : chosen;
-          if (next) familiarity[group.dataset.wordId] = next;
-          else delete familiarity[group.dataset.wordId];
-          saveFamiliarity();
+          setRating(group.dataset.wordId, next, { manual: true });
           paintRating(group, next);
           syncStarToggles();
           return;
@@ -4305,6 +4398,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return {
         groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
         familiarity: $v(".menu-familiarity").value,
+        run: $v(".menu-run").value === "spaced" ? "spaced" : "regular",
         repeat: $v(".menu-repeat").checked,
         mode: $v(".menu-mode").value,
         passes: Math.max(1, Math.min(5, Number($v(".menu-passes").value) || 1)),
@@ -4405,6 +4499,79 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       setTimeout(() => { button.textContent = "Export as .md"; }, 1600);
     }
 
+    /* ---- the spaced run ---------------------------------------------------
+       A regular run asks every word a fixed number of times and writes nothing
+       down. A spaced one carries each word up a short ladder instead: three
+       right answers and it leaves the run, each one sending it further back in
+       the queue, and a miss dropping it a rung and bringing it round sooner.
+       The queue is shared-vocab/spaced-session.js; what a finished word is
+       worth to its stars is SpacedSession.stars, the same two rules the word
+       bank settles its runs with.
+
+       The star a word already carries is where it joins the ladder, so a run
+       over words you know is one clean pass and a run over new ones is three.
+    ----------------------------------------------------------------------- */
+    const SPACED_RUNGS = 3;
+    const startingBox = entry => Math.max(0, Math.min(SPACED_RUNGS - 1, ratingOf(entry.id) - 1));
+    const shortestSpacedRun = words =>
+      words.reduce((sum, entry) => sum + (SPACED_RUNGS - startingBox(entry)), 0);
+
+    /* The next card, pushed onto the run's parallel arrays, so that everything
+       reading them by index — the prompt, the direction, the result, the
+       review — goes on working exactly as it does in a regular run. */
+    function queueSpacedQuestion() {
+      const card = vocabState.session.next();
+      if (!card) return false;
+      vocabState.card = card;
+      vocabState.words.push(card.item);
+      vocabState.directions.push(pickDirection(vocabState.settings));
+      vocabState.results.push(null);
+      vocabState.attempts.push(0);
+      vocabState.i = vocabState.words.length - 1;
+      return true;
+    }
+
+    /* What a finished word is worth, written to its star. Only an answer given
+       in Korean can raise one — reading 사람 and typing "person" is a different
+       thing from being asked for the word and producing it — while a miss in
+       any direction can bring one down. */
+    function settleVocabStar(card, clean) {
+      const id = card.item.id;
+      const level = ratingOf(id);
+      const stamp = todayStamp();
+      const earned = window.SpacedSession.stars.earned(clean, cleanDayOf(id), stamp);
+      const next = window.SpacedSession.stars.after(level, earned,
+        { produced: card.produced, manual: isManual(id) });
+
+      if (clean) vocabState.stars.clean += 1;
+      if (next > level) vocabState.stars.raised += 1;
+      if (next < level) vocabState.stars.lowered += 1;
+      setRating(id, next, {
+        cleanDay: clean ? stamp : "",
+        manual: next === level ? undefined : false
+      });
+    }
+
+    function gradeSpacedCard(correct) {
+      const card = vocabState.card;
+      vocabState.pending = null;
+      if (!card || card.retired) return;
+      if (correct && vocabState.directions[vocabState.i].answerLang === "ko") card.produced = true;
+      const outcome = vocabState.session.grade(card, correct);
+      if (outcome.retired) settleVocabStar(card, card.missed === 0);
+    }
+
+    /* The words a run never got to the top of the ladder, because it was ended
+       early or ran to its ceiling. A word that was asked and missed and never
+       came good is exactly the kind the stars are for, so ending a run early is
+       not a way out of the demotion. A word never asked at all is left alone. */
+    function settleUnfinishedVocab() {
+      vocabState.session.cards.forEach(card => {
+        if (card.retired || !card.seen || !card.missed) return;
+        settleVocabStar(card, false);
+      });
+    }
+
     function vocabPool(settings) {
       const chosen = new Set(settings.groups);
       const ids = new Set();
@@ -4417,30 +4584,57 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         if (settings.familiarity === "all") return true;
         /* Each menu choice names one rung of the scale, so a half-known word
            is drilled on its own rather than with the words already known. */
-        return ratingOf(entry.id) === STAR_FILTERS[settings.familiarity].level;
+        return ratingOf(entry.id) === WORD_STAR_FILTERS[settings.familiarity].level;
       });
+    }
+
+    /* The repetitions box and the retry switch belong to the regular run: a
+       spaced run decides how often a word comes back, and asking a missed word
+       again on the spot is the opposite of spacing it. */
+    function paintVocabModeNote(settings) {
+      const spaced = settings.run === "spaced";
+      [$v(".menu-passes"), $v(".menu-repeat")].forEach(control => {
+        control.disabled = spaced;
+        control.closest("label").style.opacity = spaced ? ".45" : "";
+      });
+      $v(".vocab-mode-note").innerHTML = spaced
+        ? "<ul>"
+          + "<li>Three right answers and a word leaves the run; each one sends it further back in the queue.</li>"
+          + "<li>A miss drops it a rung and brings it round sooner.</li>"
+          + "<li>Stars: ★ got there in the end · ★★ never missed · ★★★ clean on a later day than the last.</li>"
+          + "<li>Only an answer in 한국어 can raise a star. Length and the retry switch sit this one out.</li>"
+          + "</ul>"
+        : "Every word is asked the same number of times, in a shuffled order. Nothing is written to the stars.";
     }
 
     function paintPoolNote() {
       const settings = readVocabSettings();
       const note = $v(".vocab-pool-note");
+      paintVocabModeNote(settings);
       if (!canPair(settings)) {
         note.innerHTML = '<span class="assistance-used">Tick a script on each side, and not the same one on both.</span>';
         return;
       }
-      const size = vocabPool(settings).length;
+      const pool = vocabPool(settings);
+      const size = pool.length;
       const mixed = settings.promptLangs.length > 1 || settings.answerLangs.length > 1;
+      /* A spaced run has no length until it is run, so the note quotes the
+         floor — what it costs with nothing going wrong — rather than a total it
+         cannot know. */
+      const length = settings.run === "spaced"
+        ? ", " + shortestSpacedRun(pool) + " questions at best, more for anything you miss"
+        : (settings.passes > 1
+            ? ", asked " + settings.passes + " times each — "
+              + plural(size * settings.passes, "question", "questions")
+            : "");
       note.textContent = size
         ? plural(size, "word", "words") + " in your selection"
-          + (settings.passes > 1
-              ? ", asked " + settings.passes + " times each — "
-                + plural(size * settings.passes, "question", "questions")
-              : "")
+          + length
           + ". " + directionLabel(settings) + "."
           + (mixed ? " Each question picks its own pair." : "")
         : settings.familiarity === "all"
           ? "No words match your selection yet."
-          : "No " + STAR_FILTERS[settings.familiarity].adjective
+          : "No " + WORD_STAR_FILTERS[settings.familiarity].adjective
             + " words in your selection yet.";
     }
 
@@ -4543,9 +4737,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         paintPoolNote();
         return;
       }
-      const picked = buildRun(pool, settings.passes);
+      const spaced = settings.run === "spaced";
+      const picked = spaced ? [] : buildRun(pool, settings.passes);
       vocabState = {
         settings,
+        run: settings.run,
         pool,
         words: picked,
         i: 0,
@@ -4558,6 +4754,22 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         directions: picked.map(() => pickDirection(settings)),
         results: picked.map(() => null)
       };
+      if (spaced) {
+        vocabState.session = window.SpacedSession.create({
+          items: pool.map(entry => ({ id: entry.id, item: entry, box: startingBox(entry) })),
+          retireAt: SPACED_RUNGS,
+          /* A ceiling for a night when nothing is going in. Ending the test is
+             the other way out. */
+          cap: Math.max(20, pool.length * 6)
+        });
+        vocabState.stars = { raised: 0, lowered: 0, clean: 0 };
+        vocabState.card = null;
+        /* The verdict waits until the question is left rather than landing the
+           moment it is answered, so Count as correct still has something to
+           correct. */
+        vocabState.pending = null;
+        if (!queueSpacedQuestion()) { paintPoolNote(); return; }
+      }
       $v(".exercise-menu").classList.add("hidden");
       $v(".finish").classList.add("hidden");
       $v(".live").classList.remove("hidden");
@@ -4581,13 +4793,27 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const direction = vocabState.directions[vocabState.i];
       vocabState.locked = false;
 
-      $v(".count").textContent = "Word " + (vocabState.i + 1) + " of " + vocabState.words.length;
+      /* A regular run counts questions, because it knows how many there are. A
+         spaced one has no total to count towards, so it says where it has got
+         to: the question it is on, how many words are finished with, and how
+         many are one right answer from being finished with. The bar behind it
+         is drawn on rungs climbed rather than on words retired — words retire
+         in a clump near the end, and a bar drawn on retirements sits at nothing
+         through the first third of a run and then fills in a rush. */
+      const stats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
+      $v(".count").textContent = stats
+        ? "Question " + stats.asked + " · " + stats.retired + " of " + stats.total + " words done"
+          + (stats.nearly ? " · " + stats.nearly + " one answer away" : "")
+          + (stats.started ? " · " + stats.started + " under way" : "")
+        : "Word " + (vocabState.i + 1) + " of " + vocabState.words.length;
       $v(".mode-label").textContent = entry.groupLabel;
       const progress = $v(".progress");
-      progress.firstElementChild.style.width =
-        Math.round((vocabState.i / vocabState.words.length) * 100) + "%";
-      progress.setAttribute("aria-valuemax", String(vocabState.words.length));
-      progress.setAttribute("aria-valuenow", String(vocabState.i));
+      const percent = stats
+        ? (stats.needed ? Math.round((stats.climbed / stats.needed) * 100) : 100)
+        : Math.round((vocabState.i / vocabState.words.length) * 100);
+      progress.firstElementChild.style.width = percent + "%";
+      progress.setAttribute("aria-valuemax", stats ? "100" : String(vocabState.words.length));
+      progress.setAttribute("aria-valuenow", String(stats ? percent : vocabState.i));
 
       /* The answer script is named on every question, because a mixed run can
          change it from one word to the next. */
@@ -4664,10 +4890,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         vocabState.results[vocabState.i].solved = true;
       }
 
+      /* The ladder is told when the question is left, not now, so that Count
+         as correct can still change the answer. */
+      if (vocabState.run === "spaced") vocabState.pending = correct;
+
       /* Asking a word again is only worth anything while the answer stays
          hidden, so a repeat run holds the card back — until the third miss,
-         when the word has clearly gone and staring at it is the way out. */
-      const retry = Boolean(settings.repeat) && !correct;
+         when the word has clearly gone and staring at it is the way out. A
+         spaced run never does this: it brings the word round by itself. */
+      const retry = Boolean(settings.repeat) && vocabState.run !== "spaced" && !correct;
       vocabState.retry = retry;
       const settle = correct || !retry || attempts >= 3;
       const shown = settle && !correct;
@@ -4719,6 +4950,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           result.correct = true;
           result.selfMarked = true;
           vocabState.retry = false;
+          /* The ladder has not been told anything yet, so it hears the
+             corrected verdict rather than the checker's. */
+          if (vocabState.run === "spaced") vocabState.pending = true;
           paintVocabScore();
           nextVocabQuestion();
         });
@@ -4748,6 +4982,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         showVocabQuestion();
         return;
       }
+      if (vocabState.run === "spaced") {
+        if (vocabState.pending !== null) gradeSpacedCard(vocabState.pending);
+        if (!queueSpacedQuestion()) { finishVocabTest(""); return; }
+        showVocabQuestion();
+        return;
+      }
       if (vocabState.i + 1 >= vocabState.words.length) {
         finishVocabTest("");
         return;
@@ -4757,8 +4997,15 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     }
 
     function finishVocabTest(note) {
+      /* A question answered and never left — the test was ended on the feedback
+         — still counts on the ladder, and so do the words it never finished. */
+      if (vocabState.run === "spaced") {
+        if (vocabState.pending !== null) gradeSpacedCard(vocabState.pending);
+        settleUnfinishedVocab();
+      }
       vocabState.finished = true;
       const total = vocabState.words.length;
+      const spacedStats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
       const answered = vocabState.results.filter(result => result !== null).length;
       const right = vocabState.results.filter(result => result && result.correct).length;
       const percent = total ? Math.round((right / total) * 100) : 0;
@@ -4775,9 +5022,26 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
             '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
             + '<span class="word-ro">' + esc(ReadingVocab.romanize(entry.ko)) + '</span>'
             + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
-          + '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
-          + 'Lower the stars on these ' + missed.length + '</button></div>'
+          /* A spaced run has already settled every star it is entitled to, so
+             offering to lower them again would take a rung twice. */
+          + (vocabState.run === "spaced" ? ""
+            : '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
+              + 'Lower the stars on these ' + missed.length + '</button></div>')
         : "<p>Nothing missed. 잘했어요!</p>";
+
+      /* What the run wrote to the tables above, said plainly, because a star
+         moving on its own is the sort of thing a page should own up to. */
+      const stats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
+      const moved = [];
+      if (stats && vocabState.stars.raised) moved.push(vocabState.stars.raised + " raised");
+      if (stats && vocabState.stars.lowered) moved.push(vocabState.stars.lowered + " lowered");
+      const starHtml = !stats ? ""
+        : '<p class="wordbank-count">' + (stats.asked
+          ? "<strong>Stars</strong> — " + vocabState.stars.clean + " of " + stats.total
+            + " carried clean · " + (moved.length ? moved.join(", ") : "nothing moved")
+            + ". Only an answer in 한국어 can raise a star; only a miss can lower one, by a rung;"
+            + " a star you set by hand stays where you put it."
+          : "<strong>Stars</strong> — nothing was asked, so nothing moved.") + "</p>";
 
       $v(".live").classList.add("hidden");
       const finishEl = $v(".finish");
@@ -4788,8 +5052,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
         + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
         + '<div class="summary-tile"><strong>' + answered + '</strong><small>Questions answered</small></div>'
+        + (spacedStats
+            ? '<div class="summary-tile"><strong>' + spacedStats.retired + " / " + spacedStats.total
+              + '</strong><small>Words carried through</small></div>'
+            : "")
         + '</div>'
         + '<div><h4>Words to review</h4>' + missedHtml + '</div>'
+        + starHtml
         + '<div class="finish-actions">'
         + '<button class="btn primary again" type="button">Test again</button>'
         + '<button class="btn secondary change-setup" type="button">Change setup</button>'
@@ -4800,12 +5069,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         markWeak.addEventListener("click", () => {
           /* A miss demotes rather than resets: two stars fall to one, one
              falls to none. */
-          missed.forEach(entry => {
-            const next = ratingOf(entry.id) - 1;
-            if (next > 0) familiarity[entry.id] = next;
-            else delete familiarity[entry.id];
-          });
-          saveFamiliarity();
+          missed.forEach(entry => setRating(entry.id, ratingOf(entry.id) - 1, { manual: true }));
           repaintRatings();
           markWeak.disabled = true;
           markWeak.textContent = "Stars lowered";
