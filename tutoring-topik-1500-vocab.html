@@ -1972,7 +1972,7 @@ th {
                   <div class="export-actions">
                     <button class="btn secondary" type="button" data-copy="${id}">Copy</button>
                     <button class="btn secondary" type="button" data-download="${id}">Download .md</button>
-                    <button class="btn positive" type="button" data-send="${id}">Send to paste practice</button>
+                    <button class="btn positive" type="button" data-send="${id}">Practice these on their own</button>
                   </div>
                 </div>
                 <textarea class="export-text" id="export-text-${id}" spellcheck="false" readonly></textarea>
@@ -2378,15 +2378,17 @@ th {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    // The paste exercise is its own page, so the export is parked under a key
-    // that page reads once on load.
+    // The paste exercise is its own page, so the export travels in the link
+    // itself, after the #, where it never leaves the browser. It is also parked
+    // under a key the page reads on load, but that is the fallback: a page
+    // opened from disk gets its own storage in some browsers, and the link
+    // works wherever the two pages are.
     const HANDOFF_KEY = "koreanCustomListHandoffV1";
 
     function sendToPastePractice(exerciseId) {
-      try {
-        localStorage.setItem(HANDOFF_KEY, document.getElementById(`export-text-${exerciseId}`).value);
-      } catch (_) {}
-      window.location.href = "./custom-word-list-practice.html";
+      const text = document.getElementById(`export-text-${exerciseId}`).value;
+      try { localStorage.setItem(HANDOFF_KEY, text); } catch (_) {}
+      window.location.href = "./custom-word-list-practice.html#paste=" + encodeURIComponent(text);
     }
 
     // ------------------------------------------------------------------ page

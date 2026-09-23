@@ -1820,7 +1820,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <p>No new words &mdash; the bank stops at day 27. This fortnight is two full passes over all 1358, then the leftovers. Use <em>Check range</em> for the blocks.</p>
             <p><strong>Days 28&ndash;32, pass one.</strong> Korean &rarr; English. One block a day: days 1&ndash;6, 7&ndash;11, 12&ndash;17, 18&ndash;22, 23&ndash;27. About 270 words each, 25 minutes on the timer.</p>
             <p><strong>Days 33&ndash;37, pass two.</strong> Same five blocks, but English &rarr; Korean. Harder, and the direction the writing paper needs.</p>
-            <p><strong>Days 38&ndash;40, the leftovers.</strong> Every run ends with a <em>Words to review</em> box holding what you missed. Press <strong>Send to paste practice</strong> and it carries them to the Paste Your Own List page, where you drill just those until a run comes back clean.</p>
+            <p><strong>Days 38&ndash;40, the leftovers.</strong> Every run ends with a <em>Words to review</em> box holding what you missed. Press <strong>Practice these on their own</strong> and it carries them to the Paste Your Own List page, where you drill just those until a run comes back clean.</p>
             <p><strong>Day 41, rehearsal.</strong> Tick <em>All</em> days, <em>Word limit</em> 100, timer 20, Korean &rarr; English. A random hundred out of the whole bank is a fair read on where you actually stand.</p>
             <p>Two weeks is the shortest tail worth running: it is what gives the words you met on day 27 a fortnight-wide gap before the exam. Ending at day 41 leaves about two and a half weeks of slack in a two-month run.</p>
           </details>
@@ -3196,7 +3196,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
                   <div class="export-actions">
                     <button class="btn secondary" type="button" data-copy="${id}">Copy</button>
                     <button class="btn secondary" type="button" data-download="${id}">Download .md</button>
-                    <button class="btn positive" type="button" data-send="${id}">Send to paste practice</button>
+                    <button class="btn positive" type="button" data-send="${id}">Practice these on their own</button>
                   </div>
                 </div>
                 <textarea class="export-text" id="export-text-${id}" spellcheck="false" readonly></textarea>
@@ -3908,15 +3908,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       setTimeout(() => { button.textContent = "Export as .md"; }, 1600);
     }
 
-    // The paste exercise is its own page, so the export is parked under a key
-    // that page reads once on load.
+    // The paste exercise is its own page, so the export travels in the link
+    // itself, after the #, where it never leaves the browser. It is also parked
+    // under a key the page reads on load, but that is the fallback: a page
+    // opened from disk gets its own storage in some browsers, and the link
+    // works wherever the two pages are.
     const HANDOFF_KEY = "koreanCustomListHandoffV1";
 
     function sendToPastePractice(exerciseId) {
-      try {
-        localStorage.setItem(HANDOFF_KEY, document.getElementById(`export-text-${exerciseId}`).value);
-      } catch (_) {}
-      window.location.href = "./custom-word-list-practice.html";
+      const text = document.getElementById(`export-text-${exerciseId}`).value;
+      try { localStorage.setItem(HANDOFF_KEY, text); } catch (_) {}
+      window.location.href = "./custom-word-list-practice.html#paste=" + encodeURIComponent(text);
     }
 
     // ------------------------------------------------------------------ page

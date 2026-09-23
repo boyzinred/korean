@@ -2332,21 +2332,33 @@ th {
     }
 
     // ------------------------------------------------------------------ page
-    // A vocabulary page can hand its missed words over: it parks the export
-    // under this key and links here, so the list is already in the box.
+    // A vocabulary page can hand its missed words over. The list comes in the
+    // link, after #paste=, and is also parked under this key as a fallback —
+    // the link is what works when the pages are opened from disk, where some
+    // browsers give every file its own storage.
     const HANDOFF_KEY = "koreanCustomListHandoffV1";
 
     function readHandoff() {
       let text = "";
+      if (location.hash.startsWith("#paste=")) {
+        try { text = decodeURIComponent(location.hash.slice("#paste=".length)); } catch (_) {}
+      }
       try {
-        text = localStorage.getItem(HANDOFF_KEY) || "";
+        if (!text) text = localStorage.getItem(HANDOFF_KEY) || "";
         localStorage.removeItem(HANDOFF_KEY);
       } catch (_) {}
       if (!text.trim()) return;
       // A handed-over list replaces whatever the box held, the same way
-      // Practice these again does.
+      // Practice these again does, and the exercise opens on it. The link is
+      // swapped for one pointing at the exercise, so a reload does not paste
+      // the list a second time and the scroll memory below leaves it alone.
+      // location.replace rather than history.replaceState, which a page
+      // opened from disk is not allowed to call.
       document.getElementById("custom-input").value = text;
       refreshCount("custom");
+      document.getElementById("exercise-custom").open = true;
+      showSetup("custom");
+      location.replace("#exercise-custom");
     }
 
     function renderStats() {
