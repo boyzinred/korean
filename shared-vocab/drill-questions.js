@@ -54,8 +54,15 @@
       mineSurfaces: true when the bank stores dictionary forms only
     });
 
-    drill.pool({ units: Set, types: Set, grammar: Set, weights })  -> every question
-    drill.draw({ … }, 20)                                          -> a balanced run
+    drill.pool({ units: Set, types: Set, grammar: Set, words, weights })  -> every question
+    drill.draw({ … }, 20)                                                 -> a balanced run
+
+  words is optional: a Set of word ids the run may ask about, which is how a
+  page narrows the drill to the familiarity stars ticked in its setup. A word
+  left out can still turn up as a wrong answer or inside a sentence; it is only
+  never the word a question is about. Questions about a whole sentence or a
+  passage — order, chunk, fix, excerpt, next, most of polite — have no such
+  word and are not narrowed by it.
 
   weights is optional: a unit id → 0-100 map saying how much of a run each of
   the ticked units is to fill. Without it the units share a run evenly, which
@@ -73,8 +80,8 @@
     units         the unit ids the question was built out of, which is what the
                   mix sliders weigh
     hint / hintId the English behind the answer, and the id of the word it
-                  belongs to. The generator never decides whether a hint is
-                  shown — the page does, off its own familiarity stars.
+                  belongs to. No page shows the hint today; the id is still
+                  the word a question is about.
 */
 (function (global) {
   "use strict";
@@ -510,12 +517,21 @@
     const corpus = buildCorpus(config);
 
     const inSelection = (ids, allowed) => !ids || !ids.length || ids.some(id => allowed.has(id));
+    /* Whether a word may be the subject of a question: in a ticked unit, and
+       among the words the page let through, when it narrowed them at all.
+       wordLet skips the unit test, for a word found inside a sentence that
+       was already drawn from a ticked unit. */
+    const wordLet = (state, word) => Boolean(word) && (!state.words || state.words.has(word.id));
+    const wordOn = (state, word) => wordLet(state, word) && inSelection(word.unitIds, state.units);
 
     /* -------------------------------------------------------------- concept */
     function conceptQuestions(state) {
       const out = [];
       const words = corpus.words.filter(word => inSelection(word.unitIds, state.units));
       if (!words.length) return out;
+      /* The words a question may be about. The wider list above still supplies
+         the class and group names the wrong answers are drawn from. */
+      const targets = words.filter(word => wordOn(state, word));
 
       const byPos = new Map();
       const byTopic = new Map();
@@ -534,7 +550,7 @@
 
       /* 1 — which class of word is this? */
       if (posNames.length >= 4) {
-        take(words.filter(word => word.posKo), PER_KIND_CAP).forEach(word => {
+        take(targets.filter(word => word.posKo), PER_KIND_CAP).forEach(word => {
           const others = take(posNames.filter(name => name !== word.posKo), 3);
           if (others.length < 3) return;
           out.push(multipleChoice({
@@ -549,7 +565,7 @@
 
       /* 2 — which group does it sit in? */
       if (topicNames.length >= 4) {
-        take(words.filter(word => word.topicKo), PER_KIND_CAP).forEach(word => {
+        take(targets.filter(word => word.topicKo), PER_KIND_CAP).forEach(word => {
           const others = take(topicNames.filter(name => name !== word.topicKo), 3);
           if (others.length < 3) return;
           out.push(multipleChoice({
@@ -584,8 +600,19 @@
           }
         });
       }
-      oddOne(byTopic, "갈래 아닌 것", "갈래의 말");
-      oddOne(byPos, "품사 아닌 것", "품사");
+      /* Every word on the screen is one being asked about, so both the three
+         that belong and the one that does not come from the targets. */
+      const groupOf = key => {
+        const groups = new Map();
+        targets.forEach(word => {
+          if (!word[key]) return;
+          if (!groups.has(word[key])) groups.set(word[key], []);
+          groups.get(word[key]).push(word);
+        });
+        return groups;
+      };
+      oddOne(groupOf("topicKo"), "갈래 아닌 것", "갈래의 말");
+      oddOne(groupOf("posKo"), "품사 아닌 것", "품사");
 
       /* 4 — which two words is it built from?
          Nouns only, on both sides and in the middle, and one half has to sit in
@@ -600,7 +627,7 @@
          out half of a compound is a coincidence, not a word it is built from. */
       const COMPOUNDABLE = new Set(["noun", "proper noun", "noun phrase", "dependent noun"]);
       const compounds = [];
-      words.forEach(word => {
+      targets.forEach(word => {
         const ko = String(word.ko || "");
         if (ko.length < 2 || !COMPOUNDABLE.has(word.pos) || !/^[가-힣]+$/.test(ko)) return;
         for (let cut = 1; cut < ko.length; cut += 1) {
@@ -640,7 +667,7 @@
 
       /* 5 — the noun under a 하다 verb */
       const hadas = [];
-      words.forEach(word => {
+      targets.forEach(word => {
         const ko = String(word.ko || "");
         if (!/하다$/.test(ko) || ko.length < 3) return;
         const stem = ko.slice(0, -2);
@@ -667,7 +694,7 @@
          answers would be right as well. */
       const syllablesOf = word => unique(String(word.ko || "").split(""));
       const bySyllable = new Map();
-      words.forEach(word => {
+      targets.forEach(word => {
         const ko = String(word.ko || "");
         if (!/^[가-힣]{2,4}$/.test(ko) || /다$/.test(ko)) return;
         syllablesOf(word).forEach(syllable => {
@@ -707,6 +734,7 @@
             const from = ends[0];
             const to = ends[1];
             const source = wordsByKo.get(from);
+            if (!wordOn(state, source)) return;
             const wrong = unique(take(words.filter(word =>
               word.pos === source.pos && word.ko !== from && word.ko !== to), 6)
               .map(word => word.ko)).slice(0, 3);
@@ -784,7 +812,7 @@
       homes.forEach((places, surface) => {
         if (places.length < 2) return;
         const word = places[0].hit.word;
-        if (!word || !inSelection(word.unitIds, state.units)) return;
+        if (!wordOn(state, word)) return;
         [2, 3].forEach(size => {
           if (places.length < size) return;
           const shown = take(places, size);
@@ -829,7 +857,7 @@
       const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
 
       take(pool, PER_KIND_CAP).forEach(entry => {
-        const hits = corpus.scan(entry.ko).filter(hit => hit.word);
+        const hits = corpus.scan(entry.ko).filter(hit => wordLet(state, hit.word));
         if (!hits.length) return;
 
         const hit = pickOne(hits);
@@ -974,7 +1002,7 @@
       /* 1 — the particle a noun takes, which its last letter decides and
          nothing else does. The wrong answers are the same noun wearing the
          forms that belong to a word ending the other way. */
-      const nouns = words.filter(word => NOUNISH.has(word.pos)
+      const nouns = words.filter(word => wordOn(state, word) && NOUNISH.has(word.pos)
         && /^[가-힣]{1,4}$/.test(String(word.ko || "")));
       take(nouns, PER_KIND_CAP).forEach(word => {
         const noun = String(word.ko);
@@ -1004,7 +1032,7 @@
          in front, the particle in front with a space, the particle behind with
          a space. */
       take(pool, PER_KIND_CAP).forEach(entry => {
-        const hit = pickOne(particleHits(entry.ko));
+        const hit = pickOne(particleHits(entry.ko).filter(item => wordLet(state, item.word)));
         if (!hit) return;
         const right = hit.noun + hit.particle;
         const wrong = unique([
@@ -1033,7 +1061,7 @@
          in the line is kept out, since it would be right as well. */
       take(pool, PER_KIND_CAP).forEach(entry => {
         const hits = particleHits(entry.ko);
-        const hit = pickOne(hits);
+        const hit = pickOne(hits.filter(item => wordLet(state, item.word)));
         if (!hit) return;
         const shared = new Set(hits.filter(item => item.particle === hit.particle)
           .map(item => item.noun));
@@ -1203,7 +1231,7 @@
       const out = [];
       const pool = corpus.sentences.filter(entry => inSelection(entry.unitIds, state.units));
       const families = confusableFamilies()
-        .filter(family => family.words.some(word => inSelection(word.unitIds, state.units)));
+        .filter(family => family.words.some(word => wordOn(state, word)));
       if (!families.length) return out;
 
       /* Words by class, for the families of two: three choices are wanted and
@@ -1232,7 +1260,7 @@
       take(pool, PER_KIND_CAP * 2).forEach(entry => {
         corpus.scan(entry.ko).forEach(hit => {
           const word = hit.word;
-          if (!word) return;
+          if (!wordLet(state, word)) return;
           (familiesOf.get(word.id) || []).forEach(family => {
             const others = family.words.filter(other => other.id !== word.id);
             const note = family.ko || "";
@@ -1700,7 +1728,7 @@
       /* 8 — the words Korean swaps rather than bends, asked only about the
          plain halves this page actually teaches */
       const known = new Map(words.map(word => [String(word.ko || ""), word]));
-      HONORIFICS.filter(pair => known.has(pair.plain)).forEach(pair => {
+      HONORIFICS.filter(pair => wordOn(state, known.get(pair.plain))).forEach(pair => {
         const wrong = take(unique(HONORIFICS
           .filter(other => other.kind === pair.kind && other.high !== pair.high)
           .map(other => other.high)), 3);

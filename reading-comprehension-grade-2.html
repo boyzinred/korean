@@ -963,17 +963,6 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   letter-spacing: .06em;
 }
 .drill-passage { margin-bottom: 18px; }
-/* The English behind the answer, shown only for a word still carrying no
-   familiarity star in the tables above. It sits between the sentence and the
-   choices, small and quiet, because it is a prop the run is meant to stop
-   needing. */
-.drill-hint {
-  margin: -6px 0 16px;
-  color: var(--muted);
-  font-size: .86rem;
-  font-style: italic;
-}
-.drill-hint strong { font-style: normal; color: var(--surface-text); }
 
 /* The mix sliders. One row per ticked passage, saying how much of the run that
    passage is to fill — the number on the right is the share it works out to
@@ -1541,16 +1530,17 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 </div>
               </fieldset>
 
+              <fieldset class="group-picker">
+                <legend>Familiarity</legend>
+                <div class="group-grid">
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="0" checked><span>No star<small>Unfamiliar</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="1" checked><span>&#9733;<small>Shaky</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="2" checked><span>&#9733;&#9733;<small>Learning</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="3" checked><span>&#9733;&#9733;&#9733;<small>Familiar</small></span></label>
+                </div>
+              </fieldset>
+
               <div class="exercise-menu-grid">
-                <label>Familiarity
-                  <select class="menu-familiarity">
-                    <option value="all" selected>All words</option>
-                    <option value="unfamiliar">Unfamiliar words (no star)</option>
-                    <option value="shaky">Shaky words (one star)</option>
-                    <option value="learning">Learning words (two stars)</option>
-                    <option value="familiar">Familiar words (three stars)</option>
-                  </select>
-                </label>
                 <label>How it repeats
                   <select class="menu-run">
                     <option value="regular" selected>Regular &mdash; a fixed number of times</option>
@@ -1679,15 +1669,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 </div>
               </fieldset>
 
+              <fieldset class="group-picker">
+                <legend>Familiarity</legend>
+                <div class="group-grid">
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="0" checked><span>No star<small>Unfamiliar</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="1" checked><span>&#9733;<small>Learning</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="2" checked><span>&#9733;&#9733;<small>Familiar</small></span></label>
+                </div>
+              </fieldset>
+
               <div class="exercise-menu-grid">
-                <label>Familiarity
-                  <select class="menu-familiarity">
-                    <option value="all" selected>All points</option>
-                    <option value="unfamiliar">Unfamiliar points (no star)</option>
-                    <option value="learning">Learning points (one star)</option>
-                    <option value="familiar">Familiar points (two stars)</option>
-                  </select>
-                </label>
                 <label>Direction
                   <select class="menu-direction">
                     <option value="en-ko" selected>English &rarr; 한국어</option>
@@ -1865,7 +1856,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
             <div class="exercise-head-copy">
               <span class="exercise-kicker">한국어로만</span>
               <h3>Question drill</h3>
-              <p>Asked and answered in Korean, start to finish &mdash; apart from the hint you can leave switched on, which shows the English only for words you have not starred yet. Nothing to type: every question is a choice or a puzzle you click together.</p>
+              <p>Asked and answered in Korean, start to finish. Nothing to type: every question is a choice or a puzzle you click together.</p>
             </div>
             <div class="score">Not started</div>
           </div>
@@ -1918,12 +1909,20 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 </label>
               </div>
 
-              <div class="option-stack">
-                <label class="exercise-option">
-                  <input class="drill-hints" type="checkbox">
-                  <span>English hint on unstarred words<small>The word behind the blank, in English, for words with no familiarity star yet. Star one and its hint stops coming.</small></span>
-                </label>
-              </div>
+              <fieldset class="group-picker">
+                <legend>Words to ask about</legend>
+                <p class="wordbank-count">By their familiarity stars in the word bank. A question about one word &mdash; its meaning, its class, the blank it fills &mdash; only picks words at the ticked levels. Questions about a whole sentence or passage are not affected.</p>
+                <div class="group-grid">
+                  <label class="exercise-option"><input class="drill-star" type="checkbox" value="0" checked><span>No star<small>Unfamiliar</small></span></label>
+                  <label class="exercise-option"><input class="drill-star" type="checkbox" value="1" checked><span>&#9733;<small>Shaky</small></span></label>
+                  <label class="exercise-option"><input class="drill-star" type="checkbox" value="2" checked><span>&#9733;&#9733;<small>Learning</small></span></label>
+                  <label class="exercise-option"><input class="drill-star" type="checkbox" value="3" checked><span>&#9733;&#9733;&#9733;<small>Familiar</small></span></label>
+                </div>
+                <div class="group-actions">
+                  <button class="btn secondary small" type="button" data-drill-all="star">Select all</button>
+                  <button class="btn secondary small" type="button" data-drill-none="star">Select none</button>
+                </div>
+              </fieldset>
 
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button">Begin drill</button>
@@ -1949,7 +1948,6 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
               <div class="prompt-label"></div>
               <div class="prompt"></div>
               <p class="drill-sentence hidden"></p>
-              <p class="drill-hint hidden"></p>
 
               <div class="choice-list"></div>
 
@@ -1986,7 +1984,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   <script src="./shared-vocab/korean-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
   <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
-  <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
+  <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
   <script>
   (() => {
     "use strict";
@@ -3971,22 +3969,14 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         + String(now.getDate()).padStart(2, "0");
     }
 
-    /* The rungs the Familiarity menus filter on, with the wording the empty
-       notes use for each. */
-    const STAR_FILTERS = {
-      unfamiliar: { level: 0, adjective: "unstarred", phrase: "unstarred" },
-      learning: { level: 1, adjective: "one-star", phrase: "at one star" },
-      familiar: { level: 2, adjective: "two-star", phrase: "at two stars" }
-    };
-    /* The word bank runs to three stars now, and the grammar bank still runs
-       to two, so the vocabulary test filters on its own map rather than on the
-       one above. */
-    const WORD_STAR_FILTERS = {
-      unfamiliar: { level: 0, adjective: "unstarred", phrase: "unstarred" },
-      shaky: { level: 1, adjective: "one-star", phrase: "at one star" },
-      learning: { level: 2, adjective: "two-star", phrase: "at two stars" },
-      familiar: { level: 3, adjective: "three-star", phrase: "at three stars" }
-    };
+    /* The star levels ticked in a Familiarity picker. One box per rung, so a
+       half-known word can be drilled on its own or beside any other rung, and
+       every box ticked is the whole bank. The word bank runs to three stars
+       and the grammar bank to two; each picker carries its own boxes. */
+    function tickedStars(scope, selector) {
+      return new Set([...scope.querySelectorAll((selector || ".menu-star") + ":checked")]
+        .map(input => Number(input.value)));
+    }
     function saveFamiliarity() {
       try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
     }
@@ -4512,7 +4502,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     function readVocabSettings() {
       return {
         groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
-        familiarity: $v(".menu-familiarity").value,
+        stars: tickedStars(vEl),
         run: $v(".menu-run").value === "spaced" ? "spaced" : "regular",
         repeat: $v(".menu-repeat").checked,
         mode: $v(".menu-mode").value,
@@ -4694,13 +4684,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         if (!chosen.has(group.id)) return;
         group.words.forEach(entry => ids.add(entry.id));
       });
-      return BANK_WORDS.filter(entry => {
-        if (!ids.has(entry.id)) return false;
-        if (settings.familiarity === "all") return true;
-        /* Each menu choice names one rung of the scale, so a half-known word
-           is drilled on its own rather than with the words already known. */
-        return ratingOf(entry.id) === WORD_STAR_FILTERS[settings.familiarity].level;
-      });
+      return BANK_WORDS.filter(entry => ids.has(entry.id) && settings.stars.has(ratingOf(entry.id)));
     }
 
     /* The repetitions box and the retry switch belong to the regular run: a
@@ -4747,10 +4731,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + length
           + ". " + directionLabel(settings) + "."
           + (mixed ? " Each question picks its own pair." : "")
-        : settings.familiarity === "all"
-          ? "No words match your selection yet."
-          : "No " + WORD_STAR_FILTERS[settings.familiarity].adjective
-            + " words in your selection yet.";
+        : settings.stars.size
+          ? "No words at the ticked star levels in your selection yet."
+          : "Tick at least one familiarity level.";
     }
 
     let testMode = "story";
@@ -5649,14 +5632,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
     function sentenceSettings() {
       const picked = [...sEl.querySelectorAll(".sentence-point:checked")].map(input => input.value);
-      const familiarity = $s(".menu-familiarity").value;
+      const stars = tickedStars(sEl);
       return {
         picked: picked,
-        familiarity: familiarity,
+        stars: stars,
         /* The stars on the grammar tables decide which of the ticked points a
            run may actually draw on. */
-        points: familiarity === "all" ? picked
-          : picked.filter(id => grammarRatingOf(id) === STAR_FILTERS[familiarity].level),
+        points: picked.filter(id => stars.has(grammarRatingOf(id))),
         direction: $s(".menu-direction").value,
         length: Math.max(1, Number($s(".menu-length").value) || 10)
       };
@@ -5677,8 +5659,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const note = $s(".sentence-pool-note");
       if (!settings.points.length) {
         note.innerHTML = '<span class="assistance-used">' + (settings.picked.length
-          ? "None of the points you ticked are "
-            + STAR_FILTERS[settings.familiarity].phrase + "."
+          ? (settings.stars.size
+            ? "None of the points you ticked are at the ticked star levels."
+            : "Tick at least one familiarity level.")
           : "Tick at least one grammar point.") + '</span>';
         return;
       }
@@ -6177,7 +6160,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         grammar: pick(saved.grammar, GRAMMAR.POINTS.map(point => point.id)),
         count: DRILL_LENGTHS.indexOf(Number(saved.count)) >= 0 ? Number(saved.count) : 20,
         mix: saved.mix && typeof saved.mix === "object" ? saved.mix : {},
-        hints: saved.hints !== false
+        stars: pick(saved.stars, Array.from({ length: MAX_STAR + 1 }, (ignore, level) => level))
       };
     }
     function saveDrillSetup(settings) {
@@ -6188,7 +6171,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           grammar: [...settings.grammar],
           count: Number($d(".menu-count").value) || 20,
           mix: drillMix,
-          hints: $d(".drill-hints").checked
+          stars: [...settings.stars]
         }));
       } catch (_) {}
     }
@@ -6217,7 +6200,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         + plural(length, "question", "questions") + '</option>').join("");
 
       drillMix = Object.assign({}, saved.mix);
-      $d(".drill-hints").checked = saved.hints;
+      dEl.querySelectorAll(".drill-star").forEach(input => {
+        input.checked = saved.stars.has(Number(input.value));
+      });
       paintDrillMix();
     }
 
@@ -6273,7 +6258,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
          handed over as none, so a run nobody has touched the sliders for is
          drawn exactly the way it was drawn before they existed. */
       const level = values.every(value => value === values[0]);
+      /* The star boxes narrow the words a question may be about. All of them
+         ticked is no narrowing, and is handed over as none. */
+      const stars = tickedStars(dEl, ".drill-star");
       return {
+        stars,
+        words: stars.size > MAX_STAR ? null
+          : new Set(BANK_WORDS.filter(entry => stars.has(ratingOf(entry.id))).map(entry => entry.id)),
         units: checked(".drill-story:checked"),
         types: checked(".drill-type:checked"),
         grammar: checked(".drill-grammar:checked"),
@@ -6294,6 +6285,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         const settings = drillSettings();
         if (!settings.units.size) { note.textContent = "Tick at least one passage."; return; }
         if (!settings.types.size) { note.textContent = "Tick at least one kind of question."; return; }
+        if (!settings.stars.size) { note.textContent = "Tick at least one familiarity level."; return; }
         const size = drillBank.pool(settings).length;
         note.textContent = size
           ? plural(size, "question", "questions") + " can be built from this selection right now, and a different set is drawn every time you begin."
@@ -6305,13 +6297,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     /* ---- running a drill ------------------------------------------------- */
     function startDrill() {
       const settings = drillSettings();
-      if (!settings.units.size || !settings.types.size) { paintDrillPool(); return; }
+      if (!settings.units.size || !settings.types.size || !settings.stars.size) { paintDrillPool(); return; }
       const questions = drillBank.draw(settings, Number($d(".menu-count").value) || 20);
       if (!questions.length) { paintDrillPool(); return; }
 
       drillRun = {
-        questions, at: 0, right: 0, locked: false, placed: [], results: [],
-        hints: $d(".drill-hints").checked
+        questions, at: 0, right: 0, locked: false, placed: [], results: []
       };
       $d(".exercise-menu").classList.add("hidden");
       $d(".finish").classList.add("hidden");
@@ -6367,14 +6358,6 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const sentence = $d(".drill-sentence");
       sentence.classList.toggle("hidden", !question.sentence);
       sentence.innerHTML = question.sentence ? drillSentenceHtml(question.sentence) : "";
-
-      /* The English behind the answer, for a word still carrying no star in the
-         tables above. Star it and the prop goes away on its own, which is the
-         only reason the stars and the hint are wired to each other. */
-      const hint = $d(".drill-hint");
-      const showHint = Boolean(drillRun.hints && question.hint && ratingOf(question.hintId) === 0);
-      hint.classList.toggle("hidden", !showHint);
-      hint.innerHTML = showHint ? "<strong>Hint</strong> &mdash; " + esc(question.hint) : "";
 
       const list = $d(".choice-list");
       const zone = $d(".order-zone");

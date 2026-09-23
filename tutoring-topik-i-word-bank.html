@@ -573,17 +573,6 @@ textarea:disabled,
   gap: 6px;
 }
 .drill-passage p { margin: 0; font-size: 1.05rem; line-height: 1.85; }
-/* The English behind the answer, shown only for a word with no star on it in
-   the tables above. It sits between the sentence and the choices, small and
-   quiet, because it is a prop the run is meant to stop needing. */
-.drill-hint {
-  margin: 12px 0 0;
-  color: var(--muted);
-  font-size: .82rem;
-  font-style: italic;
-  letter-spacing: .01em;
-}
-.drill-hint strong { font-style: normal; color: var(--surface-text); }
 .drill-sentence {
   margin: 16px 0 0;
   padding: 16px 18px;
@@ -1861,7 +1850,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       <div class="quiz-body" style="padding: 0;">
         <div class="exercise-menu" id="menu-drill">
           <h4>Set up the exercise</h4>
-          <p>The one exercise here that asks about a word rather than asking for it, and the one that shows no English once it starts &mdash; apart from the hint below, which only appears on words you have not starred yet. Every question is generated from the day&rsquo;s own words, the sentences built on them, and a short passage written for that day &mdash; so no two runs ask the same set.</p>
+          <p>The one exercise here that asks about a word rather than asking for it, and the one that shows no English once it starts. Every question is generated from the day&rsquo;s own words, the sentences built on them, and a short passage written for that day &mdash; so no two runs ask the same set.</p>
 
           <div class="picker">
             <div class="picker-head">
@@ -1907,15 +1896,20 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             </label>
           </div>
 
-          <div class="option-grid">
-            <label class="option">
-              <input type="checkbox" id="drill-hints">
-              <span>English hint on unstarred words</span>
-            </label>
+          <div class="picker">
+            <div class="picker-head">
+              <span class="control-label">Words to ask about</span>
+              <div class="picker-actions">
+                <button class="btn secondary" type="button" data-drill-all="star">All</button>
+                <button class="btn secondary" type="button" data-drill-none="star">None</button>
+              </div>
+            </div>
+            <p class="menu-summary">By their familiarity stars in the tables above. A question about one word &mdash; its meaning, its class, the blank it fills &mdash; only picks words at the ticked levels. Questions about a whole sentence or passage are not affected.</p>
+            <div class="option-grid langs" id="drillStarGrid"></div>
           </div>
 
           <div class="menu-summary" id="menu-count-drill-note"></div>
-          <p class="menu-error hidden" id="menu-error-drill">Check at least one study day and one kind of question.</p>
+          <p class="menu-error hidden" id="menu-error-drill">Check at least one study day, one kind of question, and one star level.</p>
           <div class="exercise-menu-actions">
             <button class="primary-btn" type="button" data-drill-start>Start exercise</button>
           </div>
@@ -1946,7 +1940,6 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
               <div class="prompt-label" id="prompt-label-drill"></div>
               <p class="prompt" id="prompt-drill"></p>
               <p class="drill-sentence hidden" id="sentence-drill"></p>
-              <p class="drill-hint hidden" id="hint-drill"></p>
 
               <div class="drill-choices" id="choices-drill"></div>
 
@@ -1995,7 +1988,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
   <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
-  <script src="./shared-vocab/drill-questions.js?v=1.1.0"></script>
+  <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
   <script>
   (() => {
     "use strict";
@@ -3023,31 +3016,37 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // Which stars a run draws on. This narrows whatever the pickers chose, so
-    // it works the same in every exercise. Every choice but the first names one
-    // rung of the scale in the tables above, so a half-known word is drilled on
-    // its own rather than alongside the words already known. `phrase` is the
-    // wording the empty-selection notes use.
-    const FAMILIARITY_FILTERS = [
-      { id: "all", label: "All words" },
-      { id: "unfamiliar", label: "Unfamiliar words (no star)", level: 0, phrase: "unstarred" },
-      { id: "shaky", label: "Shaky words (one star)", level: 1, phrase: "at one star" },
-      { id: "learning", label: "Learning words (two stars)", level: 2, phrase: "at two stars" },
-      { id: "familiar", label: "Familiar words (three stars)", level: 3, phrase: "at three stars" }
+    // it works the same in every exercise. One box per rung of the scale in the
+    // tables above, so a half-known word can be drilled on its own or beside
+    // any other rung, and every box ticked is every word.
+    const STAR_RUNGS = [
+      { level: 0, label: "No star" },
+      { level: 1, label: "★ Shaky" },
+      { level: 2, label: "★★ Learning" },
+      { level: 3, label: "★★★ Familiar" }
     ];
-    const FAMILIARITY_BY_ID = new Map(FAMILIARITY_FILTERS.map(filter => [filter.id, filter]));
+
+    function starBoxes(attribute, checked) {
+      return STAR_RUNGS.map(rung => `
+              <label class="option">
+                <input type="checkbox" ${attribute} value="${rung.level}"${checked.has(rung.level) ? " checked" : ""}>
+                <span>${rung.label}</span>
+              </label>`).join("");
+    }
 
     function familiarityBlock(exerciseId) {
       return `
-        <label>Familiarity<small class="menu-count-note">The stars in the tables above</small>
-          <select id="menu-familiarity-${exerciseId}">
-            ${FAMILIARITY_FILTERS.map(filter => `<option value="${filter.id}">${esc(filter.label)}</option>`).join("")}
-          </select>
-        </label>`;
+        <div class="lang-pick">
+          <span class="control-label">Familiarity</span>
+          <small class="menu-count-note">The stars in the tables above</small>
+          <div class="option-grid langs">
+            ${starBoxes(`data-group="${exerciseId}-stars"`, new Set(STAR_RUNGS.map(rung => rung.level)))}
+          </div>
+        </div>`;
     }
 
-    function familiarityChoice(exerciseId) {
-      const select = document.getElementById(`menu-familiarity-${exerciseId}`);
-      return select ? select.value : "all";
+    function tickedStars(exerciseId) {
+      return new Set(checkedValues(`${exerciseId}-stars`).map(Number));
     }
 
     // An item sits on the rung its row's stars put it on; an expression
@@ -3056,19 +3055,19 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       if (!exercise) return [];
       const chosen = exercise.select();
-      const choice = familiarityChoice(exerciseId);
-      const filter = FAMILIARITY_BY_ID.get(choice);
-      if (!filter || filter.level === undefined) return chosen;
-      return chosen.filter(item => ratingOf(item.id) === filter.level);
+      const stars = tickedStars(exerciseId);
+      return chosen.filter(item => stars.has(ratingOf(item.id)));
     }
 
     // Why a selection came out empty: nothing ticked, or nothing ticked that
     // the familiarity filter lets through.
     function emptyMessageFor(exerciseId) {
       const exercise = EXERCISES.find(e => e.id === exerciseId);
-      const choice = familiarityChoice(exerciseId);
-      if (choice !== "all" && exercise.select().length) {
-        return `Nothing in this selection is ${FAMILIARITY_BY_ID.get(choice).phrase}. Set Familiarity back to all words, or tick more.`;
+      const stars = tickedStars(exerciseId);
+      if (stars.size <= MAX_STAR && exercise.select().length) {
+        return stars.size
+          ? "Nothing in this selection is at the ticked star levels. Tick more stars under Familiarity, or more words."
+          : "Tick at least one star level under Familiarity.";
       }
       return exercise.emptyMessage;
     }
@@ -3300,9 +3299,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const cap = Math.max(0, Number(document.getElementById(`menu-cap-${exerciseId}`)?.value) || 0);
       const used = cap > 0 ? Math.min(cap, words.length) : words.length;
       const note = exercise.countNote ? exercise.countNote() : "";
-      const choice = familiarityChoice(exerciseId);
-      const nothing = chosen.length && choice !== "all"
-        ? `Nothing ${FAMILIARITY_BY_ID.get(choice).phrase} in this selection`
+      const stars = tickedStars(exerciseId);
+      const nothing = !chosen.length ? "Nothing selected"
+        : !stars.size ? "No star level ticked under Familiarity"
+        : stars.size <= MAX_STAR ? "Nothing at the ticked star levels in this selection"
         : "Nothing selected";
       target.classList.toggle("empty", used === 0);
       if (used === 0) { target.textContent = `${nothing}${note}`; return; }
@@ -4057,8 +4057,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         words: BANK.filter(word => word.korean === word.shownKorean).map(word => ({
           id: word.id,
           ko: word.korean,
-          // The English the hint shows, which is the gloss the tables show and
-          // never the pattern half of an auxiliary's "-고 있다: to be doing".
+          // The gloss the tables show, never the pattern half of an
+          // auxiliary's "-고 있다: to be doing".
           en: word.shownMeaning,
           pos: word.partOfSpeech,
           posKo: (POS_BY_ID.get(word.partOfSpeech) || {}).korean || word.partOfSpeech,
@@ -4094,7 +4094,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         types: pick(saved.types, window.DrillQuestions.TYPES.map(type => type.id)),
         count: DRILL_LENGTHS.includes(Number(saved.count)) ? Number(saved.count) : 20,
         mix: saved.mix && typeof saved.mix === "object" ? saved.mix : {},
-        hints: saved.hints !== false
+        stars: pick(saved.stars, STAR_RUNGS.map(rung => rung.level))
       };
     }
 
@@ -4116,7 +4116,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         `<option value="${length}"${length === saved.count ? " selected" : ""}>${length} questions</option>`).join("");
 
       drillMix = Object.assign({}, saved.mix);
-      document.getElementById("drill-hints").checked = saved.hints;
+      document.getElementById("drillStarGrid").innerHTML = starBoxes('data-drill-group="star"', saved.stars);
       paintDrillMix();
 
       const from = document.getElementById("drill-from");
@@ -4179,7 +4179,12 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const weights = days.length < 2 || level || !values.some(value => value > 0)
         ? null
         : Object.fromEntries(days.map((id, at) => [id, values[at]]));
-      return { units: checked("day"), types: checked("type"), grammar: new Set(), weights };
+      // The star boxes narrow the words a question may be about. All of them
+      // ticked is no narrowing, and is handed over as none.
+      const stars = new Set([...checked("star")].map(Number));
+      const words = stars.size > MAX_STAR ? null
+        : new Set(BANK.filter(word => stars.has(ratingOf(word.id))).map(word => word.id));
+      return { units: checked("day"), types: checked("type"), grammar: new Set(), stars, words, weights };
     }
 
     function saveDrillSetup(settings) {
@@ -4188,7 +4193,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         types: [...settings.types],
         count: Number(document.getElementById("menu-count-drill").value) || 20,
         mix: drillMix,
-        hints: document.getElementById("drill-hints").checked
+        stars: [...settings.stars]
       });
     }
 
@@ -4201,7 +4206,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         const note = document.getElementById("menu-count-drill-note");
         const error = document.getElementById("menu-error-drill");
         const settings = drillSettings();
-        if (!settings.units.size || !settings.types.size) {
+        if (!settings.units.size || !settings.types.size || !settings.stars.size) {
           note.textContent = "";
           note.classList.add("empty");
           error.classList.remove("hidden");
@@ -4220,14 +4225,13 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     function startDrill() {
       const settings = drillSettings();
       const error = document.getElementById("menu-error-drill");
-      if (!settings.units.size || !settings.types.size) { error.classList.remove("hidden"); return; }
+      if (!settings.units.size || !settings.types.size || !settings.stars.size) { error.classList.remove("hidden"); return; }
       const questions = drillBank.draw(settings, Number(document.getElementById("menu-count-drill").value) || 20);
       if (!questions.length) { error.classList.remove("hidden"); return; }
       error.classList.add("hidden");
 
       drillRun = {
-        questions, at: 0, right: 0, locked: false, placed: [], results: [],
-        hints: document.getElementById("drill-hints").checked
+        questions, at: 0, right: 0, locked: false, placed: [], results: []
       };
       document.getElementById("menu-drill").classList.add("hidden");
       document.getElementById("quiz-card-drill").classList.remove("hidden");
@@ -4276,14 +4280,6 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const sentence = drillEl("sentence");
       sentence.classList.toggle("hidden", !question.sentence);
       sentence.innerHTML = question.sentence ? drillSentenceHtml(question.sentence) : "";
-
-      // The English behind the answer, for a word still carrying no star in
-      // the tables above. Star it and the prop goes away on its own, which is
-      // the only reason the stars and the hint are wired to each other.
-      const hint = drillEl("hint");
-      const showHint = Boolean(drillRun.hints && question.hint && ratingOf(question.hintId) === 0);
-      hint.classList.toggle("hidden", !showHint);
-      hint.innerHTML = showHint ? `<strong>Hint</strong> &mdash; ${esc(question.hint)}` : "";
 
       const choices = drillEl("choices");
       const order = drillEl("order");
@@ -4491,7 +4487,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
       section.addEventListener("change", event => {
         if (event.target.matches('input[data-drill-group="day"]')) paintDrillMix();
-        if (event.target.matches('input[data-drill-group], #menu-count-drill, #drill-hints')) refreshDrillCount();
+        if (event.target.matches('input[data-drill-group], #menu-count-drill')) refreshDrillCount();
         const slider = event.target.closest("[data-drill-mix-day]");
         // A slider at rest is a new pool to count. While it is being dragged it
         // is only a new set of shares to letter in, which is the input below.
