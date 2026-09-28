@@ -4811,6 +4811,8 @@
 
       nextQuestion.classList.remove("hidden");
       nextQuestion.focus({ preventScroll: true });
+      /* The feedback can land below the fold when the question sits at the foot of the page. */
+      nextQuestion.scrollIntoView({ block: "nearest" });
     }
 
     function goToNextQuestion() {

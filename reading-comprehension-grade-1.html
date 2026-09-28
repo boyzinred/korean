@@ -4947,6 +4947,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         ? "Try this word again"
         : (vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word");
       next.focus({ preventScroll: true });
+      /* The feedback can land below the fold when the exercise sits at the foot of the page. */
+      next.scrollIntoView({ block: "nearest" });
 
       /* A word on its way back round has not moved the run along. */
       if (!retry) {
@@ -5749,6 +5751,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         ? "See my results"
         : "Next sentence";
       next.focus({ preventScroll: true });
+      /* The feedback can land below the fold when the exercise sits at the foot of the page. */
+      next.scrollIntoView({ block: "nearest" });
 
       const progress = $s(".progress");
       progress.firstElementChild.style.width =

@@ -3263,6 +3263,8 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         ? "Try this word again"
         : (vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word");
       next.focus({ preventScroll: true });
+      /* The feedback can land below the fold when the exercise sits at the foot of the page. */
+      next.scrollIntoView({ block: "nearest" });
 
       /* A word on its way back round has not moved the run along. */
       if (!retry) {
