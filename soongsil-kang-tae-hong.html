@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>강태홍 &middot; Soongsil</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  /* Professor Kang's palette: warm paper, stone bands and right answers,
+     charcoal text, and the orange for buttons and wrong answers. */
+  --light-background: #FFFCF2;
+  --light-foreground: #252422;
+  --light-primary: #EB5E28;
+  --light-primary-hover: #D14F1C;
+  --light-secondary: #CCC5B9;
+  --light-secondary-soft: #EDE9E1;
+  --light-accent: #403D39;
+  --light-accent-soft: #E6E1D8;
+  --light-muted: #F3EFE4;
+  --light-muted-strong: #E2DCCF;
+  --light-blue-soft: #F7F3EA;
+  --light-border: #D9D2C5;
+  --light-subtle: #CCC5B9;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #FFFEFA;
+  --surface-text: #252422;
+  --surface-muted: #F6F2E8;
+  --inverse: #252422;
+  --inverse-text: #FFFCF2;
+  --hero-heading: #252422;
+  --hero-text: #403D39;
+  /* Text on a filled colour: one ink for the primary and accent fills, one
+     for the secondary fill and the white chip. */
+  --on-primary: #252422;
+  --on-secondary: #252422;
+  --on-accent: #FFFCF2;
+  --chip: #FFFFFF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  /* Outfit has no Hangul, so Korean falls past it to IBM Plex Sans KR, picked
+     for its branching ㅈ: the two legs meet at one point under the bar instead
+     of hooking off its left end. As a batchim, where the jamo is squeezed into
+     the bottom third of the block, that is the difference between reading 갖
+     and guessing at it. Latin never reaches Plex — Outfit covers that, and the
+     fallback runs character by character, not run by run. Plex KR stops at
+     700, so the 800s below land on its bold instead of a synthesised one,
+     which on Hangul would fill the counters straight back in. */
+  --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
+  --transition: all 200ms ease;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #0A0A0A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #E5E5E5;
+  --light-primary-hover: #CFCFCF;
+  --light-secondary: #A3A3A3;
+  --light-secondary-soft: #262626;
+  --light-accent: #737373;
+  --light-accent-soft: #1C1C1C;
+  --light-muted: #262626;
+  --light-muted-strong: #404040;
+  --light-blue-soft: #262626;
+  --light-border: #3A3A3A;
+  --light-subtle: #A3A3A3;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #171717;
+  --surface-text: #F5F5F5;
+  --surface-muted: #262626;
+  --inverse: #000000;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #D4D4D4;
+  --on-primary: #0A0A0A;
+  --on-secondary: #0A0A0A;
+  --on-accent: #0A0A0A;
+  --chip: #F5F5F5;
+}
+
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  /* Base text 6pt larger than the browser default (16px -> 24px), the same as
+     the word bank pages. Every size below is in rem, so the layout scales. */
+  font-size: calc(100% + 6pt);
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.hidden { display: none !important; }
+
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1320px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero { color: var(--hero-heading); background: var(--background); }
+.hero-inner { padding: clamp(48px, 7vw, 82px); }
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.02em;
+}
+.hero p { max-width: 62ch; margin: 24px 0 0; color: var(--hero-text); font-size: 1.05rem; }
+
+.section { scroll-margin-top: 18px; border-bottom: 1px solid var(--border); }
+details.section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: var(--on-secondary);
+  background: var(--secondary);
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  cursor: pointer;
+  list-style: none;
+}
+details.section:nth-of-type(2) > summary { background: var(--primary); }
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: var(--on-secondary);
+  background: var(--chip);
+  border: 4px solid var(--on-secondary);
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after { content: "Expand"; }
+.section-body {
+  display: grid;
+  gap: 22px;
+  padding: clamp(18px, 3vw, 40px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.info-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+.info-card h4 { margin: 0 0 8px; font-size: 1.15rem; }
+.info-card p { margin: 0; }
+
+.wordbank-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.wordbank-tools input { max-width: 20rem; }
+.wordbank-count { font-size: .86rem; font-weight: 800; opacity: .78; }
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.blur-toggle:hover { transform: scale(1.04); }
+.blur-toggle[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); }
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--inverse-text);
+  background: var(--inverse);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td .roman { opacity: .78; }
+
+.is-blurred .blur-target { filter: blur(7px); user-select: none; }
+/* Every vocab and grammar cell blurs and unblurs on its own click, whether or
+   not the toolbar has blurred the whole column it sits in. */
+[data-vocab-field] { cursor: pointer; }
+
+.vocab-category-stack { display: grid; gap: 14px; }
+.vocab-category {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-category > summary {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.vocab-category > summary::-webkit-details-marker { display: none; }
+.vocab-category > summary::after {
+  content: '−';
+  width: 2.125rem;
+  height: 2.125rem;
+  flex: 0 0 2.125rem;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+}
+.vocab-category:not([open]) > summary::after { content: '+'; }
+.vocab-category-count {
+  display: block;
+  margin-top: 2px;
+  color: var(--subtle);
+  font-size: .76rem;
+  font-weight: 700;
+}
+.vocab-category .table-wrap { border: 0; border-radius: 0; }
+/* Every cell centres on its own column, headers included, so a column reads as
+   one straight line from top to bottom. */
+.vocab-category table {
+  width: 100%;
+  min-width: 720px;
+  /* Fixed layout so the five content columns split the width evenly instead of
+     each one sizing to its longest word. The ＋ is left out of that split: it
+     takes a narrow strip on the far left and the button sits in the middle of
+     it, which is why the columns no longer start off-centre. */
+  table-layout: fixed;
+}
+.vocab-category th,
+.vocab-category td { text-align: center; vertical-align: middle; }
+/* The small print under a row is prose, and prose still reads from the left. */
+.vocab-category .vocab-note-row > td { text-align: left; }
+
+/* The word bank toolbar: how the same words are regrouped, and the search that
+   runs across every group at once. */
+.ref-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.ref-modes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.ref-modes__label {
+  padding: 0 8px;
+  color: var(--surface-text);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.mode-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.mode-btn:hover { transform: scale(1.04); }
+.mode-btn.active { color: var(--on-primary); background: var(--primary); }
+.ref-filter { flex: 1 1 15rem; max-width: 24rem; }
+.section-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 18px 18px;
+}
+.section-toolbar .blur-toggle { min-height: 44px; font-size: .84rem; }
+/* A zero-height item that eats the rest of a toolbar line, so the sort control
+   below it starts a line of its own. */
+.toolbar-break { flex: 0 0 100%; height: 0; }
+/* The sort control is the quiet one of the row, so it sits under the toggles
+   rather than beside them, and runs smaller. Its left padding is the toggles'
+   own, which puts "Sort" directly under the B of "Blur English". */
+.sort-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 16px;
+}
+.sort-field__label {
+  font-size: .64rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+/* The select wears its own chevron: the native one cannot be made this small,
+   and a border drawn in currentColor follows the theme for free. */
+.sort-select-wrap { position: relative; display: inline-flex; align-items: center; }
+.sort-select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  opacity: .55;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 36px;
+  padding: 0 28px 0 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+}
+.sort-select:focus { border-color: var(--primary); outline: none; }
+.group-note {
+  margin: 10px 18px 12px;
+  font-size: .86rem;
+  font-weight: 600;
+  opacity: .8;
+}
+
+/* The ＋ on a row opens that word's small print underneath it: how the word
+   behaves, and one model sentence in all three scripts. */
+.vocab-note-head, .vocab-note-cell {
+  width: 4.5rem;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+/* No line box in the cell, so nothing pushes the button off the middle. */
+.vocab-note-cell { line-height: 0; }
+.vocab-note-toggle {
+  width: 2.125rem;
+  height: 2.125rem;
+  display: grid;
+  place-items: center;
+  /* A grid box is block-level, so the cell's text-align does nothing for it —
+     auto side margins are what put it in the middle of its strip. */
+  margin-inline: auto;
+  padding: 0;
+  line-height: 1;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.vocab-note-toggle:hover { transform: scale(1.08); }
+.vocab-note-toggle[aria-expanded="true"] { color: var(--on-primary); background: var(--primary); }
+.vocab-note-row > td {
+  padding: 2px 4.5rem 20px;
+  background: var(--surface-muted);
+}
+.word-note { display: grid; gap: 10px; }
+/* The example box spends 4px on its coloured rail and 14px on padding before
+   its text starts, so the plain paragraphs take the same 18px and every line
+   in a note begins on one left edge. */
+.word-note-usage, .word-note-tags { padding-left: 18px; }
+.word-note-usage { margin: 0; font-weight: 600; }
+.word-note-example {
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--secondary);
+  border-radius: var(--radius-md);
+}
+.word-note-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+.word-note-example p { margin: 0; }
+.word-note-ko { font-weight: 800; }
+.word-note-en { opacity: .82; }
+.word-note-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.word-tag {
+  padding: 3px 9px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+}
+.grammar-form { font-size: 1.05rem; letter-spacing: .01em; }
+.story-quote { border-left-color: var(--muted-strong); }
+.word-note-rule {
+  height: 0;
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px dashed var(--border);
+}
+
+.vocab-category tbody tr.is-hidden { display: none; }
+.vocab-category.is-hidden { display: none; }
+
+/* The star pill sits in the middle of its column, header and all, so a
+   column of them reads as one line instead of a ragged left edge. */
+.familiarity-head, .familiarity-cell { min-width: 7rem; text-align: center; vertical-align: middle; }
+/* Same trick as the ＋ column: no line box in the cell, and the pill lines up
+   on its middle rather than on a baseline the stars do not really have. */
+.familiarity-cell { line-height: 0; }
+.familiarity-stars {
+  display: inline-flex;
+  vertical-align: middle;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.3rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+/* A rating lights the stars up to it: the first at one star, both at two. */
+.familiarity-stars[data-level="1"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="2"],
+.familiarity-stars[data-level="3"] .familiarity-star { color: var(--accent); }
+
+.lang-picks {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.group-picker {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.group-picker legend {
+  padding: 0 8px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.group-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* The translation picker stacks one grid per grammar type, so a point is
+   found under the heading it is filed under in the bank above. */
+.group-stack > .ref-modes__label { display: block; margin: 14px 0 0; }
+.group-stack > .ref-modes__label:first-child { margin-top: 0; }
+.sentence-cue { margin: 6px 0 0; font-size: .86rem; font-weight: 700; opacity: .8; }
+.answer-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.answer-input:focus { background: var(--surface); border-color: var(--primary); }
+.word-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.word-card { padding: 12px 14px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.word-card .word-ko { display: block; font-size: 1.1rem; font-weight: 800; }
+.word-card .word-ro { display: block; font-size: .8rem; font-weight: 700; opacity: .72; }
+.word-card .word-en { display: block; margin-top: 2px; font-size: .86rem; }
+
+.exercise {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy { padding: 24px 28px; }
+.exercise-kicker,
+.prompt-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p { margin: 10px 0 0; color: var(--subtle); }
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: var(--on-accent);
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+  text-align: center;
+}
+.exercise-body { padding: clamp(24px, 4vw, 38px); }
+
+.exercise-menu { display: grid; gap: 20px; }
+.exercise-menu h4 { margin: 0; font-size: 1.45rem; }
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu-grid label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-grid label > * { width: 100%; height: 56px; min-width: 0; }
+.exercise-menu-grid .wide { grid-column: span 2; }
+/* The story picker is the only control left in its row, so it takes the
+   whole width rather than leaving half the grid empty. */
+.exercise-menu-grid.story-pick .wide { grid-column: 1 / -1; }
+.option-stack { display: grid; gap: 8px; }
+.exercise-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.exercise-option input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  padding: 0;
+}
+.exercise-option small { display: block; font-weight: 600; opacity: .74; }
+.timed-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.timed-fields label {
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+/* The export writes out whatever the setup selects, so the separator it uses
+   is picked in the same row rather than in a dialog the download would wait
+   on. */
+.export-sep,
+.export-what { width: auto; flex: 0 0 auto; font-size: .82rem; font-weight: 700; }
+
+input, select {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus, select:focus { background: var(--surface); border-color: var(--primary); }
+input:disabled, select:disabled { color: var(--surface-text); background: var(--muted-strong); cursor: not-allowed; opacity: .6; }
+
+.btn {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled) { transform: scale(1.04); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn.primary { color: var(--on-primary); background: var(--primary); }
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn.positive { color: var(--on-secondary); background: var(--secondary); }
+.btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
+.btn.warning { color: var(--on-accent); background: var(--accent); }
+.btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
+
+.runtime-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.timer-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.timer-chip.is-low { color: var(--on-accent); background: var(--accent); }
+.timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+.progress { height: 12px; overflow: hidden; background: var(--muted-strong); }
+.progress > div { height: 100%; background: var(--secondary); transition: width 200ms ease; }
+
+.story-panel {
+  margin: 20px 0;
+  padding: 22px;
+  background: var(--surface-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.story-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.story-panel-head h4 { margin: 0; font-size: 1.35rem; letter-spacing: -.01em; }
+.story-skill {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.story-purpose { margin: 0 0 14px; font-size: .92rem; font-weight: 700; opacity: .82; }
+.story-text {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  font-size: clamp(1.1rem, 2vw, 1.32rem);
+  font-weight: 600;
+  line-height: 2;
+}
+.story-line { display: block; }
+
+.prompt {
+  margin: 8px 0 6px;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.8;
+}
+.prompt-hint-legend {
+  display: none;
+  margin: 0 0 16px;
+  font-size: .82rem;
+  font-weight: 800;
+  opacity: .76;
+}
+.prompt-hint-legend.is-visible { display: block; }
+
+.choice-list { display: grid; gap: 10px; }
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  line-height: 1.9;
+  text-align: left;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.choice:hover:not(.is-locked) { color: var(--on-primary); background: var(--primary); transform: scale(1.01); }
+.choice.is-locked { cursor: default; }
+.choice-letter {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .85rem;
+  font-weight: 800;
+}
+.choice-text { min-width: 0; }
+.choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.choice.correct .choice-letter { color: var(--surface-text); }
+.choice.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.choice.wrong .choice-letter { color: var(--surface-text); }
+.choice.faded { opacity: .55; }
+
+/* ---------------------------------------------------------------------------
+   Question drill
+   Two things the other exercises on this page do not have: a sentence with a
+   hole in it, and a puzzle assembled by clicking. Everything else it shows —
+   the card, the choices, the feedback, the review — is the exercise furniture
+   already defined above.
+--------------------------------------------------------------------------- */
+.drill-sentence {
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.95;
+}
+/* Fixed width whatever word is missing, so the size of the gap never says how
+   long the answer is. */
+.drill-blank {
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.drill-passage { margin-bottom: 18px; }
+
+/* The mix sliders. One row per ticked passage, saying how much of the run that
+   passage is to fill — the number on the right is the share it works out to
+   once every other slider is counted in, so the column always adds to 100%. */
+/* The note under the mode select: one line for the regular run, a short list
+   for the spaced one, because four rules read as four rules and not as a
+   paragraph to wade through. */
+.mode-note ul {
+  margin: 4px 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 3px;
+}
+.mode-note li { line-height: 1.5; }
+
+.mix-grid { display: grid; gap: 8px; margin-top: 8px; }
+.mix-row {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) 1fr 3.4rem;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 700;
+}
+.mix-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mix-row input[type="range"] { width: 100%; margin: 0; min-height: 0; accent-color: var(--primary); }
+.mix-share { text-align: right; font-variant-numeric: tabular-nums; opacity: .75; }
+.mix-row.off { opacity: .55; }
+.mix-row.off .mix-share { color: var(--accent); opacity: 1; }
+
+.order-zone { display: grid; gap: 12px; }
+.order-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  min-height: 76px;
+  padding: 12px;
+  background: var(--surface-muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.order-slot:empty::after {
+  content: "여기에 차례대로 놓으세요";
+  font-size: .9rem;
+  font-weight: 700;
+  opacity: .62;
+}
+.order-bank { display: flex; flex-wrap: wrap; gap: 8px; }
+.order-tile {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-height: 52px;
+  padding: 12px 15px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.order-tile:hover:not(:disabled) { color: var(--on-primary); background: var(--primary); transform: scale(1.02); }
+.order-tile:disabled { cursor: default; }
+.order-tile .order-no {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .74rem;
+  font-weight: 800;
+}
+.order-tile.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.order-tile.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.order-tile.correct .order-no,
+.order-tile.wrong .order-no { color: var(--surface-text); }
+.order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.hint-row { display: grid; gap: 8px; margin: 16px 0; }
+.question-hint {
+  display: none;
+  padding: 14px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+.question-hint.is-open { display: block; }
+.assistant-status { margin: 0; font-size: .84rem; font-weight: 800; }
+.assistance-used {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+}
+.feedback strong { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+.feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
+.feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
+.next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+.finish { display: grid; gap: 20px; }
+.finish h4 { margin: 0; font-size: 1.6rem; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+.summary-tile { padding: 16px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.summary-tile strong { display: block; font-size: 1.8rem; line-height: 1.1; }
+.summary-tile small {
+  display: block;
+  margin-top: 4px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .78;
+}
+.review { display: grid; gap: 10px; }
+.review-item {
+  padding: 14px 16px;
+  background: var(--surface-muted);
+  border-left: 8px solid var(--secondary);
+  border-radius: var(--radius-md);
+  font-size: .92rem;
+}
+.review-item.is-wrong { border-left-color: var(--accent); }
+.review-item .review-q { display: block; font-weight: 800; margin-bottom: 6px; }
+.review-item .review-line { display: block; opacity: .86; }
+.review-tag {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  background: var(--surface);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.skill-breakdown { display: grid; gap: 8px; }
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.finish-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.feedback-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-bottom: 4px;
+}
+.feedback-head > :first-child { flex: 1 1 12ch; min-width: 0; margin-bottom: 0; }
+.feedback-head .count-correct { flex: none; min-height: 40px; padding: 0 14px; font-size: .88rem; }
+
+.vocab-token {
+  position: relative;
+  display: inline-block;
+  border-bottom: 4px solid var(--accent);
+  border-radius: 2px;
+  cursor: pointer;
+  line-height: 1.08;
+  outline: none;
+}
+.vocab-token::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 7px;
+}
+.vocab-token:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; }
+.vocab-popover {
+  --arrow-left: 50%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  isolation: isolate;
+  width: min(21rem, calc(100vw - 24px));
+  max-height: min(70vh, 520px);
+  display: none;
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 54px rgba(15,23,42,.38);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.42;
+  text-align: left;
+  white-space: normal;
+  cursor: default;
+}
+.vocab-popover::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left);
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
+}
+.vocab-token.is-pinned > .vocab-popover { display: grid; }
+.vocab-popover-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.vocab-popover-heading strong { font-size: .82rem; }
+.vocab-popover-heading small { opacity: .68; }
+.hint-content .roman { opacity: .75; }
+.hint-content em { opacity: .7; }
+.popover-close-btn {
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-text);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: var(--transition);
+}
+.popover-close-btn:hover { color: var(--accent); background: var(--surface-muted); }
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
+.hint-step {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-weight: 800;
+}
+.hint-step:hover, .hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
+.hint-step.is-open { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
+.hint-content {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: 7px;
+  padding: 10px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.42;
+}
+.hint-content.is-open { display: block; }
+
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
+.utility-button.nav { background: var(--accent); }
+.utility-button[disabled] { opacity: .4; cursor: default; }
+.utility-button[disabled]:hover { background: var(--accent); transform: none; }
+
+/* Quick section navigation */
+.toc-card { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover { color: var(--foreground); background: var(--blue-soft); border-color: var(--primary); }
+.exercise, .vocab-category { scroll-margin-top: 18px; }
+
+@media (max-width: 1000px) {
+  .exercise-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .exercise-menu-grid .wide { grid-column: span 2; }
+}
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner, .page-main { width: 100%; }
+  .header-inner { min-height: 60px; padding: 0 14px; }
+  .page-main { margin-top: 0; border-radius: 0; }
+  .hero-inner { padding: 48px 22px; }
+  .toc-card { overflow-x: auto; }
+  .toc-grid { width: max-content; flex-wrap: nowrap; }
+  details.section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after { width: 100%; }
+  .section-body, .exercise-body { padding: 22px; }
+  .exercise-menu-grid, .timed-fields { grid-template-columns: 1fr; }
+  .exercise-menu-grid .wide { grid-column: span 1; }
+  .btn { width: 100%; }
+  .btn.small { width: auto; }
+  .exercise-menu-actions .btn, .exercise-menu-actions .export-sep,
+  .exercise-menu-actions .export-what, .finish-actions .btn { width: 100%; }
+  .sort-field { flex: 1 1 100%; padding-left: 0; }
+  .sort-select-wrap { flex: 1; min-width: 0; }
+  .sort-select { width: 100%; min-height: 44px; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
+}
+
+/* ---------------------------------------------------------------------------
+   Korean leading
+   Korean is set in IBM Plex Sans KR (see --font above), but no face fixes the
+   spacing on its own: a syllable block stacks two or three jamo into the
+   height a Latin letter spends on one, so the leading the English reads
+   comfortably at still closes Korean up. The strokes inside 왔 run together,
+   을 and 늘 stop being tellable apart at a glance, and in a table the word
+   ends up pressed against the rule under its row. Everything below hands
+   Korean a taller line box. Two numbers drive the lot — one for running text,
+   one for the small boxes (popovers, notes, feedback) where full leading would
+   push the content out of the box it sits in.
+
+   These rules come last in the sheet on purpose: each component sets its own
+   line-height beside the rest of its styling, and this is what overrides them
+   without scattering the number across the file.
+--------------------------------------------------------------------------- */
+:root {
+  /* How much bigger Korean is set than the Latin it sits beside. Every size in
+     the block at the bottom of this sheet is the page's original number times
+     this, so the proportions the layout was drawn to still hold and only this
+     one value moves. */
+  --ko-size: 1.25;
+  /* Eased back from 2.3 now that the larger size carries the legibility; at
+     2.3 the taller Korean was leaving holes between the rows. */
+  --ko-leading: 2;
+  --ko-leading-tight: 1.75;
+}
+.story-text,
+.story-purpose,
+.story-panel-head h4,
+.prompt,
+.choice,
+.drill-sentence,
+.order-tile,
+.table-wrap td[data-vocab-field],
+.word-note-ko { line-height: var(--ko-leading); }
+
+.order-slot:empty::after,
+.vocab-popover,
+.hint-content,
+.feedback,
+.word-note-usage,
+.word-note-en { line-height: var(--ko-leading-tight); }
+
+/* Hangul is drawn on a square body with no side bearings to spare, so negative
+   tracking pushes the blocks into each other rather than closing a gap. */
+.story-panel-head h4,
+.prompt,
+.drill-sentence { letter-spacing: normal; }
+
+/* The token is an inline-block, so its underline is drawn at the bottom of its
+   own box — and a box barely taller than the text put that rule straight
+   through the descending stroke of 을 or 늘. The taller box drops it clear.
+   It stays shorter than the passage's own line box, so nothing opens up
+   around a token that has one. */
+.vocab-token { line-height: 1.55; }
+
+/* Taller lines need the row to grow with them, or the new leading just eats
+   the padding that was keeping the words off the rules above and below. The
+   note row keeps its own padding: it is meant to hug the word it belongs to. */
+.table-wrap th,
+.table-wrap td { padding-top: 18px; padding-bottom: 18px; }
+
+/* ---------------------------------------------------------------------------
+   Korean size
+   Leading alone did not do it. A Hangul block spends its height on two or
+   three stacked jamo, so at the size the Latin is set at, the counters inside
+   ㅁ and ㅇ and the whole batchim close up well before an English word of the
+   same measure gets hard to read — which is why Korean here is set a quarter
+   larger than everything around it rather than matching it.
+
+   Each rule keeps the page's original size inside the calc(), so what the
+   layout was drawn to is still legible in the source and --ko-size is the only
+   thing to turn.
+
+   Story lines, prompts and choices carry whichever language the exercise is
+   set to, so on an English run these grow too. That is the trade for not
+   wrapping every Korean fragment in a span the scripts would have to emit.
+--------------------------------------------------------------------------- */
+.story-text { font-size: calc(clamp(1.1rem, 2vw, 1.32rem) * var(--ko-size)); }
+.prompt { font-size: calc(clamp(1.15rem, 2.2vw, 1.6rem) * var(--ko-size)); }
+.drill-sentence { font-size: calc(clamp(1.1rem, 2vw, 1.4rem) * var(--ko-size)); }
+.order-tile { font-size: calc(1.02rem * var(--ko-size)); }
+.choice,
+.word-note-ko { font-size: calc(1rem * var(--ko-size)); }
+.table-wrap td[data-vocab-field="korean"] strong,
+.grammar-form { font-size: calc(1.15rem * var(--ko-size)); }
+  
+/* Symbols and formulas: Outfit has no ∈, ‖ or subscripts, so the column falls
+   to the system's math-capable faces instead of mixing in a fallback glyph
+   by glyph. */
+.math-symbol {
+  font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif;
+  font-size: 1.1em;
+  overflow-wrap: anywhere;
+}
+/* The floating arrows sit on the charcoal accent, not the orange. */
+.utility-button.nav { color: var(--on-accent); }
+</style>
+</head>
+<body id="top">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">숭실대 수업 &middot; Professor Kang Tae Hong</p>
+        <h1 id="page-title">강태홍</h1>
+        <p>The math vocabulary for Professor Kang&rsquo;s class, from the class glossary (딥러닝 수학, chapters 3&ndash;4) and grouped the way the glossary groups it. The last column is each term&rsquo;s symbol or formula; open its ＋ for the glossary&rsquo;s Korean definition and how to read it aloud.</p>
+      </div>
+    </section>
+
+    <nav class="toc-card" aria-label="Page sections">
+      <span class="toc-label">Jump to a section</span>
+      <div class="toc-grid" id="tocGrid">
+        <a class="toc-link" href="#wordbank">Word bank</a>
+        <a class="toc-link" href="#vocabExercise">Vocabulary test</a>
+      </div>
+    </nav>
+
+    <details class="section" id="wordbank" open>
+      <summary>Word bank</summary>
+      <div class="section-body">
+        <div class="ref-toolbar">
+          <div class="ref-modes" id="wordbankModes" role="group" aria-label="Group the word bank by">
+            <span class="ref-modes__label">Group by</span>
+          </div>
+          <input class="ref-filter" id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, English, or a category" aria-label="Search the word bank">
+          <button class="blur-toggle" type="button" id="wordbankExpand">Open all</button>
+          <button class="blur-toggle" type="button" id="wordbankCollapse">Close all</button>
+          <span class="wordbank-count" id="wordbankCount"></span>
+        </div>
+        <div id="wordbankGroups"></div>
+
+        <article class="exercise" id="vocabExercise">
+          <div class="exercise-head">
+            <div class="exercise-head-copy">
+              <span class="exercise-kicker">Word bank</span>
+              <h3>Vocabulary test</h3>
+              <p>Test the groups you choose, in either direction.</p>
+            </div>
+            <div class="score">Not started</div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="exercise-menu">
+              <h4>Test setup</h4>
+
+              <fieldset class="group-picker">
+                <legend>What to test</legend>
+                <div class="ref-modes" id="vocabModes" role="group" aria-label="Group the test words by">
+                  <span class="ref-modes__label">Group by</span>
+                </div>
+                <div class="group-grid" id="vocabGroupGrid"></div>
+                <div class="group-actions">
+                  <button class="btn secondary small select-all" type="button">Select all</button>
+                  <button class="btn secondary small select-none" type="button">Select none</button>
+                </div>
+              </fieldset>
+
+              <fieldset class="group-picker">
+                <legend>Familiarity</legend>
+                <div class="group-grid">
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="0" checked><span>No star<small>Unfamiliar</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="1" checked><span>&#9733;<small>Shaky</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="2" checked><span>&#9733;&#9733;<small>Learning</small></span></label>
+                  <label class="exercise-option"><input class="menu-star" type="checkbox" value="3" checked><span>&#9733;&#9733;&#9733;<small>Familiar</small></span></label>
+                </div>
+              </fieldset>
+
+              <div class="exercise-menu-grid">
+                <label>How it repeats
+                  <select class="menu-run">
+                    <option value="regular" selected>Regular &mdash; a fixed number of times</option>
+                    <option value="spaced">Spaced &mdash; until each word sticks</option>
+                  </select>
+                </label>
+                <label>Mode
+                  <select class="menu-mode">
+                    <option value="mc">Multiple choice</option>
+                    <option value="typed" selected>Typed</option>
+                  </select>
+                </label>
+                <label>Length
+                  <select class="menu-passes">
+                    <option value="1" selected>Every word once</option>
+                    <option value="2">Every word twice (2&times;)</option>
+                    <option value="3">Every word three times (3&times;)</option>
+                    <option value="4">Every word four times (4&times;)</option>
+                    <option value="5">Every word five times (5&times;)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="lang-picks">
+                <fieldset class="group-picker">
+                  <legend>Question shows</legend>
+                  <div class="group-grid">
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ko"><span>한국어 Korean</span></label>
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="ro"><span>Romanization</span></label>
+                    <label class="exercise-option"><input class="prompt-lang" type="checkbox" value="en" checked><span>English</span></label>
+                  </div>
+                </fieldset>
+                <fieldset class="group-picker">
+                  <legend>Answer in</legend>
+                  <div class="group-grid">
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="en"><span>English</span></label>
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ko" checked><span>한국어 Korean</span></label>
+                    <label class="exercise-option"><input class="answer-lang" type="checkbox" value="ro"><span>Romanization</span></label>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="wordbank-count mode-note vocab-mode-note"></div>
+              <p class="wordbank-count">Tick one box on each side for a run that always goes the same way. Tick more than one and the run mixes directions, and every question says which script to answer in.</p>
+
+              <label class="exercise-option" style="margin-top:12px;">
+                <input class="menu-repeat" type="checkbox" checked>
+                <span>Repeat a word until I get it right<small>A miss is asked again, answer hidden, until you answer it. The score still counts the first try.</small></span>
+              </label>
+
+              <div class="exercise-menu-actions">
+                <button class="btn primary begin" type="button">Begin vocabulary test</button>
+                <button class="btn secondary export-md" type="button">Export as .md</button>
+                <label class="sr-only" for="vocabSep">Separator between question and answer</label>
+                <select class="export-sep" id="vocabSep">
+                  <option value="slash">Separator: /</option>
+                  <option value="dash">Separator: -</option>
+                  <option value="comma">Separator: ,</option>
+                  <option value="semicolon">Separator: ;</option>
+                  <option value="equals">Separator: =</option>
+                  <option value="tab">Separator: Tab</option>
+                </select>
+              </div>
+              <p class="assistant-status vocab-pool-note"></p>
+            </div>
+
+            <div class="live hidden">
+              <div class="runtime-bar">
+                <span class="wordbank-count vocab-direction"></span>
+                <button class="btn warning small end-early" type="button">End test early</button>
+              </div>
+              <div class="status">
+                <span class="count"></span>
+                <span class="mode-label"></span>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Test progress" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0"><div style="width:0%"></div></div>
+
+              <div class="prompt-label"></div>
+              <div class="prompt"></div>
+
+              <div class="zone"></div>
+              <div class="feedback" aria-live="polite"></div>
+              <div class="next-row"><button class="btn warning next hidden" type="button">Next word</button></div>
+            </div>
+
+            <div class="finish hidden"></div>
+          </div>
+        </article>
+      </div>
+    </details>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+    <button class="utility-button nav" type="button" data-section-nav="prev" aria-label="Previous section" title="Previous section">↑</button>
+    <button class="utility-button nav" type="button" data-section-nav="next" aria-label="Next section" title="Next section">↓</button>
+  </div>
+
+  <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
+  <script>
+  (() => {
+    "use strict";
+
+    /* -----------------------------------------------------------------------
+       강태홍 · 딥러닝 수학 VOCABULARY
+       From the class glossary "AI 수학 & 선형대수 통합 용어집" (딥러닝수학
+       ch3~4), in its own order and under its own category headings (분류).
+       Part 1 is the symbols, Part 2 the linear algebra and AI math terms.
+       Parts 3 and 4 of the glossary are quick-reference tables that repeat
+       entries from these two, so they are left out.
+
+       Group fields
+         part, ko, en   the glossary's part, and its category heading with an
+                        English name written for this page
+         words          [ko, en, symbol, meaning, reading]
+                        symbol   기호·공식 as printed ("" where blank)
+                        meaning  핵심 의미 / 의미, the glossary's Korean gloss
+                        reading  읽는 법 ("" where blank; Part 1 has none)
+    ----------------------------------------------------------------------- */
+    const PART_1 = "Part 1 — 기본 수학 기호 (Basic Mathematical Symbols)";
+    const PART_2 = "Part 2 — 선형대수 & AI 수학 용어 (Linear Algebra & AI Math Terminology)";
+    const GLOSSARY = [
+      { part: PART_1, ko: "기본 연산", en: "Basic operations", words: [
+        ["같다", "equals", "=", "양쪽 값이 같음", ""],
+        ["같지 않다", "not equal to", "≠", "서로 같지 않음", ""],
+        ["더하기", "plus", "+", "덧셈", ""],
+        ["빼기", "minus", "−", "뺄셈", ""],
+        ["곱하기", "times / multiplied by", "×", "곱셈", ""],
+        ["곱하기 / 점", "dot / times", "·", "곱셈 (점 표기)", ""],
+        ["나누기", "divided by", "/", "나눗셈", ""],
+        ["괄호", "parentheses", "()", "식을 묶음", ""],
+        ["대괄호", "square brackets", "[]", "행렬 등에 사용", ""],
+        ["절댓값/행렬식", "absolute value / determinant", "|·|", "크기 또는 행렬식", ""],
+        ["생략", "ellipsis", "…", "계속 이어짐", ""],
+        ["콜론", "colon", ":", "조건이나 범위 표시", ""]
+      ] },
+      { part: PART_1, ko: "변수·상수", en: "Variables and constants", words: [
+        ["변수", "variable", "x, y", "미지수", ""],
+        ["상수 / 계수", "constant / coefficient", "a, b, c", "고정된 값", ""],
+        ["엑스 일, 이", "x sub one, x sub two", "x₁, x₂", "첨자로 구분하는 변수", ""]
+      ] },
+      { part: PART_1, ko: "제곱·제곱근", en: "Powers and roots", words: [
+        ["엑스 제곱", "x squared", "x²", "x의 2승", ""],
+        ["엑스 세제곱", "x cubed", "x³", "x의 3승", ""],
+        ["엑스의 n 제곱", "x to the n-th power", "xⁿ", "x의 n승", ""],
+        ["제곱근", "square root of x", "√x", "x의 양의 제곱근", ""],
+        ["세제곱근", "cube root of x", "∛x", "x의 세제곱근", ""]
+      ] },
+      { part: PART_1, ko: "함수", en: "Functions", words: [
+        ["에프 오브 엑스", "f of x", "f(x)", "x를 입력으로 하는 함수 f", ""],
+        ["y는 f of x", "y equals f of x", "y = f(x)", "함수 관계식", ""],
+        ["삼엑스제곱+이엑스+일", "three x squared plus two x plus one", "y=3x²+2x+1", "이차함수 예시", ""]
+      ] },
+      { part: PART_1, ko: "삼각함수", en: "Trigonometric functions", words: [
+        ["세타의 사인", "sine theta", "sin θ", "사인 값", ""],
+        ["세타의 코사인", "cosine theta", "cos θ", "코사인 값", ""],
+        ["세타의 탄젠트", "tangent theta", "tan θ", "탄젠트 값", ""],
+        ["피타고라스 항등식", "Pythagorean identity", "sin²θ+cos²θ=1", "기본 삼각 항등식", ""],
+        ["탄젠트 정의", "tangent definition", "tan θ=sinθ/cosθ", "탄젠트=사인/코사인", ""]
+      ] },
+      { part: PART_1, ko: "합·곱 기호", en: "Sum and product notation", words: [
+        ["시그마 / 총합", "summation", "Σ (sigma)", "여러 항의 합", ""],
+        ["k=0부터 n까지 합", "sum from k=0 to n", "Σₖ₌₀ⁿ aₖxᵏ", "급수 표기", ""],
+        ["파이 / 총곱", "product (capital pi)", "Π (pi)", "여러 항의 곱", ""]
+      ] },
+      { part: PART_1, ko: "집합·실수", en: "Sets and number sets", words: [
+        ["원소이다", "is an element of", "∈", "집합 소속 표기 (x∈A: x는 A에 속함)", ""],
+        ["실수 집합", "set of real numbers", "ℝ", "실수 전체", ""],
+        ["복소수 집합", "set of complex numbers", "ℂ", "복소수 전체", ""],
+        ["자연수 집합", "set of natural numbers", "ℕ", "자연수 전체", ""],
+        ["정수 집합", "set of integers", "ℤ", "정수 전체", ""],
+        ["유리수 집합", "set of rational numbers", "ℚ", "유리수 전체", ""]
+      ] },
+
+      { part: PART_2, ko: "기초·기호", en: "Foundations and notation", words: [
+        ["실수", "real number", "ℝ", "수직선 위의 모든 수", "알 / real numbers"],
+        ["복소수", "complex number", "z=x+yi", "실수부와 허수부로 이루어진 수", ""],
+        ["허수단위", "imaginary unit", "i²=−1", "제곱하면 -1이 되는 수", "아이 제곱 = 마이너스 일"],
+        ["자연수", "natural number", "ℕ", "1, 2, 3, …의 양의 정수", ""],
+        ["정수", "integer", "ℤ", "음의 정수, 0, 양의 정수", ""],
+        ["유리수", "rational number", "ℚ", "두 정수의 비로 나타낼 수 있는 수", ""],
+        ["무리수", "irrational number", "", "두 정수의 비로 나타낼 수 없는 실수", ""],
+        ["스칼라/상수", "scalar", "k, λ", "크기 하나의 실수 값", "케이, 람다"],
+        ["필요조건", "necessary condition", "", "명제가 참이기 위해 반드시 필요한 조건", ""],
+        ["충분조건", "sufficient condition", "", "그 조건이 성립하면 명제가 참이 되는 조건", ""],
+        ["필요충분조건", "necessary and sufficient condition", "iff", "필요조건이면서 충분조건", "이프 앤 온리 이프"]
+      ] },
+      { part: PART_2, ko: "연립방정식", en: "Systems of equations", words: [
+        ["선형방정식", "linear equation", "", "미지수 차수가 1인 방정식", ""],
+        ["연립선형방정식", "system of linear equations", "", "여러 선형방정식을 동시에 만족하는 해를 찾는 문제", ""],
+        ["선형결합", "linear combination", "a₁v₁+…+aₙvₙ", "벡터들을 스칼라배하여 더한 결합", "에이 원 브이 원 + …"],
+        ["소거법", "elimination method", "", "변수를 제거해 연립방정식을 푸는 방법", ""],
+        ["가우스 소거법", "Gaussian elimination", "", "행 기본변환으로 행 사다리꼴을 만들어 해를 구함", "가우시안 엘리미네이션"],
+        ["가우스-조던 소거법", "Gauss-Jordan elimination", "", "기약 행 사다리꼴까지 변환하는 소거법", ""],
+        ["행 사다리꼴", "row echelon form (REF)", "REF", "피벗이 아래 행으로 갈수록 오른쪽에 위치하는 형태", "알이에프"],
+        ["기약 행 사다리꼴", "reduced row echelon form (RREF)", "RREF", "각 피벗열에서 피벗 외 원소가 모두 0인 형태", "알알이에프"],
+        ["기본 행 연산", "elementary row operation", "Rᵢ↔Rⱼ", "행 교환, 상수배, 다른 행의 배를 더하는 연산", "로우 아이 스왑 로우 제이"],
+        ["동치", "equivalence", "", "서로 다른 표현이 같은 해를 갖는 관계", ""],
+        ["동차", "homogeneous", "Ax=0", "상수항이 0인 형태", "에이 엑스 = 제로"],
+        ["자명해", "trivial solution", "", "동차방정식에서 모든 계수가 0인 해", ""]
+      ] },
+      { part: PART_2, ko: "행렬", en: "Matrices", words: [
+        ["행렬", "matrix", "A=[aᵢⱼ]", "수나 식을 행과 열로 배열한 것", "에이 = 에이 서브 아이제이"],
+        ["행", "row", "R₁, R₂, …", "행렬의 가로 방향 성분", "로우 원, 로우 투"],
+        ["열", "column", "", "행렬의 세로 방향 성분", ""],
+        ["m×n 행렬", "m × n matrix", "m×n", "m행 n열로 이루어진 행렬", "m 바이 n 매트릭스"],
+        ["정방행렬", "square matrix", "n×n", "행의 수와 열의 수가 같은 행렬", "스퀘어 매트릭스"],
+        ["대각행렬", "diagonal matrix", "", "주대각선 밖의 성분이 모두 0인 정방행렬", "다이애거널 매트릭스"],
+        ["항등행렬", "identity matrix", "I", "곱해도 원래 벡터/행렬을 바꾸지 않는 행렬", "아이 (identity matrix)"],
+        ["역행렬", "inverse matrix", "A⁻¹", "AA⁻¹=A⁻¹A=I를 만족하는 행렬", "에이 인버스"],
+        ["전치행렬", "transpose matrix", "Aᵀ", "행과 열을 서로 바꾼 행렬", "에이 트랜스포즈"],
+        ["대칭행렬", "symmetric matrix", "Aᵀ=A", "전치행렬이 자기 자신과 같은 행렬", "에이 트랜스포즈 = 에이"],
+        ["행렬식", "determinant", "det(A)", "정방행렬에 대응하는 스칼라; 가역성·부피 변화 나타냄", "디터미넌트 에이"],
+        ["특이행렬", "singular matrix", "det(A)=0", "역행렬이 존재하지 않는 행렬", ""],
+        ["비특이행렬", "nonsingular matrix", "det(A)≠0", "역행렬이 존재하는 행렬 (정칙행렬)", ""],
+        ["가역성", "invertibility", "det(A)≠0", "역행렬이 존재하는 성질", ""],
+        ["랭크(계수)", "rank", "rank(A)", "서로 독립인 행 또는 열의 최대 개수", "랭크 에이"],
+        ["여인수", "cofactor", "Cᵢⱼ=(−1)ⁱ⁺ʲ|Aᵢⱼ|", "행렬식 전개에 사용하는 부호 포함 소행렬식", "씨 서브 아이제이"],
+        ["LU 분해", "LU decomposition", "A=LU", "행렬을 하삼각행렬 L과 상삼각행렬 U의 곱으로 분해", "에이 = 엘 유"],
+        ["하삼각행렬", "lower triangular matrix", "L", "대각선 위가 모두 0인 행렬", "로어 트라이앵귤러"],
+        ["상삼각행렬", "upper triangular matrix", "U", "대각선 아래가 모두 0인 행렬", "어퍼 트라이앵귤러"],
+        ["블록행렬", "block matrix", "", "큰 행렬을 부분행렬 블록으로 나누어 표현", ""],
+        ["블록대각행렬", "block diagonal matrix", "diag(A₁,…,Aₖ)", "대각블록만 존재하는 블록행렬", "다이애그"],
+        ["교환법칙", "commutative law", "A+B=B+A", "연산 순서를 바꿔도 결과가 같음 (덧셈만)", ""],
+        ["결합법칙", "associative law", "(AB)C=A(BC)", "괄호 묶는 방식이 결과에 영향을 주지 않음", ""],
+        ["분배법칙", "distributive law", "A(B+C)=AB+AC", "곱셈이 덧셈에 대해 분배됨", ""]
+      ] },
+      { part: PART_2, ko: "벡터", en: "Vectors", words: [
+        ["벡터", "vector", "", "크기와 방향을 함께 갖는 수학적 대상", "벡터 / vector"],
+        ["크기(노름)", "magnitude / norm", "‖v‖", "벡터의 길이를 나타내는 함수", "노름 오브 브이"],
+        ["L1 노름", "L1 norm", "Σ|xᵢ|", "성분 절대값의 합으로 정의되는 노름", "엘 원 노름"],
+        ["L2 노름", "L2 norm", "√Σxᵢ²", "성분 제곱합의 제곱근으로 정의되는 노름", "엘 투 노름"],
+        ["L∞ 노름", "L-infinity norm", "max|xᵢ|", "성분 절대값 중 최대값", "엘 인피니티 노름"],
+        ["정규화", "normalization", "v/‖v‖", "벡터를 단위벡터로 만드는 과정", "브이 나누기 노름 브이"],
+        ["영벡터", "zero vector", "0", "모든 성분이 0인 벡터", "제로 벡터"],
+        ["단위벡터", "unit vector", "‖v‖=1", "노름이 1인 벡터", "유닛 벡터"],
+        ["표준단위벡터", "standard unit vector", "e₁,…,eₙ", "한 성분만 1이고 나머지는 0인 단위벡터", "이 서브 원, …, 이 서브 엔"],
+        ["기저벡터", "basis vector", "", "벡터공간을 생성하는 기저를 이루는 벡터", ""],
+        ["벡터 덧셈", "vector addition", "u+v", "같은 위치 성분끼리 더하는 연산", "유 플러스 브이"],
+        ["벡터 뺄셈", "vector subtraction", "u−v", "같은 위치 성분끼리 빼는 연산", "유 마이너스 브이"],
+        ["스칼라배", "scalar multiplication", "αv", "벡터의 모든 성분에 같은 스칼라를 곱함", "알파 브이"],
+        ["점곱", "dot product", "u·v=Σuᵢvᵢ", "두 벡터의 대응 성분 곱의 합", "유 닷 브이"],
+        ["내적", "inner product", "⟨u,v⟩", "벡터의 길이와 각도를 정의할 수 있게 하는 곱", "이너 프로덕트"],
+        ["외적(벡터곱)", "cross product", "u×v", "3차원에서 두 벡터에 수직인 벡터를 만드는 연산", "유 크로스 브이"],
+        ["사영", "projection", "proj", "벡터를 다른 벡터/부분공간 방향으로 투영", "프로젝션"],
+        ["직교", "orthogonal", "u·v=0", "두 벡터의 내적이 0인 관계", "오소고널"],
+        ["수직", "perpendicular", "", "기하학적으로 90°를 이루는 관계", ""],
+        ["각도", "angle", "θ", "두 벡터 사이의 벌어진 정도", "세타"],
+        ["좌표계", "coordinate system", "", "점과 벡터를 좌표로 표현하는 기준 체계", ""],
+        ["원점", "origin", "(0,0,…)", "좌표계의 기준점", ""],
+        ["동치 벡터", "equivalent vectors", "", "크기와 방향이 같은 벡터", ""]
+      ] },
+      { part: PART_2, ko: "거리·유사도", en: "Distance and similarity", words: [
+        ["거리함수", "metric / distance function", "d(x,y)", "두 점 사이 거리를 정의하는 함수", "디 오브 엑스 와이"],
+        ["유클리드 거리", "Euclidean distance", "√Σ(xᵢ−yᵢ)²", "직선거리; L2 노름 기반 거리", "유클리디언 디스턴스"],
+        ["맨해튼 거리", "Manhattan distance", "Σ|xᵢ−yᵢ|", "좌표별 절대 차이의 합; L1 노름 기반 거리", "맨해튼 디스턴스"],
+        ["민코프스키 거리", "Minkowski distance", "(Σ|xᵢ−yᵢ|ᵖ)^(1/p)", "L1, L2 등을 일반화한 p-노름 거리", "민코우스키 디스턴스"],
+        ["체비셰프 거리", "Chebyshev distance", "max|xᵢ−yᵢ|", "좌표 차이 절대값 중 최대값", "체비셰프 디스턴스"],
+        ["마할라노비스 거리", "Mahalanobis distance", "D²=(x−m)ᵀC⁻¹(x−m)", "분산과 공분산 구조를 고려하는 통계적 거리", "마할라노비스 디스턴스"],
+        ["코사인 유사도", "cosine similarity", "(u·v)/(‖u‖‖v‖)", "두 벡터 사이 각도의 코사인으로 유사도 측정", "코사인 시밀래리티"],
+        ["자카드 유사도", "Jaccard similarity", "|A∩B|/|A∪B|", "교집합 크기를 합집합 크기로 나눈 집합 유사도", "자카드 시밀래리티"],
+        ["유사도", "similarity", "", "두 대상이 얼마나 비슷한지 나타내는 정도", ""],
+        ["상이성", "dissimilarity", "", "두 대상이 얼마나 다른지 나타내는 정도", ""],
+        ["근접성", "proximity", "", "유사도와 상이성을 포괄하는 개념", ""],
+        ["교집합", "intersection", "A∩B", "두 집합에 공통으로 포함된 원소들의 집합", "인터섹션"],
+        ["합집합", "union", "A∪B", "두 집합 중 하나 이상에 포함된 원소들의 집합", "유니온"],
+        ["이상치", "outlier", "", "다른 데이터와 크게 떨어진 관측값", ""],
+        ["손실함수", "loss function", "", "예측과 실제값의 차이를 수치화하는 함수", ""]
+      ] },
+      { part: PART_2, ko: "통계", en: "Statistics", words: [
+        ["기댓값", "expectation", "E[X]", "확률변수의 평균적 값", "이 오브 엑스"],
+        ["분산", "variance", "Var(X)", "확률변수가 평균에서 퍼진 정도", "바 오브 엑스"],
+        ["표준편차", "standard deviation", "σ", "분산의 제곱근으로 데이터의 퍼짐을 나타냄", "시그마"],
+        ["공분산", "covariance", "Cov(X,Y)", "두 확률변수의 선형적 공동 변동을 나타내는 값", "코브이 오브 엑스 와이"],
+        ["공분산행렬", "covariance matrix", "C", "여러 변수의 분산과 공분산을 배열한 행렬", "씨 (매트릭스)"]
+      ] },
+      { part: PART_2, ko: "벡터공간", en: "Vector spaces", words: [
+        ["벡터공간", "vector space", "V", "벡터 덧셈과 스칼라배에 대해 닫혀 있는 공간", "벡터 스페이스"],
+        ["실벡터공간", "real vector space", "", "스칼라가 실수인 벡터공간", ""],
+        ["복소벡터공간", "complex vector space", "", "스칼라가 복소수인 벡터공간", ""],
+        ["내적공간", "inner product space", "", "벡터공간에 내적 규칙을 추가한 공간", "이너 프로덕트 스페이스"],
+        ["부분공간", "subspace", "W⊆V", "벡터공간의 연산을 그대로 유지하는 부분집합", "서브스페이스"],
+        ["선형독립", "linear independence", "a₁v₁+…+aₙvₙ=0", "영벡터를 만드는 선형결합의 계수가 모두 0뿐인 상태", "리니어 인디펜던스"],
+        ["선형종속", "linear dependence", "", "0이 아닌 계수로 영벡터를 만드는 선형결합이 존재하는 상태", "리니어 디펜던스"],
+        ["생성(선형생성)", "span / linear span", "span(S)", "주어진 벡터들의 모든 선형결합으로 이루어진 집합", "스팬"],
+        ["기저", "basis", "B", "선형독립이면서 공간 전체를 생성하는 벡터 집합", "베이시스"],
+        ["차원", "dimension", "dim(V)", "기저를 이루는 벡터의 개수", "딤 브이"],
+        ["직교기저", "orthogonal basis", "", "서로 다른 기저벡터끼리 직교하는 기저", ""],
+        ["정규직교기저", "orthonormal basis", "", "단위벡터이면서 서로 직교하는 기저", ""],
+        ["정규기저", "normal basis", "", "모든 기저벡터의 노름이 1인 기저", ""],
+        ["표준기저", "standard basis", "", "좌표축 방향의 표준단위벡터로 이루어진 기저", ""],
+        ["순서기저", "ordered basis", "", "벡터의 순서까지 정해진 기저", ""],
+        ["좌표벡터", "coordinate vector", "[v]ᴮ", "기저에 대한 벡터의 계수들을 모은 벡터", ""]
+      ] },
+      { part: PART_2, ko: "대수구조", en: "Algebraic structures", words: [
+        ["연산", "operation", "", "대상들을 결합해 새로운 대상을 만드는 규칙", ""],
+        ["사칙연산", "elementary arithmetic", "+,−,×,÷", "덧셈·뺄셈·곱셈·나눗셈", ""],
+        ["닫힘", "closure", "", "연산 결과가 다시 같은 집합에 속하는 성질", ""],
+        ["군", "group", "", "하나의 연산에 대해 결합법칙·항등원·역원을 갖는 대수구조", "그룹"],
+        ["환", "ring", "", "덧셈과 곱셈을 갖고 특정 대수 법칙을 만족하는 구조", "링"],
+        ["체", "field", "ℝ, ℂ", "사칙연산이 가능한 수 체계", "필드"],
+        ["항등원", "identity element", "", "연산해도 원소를 바꾸지 않는 원소", ""],
+        ["역원", "inverse element", "", "연산하여 항등원을 만드는 원소", ""]
+      ] },
+      { part: PART_2, ko: "선형변환", en: "Linear transformations", words: [
+        ["선형변환", "linear transformation", "L(u+v)=L(u)+L(v)", "덧셈과 스칼라배를 보존하는 변환", "리니어 트랜스포메이션"],
+        ["선형사상", "linear map", "", "선형결합을 보존하는 사상; 선형변환과 동의어", "리니어 맵"],
+        ["선형연산자", "linear operator", "", "같은 벡터공간에서 자기 자신으로 가는 선형사상", ""],
+        ["사상", "mapping / map", "", "한 집합의 원소를 다른 집합의 원소에 대응시키는 함수", "매핑"],
+        ["정의역", "domain", "", "함수 입력값들의 집합", "도메인"],
+        ["공역", "codomain", "", "함수의 출력값이 속하도록 정한 집합", "코도메인"],
+        ["치역 / 상", "range / image", "", "실제로 함수가 만들어 내는 출력값들의 집합", "레인지 / 이미지"],
+        ["단사사상", "monomorphism / injective map", "", "서로 다른 입력이 서로 다른 출력으로 가는 사상", "인젝티브 맵"],
+        ["전사사상", "epimorphism / surjective map", "", "공역의 모든 원소가 실제 출력으로 나타나는 사상", "서젝티브 맵"],
+        ["동형사상 / 전단사", "isomorphism / bijective map", "", "일대일 대응이며 구조를 보존하는 사상", "아이소모피즘"],
+        ["역사상", "inverse map", "f⁻¹", "원래 사상의 대응을 거꾸로 되돌리는 사상", "에프 인버스"],
+        ["핵 / 영공간", "kernel / null space", "ker(T), Null(A)", "선형사상에서 0으로 보내지는 모든 입력 벡터의 집합", "커널, 널스페이스"],
+        ["선형사상의 상", "image of a linear map", "Im(T)", "선형사상이 만들어 내는 모든 출력 벡터의 집합", "이미지 오브 티"],
+        ["행렬표현", "matrix representation", "[L]", "기저를 정했을 때 선형사상을 행렬로 나타낸 것", ""],
+        ["사영변환", "projection transformation", "", "벡터를 특정 축이나 부분공간으로 투영하는 변환", ""],
+        ["전단변환", "shear transformation", "", "한 방향 성분에 다른 방향 성분을 더해 기울이는 변환", ""],
+        ["회전변환", "rotation transformation", "", "원점을 중심으로 벡터를 일정 각도 회전시키는 변환", ""],
+        ["반사", "reflection", "", "축이나 평면을 기준으로 뒤집는 변환", ""],
+        ["수축", "compression", "", "벡터의 특정 방향 크기를 줄이는 변환", ""],
+        ["팽창", "expansion", "", "벡터의 특정 방향 크기를 늘리는 변환", ""],
+        ["행렬의 거듭제곱", "matrix power", "A², A³", "같은 정방행렬의 선형변환을 반복 적용", "에이 스퀘어드, 에이 큐브드"]
+      ] },
+      { part: PART_2, ko: "고유값·고유벡터", en: "Eigenvalues and eigenvectors", words: [
+        ["고유값", "eigenvalue", "λ", "고유벡터 방향을 유지한 채 크기를 변화시키는 스칼라", "람다 (lambda)"],
+        ["고유벡터", "eigenvector", "Av=λv", "선형변환 후에도 방향을 유지하는 0이 아닌 벡터", "에이 브이 = 람다 브이"],
+        ["특성방정식", "characteristic equation", "det(A−λI)=0", "고유값을 구하기 위해 푸는 행렬식 방정식", "디터미넌트 에이 마이너스 람다 아이 = 제로"],
+        ["특성다항식", "characteristic polynomial", "p(λ)=det(A−λI)", "det(A−λI)를 λ에 대한 다항식으로 본 것", "피 오브 람다"],
+        ["고유공간", "eigenspace", "Null(A−λI)", "같은 고유값에 대응하는 고유벡터들과 영벡터의 집합", ""],
+        ["대수적 중복도", "algebraic multiplicity", "", "특성다항식에서 특정 고유값이 근으로 반복되는 횟수", ""],
+        ["기하적 중복도", "geometric multiplicity", "dim Eλ", "특정 고유값의 고유공간 차원", ""],
+        ["대각화", "diagonalization", "A=PDP⁻¹", "행렬을 고유벡터 기저에서 대각행렬 형태로 표현", "에이 = 피 디 피 인버스"],
+        ["스펙트럼 분해", "spectral decomposition", "", "행렬을 고유값·고유벡터 정보로 분해하는 방법", "스펙트럴 디컴포지션"]
+      ] }
+    ];
+
+    /* -----------------------------------------------------------------------
+       ROMANIZATION
+       The site's literal table: every syllable block on its own, joined with a
+       dash, and a letter with two readings takes the first as an onset and the
+       second as a coda. No sound changes. Copied from reading-vocab.js, which
+       this page does not otherwise need.
+    ----------------------------------------------------------------------- */
+    const INITIALS = ["g", "gg", "n", "d", "dd", "r", "m", "b", "bb", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+    const MEDIALS = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
+    const FINALS = ["", "k", "kk", "ks", "n", "nj", "nh", "t", "l", "lk", "lm", "lp", "ls", "lt", "lp", "lh", "m", "p", "ps", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+
+    function romanize(text) {
+      let out = "";
+      let prev = false;
+      for (const ch of String(text ?? "")) {
+        const code = ch.codePointAt(0) - 0xAC00;
+        if (code >= 0 && code <= 0xD7A3 - 0xAC00) {
+          out += (prev ? "-" : "") + INITIALS[Math.floor(code / 588)]
+            + MEDIALS[Math.floor((code % 588) / 28)] + FINALS[code % 28];
+          prev = true;
+        } else {
+          out += ch;
+          prev = false;
+        }
+      }
+      return out;
+    }
+
+    /* The glossary in its own order. A term's id is its Korean, so a term
+       that turns up again in a later batch keeps its stars. */
+    const WORDS = [];
+    GLOSSARY.forEach((group, index) => {
+      group.id = "category-" + (index + 1);
+      group.label = group.ko + " · " + group.en;
+      group.words.forEach(([ko, en, symbol, meaning, reading]) => {
+        WORDS.push({
+          ko, en, symbol, meaning, reading,
+          id: romanize(ko).replace(/[\s/]+/g, "_"),
+          group: group.id,
+          groupLabel: group.label,
+          usage: meaning,
+          order: WORDS.length
+        });
+      });
+    });
+
+    /* -----------------------------------------------------------------------
+       Helpers
+    ----------------------------------------------------------------------- */
+    const LETTERS = ["A", "B", "C", "D", "E"];
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+    function shuffled(list) {
+      const copy = list.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function plural(n, one, many) { return n + " " + (n === 1 ? one : many); }
+
+
+    /* -----------------------------------------------------------------------
+       Word bank: grouped tables, blurring, and star ratings
+    ----------------------------------------------------------------------- */
+    /* V2 stores a record rather than a bare number, because a star now has to
+       say where it came from: the level, the day the word was last carried
+       through a spaced run without a miss, and whether a person set it by
+       hand. */
+    const FAMILIARITY_KEY = "koreanKangFamiliarity:v1";
+    const MAX_STAR = 3;
+    let familiarity = {};
+    try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
+    /* Three stars, and each one means something a run can establish rather
+       than something you assert:
+
+         ★     carried to the end of a spaced run, but missed on the way
+         ★★    carried clean — right every time it came round
+         ★★★   carried clean on a later day than the last clean run
+
+       Every rung can still be set by hand, and a hand-set star is never taken
+       down by a run — only stars a run awarded can fall. */
+    function entryOf(id) {
+      const held = familiarity[id];
+      if (!held || typeof held !== "object") {
+        return { l: Math.min(MAX_STAR, Math.max(0, Number(held) || 0)) };
+      }
+      return held;
+    }
+    function ratingOf(id) { return Math.min(MAX_STAR, Math.max(0, Number(entryOf(id).l) || 0)); }
+    /* The day the word was last carried clean, which is what the third star
+       waits for. Nothing else is stored against a word. */
+    const cleanDayOf = id => entryOf(id).d || "";
+    const isManual = id => Boolean(entryOf(id).m);
+
+    /* The one way a rating is written. `manual` marks a star a person chose,
+       and `cleanDay` is stamped by a spaced run that carried the word without
+       a miss. */
+    function setRating(id, level, options) {
+      const settings = options || {};
+      const safe = Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
+      const held = entryOf(id);
+      const day = settings.cleanDay || held.d || "";
+      if (!safe && !day) delete familiarity[id];
+      else {
+        const record = { l: safe };
+        if (day) record.d = day;
+        if (settings.manual !== undefined ? settings.manual : held.m) record.m = true;
+        familiarity[id] = record;
+      }
+      saveFamiliarity();
+    }
+
+    function todayStamp() {
+      const now = new Date();
+      return now.getFullYear() + "-"
+        + String(now.getMonth() + 1).padStart(2, "0") + "-"
+        + String(now.getDate()).padStart(2, "0");
+    }
+
+    /* The star levels ticked in a Familiarity picker. One box per rung, so a
+       half-known word can be drilled on its own or beside any other rung, and
+       every box ticked is the whole bank. The word bank runs to three stars
+       and the grammar bank to two; each picker carries its own boxes. */
+    function tickedStars(scope, selector) {
+      return new Set([...scope.querySelectorAll((selector || ".menu-star") + ":checked")]
+        .map(input => Number(input.value)));
+    }
+    function saveFamiliarity() {
+      try { localStorage.setItem(FAMILIARITY_KEY, JSON.stringify(familiarity)); } catch (_) {}
+    }
+
+    /* ---- section sort ------------------------------------------------------
+       Every section of the word bank and of the grammar bank carries its own
+       sort, saved per section id the way blur is, so one group can sit in
+       unstarred-first order while the rest keep the order they were built in.
+       The first option in a list is that built order, and is the default.
+    ----------------------------------------------------------------------- */
+    const SECTION_SORT_KEY = "korean.kangSectionSort";
+    let sectionSort = (() => {
+      try { return JSON.parse(localStorage.getItem(SECTION_SORT_KEY) || "{}") || {}; }
+      catch (_) { return {}; }
+    })();
+    function saveSectionSort() {
+      try { localStorage.setItem(SECTION_SORT_KEY, JSON.stringify(sectionSort)); } catch (_) {}
+    }
+    function sortFor(sectionId, options) {
+      const saved = sectionSort[sectionId];
+      return options.some(option => option.id === saved) ? saved : options[0].id;
+    }
+    function sortControl(sectionId, options) {
+      const current = sortFor(sectionId, options);
+      return '<span class="toolbar-break" aria-hidden="true"></span>'
+        + '<label class="sort-field"><span class="sort-field__label">Sort</span>'
+        + '<span class="sort-select-wrap">'
+        + '<select class="sort-select" data-sort-for="' + esc(sectionId) + '" aria-label="Sort this section">'
+        + options.map(option => '<option value="' + option.id + '"'
+            + (option.id === current ? " selected" : "") + '>' + esc(option.label) + '</option>').join("")
+        + '</select></span></label>';
+    }
+    /* No comparator means the built order. Everything else falls back to it
+       when two rows tie, so a sort never shuffles rows it has nothing to say
+       about. */
+    function sortRows(items, mode, comparators) {
+      const compare = comparators[mode];
+      if (!compare) return items;
+      const built = new Map(items.map((item, index) => [item, index]));
+      return items.slice().sort((a, b) => compare(a, b) || built.get(a) - built.get(b));
+    }
+
+    /* The built order is the glossary's own. */
+    const WORD_SORT_OPTIONS = [
+      { id: "glossary", label: "Glossary order" },
+      { id: "korean", label: "Korean \uac00\u2013\ud558" },
+      { id: "unfamiliar", label: "Familiarity: unstarred first" },
+      { id: "familiar", label: "Familiarity: starred first" },
+      { id: "english", label: "English A\u2013Z" },
+      { id: "romanization", label: "Romanization A\u2013Z" }
+    ];
+    const WORD_SORTS = {
+      glossary: null,
+      korean: (a, b) => a.ko.localeCompare(b.ko, "ko"),
+      unfamiliar: (a, b) => ratingOf(a.id) - ratingOf(b.id),
+      familiar: (a, b) => ratingOf(b.id) - ratingOf(a.id),
+      english: (a, b) => String(a.en).localeCompare(String(b.en), "en"),
+      romanization: (a, b) => romanize(a.ko).localeCompare(romanize(b.ko), "en")
+    };
+
+    /* -----------------------------------------------------------------------
+       WORD BANK TABLES
+       One group per glossary category, in the glossary's order, and one way
+       of grouping, so the Group by buttons are hidden.
+    ----------------------------------------------------------------------- */
+    const REF_MODES = ["category"];
+    const REF_MODE_LABELS = { category: "Category" };
+    const REF_MODE_KEY = "korean.kangWordBankMode";
+    const REF_BLUR_KEY = "korean.kangWordBankBlur";
+
+    const BANK_WORDS = WORDS;
+
+    function refGroups() {
+      return GLOSSARY.map(group => ({
+        id: group.id,
+        label: group.label,
+        note: group.part + ". Blur a column to test yourself, then rate each word.",
+        words: BANK_WORDS.filter(entry => entry.group === group.id)
+      }));
+    }
+
+    let refMode = "category";
+
+    let refBlur = (() => {
+      try { return JSON.parse(localStorage.getItem(REF_BLUR_KEY) || "{}") || {}; }
+      catch (_) { return {}; }
+    })();
+    function saveBlur() {
+      try { localStorage.setItem(REF_BLUR_KEY, JSON.stringify(refBlur)); } catch (_) {}
+    }
+
+    const REF_GROUP_BY_ID = new Map();
+    let repaintRatings = () => {};
+
+    function buildWordBank() {
+      const host = document.getElementById("wordbankGroups");
+      const counter = document.getElementById("wordbankCount");
+      const search = document.getElementById("wordbankSearch");
+
+      function render() {
+        const groups = refGroups(refMode);
+        REF_GROUP_BY_ID.clear();
+        groups.forEach(group => REF_GROUP_BY_ID.set(group.id, group));
+        const lastColumn = "Symbol";
+
+        host.innerHTML = '<div class="vocab-category-stack">' + groups.map(group =>
+          '<details class="vocab-category" data-section-id="' + esc(group.id) + '">'
+          + '<summary><span>' + esc(group.label)
+          + '<span class="vocab-category-count">' + plural(group.words.length, "word", "words")
+          + '</span></span></summary>'
+          + '<p class="group-note">' + esc(group.note) + '</p>'
+          + '<div class="section-toolbar">'
+          + '<button class="blur-toggle" type="button" data-field="english" aria-pressed="false">Blur English</button>'
+          + '<button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>'
+          + '<button class="blur-toggle" type="button" data-field="korean" aria-pressed="false">Blur Korean</button>'
+          + '<button class="blur-toggle notes-toggle" type="button" aria-pressed="false">Open all notes</button>'
+          + '<button class="blur-toggle star-toggle" type="button">Star all</button>'
+          + sortControl(group.id, WORD_SORT_OPTIONS)
+          + '</div>'
+          + '<div class="table-wrap"><table><thead><tr>'
+          + '<th class="vocab-note-head"><span class="sr-only">Usage notes</span></th>'
+          + '<th>English</th><th>Romanization</th><th>Korean</th><th>' + esc(lastColumn) + '</th>'
+          + '<th class="familiarity-head">Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
+
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          section.addEventListener("toggle", () => { if (section.open) fillRows(section); });
+          restoreBlur(section);
+          syncStarToggle(section);
+        });
+        const label = document.getElementById("refModeLabel");
+        if (label) label.textContent = REF_MODE_LABELS[refMode];
+        paintCount("");
+      }
+
+      function fillRows(section) {
+        const body = section.querySelector("tbody");
+        if (body.dataset.filled === "true") return;
+        const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+        if (!group) return;
+        body.innerHTML = sortRows(group.words, sortFor(section.dataset.sectionId, WORD_SORT_OPTIONS), WORD_SORTS)
+          .map(entry => row(section, entry)).join("");
+        body.dataset.filled = "true";
+        paintSectionRatings(section);
+        applyBlur(section);
+        syncNotesToggle(section);
+      }
+
+      /* The term's symbol or formula, as the glossary prints it. */
+      function lastCell(entry) {
+        return entry.symbol ? '<span class="math-symbol">' + esc(entry.symbol) + '</span>' : "";
+      }
+
+      function row(section, entry) {
+        const ro = romanize(entry.ko);
+        /* The definition stays out of the haystack, or searching 벡터 would
+           bring back half the glossary. The symbol stays in, so "det" finds
+           the determinant. */
+        const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.groupLabel + " "
+          + entry.symbol).toLowerCase();
+        const noteId = "vnote-" + section.dataset.sectionId + "-" + entry.id;
+        const main = '<tr data-search="' + esc(haystack) + '">'
+          + '<td class="vocab-note-cell"><button class="vocab-note-toggle" type="button" aria-expanded="false"'
+          + ' aria-controls="' + esc(noteId) + '" aria-label="Show usage notes for ' + esc(entry.ko)
+          + '"><span aria-hidden="true">＋</span></button></td>'
+          + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
+          + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
+          + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
+          + '<td>' + lastCell(entry) + '</td>'
+          + '<td class="familiarity-cell">'
+          + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group"'
+          + ' aria-label="Familiarity for ' + esc(entry.ko) + '">'
+          + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
+          + ' aria-label="Mark as shaky">★</button>'
+          + '<button class="familiarity-star" type="button" data-level="2" aria-pressed="false"'
+          + ' aria-label="Mark as learning">★</button>'
+          + '<button class="familiarity-star" type="button" data-level="3" aria-pressed="false"'
+          + ' aria-label="Mark as familiar">★</button>'
+          + '</div></td></tr>';
+
+        const tags = '<div class="word-note-tags">'
+          + '<span class="word-tag">' + esc(entry.groupLabel) + '</span>'
+          + '</div>';
+        /* The note is the glossary's own: the Korean definition, and how the
+           symbol is read aloud where it says. */
+        const note = '<div class="word-note">'
+          + '<div class="word-note-example"><span class="word-note-label">의미 · Meaning</span>'
+          + '<p class="word-note-ko">' + esc(entry.meaning) + '</p>'
+          + '<p class="roman">' + esc(romanize(entry.meaning)) + '</p></div>'
+          + (entry.reading
+              ? '<div class="word-note-example"><span class="word-note-label">읽는 법 · Read aloud</span>'
+                + '<p class="word-note-ko">' + esc(entry.reading) + '</p>'
+                + '<p class="roman">' + esc(romanize(entry.reading)) + '</p></div>'
+              : "")
+          + tags + '</div>';
+        return main + '<tr class="vocab-note-row" id="' + esc(noteId) + '" hidden><td colspan="6">' + note + '</td></tr>';
+      }
+
+      /* ---- blur, remembered per section so each group keeps its own state --- */
+      function applyBlur(section) {
+        const saved = refBlur[section.dataset.sectionId] || {};
+        section.querySelectorAll(".section-toolbar .blur-toggle[data-field]").forEach(button => {
+          const on = Boolean(saved[button.dataset.field]);
+          button.setAttribute("aria-pressed", String(on));
+          section.querySelectorAll('[data-vocab-field="' + button.dataset.field + '"]')
+            .forEach(cell => cell.classList.toggle("is-blurred", on));
+        });
+      }
+      function restoreBlur(section) { applyBlur(section); }
+
+      /* ---- the ＋ notes ---------------------------------------------------- */
+      function setNote(button, open) {
+        const noteRow = document.getElementById(button.getAttribute("aria-controls"));
+        button.setAttribute("aria-expanded", String(open));
+        button.querySelector("span").textContent = open ? "−" : "＋";
+        if (noteRow) noteRow.hidden = !open;
+      }
+      function setAllNotes(section, open) {
+        section.querySelectorAll(".vocab-note-toggle").forEach(button => {
+          const hiddenRow = button.closest("tr").classList.contains("is-hidden");
+          setNote(button, open && !hiddenRow);
+        });
+        syncNotesToggle(section);
+      }
+      function syncNotesToggle(section) {
+        const button = section.querySelector(".notes-toggle");
+        if (!button) return;
+        const toggles = [...section.querySelectorAll(".vocab-note-toggle")];
+        const allOpen = toggles.length > 0 && toggles.every(t => t.getAttribute("aria-expanded") === "true");
+        button.setAttribute("aria-pressed", String(allOpen));
+        button.textContent = allOpen ? "Close all notes" : "Open all notes";
+      }
+
+      /* ---- stars ----------------------------------------------------------- */
+      function paintRating(group, level) {
+        const safe = Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
+        group.dataset.level = String(safe);
+        group.querySelectorAll(".familiarity-star").forEach(button =>
+          button.setAttribute("aria-pressed", String(Number(button.dataset.level) <= safe)));
+      }
+      function paintSectionRatings(section) {
+        section.querySelectorAll(".familiarity-stars").forEach(group =>
+          paintRating(group, ratingOf(group.dataset.wordId)));
+      }
+      repaintRatings = () => {
+        host.querySelectorAll(".familiarity-stars")
+          .forEach(group => paintRating(group, ratingOf(group.dataset.wordId)));
+        syncStarToggles();
+      };
+      /* One switch for a section's stars, the way the notes have one: it fills
+         the section to both stars while anything in it is short of them, and
+         clears it once every word has both. Pressing it just does the thing and
+         renames itself. */
+      function starsFull(group) {
+        return Boolean(group.words.length) && group.words.every(entry => ratingOf(entry.id) === MAX_STAR);
+      }
+      function syncStarToggle(section) {
+        const button = section.querySelector(".star-toggle");
+        const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+        if (!button || !group) return;
+        button.textContent = starsFull(group) ? "Clear stars" : "Star all";
+      }
+      function syncStarToggles() {
+        host.querySelectorAll(".vocab-category").forEach(section => syncStarToggle(section));
+      }
+
+      /* ---- sort ------------------------------------------------------------
+         Changing a section's sort rebuilds that section's rows and nothing
+         else, then re-runs the search so a filtered view stays filtered. */
+      host.addEventListener("change", event => {
+        const select = event.target.closest(".sort-select");
+        if (!select) return;
+        const section = select.closest(".vocab-category");
+        sectionSort[select.dataset.sortFor] = select.value;
+        saveSectionSort();
+        const body = section.querySelector("tbody");
+        body.innerHTML = "";
+        body.dataset.filled = "false";
+        fillRows(section);
+        if (search.value.trim()) runSearch();
+      });
+
+      /* ---- search ---------------------------------------------------------- */
+      function paintCount(term) {
+        const total = BANK_WORDS.length;
+        if (!term) {
+          counter.textContent = plural(total, "word", "words") + " · grouped by " + REF_MODE_LABELS[refMode].toLowerCase();
+          return;
+        }
+        let shown = 0;
+        host.querySelectorAll(".vocab-category").forEach(section =>
+          { shown += section.querySelectorAll("tbody tr:not(.vocab-note-row):not(.is-hidden)").length; });
+        counter.textContent = shown + " matching " + (shown === 1 ? "row" : "rows");
+      }
+
+      function runSearch() {
+        const term = search.value.trim().toLowerCase();
+        host.querySelectorAll(".vocab-category").forEach(section => {
+          if (term) fillRows(section);
+          let visible = 0;
+          section.querySelectorAll("tbody tr:not(.vocab-note-row)").forEach(tr => {
+            const match = !term || (tr.dataset.search || "").indexOf(term) >= 0;
+            tr.classList.toggle("is-hidden", !match);
+            const noteRow = tr.nextElementSibling;
+            if (noteRow && noteRow.classList.contains("vocab-note-row")) {
+              noteRow.classList.toggle("is-hidden", !match);
+              if (!match) setNote(tr.querySelector(".vocab-note-toggle"), false);
+            }
+            if (match) visible += 1;
+          });
+          section.classList.toggle("is-hidden", Boolean(term) && visible === 0);
+          if (term && visible) section.open = true;
+          syncNotesToggle(section);
+        });
+        paintCount(term);
+      }
+
+      /* ---- one delegated listener for the whole bank ----------------------- */
+      host.addEventListener("click", event => {
+        const modeButton = event.target.closest("[data-ref-mode]");
+        if (modeButton) return;
+
+        const blurButton = event.target.closest(".section-toolbar .blur-toggle[data-field]");
+        if (blurButton) {
+          const section = blurButton.closest(".vocab-category");
+          const id = section.dataset.sectionId;
+          refBlur[id] = refBlur[id] || {};
+          refBlur[id][blurButton.dataset.field] = !refBlur[id][blurButton.dataset.field];
+          saveBlur();
+          applyBlur(section);
+          return;
+        }
+        /* Filling or clearing a section's stars does it to the words, not just
+           to the rows on screen, so the other grouping shows the same stars:
+           the rating belongs to the word, not to the row. */
+        const button = event.target.closest(".star-toggle");
+        if (button) {
+          const section = button.closest(".vocab-category");
+          const group = REF_GROUP_BY_ID.get(section.dataset.sectionId);
+          if (!group) return;
+          const filling = !starsFull(group);
+          group.words.forEach(entry => setRating(entry.id, filling ? MAX_STAR : 0, { manual: true }));
+          repaintRatings();
+          return;
+        }
+        const notesButton = event.target.closest(".notes-toggle");
+        if (notesButton) {
+          const section = notesButton.closest(".vocab-category");
+          setAllNotes(section, notesButton.getAttribute("aria-pressed") !== "true");
+          return;
+        }
+        const noteToggle = event.target.closest(".vocab-note-toggle");
+        if (noteToggle) {
+          setNote(noteToggle, noteToggle.getAttribute("aria-expanded") !== "true");
+          syncNotesToggle(noteToggle.closest(".vocab-category"));
+          return;
+        }
+        const star = event.target.closest(".familiarity-star");
+        if (star) {
+          const group = star.closest(".familiarity-stars");
+          const chosen = Number(star.dataset.level) || 0;
+          const next = Number(group.dataset.level) === chosen ? 0 : chosen;
+          setRating(group.dataset.wordId, next, { manual: true });
+          paintRating(group, next);
+          syncStarToggles();
+          return;
+        }
+        const cell = event.target.closest("[data-vocab-field]");
+        if (cell) cell.classList.toggle("is-blurred");
+      });
+
+      host.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const cell = event.target.closest("[data-vocab-field]");
+        if (!cell) return;
+        event.preventDefault();
+        cell.classList.toggle("is-blurred");
+      });
+
+      /* ---- the toolbar above every group ----------------------------------- */
+      /* With one way of grouping there is nothing to choose between. */
+      if (REF_MODES.length < 2) {
+        document.getElementById("wordbankModes").hidden = true;
+        document.getElementById("vocabModes").hidden = true;
+      }
+      document.getElementById("wordbankModes").innerHTML = REF_MODES.map(mode =>
+        '<button class="mode-btn' + (mode === refMode ? " active" : "") + '" type="button" data-ref-mode="'
+        + mode + '" aria-pressed="' + (mode === refMode) + '">' + REF_MODE_LABELS[mode] + '</button>').join("");
+
+      document.getElementById("wordbankModes").addEventListener("click", event => {
+        const button = event.target.closest("[data-ref-mode]");
+        if (!button || button.dataset.refMode === refMode) return;
+        refMode = button.dataset.refMode;
+        try { localStorage.setItem(REF_MODE_KEY, refMode); } catch (_) {}
+        document.querySelectorAll("#wordbankModes .mode-btn").forEach(other => {
+          const on = other.dataset.refMode === refMode;
+          other.classList.toggle("active", on);
+          other.setAttribute("aria-pressed", String(on));
+        });
+        render();
+        if (search.value.trim()) runSearch();
+      });
+
+      document.getElementById("wordbankExpand").addEventListener("click", () => {
+        host.querySelectorAll(".vocab-category").forEach(section => { section.open = true; fillRows(section); });
+      });
+      document.getElementById("wordbankCollapse").addEventListener("click", () => {
+        host.querySelectorAll(".vocab-category").forEach(section => { section.open = false; });
+      });
+
+      search.addEventListener("input", runSearch);
+      render();
+    }
+
+    /* -----------------------------------------------------------------------
+       Vocabulary test
+    ----------------------------------------------------------------------- */
+    const vEl = document.getElementById("vocabExercise");
+    const $v = selector => vEl.querySelector(selector);
+    let vocabState = null;
+
+    function wordIn(entry, lang) {
+      if (lang === "en") return entry.en;
+      if (lang === "ro") return romanize(entry.ko);
+      return entry.ko;
+    }
+
+    /* Typed answers are checked loosely: spacing and syllable dashes are
+       ignored, and an English gloss accepts any of its alternatives. */
+    function normalizeAnswer(text, lang) {
+      const value = String(text || "").trim().toLowerCase();
+      if (lang === "ko") return value.replace(/\s+/g, "");
+      if (lang === "ro") return value.replace(/[\s\-]+/g, "");
+      return value.replace(/[.!?]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    /* A term written two ways takes either: "절댓값/행렬식" and "치역 / 상"
+       take either half, and "랭크(계수)" takes the whole, the word outside the
+       brackets, or the word inside them. */
+    function koreanAnswers(ko) {
+      const out = new Set();
+      ko.split("/").map(part => part.trim()).filter(Boolean).forEach(part => {
+        out.add(part);
+        const bracket = part.match(/^(.*?)\((.*)\)\s*$/);
+        if (bracket) {
+          if (bracket[1].trim()) out.add(bracket[1].trim());
+          if (bracket[2].trim()) out.add(bracket[2].trim());
+        }
+      });
+      return [...out];
+    }
+    function acceptedAnswers(entry, lang) {
+      if (lang === "ko") return koreanAnswers(entry.ko);
+      if (lang === "ro") return koreanAnswers(entry.ko).map(romanize);
+      const parts = entry.en.split(/[,/]/)
+        .map(part => part.replace(/\([^)]*\)/g, "").trim())
+        .filter(Boolean);
+      const all = new Set([entry.en.replace(/\([^)]*\)/g, "").trim(), ...parts]);
+      [...all].forEach(item => {
+        const stripped = item.replace(/^(to|a|an|the)\s+/i, "").trim();
+        if (stripped) all.add(stripped);
+      });
+      return [...all];
+    }
+
+    function checkTyped(entry, lang, input) {
+      const given = normalizeAnswer(input, lang);
+      if (!given) return false;
+      return acceptedAnswers(entry, lang).some(answer => normalizeAnswer(answer, lang) === given);
+    }
+
+    /* Two terms could share a spelling. Shown one of them, either
+       meaning is right, so a typed answer is
+       checked against every word the question could be showing, and a
+       multiple-choice list never offers a second right answer. */
+    function lookAlikes(entry, lang) {
+      return BANK_WORDS.filter(other => wordIn(other, lang) === wordIn(entry, lang));
+    }
+    function checkTypedFor(entry, direction, input) {
+      return lookAlikes(entry, direction.promptLang)
+        .some(other => checkTyped(other, direction.answerLang, input));
+    }
+    function clashes(option, entry, direction) {
+      return wordIn(option, direction.promptLang) === wordIn(entry, direction.promptLang)
+        || wordIn(option, direction.answerLang) === wordIn(entry, direction.answerLang);
+    }
+
+    function readVocabSettings() {
+      return {
+        groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
+        stars: tickedStars(vEl),
+        run: $v(".menu-run").value === "spaced" ? "spaced" : "regular",
+        repeat: $v(".menu-repeat").checked,
+        mode: $v(".menu-mode").value,
+        passes: Math.max(1, Math.min(5, Number($v(".menu-passes").value) || 1)),
+        promptLangs: [...vEl.querySelectorAll(".prompt-lang:checked")].map(input => input.value),
+        answerLangs: [...vEl.querySelectorAll(".answer-lang:checked")].map(input => input.value)
+      };
+    }
+
+    /* The buckets come from whichever grouping the test is set to, so the ids
+       in settings.groups are section ids, not necessarily topic ids. */
+    function testGroups() { return refGroups(testMode); }
+
+    const LANG_NAMES = { ko: "한국어", ro: "romanization", en: "English" };
+
+    /* A question has to show one script and be answered in another, so a run is
+       only possible when the two sides are not the same single tick. Tick more
+       than one and each question picks its own pair, which is why the direction
+       is worked out per word rather than once for the run. */
+    function canPair(settings) {
+      return settings.promptLangs.some(prompt =>
+        settings.answerLangs.some(answer => answer !== prompt));
+    }
+
+    function pickDirection(settings) {
+      const usable = settings.promptLangs.filter(prompt =>
+        settings.answerLangs.some(answer => answer !== prompt));
+      if (!usable.length) return null;
+      const promptLang = usable[Math.floor(Math.random() * usable.length)];
+      const answers = settings.answerLangs.filter(answer => answer !== promptLang);
+      return { promptLang: promptLang, answerLang: answers[Math.floor(Math.random() * answers.length)] };
+    }
+
+    function directionLabel(settings) {
+      const names = list => list.map(lang => LANG_NAMES[lang]).join(", ");
+      return "Question in " + names(settings.promptLangs) + " · answer in " + names(settings.answerLangs);
+    }
+
+    /* What goes between the question and the answer in an exported line. The
+       slash matches the word bank tables and the paste exercise, but an
+       English gloss can carry one itself ("snow / eye"), so a list bound for a
+       spreadsheet or Anki can pick another. */
+    const SEPARATORS = {
+      slash: " / ",
+      dash: " - ",
+      comma: ", ",
+      semicolon: "; ",
+      equals: " = ",
+      tab: "\t"
+    };
+
+    function separatorValue(scope) {
+      return SEPARATORS[scope.querySelector(".export-sep").value] || SEPARATORS.slash;
+    }
+
+    /* A mixed run picks its pair per question, so an export — which writes one
+       line per word — takes the first pair the ticks allow, the same pair the
+       test could open with. */
+    function exportDirection(settings) {
+      const promptLang = settings.promptLangs.find(prompt =>
+        settings.answerLangs.some(answer => answer !== prompt));
+      if (!promptLang) return null;
+      return { promptLang: promptLang, answerLang: settings.answerLangs.find(answer => answer !== promptLang) };
+    }
+
+    const PAGE_SLUG = (location.pathname.split("/").pop() || "reading").replace(/\.html?$/i, "") || "reading";
+
+    /* The selection as it stands in the setup, written out before a run rather
+       than after one: one word per line, question language first, then the
+       answer language. */
+    function exportVocabSelection(button) {
+      const settings = readVocabSettings();
+      const direction = exportDirection(settings);
+      if (!direction) { paintPoolNote(); return; }
+      const pool = vocabPool(settings);
+      if (!pool.length) { paintPoolNote(); return; }
+
+      const separator = separatorValue(vEl);
+      const today = new Date().toISOString().slice(0, 10);
+      const text = [
+        "# Vocabulary — " + LANG_NAMES[direction.promptLang] + " → " + LANG_NAMES[direction.answerLang] + " — " + today,
+        "# " + plural(pool.length, "word", "words") + " selected",
+        ""
+      ].concat(pool.map(entry =>
+        wordIn(entry, direction.promptLang) + separator + wordIn(entry, direction.answerLang)
+      )).join("\n") + "\n";
+
+      const blob = new Blob([text], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = PAGE_SLUG + "-vocab-" + direction.promptLang + "-to-" + direction.answerLang + "-" + today + ".md";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      button.textContent = "Exported";
+      setTimeout(() => { button.textContent = "Export as .md"; }, 1600);
+    }
+
+    /* ---- the spaced run ---------------------------------------------------
+       A regular run asks every word a fixed number of times and writes nothing
+       down. A spaced one carries each word up a short ladder instead: three
+       right answers and it leaves the run, each one sending it further back in
+       the queue, and a miss dropping it a rung and bringing it round sooner.
+       The queue is shared-vocab/spaced-session.js; what a finished word is
+       worth to its stars is SpacedSession.stars, the same two rules the word
+       bank settles its runs with.
+
+       The star a word already carries is where it joins the ladder, so a run
+       over words you know is one clean pass and a run over new ones is three.
+    ----------------------------------------------------------------------- */
+    const SPACED_RUNGS = 3;
+    const startingBox = entry => Math.max(0, Math.min(SPACED_RUNGS - 1, ratingOf(entry.id) - 1));
+    const shortestSpacedRun = words =>
+      words.reduce((sum, entry) => sum + (SPACED_RUNGS - startingBox(entry)), 0);
+
+    /* The next card, pushed onto the run's parallel arrays, so that everything
+       reading them by index — the prompt, the direction, the result, the
+       review — goes on working exactly as it does in a regular run. */
+    function queueSpacedQuestion() {
+      const card = vocabState.session.next();
+      if (!card) return false;
+      vocabState.card = card;
+      vocabState.words.push(card.item);
+      vocabState.directions.push(pickDirection(vocabState.settings));
+      vocabState.results.push(null);
+      vocabState.attempts.push(0);
+      vocabState.i = vocabState.words.length - 1;
+      return true;
+    }
+
+    /* What a finished word is worth, written to its star. Only an answer given
+       in Korean can raise one — reading 사람 and typing "person" is a different
+       thing from being asked for the word and producing it — while a miss in
+       any direction can bring one down. */
+    function settleVocabStar(card, clean) {
+      const id = card.item.id;
+      const level = ratingOf(id);
+      const stamp = todayStamp();
+      const earned = window.SpacedSession.stars.earned(clean, cleanDayOf(id), stamp);
+      const next = window.SpacedSession.stars.after(level, earned,
+        { produced: card.produced, manual: isManual(id) });
+
+      if (clean) vocabState.stars.clean += 1;
+      if (next > level) vocabState.stars.raised += 1;
+      if (next < level) vocabState.stars.lowered += 1;
+      setRating(id, next, {
+        cleanDay: clean ? stamp : "",
+        manual: next === level ? undefined : false
+      });
+    }
+
+    function gradeSpacedCard(correct) {
+      const card = vocabState.card;
+      vocabState.pending = null;
+      if (!card || card.retired) return;
+      if (correct && vocabState.directions[vocabState.i].answerLang === "ko") card.produced = true;
+      const outcome = vocabState.session.grade(card, correct);
+      if (outcome.retired) settleVocabStar(card, card.missed === 0);
+    }
+
+    /* The words a run never got to the top of the ladder, because it was ended
+       early or ran to its ceiling. A word that was asked and missed and never
+       came good is exactly the kind the stars are for, so ending a run early is
+       not a way out of the demotion. A word never asked at all is left alone. */
+    function settleUnfinishedVocab() {
+      vocabState.session.cards.forEach(card => {
+        if (card.retired || !card.seen || !card.missed) return;
+        settleVocabStar(card, false);
+      });
+    }
+
+    function vocabPool(settings) {
+      const chosen = new Set(settings.groups);
+      const ids = new Set();
+      testGroups().forEach(group => {
+        if (!chosen.has(group.id)) return;
+        group.words.forEach(entry => ids.add(entry.id));
+      });
+      return BANK_WORDS.filter(entry => ids.has(entry.id) && settings.stars.has(ratingOf(entry.id)));
+    }
+
+    /* The repetitions box and the retry switch belong to the regular run: a
+       spaced run decides how often a word comes back, and asking a missed word
+       again on the spot is the opposite of spacing it. */
+    function paintVocabModeNote(settings) {
+      const spaced = settings.run === "spaced";
+      [$v(".menu-passes"), $v(".menu-repeat")].forEach(control => {
+        control.disabled = spaced;
+        control.closest("label").style.opacity = spaced ? ".45" : "";
+      });
+      $v(".vocab-mode-note").innerHTML = spaced
+        ? "<ul>"
+          + "<li>Three right answers and a word leaves the run; each one sends it further back in the queue.</li>"
+          + "<li>A miss drops it a rung and brings it round sooner.</li>"
+          + "<li>Stars: ★ got there in the end · ★★ never missed · ★★★ clean on a later day than the last.</li>"
+          + "<li>Only an answer in 한국어 can raise a star. Length and the retry switch sit this one out.</li>"
+          + "</ul>"
+        : "Every word is asked the same number of times, in a shuffled order. Nothing is written to the stars.";
+    }
+
+    function paintPoolNote() {
+      const settings = readVocabSettings();
+      const note = $v(".vocab-pool-note");
+      paintVocabModeNote(settings);
+      if (!canPair(settings)) {
+        note.innerHTML = '<span class="assistance-used">Tick a script on each side, and not the same one on both.</span>';
+        return;
+      }
+      const pool = vocabPool(settings);
+      const size = pool.length;
+      const mixed = settings.promptLangs.length > 1 || settings.answerLangs.length > 1;
+      /* A spaced run has no length until it is run, so the note quotes the
+         floor — what it costs with nothing going wrong — rather than a total it
+         cannot know. */
+      const length = settings.run === "spaced"
+        ? ", " + shortestSpacedRun(pool) + " questions at best, more for anything you miss"
+        : (settings.passes > 1
+            ? ", asked " + settings.passes + " times each — "
+              + plural(size * settings.passes, "question", "questions")
+            : "");
+      note.textContent = size
+        ? plural(size, "word", "words") + " in your selection"
+          + length
+          + ". " + directionLabel(settings) + "."
+          + (mixed ? " Each question picks its own pair." : "")
+        : settings.stars.size
+          ? "No words at the ticked star levels in your selection yet."
+          : "Tick at least one familiarity level.";
+    }
+
+    let testMode = refMode;
+
+    function paintGroupGrid() {
+      document.getElementById("vocabGroupGrid").innerHTML = testGroups().map(group =>
+        '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
+        + esc(group.id) + '"><span>' + esc(group.label)
+        + '<small>' + plural(group.words.length, "word", "words") + '</small></span></label>').join("");
+    }
+
+    function buildVocabTest() {
+      const modes = document.getElementById("vocabModes");
+      modes.insertAdjacentHTML("beforeend", REF_MODES.map(mode =>
+        '<button class="mode-btn' + (mode === testMode ? " active" : "") + '" type="button" data-test-mode="'
+        + mode + '" aria-pressed="' + (mode === testMode) + '">' + REF_MODE_LABELS[mode] + '</button>').join(""));
+      modes.addEventListener("click", event => {
+        const button = event.target.closest("[data-test-mode]");
+        if (!button || button.dataset.testMode === testMode) return;
+        testMode = button.dataset.testMode;
+        modes.querySelectorAll(".mode-btn").forEach(other => {
+          const on = other.dataset.testMode === testMode;
+          other.classList.toggle("active", on);
+          other.setAttribute("aria-pressed", String(on));
+        });
+        paintGroupGrid();
+        paintPoolNote();
+      });
+      paintGroupGrid();
+
+      vEl.querySelector(".exercise-menu").addEventListener("change", paintPoolNote);
+      $v(".select-all").addEventListener("click", () => {
+        vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = true; });
+        paintPoolNote();
+      });
+      $v(".select-none").addEventListener("click", () => {
+        vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = false; });
+        paintPoolNote();
+      });
+      $v(".begin").addEventListener("click", startVocabTest);
+      $v(".export-md").addEventListener("click", event => exportVocabSelection(event.currentTarget));
+      $v(".next").addEventListener("click", nextVocabQuestion);
+
+      /* Enter keeps a run moving without reaching for the mouse: it moves an
+         answered question on and starts another run from the results. A typed
+         answer is still checked by the input's own Enter, which never reaches
+         here because that handler has already claimed the key. */
+      document.addEventListener("keydown", event => {
+        if (event.key !== "Enter" || event.defaultPrevented) return;
+        if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+        if (!vocabState) return;
+        /* A focused button or field answers Enter on its own. */
+        if (event.target && event.target.closest
+          && event.target.closest("button, a, input, select, textarea")) return;
+        if (!$v(".finish").classList.contains("hidden")) {
+          const again = $v(".finish .again");
+          if (again) { event.preventDefault(); again.click(); }
+          return;
+        }
+        if ($v(".live").classList.contains("hidden")) return;
+        if (!vocabState.locked || vocabState.finished) return;
+        event.preventDefault();
+        nextVocabQuestion();
+      });
+      $v(".end-early").addEventListener("click", () => {
+        if (!vocabState || vocabState.finished) return;
+        finishVocabTest("You ended the test early.");
+      });
+      paintPoolNote();
+    }
+
+    /* A run is the whole selection, shuffled — once for a 1× run, and once
+       more per extra pass, so each word comes round the same number of times.
+       Each pass is shuffled separately, and a pass never opens on the word the
+       one before it closed with. */
+    function buildRun(pool, passes) {
+      const out = [];
+      for (let pass = 0; pass < passes; pass += 1) {
+        const round = shuffled(pool);
+        if (out.length && round.length > 1 && round[0].id === out[out.length - 1].id) {
+          const swap = 1 + Math.floor(Math.random() * (round.length - 1));
+          const first = round[0];
+          round[0] = round[swap];
+          round[swap] = first;
+        }
+        round.forEach(entry => out.push(entry));
+      }
+      return out;
+    }
+
+    function startVocabTest() {
+      const settings = readVocabSettings();
+      if (!canPair(settings)) {
+        paintPoolNote();
+        return;
+      }
+      const pool = vocabPool(settings);
+      if (!pool.length) {
+        paintPoolNote();
+        return;
+      }
+      const spaced = settings.run === "spaced";
+      const picked = spaced ? [] : buildRun(pool, settings.passes);
+      vocabState = {
+        settings,
+        run: settings.run,
+        pool,
+        words: picked,
+        i: 0,
+        locked: false,
+        finished: false,
+        /* Counted per word so a repeat run knows when to stop hiding the
+           answer, and so the score can keep the first try's verdict. */
+        attempts: picked.map(() => 0),
+        retry: false,
+        directions: picked.map(() => pickDirection(settings)),
+        results: picked.map(() => null)
+      };
+      if (spaced) {
+        vocabState.session = window.SpacedSession.create({
+          items: pool.map(entry => ({ id: entry.id, item: entry, box: startingBox(entry) })),
+          retireAt: SPACED_RUNGS,
+          /* A ceiling for a night when nothing is going in. Ending the test is
+             the other way out. */
+          cap: Math.max(20, pool.length * 6)
+        });
+        vocabState.stars = { raised: 0, lowered: 0, clean: 0 };
+        vocabState.card = null;
+        /* The verdict waits until the question is left rather than landing the
+           moment it is answered, so Count as correct still has something to
+           correct. */
+        vocabState.pending = null;
+        if (!queueSpacedQuestion()) { paintPoolNote(); return; }
+      }
+      $v(".exercise-menu").classList.add("hidden");
+      $v(".finish").classList.add("hidden");
+      $v(".live").classList.remove("hidden");
+      $v(".vocab-direction").textContent = directionLabel(settings);
+      showVocabQuestion();
+      vEl.scrollIntoView({ block: "start" });
+    }
+
+    function paintVocabScore() {
+      const done = vocabState.results.filter(result => result !== null).length;
+      const right = vocabState.results.filter(result => result && result.correct).length;
+      $v(".score").innerHTML = done
+        ? right + " / " + done + " correct<br><small>"
+          + plural(vocabState.words.length, "question", "questions") + "</small>"
+        : "Not started";
+    }
+
+    function showVocabQuestion() {
+      const settings = vocabState.settings;
+      const entry = vocabState.words[vocabState.i];
+      const direction = vocabState.directions[vocabState.i];
+      vocabState.locked = false;
+
+      /* A regular run counts questions, because it knows how many there are. A
+         spaced one has no total to count towards, so it says where it has got
+         to: the question it is on, how many words are finished with, and how
+         many are one right answer from being finished with. The bar behind it
+         is drawn on rungs climbed rather than on words retired — words retire
+         in a clump near the end, and a bar drawn on retirements sits at nothing
+         through the first third of a run and then fills in a rush. */
+      const stats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
+      $v(".count").textContent = stats
+        ? "Question " + stats.asked + " · " + stats.retired + " of " + stats.total + " words done"
+          + (stats.nearly ? " · " + stats.nearly + " one answer away" : "")
+          + (stats.started ? " · " + stats.started + " under way" : "")
+        : "Word " + (vocabState.i + 1) + " of " + vocabState.words.length;
+      $v(".mode-label").textContent = entry.groupLabel;
+      const progress = $v(".progress");
+      const percent = stats
+        ? (stats.needed ? Math.round((stats.climbed / stats.needed) * 100) : 100)
+        : Math.round((vocabState.i / vocabState.words.length) * 100);
+      progress.firstElementChild.style.width = percent + "%";
+      progress.setAttribute("aria-valuemax", stats ? "100" : String(vocabState.words.length));
+      progress.setAttribute("aria-valuenow", String(stats ? percent : vocabState.i));
+
+      /* The answer script is named on every question, because a mixed run can
+         change it from one word to the next. */
+      $v(".prompt-label").textContent = (settings.mode === "mc"
+        ? "Choose the matching word"
+        : "Type the answer") + " in " + LANG_NAMES[direction.answerLang];
+      $v(".prompt").textContent = wordIn(entry, direction.promptLang);
+
+      const zone = $v(".zone");
+      if (settings.mode === "mc") {
+        /* Distractors come from the whole list, so a run over one short
+           group still gets four choices. */
+        const others = [];
+        shuffled(vocabState.pool).concat(shuffled(BANK_WORDS)).forEach(item => {
+          if (others.length >= 3 || item.id === entry.id || clashes(item, entry, direction)) return;
+          if (others.some(other => clashes(item, other, direction))) return;
+          others.push(item);
+        });
+        const options = shuffled([entry, ...others]);
+        vocabState.options = options;
+        zone.innerHTML = '<div class="choice-list">' + options.map((option, index) =>
+          '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
+          + '<span class="choice-letter">' + LETTERS[index] + '</span>'
+          + '<span class="choice-text">' + esc(wordIn(option, direction.answerLang)) + '</span></div>').join("")
+          + '</div>';
+        zone.querySelectorAll(".choice").forEach(node => {
+          const pick = () => {
+            if (vocabState.locked || vocabState.finished) return;
+            lockVocabQuestion(options[Number(node.dataset.choice)].id === entry.id,
+              wordIn(options[Number(node.dataset.choice)], direction.answerLang));
+          };
+          node.addEventListener("click", pick);
+          node.addEventListener("keydown", event => {
+            if (event.key !== "Enter" && event.key !== " ") return;
+            /* Once the question is locked Enter belongs to the shortcut below,
+               so leave it alone and only swallow the space bar's scroll. */
+            if (vocabState.locked || vocabState.finished) {
+              if (event.key === " ") event.preventDefault();
+              return;
+            }
+            event.preventDefault();
+            pick();
+          });
+        });
+      } else {
+        zone.innerHTML = '<div class="answer-row">'
+          + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
+          + 'placeholder="' + esc(LANG_NAMES[direction.answerLang]) + '">'
+          + '<button class="btn primary submit" type="button">Check</button></div>';
+        const input = zone.querySelector(".answer-input");
+        const submit = () => {
+          if (vocabState.locked || vocabState.finished) return;
+          lockVocabQuestion(checkTypedFor(entry, direction, input.value), input.value.trim());
+        };
+        zone.querySelector(".submit").addEventListener("click", submit);
+        input.addEventListener("keydown", event => {
+          if (event.key === "Enter") { event.preventDefault(); submit(); }
+        });
+        input.focus({ preventScroll: true });
+      }
+
+      const feedback = $v(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      $v(".next").classList.add("hidden");
+      paintVocabScore();
+    }
+
+    function lockVocabQuestion(correct, given) {
+      const settings = vocabState.settings;
+      const entry = vocabState.words[vocabState.i];
+      const direction = vocabState.directions[vocabState.i];
+      vocabState.locked = true;
+      vocabState.attempts[vocabState.i] += 1;
+      const attempts = vocabState.attempts[vocabState.i];
+      /* The score keeps the first try: a word drilled until it sticks is still
+         a word you missed. Later tries only record that it came good. */
+      if (!vocabState.results[vocabState.i]) {
+        vocabState.results[vocabState.i] = { correct, given: given || "" };
+      } else if (correct) {
+        vocabState.results[vocabState.i].solved = true;
+      }
+
+      /* The ladder is told when the question is left, not now, so that Count
+         as correct can still change the answer. */
+      if (vocabState.run === "spaced") vocabState.pending = correct;
+
+      /* Asking a word again is only worth anything while the answer stays
+         hidden, so a repeat run holds the card back — until the third miss,
+         when the word has clearly gone and staring at it is the way out. A
+         spaced run never does this: it brings the word round by itself. */
+      const retry = Boolean(settings.repeat) && vocabState.run !== "spaced" && !correct;
+      vocabState.retry = retry;
+      const settle = correct || !retry || attempts >= 3;
+      const shown = settle && !correct;
+
+      if (settings.mode === "mc") {
+        $v(".zone").querySelectorAll(".choice").forEach((node, index) => {
+          node.classList.add("is-locked");
+          node.setAttribute("aria-disabled", "true");
+          const option = vocabState.options[index];
+          if (option.id === entry.id) { if (settle) node.classList.add("correct"); }
+          else if (wordIn(option, direction.answerLang) === given && !correct) node.classList.add("wrong");
+          else if (settle) node.classList.add("faded");
+        });
+      } else {
+        const input = $v(".answer-input");
+        if (input) input.disabled = true;
+        const submit = $v(".submit");
+        if (submit) submit.disabled = true;
+      }
+
+      const full = esc(entry.ko) + " · " + esc(romanize(entry.ko)) + " · " + esc(entry.en);
+      const feedback = $v(".feedback");
+      feedback.className = "feedback " + (correct ? "good" : "bad");
+      /* A word has more than one good gloss, and no checker catches them all.
+         Rather than argue with the exercise, mark it yourself from the headline
+         line: the word counts as known, drops out of the retry queue, and the
+         run moves straight on. */
+      const head = correct
+        ? "<strong>맞아요!</strong>"
+        : '<div class="feedback-head"><strong>아니에요.</strong>'
+          + '<button class="btn secondary count-correct" type="button">Count as correct →</button></div>';
+      if (correct) {
+        feedback.innerHTML = head + full
+          + "<br><small>" + esc(entry.usage) + "</small>";
+      } else if (shown) {
+        feedback.innerHTML = head + "Answer: <em>"
+          + esc(wordIn(entry, direction.answerLang)) + "</em>. "
+          + full + "<br><small>" + esc(entry.usage) + "</small>"
+          + (retry ? "<br><small>Answer it yourself to move on.</small>" : "");
+      } else {
+        feedback.innerHTML = head + "다시 해 봐요 — this word comes round again."
+          + "<br><small>Try " + attempts + " · the answer shows on the third miss.</small>";
+      }
+
+      const countCorrect = feedback.querySelector(".count-correct");
+      if (countCorrect) {
+        countCorrect.addEventListener("click", () => {
+          const result = vocabState.results[vocabState.i];
+          result.correct = true;
+          result.selfMarked = true;
+          vocabState.retry = false;
+          /* The ladder has not been told anything yet, so it hears the
+             corrected verdict rather than the checker's. */
+          if (vocabState.run === "spaced") vocabState.pending = true;
+          paintVocabScore();
+          nextVocabQuestion();
+        });
+      }
+
+      const next = $v(".next");
+      next.classList.remove("hidden");
+      next.textContent = retry
+        ? "Try this word again"
+        : (vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word");
+      next.focus({ preventScroll: true });
+
+      /* A word on its way back round has not moved the run along. */
+      if (!retry) {
+        const progress = $v(".progress");
+        progress.firstElementChild.style.width =
+          Math.round(((vocabState.i + 1) / vocabState.words.length) * 100) + "%";
+        progress.setAttribute("aria-valuenow", String(vocabState.i + 1));
+      }
+      paintVocabScore();
+    }
+
+    function nextVocabQuestion() {
+      /* Same word, same direction, freshly shuffled choices. */
+      if (vocabState.retry) {
+        vocabState.retry = false;
+        showVocabQuestion();
+        return;
+      }
+      if (vocabState.run === "spaced") {
+        if (vocabState.pending !== null) gradeSpacedCard(vocabState.pending);
+        if (!queueSpacedQuestion()) { finishVocabTest(""); return; }
+        showVocabQuestion();
+        return;
+      }
+      if (vocabState.i + 1 >= vocabState.words.length) {
+        finishVocabTest("");
+        return;
+      }
+      vocabState.i += 1;
+      showVocabQuestion();
+    }
+
+    function finishVocabTest(note) {
+      /* A question answered and never left — the test was ended on the feedback
+         — still counts on the ladder, and so do the words it never finished. */
+      if (vocabState.run === "spaced") {
+        if (vocabState.pending !== null) gradeSpacedCard(vocabState.pending);
+        settleUnfinishedVocab();
+      }
+      vocabState.finished = true;
+      const total = vocabState.words.length;
+      const spacedStats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
+      const answered = vocabState.results.filter(result => result !== null).length;
+      const right = vocabState.results.filter(result => result && result.correct).length;
+      const percent = total ? Math.round((right / total) * 100) : 0;
+      const missedIds = new Set();
+      const missed = vocabState.words.filter((entry, index) => {
+        if (vocabState.results[index] && vocabState.results[index].correct) return false;
+        if (missedIds.has(entry.id)) return false;
+        missedIds.add(entry.id);
+        return true;
+      });
+
+      const missedHtml = missed.length
+        ? '<div class="word-list">' + missed.map(entry =>
+            '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
+            + '<span class="word-ro">' + esc(romanize(entry.ko)) + '</span>'
+            + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
+          /* A spaced run has already settled every star it is entitled to, so
+             offering to lower them again would take a rung twice. */
+          + (vocabState.run === "spaced" ? ""
+            : '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
+              + 'Lower the stars on these ' + missed.length + '</button></div>')
+        : "<p>Nothing missed. 잘했어요!</p>";
+
+      /* What the run wrote to the tables above, said plainly, because a star
+         moving on its own is the sort of thing a page should own up to. */
+      const stats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
+      const moved = [];
+      if (stats && vocabState.stars.raised) moved.push(vocabState.stars.raised + " raised");
+      if (stats && vocabState.stars.lowered) moved.push(vocabState.stars.lowered + " lowered");
+      const starHtml = !stats ? ""
+        : '<p class="wordbank-count">' + (stats.asked
+          ? "<strong>Stars</strong> — " + vocabState.stars.clean + " of " + stats.total
+            + " carried clean · " + (moved.length ? moved.join(", ") : "nothing moved")
+            + ". Only an answer in 한국어 can raise a star; only a miss can lower one, by a rung;"
+            + " a star you set by hand stays where you put it."
+          : "<strong>Stars</strong> — nothing was asked, so nothing moved.") + "</p>";
+
+      $v(".live").classList.add("hidden");
+      const finishEl = $v(".finish");
+      finishEl.classList.remove("hidden");
+      finishEl.innerHTML = '<h4>Vocabulary test complete</h4>'
+        + (note ? "<p><strong>" + esc(note) + "</strong></p>" : "")
+        + '<div class="summary-grid">'
+        + '<div class="summary-tile"><strong>' + right + " / " + total + '</strong><small>Correct</small></div>'
+        + '<div class="summary-tile"><strong>' + percent + '%</strong><small>Score</small></div>'
+        + '<div class="summary-tile"><strong>' + answered + '</strong><small>Questions answered</small></div>'
+        + (spacedStats
+            ? '<div class="summary-tile"><strong>' + spacedStats.retired + " / " + spacedStats.total
+              + '</strong><small>Words carried through</small></div>'
+            : "")
+        + '</div>'
+        + '<div><h4>Words to review</h4>' + missedHtml + '</div>'
+        + starHtml
+        + '<div class="finish-actions">'
+        + '<button class="btn primary again" type="button">Test again</button>'
+        + '<button class="btn secondary change-setup" type="button">Change setup</button>'
+        + '</div>';
+
+      const markWeak = finishEl.querySelector(".mark-weak");
+      if (markWeak) {
+        markWeak.addEventListener("click", () => {
+          /* A miss demotes rather than resets: two stars fall to one, one
+             falls to none. */
+          missed.forEach(entry => setRating(entry.id, ratingOf(entry.id) - 1, { manual: true }));
+          repaintRatings();
+          markWeak.disabled = true;
+          markWeak.textContent = "Stars lowered";
+        });
+      }
+      finishEl.querySelector(".again").addEventListener("click", startVocabTest);
+      finishEl.querySelector(".change-setup").addEventListener("click", () => {
+        $v(".live").classList.add("hidden");
+        $v(".finish").classList.add("hidden");
+        $v(".exercise-menu").classList.remove("hidden");
+        paintPoolNote();
+      });
+      paintVocabScore();
+    }
+
+
+    buildWordBank();
+    buildVocabTest();
+  })();
+  </script>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
+      });
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+    })();
+  </script>
+
+  <script>
+    /* Quick navigation: open every collapsed section the target sits inside. */
+    (function () {
+      document.querySelectorAll(".toc-link").forEach(link => {
+        link.addEventListener("click", () => {
+          const target = document.querySelector(link.getAttribute("href"));
+          for (let node = target; node; node = node.parentElement) {
+            if (node.tagName === "DETAILS") node.open = true;
+          }
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    /* The floating arrows walk the page's sections — the same list the "Jump to
+       a section" card holds — rather than only running back to the top. ↑ from
+       the first section still goes to the top of the page. */
+    (function () {
+      const buttons = [...document.querySelectorAll("[data-section-nav]")];
+      if (!buttons.length) return;
+
+      function stops() {
+        const seen = new Set();
+        const list = [];
+        document.querySelectorAll('.toc-link[href^="#"]').forEach(link => {
+          const hash = link.getAttribute("href");
+          const node = hash.length > 1 ? document.querySelector(hash) : null;
+          if (!node || seen.has(hash)) return;
+          seen.add(hash);
+          const span = link.querySelector("span");
+          list.push({ hash: hash, node: node, label: (span ? span.textContent : link.textContent).trim() });
+        });
+        return list;
+      }
+
+      /* The section being read is the last one whose top has passed the upper
+         third of the window, so a long section stays the current one well after
+         its heading has scrolled off. */
+      function measuredIndex(list) {
+        const line = window.innerHeight / 3;
+        let index = -1;
+        list.forEach((stop, position) => {
+          if (stop.node.getBoundingClientRect().top <= line) index = position;
+        });
+        return index;
+      }
+
+      /* A jump scrolls smoothly, so for a moment the page is still where it
+         was. Until the scroll lands, the section just jumped to is the current
+         one — otherwise two quick taps would both move one step. */
+      let jumped = null;
+      function currentIndex(list) {
+        const measured = measuredIndex(list);
+        if (!jumped) return measured;
+        if (measured === jumped.index || Date.now() - jumped.at > 2000) {
+          jumped = null;
+          return measured;
+        }
+        return jumped.index;
+      }
+
+      function targetOf(direction, list) {
+        const index = currentIndex(list);
+        if (direction === "next") return index + 1 < list.length ? index + 1 : -1;
+        return index > 0 ? index - 1 : -1;
+      }
+
+      function paint() {
+        const list = stops();
+        buttons.forEach(button => {
+          const direction = button.dataset.sectionNav;
+          const index = targetOf(direction, list);
+          const stop = index < 0 ? null : list[index];
+          const label = stop
+            ? (direction === "next" ? "Next section: " : "Previous section: ") + stop.label
+            : (direction === "next" ? "Last section" : "Back to the top");
+          button.title = label;
+          button.setAttribute("aria-label", label);
+          button.disabled = direction === "next" ? !stop : (!stop && window.scrollY <= 4);
+        });
+      }
+
+      buttons.forEach(button => button.addEventListener("click", () => {
+        const list = stops();
+        const direction = button.dataset.sectionNav;
+        const index = targetOf(direction, list);
+        if (index < 0) {
+          if (direction === "prev") window.scrollTo({ top: 0, behavior: "smooth" });
+          paint();
+          return;
+        }
+        const stop = list[index];
+        /* A collapsed section is left collapsed: the arrows move the page, they
+           do not decide what is open. The jump still lands on its heading. */
+        jumped = { index: index, at: Date.now() };
+        /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
+           section in the address bar, and lets anything watching for a hash
+           change see the move. */
+        location.hash = stop.hash;
+        paint();
+      }));
+
+      let frame = null;
+      window.addEventListener("scroll", () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => { frame = null; paint(); });
+      }, { passive: true });
+      window.addEventListener("resize", paint);
+      document.addEventListener("toggle", paint, true);
+      paint();
+    })();
+  </script>
+
+</body>
+</html>

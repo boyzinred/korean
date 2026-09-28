@@ -778,7 +778,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
 
       { title: "Unit 1: Lessons 1–3", href: "howtostudykorean-unit-1.html", group: "HowToStudyKorean", tag: "Unit 1" },
 
-      { title: "Class Word Bank", href: "tue-wed-korean.html", group: "Tue-Wed Korean", tag: "Vocabulary" },
+      { title: "Tue-Wed Korean", href: "tue-wed-korean.html", group: "숭실대 수업", tag: "Korean class" },
+      { title: "문지현", href: "soongsil-moon-ji-hyeon.html", group: "숭실대 수업", tag: "Prof. Moon" },
+      { title: "강태홍", href: "soongsil-kang-tae-hong.html", group: "숭실대 수업", tag: "Prof. Kang" },
 
       { title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "Helper exercises", tag: "TOPIK Practice Test" },
       { title: "Romanization Practice", href: "romanization-practice.html", group: "Helper exercises", tag: "Romanization" },
@@ -799,7 +801,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
     function slugify(text) {
       return String(text)
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/[^a-z0-9가-힣]+/g, "-")
         .replace(/^-+|-+$/g, "");
     }
 
