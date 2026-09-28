@@ -1081,6 +1081,8 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 .feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
 .feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
 .next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+/* Scrolled to after an answer; the margin keeps it clear of the floating buttons. */
+.next-row .next { scroll-margin-bottom: 88px; }
 
 .finish { display: grid; gap: 20px; }
 .finish h4 { margin: 0; font-size: 1.6rem; }
