@@ -1648,7 +1648,8 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        ch3~4), in its own order and under its own category headings (분류).
        Part 1 is the symbols, Part 2 the linear algebra and AI math terms.
        Parts 3 and 4 of the glossary are quick-reference tables that repeat
-       entries from these two, so they are left out.
+       entries from these two, so they are left out. After them come the
+       words taken down in class, one group per day.
 
        Group fields
          part, ko, en   the glossary's part, and its category heading with an
@@ -1660,6 +1661,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
     ----------------------------------------------------------------------- */
     const PART_1 = "Part 1 — 기본 수학 기호 (Basic Mathematical Symbols)";
     const PART_2 = "Part 2 — 선형대수 & AI 수학 용어 (Linear Algebra & AI Math Terminology)";
+    const SEP_29 = "Class notes, Sep 29 — words from the board, some repeating the glossary";
     const GLOSSARY = [
       { part: PART_1, ko: "기본 연산", en: "Basic operations", words: [
         ["같다", "equals", "=", "양쪽 값이 같음", ""],
@@ -1876,6 +1878,42 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         ["기하적 중복도", "geometric multiplicity", "dim Eλ", "특정 고유값의 고유공간 차원", ""],
         ["대각화", "diagonalization", "A=PDP⁻¹", "행렬을 고유벡터 기저에서 대각행렬 형태로 표현", "에이 = 피 디 피 인버스"],
         ["스펙트럼 분해", "spectral decomposition", "", "행렬을 고유값·고유벡터 정보로 분해하는 방법", "스펙트럴 디컴포지션"]
+      ] },
+
+      { part: SEP_29, ko: "9월 29일 단어", en: "Sep 29 words", words: [
+        ["호환", "compatibility / interchangeable", "", "서로 바꿔 쓸 수 있음", ""],
+        ["근거 / 증거", "basis / evidence", "", "주장을 뒷받침하는 이유나 자료", ""],
+        ["실수", "real number", "ℝ", "수직선 위의 모든 수", ""],
+        ["동작", "operation / action", "", "수행하는 연산이나 움직임", ""],
+        ["결합", "combination", "", "여러 개를 하나로 합침", ""],
+        ["자명해", "trivial solution", "x=0", "모든 변수가 0인 해", ""],
+        ["역변환", "inverse transformation", "T⁻¹", "변환을 되돌리는 변환", ""],
+        ["변수", "variable", "x, y", "미지수", ""],
+        ["거듭제곱근", "n-th root / radical", "ⁿ√x", "n제곱하면 x가 되는 수", ""],
+        ["다항식 함수", "polynomial function", "Σ aₖxᵏ", "다항식으로 나타낸 함수", ""],
+        ["지수 함수", "exponential function", "aˣ", "변수가 지수에 있는 함수", ""],
+        ["삼각 함수", "trigonometric function", "sin, cos, tan", "각의 크기에 대한 함수", ""],
+        ["총합 / 총곱", "total sum / total product", "Σ, Π", "여러 항의 합과 곱", ""],
+        ["난수", "random number", "", "무작위로 뽑은 수", ""],
+        ["절댓값", "absolute value", "|x|", "0으로부터의 거리", ""],
+        ["선형대수", "linear algebra", "", "벡터와 행렬, 선형변환을 다루는 수학", ""],
+        ["스칼라", "scalar", "k", "크기만 있는 양", ""],
+        ["벡터", "vector", "v", "크기와 방향을 가진 양", ""],
+        ["행렬", "matrix", "A", "수를 직사각형으로 배열한 것", ""],
+        ["벡터의 내적", "dot product / inner product", "u·v", "두 벡터의 성분별 곱의 합", ""],
+        ["놈", "norm (vector norm)", "‖v‖", "벡터의 크기(길이)", ""],
+        ["행렬의 곱", "matrix multiplication", "AB", "행과 열의 내적으로 만든 행렬", ""],
+        ["아다마르 곱", "Hadamard product", "A⊙B", "같은 위치의 성분끼리 곱함 (p. 137)", ""],
+        ["요소별 곱", "element-wise product", "A⊙B", "같은 위치의 성분끼리 곱함", ""],
+        ["전치", "transpose", "Aᵀ", "행과 열을 바꿈", ""],
+        ["행렬식", "determinant", "det(A)", "정방행렬에 대응하는 스칼라 값", ""],
+        ["역행렬", "inverse matrix", "A⁻¹", "곱하면 단위행렬이 되는 행렬", ""],
+        ["정방행렬", "square matrix", "n×n", "행과 열의 개수가 같은 행렬", ""],
+        ["선형변환", "linear transformation", "T(x)=Ax", "덧셈과 스칼라배를 보존하는 변환", ""],
+        ["기저벡터", "basis vector", "e₁, e₂", "공간을 생성하는 일차독립 벡터", ""],
+        ["고유값 / 고유벡터", "eigenvalue / eigenvector", "Av=λv", "변환 후에도 방향이 유지되는 벡터와 그 배율", ""],
+        ["코사인 유사도", "cosine similarity", "cos θ", "두 벡터 사이 각의 코사인", ""],
+        ["예습", "preparation / preview study", "", "수업 전에 미리 공부함", ""]
       ] }
     ];
 
