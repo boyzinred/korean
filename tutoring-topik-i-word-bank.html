@@ -3816,11 +3816,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       } else {
         state.currentHadWrong = true;
         feedback.className = "feedback bad";
-        // A handwritten answer was marked with the answer in view, so there is
-        // no checker to overrule.
-        feedback.innerHTML = state.handwriting
-          ? `Missed. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>${state.repeatWrong ? '<br><span class="small">This word comes straight back — write it again without looking.</span>' : ""}`
-          : `<div class="feedback-head"><span>Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span></span><button class="btn secondary" type="button" data-count-correct="${exerciseId}">Count as correct →</button></div><span class="small">Full entry: ${esc(fullEntry(item))}</span>`;
+        // A handwritten miss gets the same Count as correct as a typed one, so
+        // a mis-tapped Missed it can still be put right.
+        feedback.innerHTML = `<div class="feedback-head"><span>Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span></span><button class="btn secondary" type="button" data-count-correct="${exerciseId}">Count as correct →</button></div><span class="small">Full entry: ${esc(fullEntry(item))}</span>`
+          + (state.handwriting && state.repeatWrong ? '<br><span class="small">This word comes straight back — write it again without looking.</span>' : "");
         if (state.repeatWrong) {
           state.retryCurrent = true;
         } else {

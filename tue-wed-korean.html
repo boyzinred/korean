@@ -3447,11 +3447,12 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
          Rather than argue with the exercise, mark it yourself from the headline
          line: the word counts as known, drops out of the retry queue, and the
          run moves straight on. */
-      /* A handwritten answer was marked by the learner with the answer in
-         view, so there is nothing to overrule and nothing left to hide. */
+      /* A handwritten answer was marked with the answer in view, so there is
+         nothing left to hide — but a mis-tapped Missed it can still be put
+         right with Count as correct, the same as a typed miss. */
       const handwritten = settings.mode === "handwriting";
-      const head = correct || handwritten
-        ? "<strong>" + (correct ? "맞아요!" : "아니에요.") + "</strong>"
+      const head = correct
+        ? "<strong>맞아요!</strong>"
         : '<div class="feedback-head"><strong>아니에요.</strong>'
           + '<button class="btn secondary count-correct" type="button">Count as correct →</button></div>';
       if (handwritten) {
@@ -3488,15 +3489,26 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
       const next = $v(".next");
       next.classList.remove("hidden");
+      /* A spaced run grows its word list one question at a time, so "the
+         last word in the list" is every word it has asked. Its last question
+         is the right answer that takes the last live word off the top rung —
+         knowable here, a moment before the ladder is told. */
+      const lastQuestion = vocabState.run === "spaced"
+        ? correct && vocabState.session.stats().live === 1
+          && vocabState.card && vocabState.card.box + 1 >= SPACED_RUNGS
+        : vocabState.i + 1 >= vocabState.words.length;
       next.textContent = retry
         ? "Try this word again"
-        : (vocabState.i + 1 >= vocabState.words.length ? "See my results" : "Next word");
+        : (lastQuestion ? "See my results" : "Next word");
       next.focus({ preventScroll: true });
       /* The feedback can land below the fold when the exercise sits at the foot of the page. */
       next.scrollIntoView({ block: "nearest" });
 
-      /* A word on its way back round has not moved the run along. */
-      if (!retry) {
+      /* A word on its way back round has not moved the run along. A spaced
+         run draws its bar from the ladder when the next question is shown,
+         so it is left alone here rather than filled to the end of a list
+         that is only as long as the questions asked so far. */
+      if (!retry && vocabState.run !== "spaced") {
         const progress = $v(".progress");
         progress.firstElementChild.style.width =
           Math.round(((vocabState.i + 1) / vocabState.words.length) * 100) + "%";
