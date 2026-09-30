@@ -14,28 +14,29 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>강태홍 &middot; Soongsil</title>
+  <title>공학 학술한국어 &middot; Soongsil</title>
   <style>
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
   color-scheme: light;
-  /* Professor Kang's palette: warm paper, stone bands and right answers,
-     charcoal text, and the orange for buttons and wrong answers. */
-  --light-background: #FFFCF2;
-  --light-foreground: #252422;
-  --light-primary: #EB5E28;
-  --light-primary-hover: #D14F1C;
-  --light-secondary: #CCC5B9;
-  --light-secondary-soft: #EDE9E1;
-  --light-accent: #403D39;
-  --light-accent-soft: #E6E1D8;
-  --light-muted: #F3EFE4;
-  --light-muted-strong: #E2DCCF;
-  --light-blue-soft: #F7F3EA;
-  --light-border: #D9D2C5;
-  --light-subtle: #CCC5B9;
+  /* The engineering class's palette: a cream page, lime bands and right
+     answers, forest-green buttons that lighten to fern on hover, brick red
+     for stars and misses, and a green-black for text. */
+  --light-background: #F2E8CF;
+  --light-foreground: #1B2A1E;
+  --light-primary: #386641;
+  --light-primary-hover: #6A994E;
+  --light-secondary: #A7C957;
+  --light-secondary-soft: #EEF3DA;
+  --light-accent: #BC4749;
+  --light-accent-soft: #F4DEDC;
+  --light-muted: #E9DFC4;
+  --light-muted-strong: #DCD0B0;
+  --light-blue-soft: #F7F1E1;
+  --light-border: #D9CDAE;
+  --light-subtle: #A7C957;
 
   --background: var(--light-background);
   --foreground: var(--light-foreground);
@@ -51,18 +52,17 @@
   --border: var(--light-border);
   --subtle: var(--light-subtle);
 
-  --surface: #FFFEFA;
-  --surface-text: #252422;
-  --surface-muted: #F6F2E8;
-  --inverse: #252422;
-  --inverse-text: #FFFCF2;
-  --hero-heading: #252422;
-  --hero-text: #403D39;
+  --surface: #FBF8EF;
+  --surface-text: #1B2A1E;
+  --surface-muted: #F3EDDC;
+  --inverse: #1B2A1E;
+  --inverse-text: #F2E8CF;
+  --hero-heading: #1B2A1E;
+  --hero-text: #1B2A1E;
   /* Text on a filled colour: one ink for the primary and accent fills, one
      for the secondary fill and the white chip. */
-  --on-primary: #252422;
-  --on-secondary: #252422;
-  --on-accent: #FFFCF2;
+  --on-primary: #FFFFFF;
+  --on-secondary: #1B2A1E;
   --chip: #FFFFFF;
   --radius-md: 6px;
   --radius-lg: 8px;
@@ -117,7 +117,6 @@ html[data-theme='dark'] {
   --hero-text: #D4D4D4;
   --on-primary: #0A0A0A;
   --on-secondary: #0A0A0A;
-  --on-accent: #0A0A0A;
   --chip: #F5F5F5;
 }
 
@@ -550,6 +549,14 @@ td .roman { opacity: .78; }
   padding: 2px 4.5rem 20px;
   background: var(--surface-muted);
 }
+/* A term's parts are table rows of their own, so they drop the note's prose
+   padding and sit in the columns like the term above them, a shade lighter. */
+.vocab-category .vocab-part-row > td {
+  padding: 10px 16px;
+  text-align: center;
+  background: var(--surface-muted);
+}
+.vocab-part-row .part-mark { opacity: .55; font-weight: 800; }
 .word-note { display: grid; gap: 10px; }
 /* The example box spends 4px on its coloured rail and 14px on padding before
    its text starts, so the plain paragraphs take the same 18px and every line
@@ -714,7 +721,7 @@ td .roman { opacity: .78; }
   display: grid;
   place-items: center;
   padding: 20px;
-  color: var(--on-accent);
+  color: var(--on-primary);
   background: var(--accent);
   font-size: .9rem;
   font-weight: 800;
@@ -817,7 +824,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 .btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
 .btn.positive { color: var(--on-secondary); background: var(--secondary); }
 .btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
-.btn.warning { color: var(--on-accent); background: var(--accent); }
+.btn.warning { color: var(--on-primary); background: var(--accent); }
 .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
 
 .runtime-bar {
@@ -841,7 +848,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
-.timer-chip.is-low { color: var(--on-accent); background: var(--accent); }
+.timer-chip.is-low { color: var(--on-primary); background: var(--accent); }
 .timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
 .status {
   display: flex;
@@ -944,7 +951,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 .choice-text { min-width: 0; }
 .choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
 .choice.correct .choice-letter { color: var(--surface-text); }
-.choice.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.choice.wrong { color: var(--on-primary); background: var(--accent); border-color: var(--accent); }
 .choice.wrong .choice-letter { color: var(--surface-text); }
 .choice.faded { opacity: .55; }
 
@@ -1057,7 +1064,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
 }
 .order-tile.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
-.order-tile.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.order-tile.wrong { color: var(--on-primary); background: var(--accent); border-color: var(--accent); }
 .order-tile.correct .order-no,
 .order-tile.wrong .order-no { color: var(--surface-text); }
 .order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -1463,18 +1470,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 .word-note-ko { font-size: calc(1rem * var(--ko-size)); }
 .table-wrap td[data-vocab-field="korean"] strong,
 .grammar-form { font-size: calc(1.15rem * var(--ko-size)); }
-  
-/* Symbols and formulas: Outfit has no ∈, ‖ or subscripts, so the column falls
-   to the system's math-capable faces instead of mixing in a fallback glyph
-   by glyph. */
-.math-symbol {
-  font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif;
-  font-size: 1.1em;
-  overflow-wrap: anywhere;
-}
-/* The floating arrows sit on the charcoal accent, not the orange. */
-.utility-button.nav { color: var(--on-accent); }
-</style>
+  </style>
 </head>
 <body id="top">
 
@@ -1490,9 +1486,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   <main class="page-main">
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-inner">
-        <p class="hero-kicker">숭실대 수업 &middot; Professor Kang Tae Hong</p>
-        <h1 id="page-title">강태홍</h1>
-        <p>The math vocabulary for Professor Kang&rsquo;s class, from the class glossary (딥러닝 수학, chapters 3&ndash;4) and grouped the way the glossary groups it. The last column is each term&rsquo;s symbol or formula; open its ＋ for the glossary&rsquo;s Korean definition and how to read it aloud.</p>
+        <p class="hero-kicker">숭실대 수업 &middot; Advanced Korean for Engineering</p>
+        <h1 id="page-title">공학 학술한국어</h1>
+        <p>The words you need to follow each week&rsquo;s technology video, grouped by part of speech or by week. Open a word&rsquo;s ＋ to see the parts it is built from. Cover a column to test yourself, star what you know, and drill any mix in the vocabulary test.</p>
       </div>
     </section>
 
@@ -1511,7 +1507,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           <div class="ref-modes" id="wordbankModes" role="group" aria-label="Group the word bank by">
             <span class="ref-modes__label">Group by</span>
           </div>
-          <input class="ref-filter" id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, English, or a category" aria-label="Search the word bank">
+          <input class="ref-filter" id="wordbankSearch" type="search" placeholder="Search Hangul, romanization, English, a part of speech, or a week" aria-label="Search the word bank">
           <button class="blur-toggle" type="button" id="wordbankExpand">Open all</button>
           <button class="blur-toggle" type="button" id="wordbankCollapse">Close all</button>
           <span class="wordbank-count" id="wordbankCount"></span>
@@ -1658,279 +1654,109 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
     "use strict";
 
     /* -----------------------------------------------------------------------
-       강태홍 · 딥러닝 수학 VOCABULARY
-       From the class glossary "AI 수학 & 선형대수 통합 용어집" (딥러닝수학
-       ch3~4), in its own order and under its own category headings (분류).
-       Part 1 is the symbols, Part 2 the linear algebra and AI math terms.
-       Parts 3 and 4 of the glossary are quick-reference tables that repeat
-       entries from these two, so they are left out. After them come the
-       words taken down in class, one group per day.
+       공학 학술한국어 · WEEKLY VOCABULARY
+       One list per week, cut from that week's handout down to the words the
+       video cannot be followed without: the handout's core words, the
+       script's key words, the day-two professional verbs, and the named
+       technologies. Classroom language, the pair-activity questions and the
+       reference numbers are left out.
 
-       Group fields
-         part, ko, en   the glossary's part, and its category heading with an
-                        English name written for this page
-         words          [ko, en, symbol, meaning, reading]
-                        symbol   기호·공식 as printed ("" where blank)
-                        meaning  핵심 의미 / 의미, the glossary's Korean gloss
-                        reading  읽는 법 ("" where blank; Part 1 has none)
+       Word fields  [ko, en, pos, parts]   parts: [[ko, en], ...]
+       pos: noun · verb · adjective · adverb · expression
     ----------------------------------------------------------------------- */
-    const PART_1 = "Part 1 — 기본 수학 기호 (Basic Mathematical Symbols)";
-    const PART_2 = "Part 2 — 선형대수 & AI 수학 용어 (Linear Algebra & AI Math Terminology)";
-    const SEP_29 = "Class notes, Sep 29 — words from the board, some repeating the glossary";
-    const GLOSSARY = [
-      { part: PART_1, ko: "기본 연산", en: "Basic operations", words: [
-        ["같다", "equals", "=", "양쪽 값이 같음", ""],
-        ["같지 않다", "not equal to", "≠", "서로 같지 않음", ""],
-        ["더하기", "plus", "+", "덧셈", ""],
-        ["빼기", "minus", "−", "뺄셈", ""],
-        ["곱하기", "times / multiplied by", "×", "곱셈", ""],
-        ["곱하기 / 점", "dot / times", "·", "곱셈 (점 표기)", ""],
-        ["나누기", "divided by", "/", "나눗셈", ""],
-        ["괄호", "parentheses", "()", "식을 묶음", ""],
-        ["대괄호", "square brackets", "[]", "행렬 등에 사용", ""],
-        ["절댓값/행렬식", "absolute value / determinant", "|·|", "크기 또는 행렬식", ""],
-        ["생략", "ellipsis", "…", "계속 이어짐", ""],
-        ["콜론", "colon", ":", "조건이나 범위 표시", ""]
-      ] },
-      { part: PART_1, ko: "변수·상수", en: "Variables and constants", words: [
-        ["변수", "variable", "x, y", "미지수", ""],
-        ["상수 / 계수", "constant / coefficient", "a, b, c", "고정된 값", ""],
-        ["엑스 일, 이", "x sub one, x sub two", "x₁, x₂", "첨자로 구분하는 변수", ""]
-      ] },
-      { part: PART_1, ko: "제곱·제곱근", en: "Powers and roots", words: [
-        ["엑스 제곱", "x squared", "x²", "x의 2승", ""],
-        ["엑스 세제곱", "x cubed", "x³", "x의 3승", ""],
-        ["엑스의 n 제곱", "x to the n-th power", "xⁿ", "x의 n승", ""],
-        ["제곱근", "square root of x", "√x", "x의 양의 제곱근", ""],
-        ["세제곱근", "cube root of x", "∛x", "x의 세제곱근", ""]
-      ] },
-      { part: PART_1, ko: "함수", en: "Functions", words: [
-        ["에프 오브 엑스", "f of x", "f(x)", "x를 입력으로 하는 함수 f", ""],
-        ["y는 f of x", "y equals f of x", "y = f(x)", "함수 관계식", ""],
-        ["삼엑스제곱+이엑스+일", "three x squared plus two x plus one", "y=3x²+2x+1", "이차함수 예시", ""]
-      ] },
-      { part: PART_1, ko: "삼각함수", en: "Trigonometric functions", words: [
-        ["세타의 사인", "sine theta", "sin θ", "사인 값", ""],
-        ["세타의 코사인", "cosine theta", "cos θ", "코사인 값", ""],
-        ["세타의 탄젠트", "tangent theta", "tan θ", "탄젠트 값", ""],
-        ["피타고라스 항등식", "Pythagorean identity", "sin²θ+cos²θ=1", "기본 삼각 항등식", ""],
-        ["탄젠트 정의", "tangent definition", "tan θ=sinθ/cosθ", "탄젠트=사인/코사인", ""]
-      ] },
-      { part: PART_1, ko: "합·곱 기호", en: "Sum and product notation", words: [
-        ["시그마 / 총합", "summation", "Σ (sigma)", "여러 항의 합", ""],
-        ["k=0부터 n까지 합", "sum from k=0 to n", "Σₖ₌₀ⁿ aₖxᵏ", "급수 표기", ""],
-        ["파이 / 총곱", "product (capital pi)", "Π (pi)", "여러 항의 곱", ""]
-      ] },
-      { part: PART_1, ko: "집합·실수", en: "Sets and number sets", words: [
-        ["원소이다", "is an element of", "∈", "집합 소속 표기 (x∈A: x는 A에 속함)", ""],
-        ["실수 집합", "set of real numbers", "ℝ", "실수 전체", ""],
-        ["복소수 집합", "set of complex numbers", "ℂ", "복소수 전체", ""],
-        ["자연수 집합", "set of natural numbers", "ℕ", "자연수 전체", ""],
-        ["정수 집합", "set of integers", "ℤ", "정수 전체", ""],
-        ["유리수 집합", "set of rational numbers", "ℚ", "유리수 전체", ""]
-      ] },
+    const WEEKS = [
+      { number: 1, topic: "무인 소방 로봇 · Unmanned firefighting robot", words: [
+        /* Core words, pages 5–6 */
+        ["사람", "person / human", "noun", []],
+        ["불", "fire", "noun", []],
+        ["화재", "fire (incident)", "noun", [["화", "fire"], ["재", "disaster"]]],
+        ["소방관", "firefighter", "noun", [["소방", "firefighting"], ["-관", "official"]]],
+        ["로봇", "robot", "noun", []],
+        ["무인", "unmanned", "noun", [["무", "without"], ["인", "person"]]],
+        ["위험", "danger / risk", "noun", []],
+        ["안전", "safety", "noun", []],
+        ["현장", "site / scene", "noun", []],
+        ["들어가다", "to enter / to go in", "verb", [["들어", "into"], ["가다", "to go"]]],
+        ["위험하다", "dangerous", "adjective", [["위험", "danger"], ["-하다", "to be"]]],
+        ["안전하다", "safe", "adjective", [["안전", "safety"], ["-하다", "to be"]]],
 
-      { part: PART_2, ko: "기초·기호", en: "Foundations and notation", words: [
-        ["실수", "real number", "ℝ", "수직선 위의 모든 수", "알 / real numbers"],
-        ["복소수", "complex number", "z=x+yi", "실수부와 허수부로 이루어진 수", ""],
-        ["허수단위", "imaginary unit", "i²=−1", "제곱하면 -1이 되는 수", "아이 제곱 = 마이너스 일"],
-        ["자연수", "natural number", "ℕ", "1, 2, 3, …의 양의 정수", ""],
-        ["정수", "integer", "ℤ", "음의 정수, 0, 양의 정수", ""],
-        ["유리수", "rational number", "ℚ", "두 정수의 비로 나타낼 수 있는 수", ""],
-        ["무리수", "irrational number", "", "두 정수의 비로 나타낼 수 없는 실수", ""],
-        ["스칼라/상수", "scalar", "k, λ", "크기 하나의 실수 값", "케이, 람다"],
-        ["필요조건", "necessary condition", "", "명제가 참이기 위해 반드시 필요한 조건", ""],
-        ["충분조건", "sufficient condition", "", "그 조건이 성립하면 명제가 참이 되는 조건", ""],
-        ["필요충분조건", "necessary and sufficient condition", "iff", "필요조건이면서 충분조건", "이프 앤 온리 이프"]
-      ] },
-      { part: PART_2, ko: "연립방정식", en: "Systems of equations", words: [
-        ["선형방정식", "linear equation", "", "미지수 차수가 1인 방정식", ""],
-        ["연립선형방정식", "system of linear equations", "", "여러 선형방정식을 동시에 만족하는 해를 찾는 문제", ""],
-        ["선형결합", "linear combination", "a₁v₁+…+aₙvₙ", "벡터들을 스칼라배하여 더한 결합", "에이 원 브이 원 + …"],
-        ["소거법", "elimination method", "", "변수를 제거해 연립방정식을 푸는 방법", ""],
-        ["가우스 소거법", "Gaussian elimination", "", "행 기본변환으로 행 사다리꼴을 만들어 해를 구함", "가우시안 엘리미네이션"],
-        ["가우스-조던 소거법", "Gauss-Jordan elimination", "", "기약 행 사다리꼴까지 변환하는 소거법", ""],
-        ["행 사다리꼴", "row echelon form (REF)", "REF", "피벗이 아래 행으로 갈수록 오른쪽에 위치하는 형태", "알이에프"],
-        ["기약 행 사다리꼴", "reduced row echelon form (RREF)", "RREF", "각 피벗열에서 피벗 외 원소가 모두 0인 형태", "알알이에프"],
-        ["기본 행 연산", "elementary row operation", "Rᵢ↔Rⱼ", "행 교환, 상수배, 다른 행의 배를 더하는 연산", "로우 아이 스왑 로우 제이"],
-        ["동치", "equivalence", "", "서로 다른 표현이 같은 해를 갖는 관계", ""],
-        ["동차", "homogeneous", "Ax=0", "상수항이 0인 형태", "에이 엑스 = 제로"],
-        ["자명해", "trivial solution", "", "동차방정식에서 모든 계수가 0인 해", ""]
-      ] },
-      { part: PART_2, ko: "행렬", en: "Matrices", words: [
-        ["행렬", "matrix", "A=[aᵢⱼ]", "수나 식을 행과 열로 배열한 것", "에이 = 에이 서브 아이제이"],
-        ["행", "row", "R₁, R₂, …", "행렬의 가로 방향 성분", "로우 원, 로우 투"],
-        ["열", "column", "", "행렬의 세로 방향 성분", ""],
-        ["m×n 행렬", "m × n matrix", "m×n", "m행 n열로 이루어진 행렬", "m 바이 n 매트릭스"],
-        ["정방행렬", "square matrix", "n×n", "행의 수와 열의 수가 같은 행렬", "스퀘어 매트릭스"],
-        ["대각행렬", "diagonal matrix", "", "주대각선 밖의 성분이 모두 0인 정방행렬", "다이애거널 매트릭스"],
-        ["항등행렬", "identity matrix", "I", "곱해도 원래 벡터/행렬을 바꾸지 않는 행렬", "아이 (identity matrix)"],
-        ["역행렬", "inverse matrix", "A⁻¹", "AA⁻¹=A⁻¹A=I를 만족하는 행렬", "에이 인버스"],
-        ["전치행렬", "transpose matrix", "Aᵀ", "행과 열을 서로 바꾼 행렬", "에이 트랜스포즈"],
-        ["대칭행렬", "symmetric matrix", "Aᵀ=A", "전치행렬이 자기 자신과 같은 행렬", "에이 트랜스포즈 = 에이"],
-        ["행렬식", "determinant", "det(A)", "정방행렬에 대응하는 스칼라; 가역성·부피 변화 나타냄", "디터미넌트 에이"],
-        ["특이행렬", "singular matrix", "det(A)=0", "역행렬이 존재하지 않는 행렬", ""],
-        ["비특이행렬", "nonsingular matrix", "det(A)≠0", "역행렬이 존재하는 행렬 (정칙행렬)", ""],
-        ["가역성", "invertibility", "det(A)≠0", "역행렬이 존재하는 성질", ""],
-        ["랭크(계수)", "rank", "rank(A)", "서로 독립인 행 또는 열의 최대 개수", "랭크 에이"],
-        ["여인수", "cofactor", "Cᵢⱼ=(−1)ⁱ⁺ʲ|Aᵢⱼ|", "행렬식 전개에 사용하는 부호 포함 소행렬식", "씨 서브 아이제이"],
-        ["LU 분해", "LU decomposition", "A=LU", "행렬을 하삼각행렬 L과 상삼각행렬 U의 곱으로 분해", "에이 = 엘 유"],
-        ["하삼각행렬", "lower triangular matrix", "L", "대각선 위가 모두 0인 행렬", "로어 트라이앵귤러"],
-        ["상삼각행렬", "upper triangular matrix", "U", "대각선 아래가 모두 0인 행렬", "어퍼 트라이앵귤러"],
-        ["블록행렬", "block matrix", "", "큰 행렬을 부분행렬 블록으로 나누어 표현", ""],
-        ["블록대각행렬", "block diagonal matrix", "diag(A₁,…,Aₖ)", "대각블록만 존재하는 블록행렬", "다이애그"],
-        ["교환법칙", "commutative law", "A+B=B+A", "연산 순서를 바꿔도 결과가 같음 (덧셈만)", ""],
-        ["결합법칙", "associative law", "(AB)C=A(BC)", "괄호 묶는 방식이 결과에 영향을 주지 않음", ""],
-        ["분배법칙", "distributive law", "A(B+C)=AB+AC", "곱셈이 덧셈에 대해 분배됨", ""]
-      ] },
-      { part: PART_2, ko: "벡터", en: "Vectors", words: [
-        ["벡터", "vector", "", "크기와 방향을 함께 갖는 수학적 대상", "벡터 / vector"],
-        ["크기(노름)", "magnitude / norm", "‖v‖", "벡터의 길이를 나타내는 함수", "노름 오브 브이"],
-        ["L1 노름", "L1 norm", "Σ|xᵢ|", "성분 절대값의 합으로 정의되는 노름", "엘 원 노름"],
-        ["L2 노름", "L2 norm", "√Σxᵢ²", "성분 제곱합의 제곱근으로 정의되는 노름", "엘 투 노름"],
-        ["L∞ 노름", "L-infinity norm", "max|xᵢ|", "성분 절대값 중 최대값", "엘 인피니티 노름"],
-        ["정규화", "normalization", "v/‖v‖", "벡터를 단위벡터로 만드는 과정", "브이 나누기 노름 브이"],
-        ["영벡터", "zero vector", "0", "모든 성분이 0인 벡터", "제로 벡터"],
-        ["단위벡터", "unit vector", "‖v‖=1", "노름이 1인 벡터", "유닛 벡터"],
-        ["표준단위벡터", "standard unit vector", "e₁,…,eₙ", "한 성분만 1이고 나머지는 0인 단위벡터", "이 서브 원, …, 이 서브 엔"],
-        ["기저벡터", "basis vector", "", "벡터공간을 생성하는 기저를 이루는 벡터", ""],
-        ["벡터 덧셈", "vector addition", "u+v", "같은 위치 성분끼리 더하는 연산", "유 플러스 브이"],
-        ["벡터 뺄셈", "vector subtraction", "u−v", "같은 위치 성분끼리 빼는 연산", "유 마이너스 브이"],
-        ["스칼라배", "scalar multiplication", "αv", "벡터의 모든 성분에 같은 스칼라를 곱함", "알파 브이"],
-        ["점곱", "dot product", "u·v=Σuᵢvᵢ", "두 벡터의 대응 성분 곱의 합", "유 닷 브이"],
-        ["내적", "inner product", "⟨u,v⟩", "벡터의 길이와 각도를 정의할 수 있게 하는 곱", "이너 프로덕트"],
-        ["외적(벡터곱)", "cross product", "u×v", "3차원에서 두 벡터에 수직인 벡터를 만드는 연산", "유 크로스 브이"],
-        ["사영", "projection", "proj", "벡터를 다른 벡터/부분공간 방향으로 투영", "프로젝션"],
-        ["직교", "orthogonal", "u·v=0", "두 벡터의 내적이 0인 관계", "오소고널"],
-        ["수직", "perpendicular", "", "기하학적으로 90°를 이루는 관계", ""],
-        ["각도", "angle", "θ", "두 벡터 사이의 벌어진 정도", "세타"],
-        ["좌표계", "coordinate system", "", "점과 벡터를 좌표로 표현하는 기준 체계", ""],
-        ["원점", "origin", "(0,0,…)", "좌표계의 기준점", ""],
-        ["동치 벡터", "equivalent vectors", "", "크기와 방향이 같은 벡터", ""]
-      ] },
-      { part: PART_2, ko: "거리·유사도", en: "Distance and similarity", words: [
-        ["거리함수", "metric / distance function", "d(x,y)", "두 점 사이 거리를 정의하는 함수", "디 오브 엑스 와이"],
-        ["유클리드 거리", "Euclidean distance", "√Σ(xᵢ−yᵢ)²", "직선거리; L2 노름 기반 거리", "유클리디언 디스턴스"],
-        ["맨해튼 거리", "Manhattan distance", "Σ|xᵢ−yᵢ|", "좌표별 절대 차이의 합; L1 노름 기반 거리", "맨해튼 디스턴스"],
-        ["민코프스키 거리", "Minkowski distance", "(Σ|xᵢ−yᵢ|ᵖ)^(1/p)", "L1, L2 등을 일반화한 p-노름 거리", "민코우스키 디스턴스"],
-        ["체비셰프 거리", "Chebyshev distance", "max|xᵢ−yᵢ|", "좌표 차이 절대값 중 최대값", "체비셰프 디스턴스"],
-        ["마할라노비스 거리", "Mahalanobis distance", "D²=(x−m)ᵀC⁻¹(x−m)", "분산과 공분산 구조를 고려하는 통계적 거리", "마할라노비스 디스턴스"],
-        ["코사인 유사도", "cosine similarity", "(u·v)/(‖u‖‖v‖)", "두 벡터 사이 각도의 코사인으로 유사도 측정", "코사인 시밀래리티"],
-        ["자카드 유사도", "Jaccard similarity", "|A∩B|/|A∪B|", "교집합 크기를 합집합 크기로 나눈 집합 유사도", "자카드 시밀래리티"],
-        ["유사도", "similarity", "", "두 대상이 얼마나 비슷한지 나타내는 정도", ""],
-        ["상이성", "dissimilarity", "", "두 대상이 얼마나 다른지 나타내는 정도", ""],
-        ["근접성", "proximity", "", "유사도와 상이성을 포괄하는 개념", ""],
-        ["교집합", "intersection", "A∩B", "두 집합에 공통으로 포함된 원소들의 집합", "인터섹션"],
-        ["합집합", "union", "A∪B", "두 집합 중 하나 이상에 포함된 원소들의 집합", "유니온"],
-        ["이상치", "outlier", "", "다른 데이터와 크게 떨어진 관측값", ""],
-        ["손실함수", "loss function", "", "예측과 실제값의 차이를 수치화하는 함수", ""]
-      ] },
-      { part: PART_2, ko: "통계", en: "Statistics", words: [
-        ["기댓값", "expectation", "E[X]", "확률변수의 평균적 값", "이 오브 엑스"],
-        ["분산", "variance", "Var(X)", "확률변수가 평균에서 퍼진 정도", "바 오브 엑스"],
-        ["표준편차", "standard deviation", "σ", "분산의 제곱근으로 데이터의 퍼짐을 나타냄", "시그마"],
-        ["공분산", "covariance", "Cov(X,Y)", "두 확률변수의 선형적 공동 변동을 나타내는 값", "코브이 오브 엑스 와이"],
-        ["공분산행렬", "covariance matrix", "C", "여러 변수의 분산과 공분산을 배열한 행렬", "씨 (매트릭스)"]
-      ] },
-      { part: PART_2, ko: "벡터공간", en: "Vector spaces", words: [
-        ["벡터공간", "vector space", "V", "벡터 덧셈과 스칼라배에 대해 닫혀 있는 공간", "벡터 스페이스"],
-        ["실벡터공간", "real vector space", "", "스칼라가 실수인 벡터공간", ""],
-        ["복소벡터공간", "complex vector space", "", "스칼라가 복소수인 벡터공간", ""],
-        ["내적공간", "inner product space", "", "벡터공간에 내적 규칙을 추가한 공간", "이너 프로덕트 스페이스"],
-        ["부분공간", "subspace", "W⊆V", "벡터공간의 연산을 그대로 유지하는 부분집합", "서브스페이스"],
-        ["선형독립", "linear independence", "a₁v₁+…+aₙvₙ=0", "영벡터를 만드는 선형결합의 계수가 모두 0뿐인 상태", "리니어 인디펜던스"],
-        ["선형종속", "linear dependence", "", "0이 아닌 계수로 영벡터를 만드는 선형결합이 존재하는 상태", "리니어 디펜던스"],
-        ["생성(선형생성)", "span / linear span", "span(S)", "주어진 벡터들의 모든 선형결합으로 이루어진 집합", "스팬"],
-        ["기저", "basis", "B", "선형독립이면서 공간 전체를 생성하는 벡터 집합", "베이시스"],
-        ["차원", "dimension", "dim(V)", "기저를 이루는 벡터의 개수", "딤 브이"],
-        ["직교기저", "orthogonal basis", "", "서로 다른 기저벡터끼리 직교하는 기저", ""],
-        ["정규직교기저", "orthonormal basis", "", "단위벡터이면서 서로 직교하는 기저", ""],
-        ["정규기저", "normal basis", "", "모든 기저벡터의 노름이 1인 기저", ""],
-        ["표준기저", "standard basis", "", "좌표축 방향의 표준단위벡터로 이루어진 기저", ""],
-        ["순서기저", "ordered basis", "", "벡터의 순서까지 정해진 기저", ""],
-        ["좌표벡터", "coordinate vector", "[v]ᴮ", "기저에 대한 벡터의 계수들을 모은 벡터", ""]
-      ] },
-      { part: PART_2, ko: "대수구조", en: "Algebraic structures", words: [
-        ["연산", "operation", "", "대상들을 결합해 새로운 대상을 만드는 규칙", ""],
-        ["사칙연산", "elementary arithmetic", "+,−,×,÷", "덧셈·뺄셈·곱셈·나눗셈", ""],
-        ["닫힘", "closure", "", "연산 결과가 다시 같은 집합에 속하는 성질", ""],
-        ["군", "group", "", "하나의 연산에 대해 결합법칙·항등원·역원을 갖는 대수구조", "그룹"],
-        ["환", "ring", "", "덧셈과 곱셈을 갖고 특정 대수 법칙을 만족하는 구조", "링"],
-        ["체", "field", "ℝ, ℂ", "사칙연산이 가능한 수 체계", "필드"],
-        ["항등원", "identity element", "", "연산해도 원소를 바꾸지 않는 원소", ""],
-        ["역원", "inverse element", "", "연산하여 항등원을 만드는 원소", ""]
-      ] },
-      { part: PART_2, ko: "선형변환", en: "Linear transformations", words: [
-        ["선형변환", "linear transformation", "L(u+v)=L(u)+L(v)", "덧셈과 스칼라배를 보존하는 변환", "리니어 트랜스포메이션"],
-        ["선형사상", "linear map", "", "선형결합을 보존하는 사상; 선형변환과 동의어", "리니어 맵"],
-        ["선형연산자", "linear operator", "", "같은 벡터공간에서 자기 자신으로 가는 선형사상", ""],
-        ["사상", "mapping / map", "", "한 집합의 원소를 다른 집합의 원소에 대응시키는 함수", "매핑"],
-        ["정의역", "domain", "", "함수 입력값들의 집합", "도메인"],
-        ["공역", "codomain", "", "함수의 출력값이 속하도록 정한 집합", "코도메인"],
-        ["치역 / 상", "range / image", "", "실제로 함수가 만들어 내는 출력값들의 집합", "레인지 / 이미지"],
-        ["단사사상", "monomorphism / injective map", "", "서로 다른 입력이 서로 다른 출력으로 가는 사상", "인젝티브 맵"],
-        ["전사사상", "epimorphism / surjective map", "", "공역의 모든 원소가 실제 출력으로 나타나는 사상", "서젝티브 맵"],
-        ["동형사상 / 전단사", "isomorphism / bijective map", "", "일대일 대응이며 구조를 보존하는 사상", "아이소모피즘"],
-        ["역사상", "inverse map", "f⁻¹", "원래 사상의 대응을 거꾸로 되돌리는 사상", "에프 인버스"],
-        ["핵 / 영공간", "kernel / null space", "ker(T), Null(A)", "선형사상에서 0으로 보내지는 모든 입력 벡터의 집합", "커널, 널스페이스"],
-        ["선형사상의 상", "image of a linear map", "Im(T)", "선형사상이 만들어 내는 모든 출력 벡터의 집합", "이미지 오브 티"],
-        ["행렬표현", "matrix representation", "[L]", "기저를 정했을 때 선형사상을 행렬로 나타낸 것", ""],
-        ["사영변환", "projection transformation", "", "벡터를 특정 축이나 부분공간으로 투영하는 변환", ""],
-        ["전단변환", "shear transformation", "", "한 방향 성분에 다른 방향 성분을 더해 기울이는 변환", ""],
-        ["회전변환", "rotation transformation", "", "원점을 중심으로 벡터를 일정 각도 회전시키는 변환", ""],
-        ["반사", "reflection", "", "축이나 평면을 기준으로 뒤집는 변환", ""],
-        ["수축", "compression", "", "벡터의 특정 방향 크기를 줄이는 변환", ""],
-        ["팽창", "expansion", "", "벡터의 특정 방향 크기를 늘리는 변환", ""],
-        ["행렬의 거듭제곱", "matrix power", "A², A³", "같은 정방행렬의 선형변환을 반복 적용", "에이 스퀘어드, 에이 큐브드"]
-      ] },
-      { part: PART_2, ko: "고유값·고유벡터", en: "Eigenvalues and eigenvectors", words: [
-        ["고유값", "eigenvalue", "λ", "고유벡터 방향을 유지한 채 크기를 변화시키는 스칼라", "람다 (lambda)"],
-        ["고유벡터", "eigenvector", "Av=λv", "선형변환 후에도 방향을 유지하는 0이 아닌 벡터", "에이 브이 = 람다 브이"],
-        ["특성방정식", "characteristic equation", "det(A−λI)=0", "고유값을 구하기 위해 푸는 행렬식 방정식", "디터미넌트 에이 마이너스 람다 아이 = 제로"],
-        ["특성다항식", "characteristic polynomial", "p(λ)=det(A−λI)", "det(A−λI)를 λ에 대한 다항식으로 본 것", "피 오브 람다"],
-        ["고유공간", "eigenspace", "Null(A−λI)", "같은 고유값에 대응하는 고유벡터들과 영벡터의 집합", ""],
-        ["대수적 중복도", "algebraic multiplicity", "", "특성다항식에서 특정 고유값이 근으로 반복되는 횟수", ""],
-        ["기하적 중복도", "geometric multiplicity", "dim Eλ", "특정 고유값의 고유공간 차원", ""],
-        ["대각화", "diagonalization", "A=PDP⁻¹", "행렬을 고유벡터 기저에서 대각행렬 형태로 표현", "에이 = 피 디 피 인버스"],
-        ["스펙트럼 분해", "spectral decomposition", "", "행렬을 고유값·고유벡터 정보로 분해하는 방법", "스펙트럴 디컴포지션"]
-      ] },
+        /* The script's key words, page 4 */
+        ["연기", "smoke", "noun", []],
+        ["폭발", "explosion", "noun", []],
+        ["붕괴", "collapse", "noun", []],
+        ["시야", "visibility / field of view", "noun", []],
+        ["진입하다", "to enter (formal)", "verb", [["진입", "entry"], ["-하다", "to do"]]],
+        ["먼저", "first / ahead", "adverb", []],
+        ["레이더", "radar", "noun", []],
+        ["라이다", "LiDAR", "noun", []],
+        ["장애물", "obstacle", "noun", [["장애", "obstruction"], ["-물", "thing"]]],
+        ["주변", "surroundings", "noun", []],
+        ["적외선", "infrared", "noun", [["적", "red"], ["외", "outside"], ["선", "ray"]]],
+        ["짙다", "dense / thick (of smoke)", "adjective", []],
+        ["인휠 모터", "in-wheel motor", "noun", [["인휠", "in-wheel"], ["모터", "motor"]]],
+        ["바퀴", "wheel", "noun", []],
+        ["독립적으로", "independently", "adverb", [["독립", "independence"], ["-적", "-ic"], ["-으로", "-ly"]]],
+        ["제어하다", "to control", "verb", [["제어", "control"], ["-하다", "to do"]]],
+        ["거칠다", "rough", "adjective", []],
+        ["이동하다", "to move", "verb", [["이동", "movement"], ["-하다", "to do"]]],
+        ["돕다", "to help", "verb", []],
+        ["대응", "response", "noun", []],
+        ["뜨겁다", "hot", "adjective", []],
 
-      { part: SEP_29, ko: "9월 29일 단어", en: "Sep 29 words", words: [
-        ["호환", "compatibility / interchangeable", "", "서로 바꿔 쓸 수 있음", ""],
-        ["근거 / 증거", "basis / evidence", "", "주장을 뒷받침하는 이유나 자료", ""],
-        ["실수", "real number", "ℝ", "수직선 위의 모든 수", ""],
-        ["동작", "operation / action", "", "수행하는 연산이나 움직임", ""],
-        ["결합", "combination", "", "여러 개를 하나로 합침", ""],
-        ["자명해", "trivial solution", "x=0", "모든 변수가 0인 해", ""],
-        ["역변환", "inverse transformation", "T⁻¹", "변환을 되돌리는 변환", ""],
-        ["변수", "variable", "x, y", "미지수", ""],
-        ["거듭제곱근", "n-th root / radical", "ⁿ√x", "n제곱하면 x가 되는 수", ""],
-        ["다항식 함수", "polynomial function", "Σ aₖxᵏ", "다항식으로 나타낸 함수", ""],
-        ["지수 함수", "exponential function", "aˣ", "변수가 지수에 있는 함수", ""],
-        ["삼각 함수", "trigonometric function", "sin, cos, tan", "각의 크기에 대한 함수", ""],
-        ["총합 / 총곱", "total sum / total product", "Σ, Π", "여러 항의 합과 곱", ""],
-        ["난수", "random number", "", "무작위로 뽑은 수", ""],
-        ["절댓값", "absolute value", "|x|", "0으로부터의 거리", ""],
-        ["선형대수", "linear algebra", "", "벡터와 행렬, 선형변환을 다루는 수학", ""],
-        ["스칼라", "scalar", "k", "크기만 있는 양", ""],
-        ["벡터", "vector", "v", "크기와 방향을 가진 양", ""],
-        ["행렬", "matrix", "A", "수를 직사각형으로 배열한 것", ""],
-        ["벡터의 내적", "dot product / inner product", "u·v", "두 벡터의 성분별 곱의 합", ""],
-        ["놈", "norm (vector norm)", "‖v‖", "벡터의 크기(길이)", ""],
-        ["행렬의 곱", "matrix multiplication", "AB", "행과 열의 내적으로 만든 행렬", ""],
-        ["아다마르 곱", "Hadamard product", "A⊙B", "같은 위치의 성분끼리 곱함 (p. 137)", ""],
-        ["요소별 곱", "element-wise product", "A⊙B", "같은 위치의 성분끼리 곱함", ""],
-        ["전치", "transpose", "Aᵀ", "행과 열을 바꿈", ""],
-        ["행렬식", "determinant", "det(A)", "정방행렬에 대응하는 스칼라 값", ""],
-        ["역행렬", "inverse matrix", "A⁻¹", "곱하면 단위행렬이 되는 행렬", ""],
-        ["정방행렬", "square matrix", "n×n", "행과 열의 개수가 같은 행렬", ""],
-        ["선형변환", "linear transformation", "T(x)=Ax", "덧셈과 스칼라배를 보존하는 변환", ""],
-        ["기저벡터", "basis vector", "e₁, e₂", "공간을 생성하는 일차독립 벡터", ""],
-        ["고유값 / 고유벡터", "eigenvalue / eigenvector", "Av=λv", "변환 후에도 방향이 유지되는 벡터와 그 배율", ""],
-        ["코사인 유사도", "cosine similarity", "cos θ", "두 벡터 사이 각의 코사인", ""],
-        ["예습", "preparation / preview study", "", "수업 전에 미리 공부함", ""]
+        /* The fire sequence and useful chunks, page 9 */
+        ["불이 나다", "a fire starts", "expression", [["불", "fire"], ["나다", "to break out"]]],
+        ["불을 끄다", "to put out a fire", "expression", [["불", "fire"], ["끄다", "to put out / to turn off"]]],
+        ["불이 꺼지다", "the fire goes out", "expression", [["불", "fire"], ["꺼지다", "to go out"]]],
+        ["구하다", "to rescue / to save", "verb", []],
+        ["뿌리다", "to spray / to sprinkle", "verb", []],
+        ["조종하다", "to operate / to pilot", "verb", [["조종", "steering"], ["-하다", "to do"]]],
+
+        /* Unmanned is not autonomous, page 7 */
+        ["자율", "autonomy", "noun", [["자", "self"], ["율", "rule"]]],
+
+        /* Everyday to professional, page 13 */
+        ["발생하다", "to occur / to break out", "verb", [["발생", "occurrence"], ["-하다", "to do"]]],
+        ["진압하다", "to suppress (a fire)", "verb", [["진압", "suppression"], ["-하다", "to do"]]],
+        ["구조하다", "to rescue", "verb", [["구조", "rescue"], ["-하다", "to do"]]],
+        ["확인하다", "to check / to confirm", "verb", [["확인", "confirmation"], ["-하다", "to do"]]],
+        ["원격", "remote", "noun", [["원", "far"], ["격", "apart"]]],
+        ["위험 노출", "exposure to danger", "noun", [["위험", "danger"], ["노출", "exposure"]]],
+
+        /* The system profile and the technology it uses, pages 14–16 */
+        ["소방청", "National Fire Agency", "noun", [["소방", "firefighting"], ["-청", "agency"]]],
+        ["재난", "disaster", "noun", []],
+        ["투입되다", "to be deployed", "verb", [["투입", "putting in"], ["-되다", "to be done"]]],
+        ["고열", "extreme heat", "noun", [["고", "high"], ["열", "heat"]]],
+        ["자체 분무 시스템", "self-spraying system", "noun", [["자체", "itself"], ["분무", "spraying"], ["시스템", "system"]]],
+        ["냉각", "cooling", "noun", []],
+        ["장비", "equipment", "noun", []],
+        ["기동성", "maneuverability", "noun", [["기동", "mobility"], ["-성", "-ity / quality"]]],
+        ["지형", "terrain", "noun", []],
+        ["잔해", "debris", "noun", []],
+        ["자율주행", "autonomous driving", "noun", [["자율", "autonomy"], ["주행", "driving"]]],
+        ["인식하다", "to recognize / to detect", "verb", [["인식", "recognition"], ["-하다", "to do"]]],
+        ["고압 축광 릴호스", "high-pressure glow-in-the-dark hose reel", "noun", [["고압", "high pressure"], ["축광", "glow-in-the-dark"], ["릴호스", "hose reel"]]],
+        ["탈출", "escape", "noun", []],
+        ["직접", "directly / in person", "adverb", []]
       ] }
     ];
+
+    /* The part-of-speech groups, in the order the word bank lists them. */
+    const POS_ORDER = ["noun", "verb", "adjective", "adverb", "expression"];
+    const POS_LABELS = {
+      noun: "Nouns",
+      verb: "Verbs",
+      adjective: "Adjectives",
+      adverb: "Adverbs",
+      expression: "Expressions"
+    };
+    const POS_NOTES = {
+      noun: "Things, people, and ideas from the video, technical terms included.",
+      verb: "Action verbs in their dictionary form. The -하다 verbs are the formal ones the professional explanation uses.",
+      adjective: "Descriptive verbs: they conjugate like verbs but describe a state (위험해요, 짙은 연기).",
+      adverb: "Words that modify a verb: who goes first, and how each wheel is driven.",
+      expression: "Set phrases worth learning whole. Open the ＋ to see the words each one is made of."
+    };
 
     /* -----------------------------------------------------------------------
        ROMANIZATION
@@ -1960,19 +1786,18 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       return out;
     }
 
-    /* The glossary in its own order. A term's id is its Korean, so a term
-       that turns up again in a later batch keeps its stars. */
+    /* One list per week, in the handout's order. A term's id is its spelling,
+       so its stars follow it if it comes back in a later week. */
     const WORDS = [];
-    GLOSSARY.forEach((group, index) => {
-      group.id = "category-" + (index + 1);
-      group.label = group.ko + " · " + group.en;
-      group.words.forEach(([ko, en, symbol, meaning, reading]) => {
+    WEEKS.forEach(week => {
+      week.words.forEach(([ko, en, pos, parts]) => {
         WORDS.push({
-          ko, en, symbol, meaning, reading,
-          id: romanize(ko).replace(/[\s/]+/g, "_"),
-          group: group.id,
-          groupLabel: group.label,
-          usage: meaning,
+          ko, en, pos, parts,
+          id: romanize(ko).replace(/\s+/g, "_"),
+          week: week.number,
+          groupLabel: "Week " + week.number,
+          posLabel: POS_LABELS[pos],
+          usage: parts.map(([part, gloss]) => part + " " + gloss).join(" · "),
           order: WORDS.length
         });
       });
@@ -2009,7 +1834,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        say where it came from: the level, the day the word was last carried
        through a spaced run without a miss, and whether a person set it by
        hand. */
-    const FAMILIARITY_KEY = "koreanKangFamiliarity:v1";
+    const FAMILIARITY_KEY = "koreanEngineeringFamiliarity:v1";
     const MAX_STAR = 3;
     let familiarity = {};
     try { familiarity = JSON.parse(localStorage.getItem(FAMILIARITY_KEY) || "{}"); } catch (_) { familiarity = {}; }
@@ -2078,7 +1903,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        unstarred-first order while the rest keep the order they were built in.
        The first option in a list is that built order, and is the default.
     ----------------------------------------------------------------------- */
-    const SECTION_SORT_KEY = "korean.kangSectionSort";
+    const SECTION_SORT_KEY = "korean.engineeringSectionSort";
     let sectionSort = (() => {
       try { return JSON.parse(localStorage.getItem(SECTION_SORT_KEY) || "{}") || {}; }
       catch (_) { return {}; }
@@ -2110,9 +1935,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       return items.slice().sort((a, b) => compare(a, b) || built.get(a) - built.get(b));
     }
 
-    /* The built order is the glossary's own. */
+    /* The built order is the week's own list order. */
     const WORD_SORT_OPTIONS = [
-      { id: "glossary", label: "Glossary order" },
+      { id: "list", label: "List order" },
       { id: "korean", label: "Korean \uac00\u2013\ud558" },
       { id: "unfamiliar", label: "Familiarity: unstarred first" },
       { id: "familiar", label: "Familiarity: starred first" },
@@ -2120,7 +1945,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       { id: "romanization", label: "Romanization A\u2013Z" }
     ];
     const WORD_SORTS = {
-      glossary: null,
+      list: null,
       korean: (a, b) => a.ko.localeCompare(b.ko, "ko"),
       unfamiliar: (a, b) => ratingOf(a.id) - ratingOf(b.id),
       familiar: (a, b) => ratingOf(b.id) - ratingOf(a.id),
@@ -2130,26 +1955,39 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
     /* -----------------------------------------------------------------------
        WORD BANK TABLES
-       One group per glossary category, in the glossary's order, and one way
-       of grouping, so the Group by buttons are hidden.
+       The same words two ways: one group per part of speech, or one group
+       per week. A word's stars belong to the word, so both show the same.
     ----------------------------------------------------------------------- */
-    const REF_MODES = ["category"];
-    const REF_MODE_LABELS = { category: "Category" };
-    const REF_MODE_KEY = "korean.kangWordBankMode";
-    const REF_BLUR_KEY = "korean.kangWordBankBlur";
+    const REF_MODES = ["pos", "week"];
+    const REF_MODE_LABELS = { pos: "Part of speech", week: "Week" };
+    const REF_MODE_KEY = "korean.engineeringWordBankMode";
+    const REF_BLUR_KEY = "korean.engineeringWordBankBlur";
 
     const BANK_WORDS = WORDS;
 
-    function refGroups() {
-      return GLOSSARY.map(group => ({
-        id: group.id,
-        label: group.label,
-        note: group.part + ". Blur a column to test yourself, then rate each word.",
-        words: BANK_WORDS.filter(entry => entry.group === group.id)
-      }));
+    function refGroups(mode) {
+      if (mode === "week") {
+        return WEEKS.map(week => ({
+          id: "week-" + week.number,
+          label: "Week " + week.number + " · " + week.topic,
+          note: "This week's words, in the order the handout gives them. Cover a column to test yourself, then rate each word.",
+          words: BANK_WORDS.filter(entry => entry.week === week.number)
+        }));
+      }
+      return POS_ORDER.map(pos => ({
+        id: "pos-" + pos,
+        label: POS_LABELS[pos],
+        note: POS_NOTES[pos],
+        words: BANK_WORDS.filter(entry => entry.pos === pos)
+      })).filter(group => group.words.length);
     }
 
-    let refMode = "category";
+    let refMode = (() => {
+      try {
+        const saved = localStorage.getItem(REF_MODE_KEY);
+        return REF_MODES.includes(saved) ? saved : REF_MODES[0];
+      } catch (_) { return REF_MODES[0]; }
+    })();
 
     let refBlur = (() => {
       try { return JSON.parse(localStorage.getItem(REF_BLUR_KEY) || "{}") || {}; }
@@ -2171,7 +2009,6 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         const groups = refGroups(refMode);
         REF_GROUP_BY_ID.clear();
         groups.forEach(group => REF_GROUP_BY_ID.set(group.id, group));
-        const lastColumn = "Symbol";
 
         host.innerHTML = '<div class="vocab-category-stack">' + groups.map(group =>
           '<details class="vocab-category" data-section-id="' + esc(group.id) + '">'
@@ -2189,7 +2026,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           + '</div>'
           + '<div class="table-wrap"><table><thead><tr>'
           + '<th class="vocab-note-head"><span class="sr-only">Usage notes</span></th>'
-          + '<th>English</th><th>Romanization</th><th>Korean</th><th>' + esc(lastColumn) + '</th>'
+          + '<th>English</th><th>Romanization</th><th>Korean</th>'
           + '<th class="familiarity-head">Familiarity</th></tr></thead><tbody></tbody></table></div></details>').join("") + '</div>';
 
         host.querySelectorAll(".vocab-category").forEach(section => {
@@ -2215,54 +2052,51 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         syncNotesToggle(section);
       }
 
-      /* The term's symbol or formula, as the glossary prints it. */
-      function lastCell(entry) {
-        return entry.symbol ? '<span class="math-symbol">' + esc(entry.symbol) + '</span>' : "";
-      }
-
-      function row(section, entry) {
-        const ro = romanize(entry.ko);
-        /* The definition stays out of the haystack, or searching 벡터 would
-           bring back half the glossary. The symbol stays in, so "det" finds
-           the determinant. */
-        const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.groupLabel + " "
-          + entry.symbol).toLowerCase();
-        const noteId = "vnote-" + section.dataset.sectionId + "-" + entry.id;
-        const main = '<tr data-search="' + esc(haystack) + '">'
-          + '<td class="vocab-note-cell"><button class="vocab-note-toggle" type="button" aria-expanded="false"'
-          + ' aria-controls="' + esc(noteId) + '" aria-label="Show usage notes for ' + esc(entry.ko)
-          + '"><span aria-hidden="true">＋</span></button></td>'
-          + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
-          + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
-          + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
-          + '<td>' + lastCell(entry) + '</td>'
-          + '<td class="familiarity-cell">'
-          + '<div class="familiarity-stars" data-word-id="' + esc(entry.id) + '" data-level="0" role="group"'
-          + ' aria-label="Familiarity for ' + esc(entry.ko) + '">'
+      /* Three stars for a term or a part. Parts are rated under their own
+         ids, apart from the terms, so a part never counts as a term in the
+         test's familiarity filter. */
+      function starsFor(id, ko) {
+        return '<div class="familiarity-stars" data-word-id="' + esc(id) + '" data-level="0" role="group"'
+          + ' aria-label="Familiarity for ' + esc(ko) + '">'
           + '<button class="familiarity-star" type="button" data-level="1" aria-pressed="false"'
           + ' aria-label="Mark as shaky">★</button>'
           + '<button class="familiarity-star" type="button" data-level="2" aria-pressed="false"'
           + ' aria-label="Mark as learning">★</button>'
           + '<button class="familiarity-star" type="button" data-level="3" aria-pressed="false"'
           + ' aria-label="Mark as familiar">★</button>'
-          + '</div></td></tr>';
-
-        const tags = '<div class="word-note-tags">'
-          + '<span class="word-tag">' + esc(entry.groupLabel) + '</span>'
           + '</div>';
-        /* The note is the glossary's own: the Korean definition, and how the
-           symbol is read aloud where it says. */
-        const note = '<div class="word-note">'
-          + '<div class="word-note-example"><span class="word-note-label">의미 · Meaning</span>'
-          + '<p class="word-note-ko">' + esc(entry.meaning) + '</p>'
-          + '<p class="roman">' + esc(romanize(entry.meaning)) + '</p></div>'
-          + (entry.reading
-              ? '<div class="word-note-example"><span class="word-note-label">읽는 법 · Read aloud</span>'
-                + '<p class="word-note-ko">' + esc(entry.reading) + '</p>'
-                + '<p class="roman">' + esc(romanize(entry.reading)) + '</p></div>'
-              : "")
-          + tags + '</div>';
-        return main + '<tr class="vocab-note-row" id="' + esc(noteId) + '" hidden><td colspan="6">' + note + '</td></tr>';
+      }
+      const partId = part => "part-" + romanize(part).replace(/\s+/g, "_");
+
+      function row(section, entry) {
+        const ro = romanize(entry.ko);
+        const haystack = (entry.en + " " + ro + " " + entry.ko + " " + entry.groupLabel + " " + entry.posLabel + " "
+          + entry.parts.map(([part, gloss]) => part + " " + gloss).join(" ")).toLowerCase();
+        const noteId = "vnote-" + section.dataset.sectionId + "-" + entry.id;
+        const main = '<tr data-search="' + esc(haystack) + '">'
+          + '<td class="vocab-note-cell"><button class="vocab-note-toggle" type="button" aria-expanded="false"'
+          + ' aria-controls="' + esc(noteId) + '" aria-label="Show the parts of ' + esc(entry.ko)
+          + '"><span aria-hidden="true">＋</span></button></td>'
+          + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(entry.en) + '</span></td>'
+          + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(ro) + '</span></td>'
+          + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target"><strong>' + esc(entry.ko) + '</strong></span></td>'
+          + '<td class="familiarity-cell">' + starsFor(entry.id, entry.ko) + '</td></tr>';
+
+        /* The dropdown is the term taken apart: one row per part, laid out
+           like the term's own row, blurring with its columns and carrying
+           its own stars. A part's stars belong to the part, so 개발 rated
+           under one term is rated under every term built from it. */
+        const parts = entry.parts.map(([part, gloss]) =>
+          '<tr class="vocab-note-row vocab-part-row" data-note-group="' + esc(noteId) + '" hidden>'
+          + '<td class="vocab-note-cell"><span class="part-mark" aria-hidden="true">↳</span></td>'
+          + '<td data-vocab-field="english" tabindex="0"><span class="blur-target">' + esc(gloss) + '</span></td>'
+          + '<td data-vocab-field="romanization" tabindex="0"><span class="blur-target roman">' + esc(romanize(part)) + '</span></td>'
+          + '<td data-vocab-field="korean" tabindex="0"><span class="blur-target">' + esc(part) + '</span></td>'
+          + '<td class="familiarity-cell">' + starsFor(partId(part), part) + '</td></tr>').join("");
+        const empty = '<tr class="vocab-note-row" data-note-group="' + esc(noteId) + '" hidden><td colspan="5">'
+          + '<div class="word-note"><p class="word-note-usage">One word on its own: there are no smaller parts to split it into.</p></div>'
+          + '</td></tr>';
+        return main + (entry.parts.length ? parts : empty);
       }
 
       /* ---- blur, remembered per section so each group keeps its own state --- */
@@ -2278,11 +2112,15 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       function restoreBlur(section) { applyBlur(section); }
 
       /* ---- the ＋ notes ---------------------------------------------------- */
+      /* A term's dropdown is several rows, one per part, so they are found
+         by the group they share rather than by one id. */
+      function noteRowsOf(button) {
+        return host.querySelectorAll('[data-note-group="' + button.getAttribute("aria-controls") + '"]');
+      }
       function setNote(button, open) {
-        const noteRow = document.getElementById(button.getAttribute("aria-controls"));
         button.setAttribute("aria-expanded", String(open));
         button.querySelector("span").textContent = open ? "−" : "＋";
-        if (noteRow) noteRow.hidden = !open;
+        noteRowsOf(button).forEach(noteRow => { noteRow.hidden = !open; });
       }
       function setAllNotes(section, open) {
         section.querySelectorAll(".vocab-note-toggle").forEach(button => {
@@ -2370,11 +2208,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           section.querySelectorAll("tbody tr:not(.vocab-note-row)").forEach(tr => {
             const match = !term || (tr.dataset.search || "").indexOf(term) >= 0;
             tr.classList.toggle("is-hidden", !match);
-            const noteRow = tr.nextElementSibling;
-            if (noteRow && noteRow.classList.contains("vocab-note-row")) {
-              noteRow.classList.toggle("is-hidden", !match);
-              if (!match) setNote(tr.querySelector(".vocab-note-toggle"), false);
-            }
+            const toggle = tr.querySelector(".vocab-note-toggle");
+            noteRowsOf(toggle).forEach(noteRow => noteRow.classList.toggle("is-hidden", !match));
+            if (!match) setNote(toggle, false);
             if (match) visible += 1;
           });
           section.classList.toggle("is-hidden", Boolean(term) && visible === 0);
@@ -2430,8 +2266,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           const chosen = Number(star.dataset.level) || 0;
           const next = Number(group.dataset.level) === chosen ? 0 : chosen;
           setRating(group.dataset.wordId, next, { manual: true });
-          paintRating(group, next);
-          syncStarToggles();
+          /* Every row showing this word or part, not just the one clicked:
+             개발 sits under three terms, and its stars are one rating. */
+          repaintRatings();
           return;
         }
         const cell = event.target.closest("[data-vocab-field]");
@@ -2538,8 +2375,8 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       return acceptedAnswers(entry, lang).some(answer => normalizeAnswer(answer, lang) === given);
     }
 
-    /* Two terms could share a spelling. Shown one of them, either
-       meaning is right, so a typed answer is
+    /* Two terms could one day share a spelling across weeks. Shown one of
+       them, either meaning is right, so a typed answer is
        checked against every word the question could be showing, and a
        multiple-choice list never offers a second right answer. */
     function lookAlikes(entry, lang) {

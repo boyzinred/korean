@@ -332,7 +332,22 @@ th {
 tbody tr:last-child td { border-bottom: 0; }
 td .roman { opacity: .78; }
 
-.is-blurred .blur-target { filter: blur(7px); user-select: none; }
+/* A covered cell hides behind a solid bar of one fixed width, whatever the
+   word under it: a blur still showed the shape and the length of the word,
+   which was enough of a hint to give the answer away. */
+.is-blurred .blur-target {
+  display: inline-block;
+  width: min(6em, 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: transparent;
+  background: var(--muted-strong);
+  border-radius: var(--radius-md);
+  opacity: 1;
+  user-select: none;
+}
+.is-blurred .blur-target * { color: transparent; }
 /* Every vocab and grammar cell blurs and unblurs on its own click, whether or
    not the toolbar has blurred the whole column it sits in. */
 [data-vocab-field] { cursor: pointer; }
