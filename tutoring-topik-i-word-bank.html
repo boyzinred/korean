@@ -69,6 +69,11 @@
      which on Hangul would fill the counters straight back in. */
   --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
   --transition: all 200ms ease;
+  /* The handwriting test's own colour, kept off every other control so the
+     button reads as a different way of taking the test: gold against the navy. */
+  --handwrite: #E3B448;
+  --handwrite-hover: #D2A43A;
+  --on-handwrite: #28468A;
 }
 
 html[data-theme='dark'] {
@@ -106,6 +111,9 @@ html[data-theme='dark'] {
   --surface-muted: #111827;
   --inverse: #0F172A;
   --inverse-text: #F9FAFB;
+  --handwrite: #D4A93F;
+  --handwrite-hover: #C29834;
+  --on-handwrite: #111827;
 }
 
 * { box-sizing: border-box; }
@@ -732,6 +740,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   .expr-toggle { width: 100%; }
   .utility-controls { right: 10px; bottom: 10px; }
 }
+@media (max-width: 680px) {
+  .hw-tools .btn.small { flex: 1 1 auto; }
+  .hw-tools .hw-reveal, .hw-grade .btn { width: 100%; margin-left: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
@@ -1229,6 +1241,79 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   line-height: 1;
   letter-spacing: -.02em;
 }
+.btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); }
+.btn.handwrite:hover:not(:disabled) { background: var(--handwrite-hover); }
+
+/* ---------------------------------------------------------------------------
+   Handwriting test
+   One blank writing area, deliberately without a box per syllable: boxes
+   would say how long the answer is. A single faint midline is the only guide.
+--------------------------------------------------------------------------- */
+.hw { display: grid; gap: 12px; }
+.hw-pad-wrap {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat,
+    var(--surface-muted);
+  border: 2px dashed var(--handwrite);
+  border-radius: var(--radius-lg);
+}
+.hw-pad {
+  display: block;
+  width: 100%;
+  height: clamp(240px, 42vh, 440px);
+  /* The page must not scroll or zoom while a finger or pen is writing. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+}
+.hw-hint {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .5;
+  pointer-events: none;
+}
+.hw.is-written .hw-hint { display: none; }
+.hw.is-revealed .hw-pad { cursor: default; }
+.hw-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.hw-tools .hw-reveal { margin-left: auto; }
+.hw-pen-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 800;
+}
+.hw-pen-only input { width: 18px; height: 18px; min-height: 18px; margin: 0; }
+.hw-answer {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  /* The same pairing as the question hint: on some palettes blue-soft is a
+     deep tint that only the page's own text colour reads on. */
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--handwrite);
+  border-radius: var(--radius-md);
+}
+.hw-answer-ko { font-size: calc(1.6rem * var(--ko-size)); font-weight: 800; line-height: 1.5; }
+.hw-answer-sub { font-size: .9rem; font-weight: 700; opacity: .8; }
+.hw-grade { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+.hw-tools .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
+
 .answer-form {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1965,6 +2050,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
   <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
+  <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
   <script>
@@ -3149,10 +3235,12 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <p class="menu-error hidden" id="menu-error-${id}">${esc(exercise.emptyMessage)}</p>
           <div class="exercise-menu-actions">
             <button class="primary-btn" type="button" data-start="${id}">Start exercise</button>
+            <button class="btn handwrite" type="button" data-start-handwriting="${id}">&#9998; Handwriting test</button>
             <button class="btn secondary" type="button" data-export-menu="${id}">Export as .md</button>
             <label class="sr-only" for="menu-sep-${id}">Separator between question and answer</label>
             <select class="export-sep" id="menu-sep-${id}">${SEPARATORS.map(sep => `<option value="${sep.key}">Separator: ${esc(sep.label)}</option>`).join("")}</select>
           </div>
+          <p class="menu-note">Handwriting test: write each word in Korean on the screen with a finger or a pen, reveal the answer, and mark yourself. The question comes from the English or romanization you ticked; the Answer in setting sits it out.</p>
         </div>`;
     }
 
@@ -3182,6 +3270,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
                 <input class="answer-input" id="input-${id}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer">
                 <button class="primary-btn" id="check-${id}" type="submit">Check</button>
               </form>
+              <div class="hidden" id="hw-${id}"></div>
               <div class="feedback" id="feedback-${id}" aria-live="polite"></div>
               <button class="secondary-btn hidden" type="button" data-next="${id}">Next</button>
             </div>
@@ -3319,6 +3408,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         }
         const start = event.target.closest("[data-start]");
         if (start) { startQuiz(start.dataset.start); return; }
+        const startHandwriting = event.target.closest("[data-start-handwriting]");
+        if (startHandwriting) { startQuiz(startHandwriting.dataset.startHandwriting, { handwriting: true }); return; }
         const exportMenu = event.target.closest("[data-export-menu]");
         if (exportMenu) { exportSelection(exportMenu.dataset.exportMenu, exportMenu); return; }
         const countCorrect = event.target.closest("[data-count-correct]");
@@ -3373,7 +3464,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       if (state) state.timer = null;
     }
 
-    function startQuiz(exerciseId) {
+    function startQuiz(exerciseId, options) {
+      const handwriting = Boolean(options && options.handwriting);
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       // Shuffled up front, so a run never follows the order the words were
       // listed, pasted, or sorted in — and the cap takes a random slice.
@@ -3399,9 +3491,18 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       // The modes decide what a question looks like, so the ordering needs
       // them: each copy of a word is tagged with its own direction first, and
       // the spacing pass then keeps identical-looking questions apart.
-      const questionModes = checkedValues(`${exerciseId}-qlang`);
-      const answerModes = checkedValues(`${exerciseId}-alang`);
+      // A handwritten answer is always Korean — writing out "person" by hand is
+      // not the practice this is for — so the run keeps the ticked question
+      // languages other than Korean and sets the answer side itself.
+      const questionModes = checkedValues(`${exerciseId}-qlang`)
+        .filter(mode => !handwriting || mode !== "korean");
+      const answerModes = handwriting ? ["korean"] : checkedValues(`${exerciseId}-alang`);
       const pairs = modePairs(questionModes, answerModes);
+      if (handwriting && !pairs.length) {
+        error.textContent = "The handwriting test answers in Korean, so tick English or Romanization under Question shows.";
+        error.classList.remove("hidden");
+        return;
+      }
       if (!pairs.length) {
         error.textContent = "Pick a question language and a different answer language.";
         error.classList.remove("hidden");
@@ -3418,6 +3519,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const state = {
         exerciseId,
         mode,
+        handwriting,
         pool: words,
         questions: spacedOrder(tagged, word => questionKeys(word, word.questionMode, word.answerMode)),
         index: 0,
@@ -3463,7 +3565,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       document.getElementById(`menu-${exerciseId}`).classList.add("hidden");
       document.getElementById(`quiz-card-${exerciseId}`).classList.remove("hidden");
       showPhase(exerciseId, "live");
-      document.querySelector(`.answer-form[data-exercise="${exerciseId}"]`).classList.remove("hidden");
+      document.querySelector(`.answer-form[data-exercise="${exerciseId}"]`).classList.toggle("hidden", handwriting);
+      document.getElementById(`hw-${exerciseId}`).classList.toggle("hidden", !handwriting);
       document.getElementById(`pool-label-${exerciseId}`).textContent = state.label;
 
       const minutes = Math.max(0, Number(document.getElementById(`menu-timer-${exerciseId}`).value) || 0);
@@ -3582,7 +3685,100 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       feedback.className = "feedback";
       feedback.innerHTML = "";
       document.querySelector(`[data-next="${exerciseId}"]`).classList.add("hidden");
+      if (state.handwriting) {
+        document.getElementById(`answer-mode-${exerciseId}`).innerHTML = "Write the answer in <strong>Korean</strong>";
+        showHandwritingPad(exerciseId, item);
+        return;
+      }
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
+    }
+
+    // ------------------------------------------------------------ handwriting
+    // Nothing reads the handwriting. The learner writes, reveals the answer
+    // beside what they wrote, and marks themselves; the mark then goes through
+    // answer() like a typed one, so the score, the retry queue and a spaced
+    // run's stars all treat it the same. A self-marked right answer counts as
+    // producing the word in Korean, so it can raise a star.
+    const PEN_ONLY_KEY = "korean.handwritingPenOnly";
+    const PADS = new Map();
+
+    function dropPad(exerciseId) {
+      const pad = PADS.get(exerciseId);
+      if (pad) pad.destroy();
+      PADS.delete(exerciseId);
+    }
+
+    function showHandwritingPad(exerciseId, item) {
+      dropPad(exerciseId);
+      let penOnly = false;
+      try { penOnly = localStorage.getItem(PEN_ONLY_KEY) === "1"; } catch (_) {}
+      const zone = document.getElementById(`hw-${exerciseId}`);
+      zone.innerHTML = '<div class="hw">'
+        + '<div class="hw-pad-wrap"><canvas class="hw-pad" aria-label="Writing area"></canvas>'
+        + '<span class="hw-hint" aria-hidden="true">Write here</span></div>'
+        + '<div class="hw-tools">'
+        + '<button class="btn secondary small hw-undo" type="button" disabled>Undo stroke</button>'
+        + '<button class="btn secondary small hw-clear" type="button" disabled>Clear</button>'
+        + '<label class="hw-pen-only"><input type="checkbox"' + (penOnly ? " checked" : "") + '>'
+        + '<span>Pen only</span></label>'
+        + '<button class="btn primary hw-reveal" type="button">Reveal answer</button>'
+        + '</div>'
+        + '<div class="hw-answer hidden" aria-live="polite">'
+        + '<span class="word-note-label">Answer</span>'
+        + '<span class="hw-answer-ko">' + esc(itemAnswerDisplay(item, "korean")) + '</span>'
+        + '<span class="hw-answer-sub">' + esc(displayValue(item, "romanization")) + ' · ' + esc(displayValue(item, "english")) + '</span>'
+        + '<div class="hw-grade">'
+        + '<button class="btn positive hw-got" type="button">✓ Got it</button>'
+        + '<button class="btn warning hw-missed" type="button">✗ Missed it</button>'
+        + '</div></div>'
+        + '</div>';
+
+      const box = zone.querySelector(".hw");
+      const undo = zone.querySelector(".hw-undo");
+      const clear = zone.querySelector(".hw-clear");
+      const reveal = zone.querySelector(".hw-reveal");
+      const answerBox = zone.querySelector(".hw-answer");
+      const pad = window.HandwritingPad.create(zone.querySelector(".hw-pad"), {
+        penOnly,
+        color: () => getComputedStyle(document.documentElement).getPropertyValue("--surface-text").trim() || "#000",
+        onChange: current => {
+          const empty = current.isEmpty();
+          box.classList.toggle("is-written", !empty);
+          undo.disabled = empty;
+          clear.disabled = empty;
+        }
+      });
+      PADS.set(exerciseId, pad);
+
+      undo.addEventListener("click", () => pad.undo());
+      clear.addEventListener("click", () => pad.clear());
+      zone.querySelector(".hw-pen-only input").addEventListener("change", event => {
+        const on = event.target.checked;
+        pad.setPenOnly(on);
+        try { localStorage.setItem(PEN_ONLY_KEY, on ? "1" : "0"); } catch (_) {}
+      });
+      // Revealing freezes the writing, so what gets marked is what was written
+      // before the answer was seen.
+      reveal.addEventListener("click", () => {
+        const state = STATES.get(exerciseId);
+        if (!state || state.answered || state.finished) return;
+        pad.lock();
+        box.classList.add("is-revealed");
+        undo.disabled = true;
+        clear.disabled = true;
+        reveal.classList.add("hidden");
+        answerBox.classList.remove("hidden");
+        answerBox.querySelector(".hw-got").focus({ preventScroll: true });
+        answerBox.scrollIntoView({ block: "nearest" });
+      });
+      const mark = correct => {
+        const state = STATES.get(exerciseId);
+        if (!state || state.answered || state.finished) return;
+        answerBox.querySelector(".hw-grade").classList.add("hidden");
+        answer(exerciseId, "(handwritten)", correct);
+      };
+      answerBox.querySelector(".hw-got").addEventListener("click", () => mark(true));
+      answerBox.querySelector(".hw-missed").addEventListener("click", () => mark(false));
     }
 
     function pushResult(state, item, userAnswer, correct, masteredAfterRetry) {
@@ -3599,12 +3795,14 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       });
     }
 
-    function answer(exerciseId, userAnswer) {
+    function answer(exerciseId, userAnswer, selfMark) {
       const state = STATES.get(exerciseId);
       if (!state || state.answered || state.finished) return;
       const item = currentItem(state);
       if (!item) return;
-      const correct = isCorrect(state.pool, item, state.questionMode, state.answerMode, userAnswer);
+      const correct = typeof selfMark === "boolean"
+        ? selfMark
+        : isCorrect(state.pool, item, state.questionMode, state.answerMode, userAnswer);
       const feedback = document.getElementById(`feedback-${exerciseId}`);
       state.answered = true;
       state.currentAttempts.push({ userAnswer, correct });
@@ -3618,7 +3816,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       } else {
         state.currentHadWrong = true;
         feedback.className = "feedback bad";
-        feedback.innerHTML = `<div class="feedback-head"><span>Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span></span><button class="btn secondary" type="button" data-count-correct="${exerciseId}">Count as correct →</button></div><span class="small">Full entry: ${esc(fullEntry(item))}</span>`;
+        // A handwritten answer was marked with the answer in view, so there is
+        // no checker to overrule.
+        feedback.innerHTML = state.handwriting
+          ? `Missed. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span>${state.repeatWrong ? '<br><span class="small">This word comes straight back — write it again without looking.</span>' : ""}`
+          : `<div class="feedback-head"><span>Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span></span><button class="btn secondary" type="button" data-count-correct="${exerciseId}">Count as correct →</button></div><span class="small">Full entry: ${esc(fullEntry(item))}</span>`;
         if (state.repeatWrong) {
           state.retryCurrent = true;
         } else {
@@ -3641,6 +3843,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         : state.index === state.questions.length - 1;
       next.textContent = state.retryCurrent ? "Retry question" : (lastOne ? "Finish" : "Next");
       next.classList.remove("hidden");
+      if (state.handwriting) {
+        requestAnimationFrame(() => { next.focus({ preventScroll: true }); next.scrollIntoView({ block: "nearest" }); });
+        return;
+      }
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
     }
 
@@ -3751,6 +3957,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       }
       state.finished = true;
       clearTimer(state);
+      dropPad(exerciseId);
+      document.getElementById(`hw-${exerciseId}`).classList.add("hidden");
 
       const answered = state.results.length;
       const percent = answered ? Math.round((state.score / answered) * 100) : 0;

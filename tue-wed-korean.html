@@ -77,6 +77,11 @@
      which on Hangul would fill the counters straight back in. */
   --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
   --transition: all 200ms ease;
+  /* The handwriting test's own colour, kept off every other control so the
+     button reads as a different way of taking the test: olive brown, the one brown with some green in it. */
+  --handwrite: #8A7A4A;
+  --handwrite-hover: #786A3F;
+  --on-handwrite: #FFF8EE;
 }
 
 html[data-theme='dark'] {
@@ -119,6 +124,9 @@ html[data-theme='dark'] {
   --on-primary: #0A0A0A;
   --on-secondary: #0A0A0A;
   --chip: #F5F5F5;
+  --handwrite: #525252;
+  --handwrite-hover: #5E5E5E;
+  --on-handwrite: #F5F5F5;
 }
 
 * { box-sizing: border-box; }
@@ -820,6 +828,77 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 .btn.warning { color: var(--on-primary); background: var(--accent); }
 .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
 
+.btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); }
+.btn.handwrite:hover:not(:disabled) { background: var(--handwrite-hover); }
+
+/* ---------------------------------------------------------------------------
+   Handwriting test
+   One blank writing area, deliberately without a box per syllable: boxes
+   would say how long the answer is. A single faint midline is the only guide.
+--------------------------------------------------------------------------- */
+.hw { display: grid; gap: 12px; }
+.hw-pad-wrap {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat,
+    var(--surface-muted);
+  border: 2px dashed var(--handwrite);
+  border-radius: var(--radius-lg);
+}
+.hw-pad {
+  display: block;
+  width: 100%;
+  height: clamp(240px, 42vh, 440px);
+  /* The page must not scroll or zoom while a finger or pen is writing. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+}
+.hw-hint {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .5;
+  pointer-events: none;
+}
+.hw.is-written .hw-hint { display: none; }
+.hw.is-revealed .hw-pad { cursor: default; }
+.hw-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.hw-tools .hw-reveal { margin-left: auto; }
+.hw-pen-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 800;
+}
+.hw-pen-only input { width: 18px; height: 18px; min-height: 18px; margin: 0; }
+.hw-answer {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  /* The same pairing as the question hint: on some palettes blue-soft is a
+     deep tint that only the page's own text colour reads on. */
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--handwrite);
+  border-radius: var(--radius-md);
+}
+.hw-answer-ko { font-size: calc(1.6rem * var(--ko-size)); font-weight: 800; line-height: 1.5; }
+.hw-answer-sub { font-size: .9rem; font-weight: 700; opacity: .8; }
+.hw-grade { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
 .runtime-bar {
   display: flex;
   flex-wrap: wrap;
@@ -1152,6 +1231,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 700;
 }
 .finish-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+/* The button under the missed words belongs to that list, not to the row of
+   buttons that ends the summary, so it gets room on both sides to say so. */
+.word-list + .finish-actions { margin: 22px 0 16px; }
 .feedback-head {
   display: flex;
   flex-wrap: wrap;
@@ -1371,6 +1453,10 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   .sort-select-wrap { flex: 1; min-width: 0; }
   .sort-select { width: 100%; min-height: 44px; }
   .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (max-width: 680px) {
+  .hw-tools .btn.small { flex: 1 1 auto; }
+  .hw-tools .hw-reveal, .hw-grade .btn { width: 100%; margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
@@ -1595,6 +1681,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button">Begin vocabulary test</button>
+                <button class="btn handwrite begin-handwriting" type="button">&#9998; Handwriting test</button>
                 <button class="btn secondary export-md" type="button">Export as .md</button>
                 <label class="sr-only" for="vocabSep">Separator between question and answer</label>
                 <select class="export-sep" id="vocabSep">
@@ -1607,6 +1694,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
                 </select>
               </div>
               <p class="assistant-status vocab-pool-note"></p>
+              <p class="wordbank-count">Handwriting test: write each word in 한국어 on the screen with a finger or a pen, reveal the answer, and mark yourself. The question comes from the English or romanization you ticked; the Mode and Answer in settings sit it out.</p>
             </div>
 
             <div class="live hidden">
@@ -1642,6 +1730,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   </div>
 
   <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
+  <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2925,6 +3014,16 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         note.innerHTML = '<span class="assistance-used">Tick a script on each side, and not the same one on both.</span>';
         return;
       }
+      /* Said in so many words, and in the chip the other blockers use: a
+         test that will not start has to say why where the eye already is. */
+      if (!settings.groups.length) {
+        note.innerHTML = '<span class="assistance-used">Tick at least one group under What to test.</span>';
+        return;
+      }
+      if (!settings.stars.size) {
+        note.innerHTML = '<span class="assistance-used">Tick at least one familiarity level.</span>';
+        return;
+      }
       const pool = vocabPool(settings);
       const size = pool.length;
       const mixed = settings.promptLangs.length > 1 || settings.answerLangs.length > 1;
@@ -2951,7 +3050,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
     function paintGroupGrid() {
       document.getElementById("vocabGroupGrid").innerHTML = testGroups().map(group =>
-        '<label class="exercise-option"><input class="vocab-group" type="checkbox" value="'
+        '<label class="exercise-option"><input class="vocab-group" type="checkbox" checked value="'
         + esc(group.id) + '"><span>' + esc(group.label)
         + '<small>' + plural(group.words.length, "word", "words") + '</small></span></label>').join("");
     }
@@ -2984,7 +3083,8 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         vEl.querySelectorAll(".vocab-group").forEach(input => { input.checked = false; });
         paintPoolNote();
       });
-      $v(".begin").addEventListener("click", startVocabTest);
+      $v(".begin").addEventListener("click", () => startVocabTest());
+      $v(".begin-handwriting").addEventListener("click", () => startVocabTest({ handwriting: true }));
       $v(".export-md").addEventListener("click", event => exportVocabSelection(event.currentTarget));
       $v(".next").addEventListener("click", nextVocabQuestion);
 
@@ -3035,8 +3135,25 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       return out;
     }
 
-    function startVocabTest() {
-      const settings = readVocabSettings();
+    /* A handwritten answer is always Korean — writing out "firefighter" by
+       hand is not the practice this is for — so the run keeps the ticked
+       question scripts other than 한국어 and sets the answer side itself. The
+       Mode setting has nothing to choose between here. */
+    function handwritingSettings(settings) {
+      return Object.assign({}, settings, {
+        mode: "handwriting",
+        promptLangs: settings.promptLangs.filter(lang => lang !== "ko"),
+        answerLangs: ["ko"]
+      });
+    }
+
+    function startVocabTest(options) {
+      const handwriting = Boolean(options && options.handwriting);
+      const settings = handwriting ? handwritingSettings(readVocabSettings()) : readVocabSettings();
+      if (handwriting && !settings.promptLangs.length) {
+        $v(".vocab-pool-note").innerHTML = '<span class="assistance-used">The handwriting test answers in 한국어, so tick English or Romanization under Question shows.</span>';
+        return;
+      }
       if (!canPair(settings)) {
         paintPoolNote();
         return;
@@ -3050,6 +3167,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       const picked = spaced ? [] : buildRun(pool, settings.passes);
       vocabState = {
         settings,
+        handwriting,
         run: settings.run,
         pool,
         words: picked,
@@ -3101,6 +3219,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       const entry = vocabState.words[vocabState.i];
       const direction = vocabState.directions[vocabState.i];
       vocabState.locked = false;
+      dropPad();
 
       /* A regular run counts questions, because it knows how many there are. A
          spaced one has no total to count towards, so it says where it has got
@@ -3128,11 +3247,14 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
          change it from one word to the next. */
       $v(".prompt-label").textContent = (settings.mode === "mc"
         ? "Choose the matching word"
-        : "Type the answer") + " in " + LANG_NAMES[direction.answerLang];
+        : settings.mode === "handwriting" ? "Write the answer" : "Type the answer")
+        + " in " + LANG_NAMES[direction.answerLang];
       $v(".prompt").textContent = wordIn(entry, direction.promptLang);
 
       const zone = $v(".zone");
-      if (settings.mode === "mc") {
+      if (settings.mode === "handwriting") {
+        showHandwritingPad(zone, entry);
+      } else if (settings.mode === "mc") {
         /* Distractors come from the whole list, so a run over one short
            heading (there is one particle on the list) still gets four choices. */
         const others = [];
@@ -3191,6 +3313,89 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       paintVocabScore();
     }
 
+    /* ---- the handwriting test ---------------------------------------------
+       Nothing reads the handwriting. The learner writes, reveals the answer
+       beside what they wrote, and marks themselves; the mark then goes through
+       lockVocabQuestion like any other answer, so the score, the retry queue
+       and the spaced run's stars all treat it the same. A self-marked right
+       answer counts as producing the word in 한국어, so it can raise a star. */
+    const PEN_ONLY_KEY = "korean.handwritingPenOnly";
+    let pad = null;
+
+    function dropPad() {
+      if (pad) pad.destroy();
+      pad = null;
+    }
+
+    function showHandwritingPad(zone, entry) {
+      let penOnly = false;
+      try { penOnly = localStorage.getItem(PEN_ONLY_KEY) === "1"; } catch (_) {}
+      zone.innerHTML = '<div class="hw">'
+        + '<div class="hw-pad-wrap"><canvas class="hw-pad" aria-label="Writing area"></canvas>'
+        + '<span class="hw-hint" aria-hidden="true">Write here</span></div>'
+        + '<div class="hw-tools">'
+        + '<button class="btn secondary small hw-undo" type="button" disabled>Undo stroke</button>'
+        + '<button class="btn secondary small hw-clear" type="button" disabled>Clear</button>'
+        + '<label class="hw-pen-only"><input type="checkbox"' + (penOnly ? " checked" : "") + '>'
+        + '<span>Pen only</span></label>'
+        + '<button class="btn primary hw-reveal" type="button">Reveal answer</button>'
+        + '</div>'
+        + '<div class="hw-answer hidden" aria-live="polite">'
+        + '<span class="word-note-label">Answer</span>'
+        + '<span class="hw-answer-ko">' + esc(entry.ko) + '</span>'
+        + '<span class="hw-answer-sub">' + esc(wordIn(entry, "ro")) + ' · ' + esc(wordIn(entry, "en")) + '</span>'
+        + '<div class="hw-grade">'
+        + '<button class="btn positive hw-got" type="button">✓ Got it</button>'
+        + '<button class="btn warning hw-missed" type="button">✗ Missed it</button>'
+        + '</div></div>'
+        + '</div>';
+
+      const box = zone.querySelector(".hw");
+      const undo = zone.querySelector(".hw-undo");
+      const clear = zone.querySelector(".hw-clear");
+      const reveal = zone.querySelector(".hw-reveal");
+      const answer = zone.querySelector(".hw-answer");
+      pad = window.HandwritingPad.create(zone.querySelector(".hw-pad"), {
+        penOnly,
+        color: () => getComputedStyle(document.documentElement).getPropertyValue("--surface-text").trim() || "#000",
+        onChange: current => {
+          const empty = current.isEmpty();
+          box.classList.toggle("is-written", !empty);
+          undo.disabled = empty;
+          clear.disabled = empty;
+        }
+      });
+
+      undo.addEventListener("click", () => pad && pad.undo());
+      clear.addEventListener("click", () => pad && pad.clear());
+      zone.querySelector(".hw-pen-only input").addEventListener("change", event => {
+        const on = event.target.checked;
+        if (pad) pad.setPenOnly(on);
+        try { localStorage.setItem(PEN_ONLY_KEY, on ? "1" : "0"); } catch (_) {}
+      });
+      /* Revealing freezes the writing, so what gets marked is what was written
+         before the answer was seen. */
+      reveal.addEventListener("click", () => {
+        if (vocabState.locked || vocabState.finished) return;
+        if (pad) pad.lock();
+        box.classList.add("is-revealed");
+        undo.disabled = true;
+        clear.disabled = true;
+        reveal.classList.add("hidden");
+        answer.classList.remove("hidden");
+        const got = answer.querySelector(".hw-got");
+        got.focus({ preventScroll: true });
+        answer.scrollIntoView({ block: "nearest" });
+      });
+      const mark = correct => {
+        if (vocabState.locked || vocabState.finished) return;
+        answer.querySelector(".hw-grade").classList.add("hidden");
+        lockVocabQuestion(correct, "");
+      };
+      answer.querySelector(".hw-got").addEventListener("click", () => mark(true));
+      answer.querySelector(".hw-missed").addEventListener("click", () => mark(false));
+    }
+
     function lockVocabQuestion(correct, given) {
       const settings = vocabState.settings;
       const entry = vocabState.words[vocabState.i];
@@ -3228,7 +3433,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           else if (wordIn(option, direction.answerLang) === given && !correct) node.classList.add("wrong");
           else if (settle) node.classList.add("faded");
         });
-      } else {
+      } else if (settings.mode !== "handwriting") {
         const input = $v(".answer-input");
         if (input) input.disabled = true;
         const submit = $v(".submit");
@@ -3242,11 +3447,18 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
          Rather than argue with the exercise, mark it yourself from the headline
          line: the word counts as known, drops out of the retry queue, and the
          run moves straight on. */
-      const head = correct
-        ? "<strong>맞아요!</strong>"
+      /* A handwritten answer was marked by the learner with the answer in
+         view, so there is nothing to overrule and nothing left to hide. */
+      const handwritten = settings.mode === "handwriting";
+      const head = correct || handwritten
+        ? "<strong>" + (correct ? "맞아요!" : "아니에요.") + "</strong>"
         : '<div class="feedback-head"><strong>아니에요.</strong>'
           + '<button class="btn secondary count-correct" type="button">Count as correct →</button></div>';
-      if (correct) {
+      if (handwritten) {
+        feedback.innerHTML = head + full
+          + (entry.usage ? "<br><small>" + esc(entry.usage) + "</small>" : "")
+          + (retry ? "<br><small>This word comes straight back — write it again without looking.</small>" : "");
+      } else if (correct) {
         feedback.innerHTML = head + full
           + "<br><small>" + esc(entry.usage) + "</small>";
       } else if (shown) {
@@ -3322,6 +3534,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         settleUnfinishedVocab();
       }
       vocabState.finished = true;
+      dropPad();
       const total = vocabState.words.length;
       const spacedStats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
       const answered = vocabState.results.filter(result => result !== null).length;
@@ -3393,7 +3606,8 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           markWeak.textContent = "Stars lowered";
         });
       }
-      finishEl.querySelector(".again").addEventListener("click", startVocabTest);
+      const handwritingRun = vocabState.handwriting;
+      finishEl.querySelector(".again").addEventListener("click", () => startVocabTest({ handwriting: handwritingRun }));
       finishEl.querySelector(".change-setup").addEventListener("click", () => {
         $v(".live").classList.add("hidden");
         $v(".finish").classList.add("hidden");
