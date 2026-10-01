@@ -14,7 +14,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2074,6 +2075,7 @@ th {
         label: `${exercise.title} · ${words.length} words`
       };
       STATES.set(exerciseId, state);
+      if (window.KoreanStudy) window.KoreanStudy.start(state);
 
       document.getElementById(`menu-${exerciseId}`).classList.add("hidden");
       document.getElementById(`quiz-card-${exerciseId}`).classList.remove("hidden");
@@ -2180,6 +2182,18 @@ th {
       const feedback = document.getElementById(`feedback-${exerciseId}`);
       state.answered = true;
       state.currentAttempts.push({ userAnswer, correct });
+      // Every answer goes to the study log (shared-vocab/study-log.js). A pasted
+      // word has no id of its own, so the Korean stands in for one.
+      if (window.KoreanStudy) {
+        const lang = { korean: "ko", english: "en", romanization: "ro" };
+        window.KoreanStudy.answer(state, {
+          page: "custom-list", exercise: "vocab", item: item.korean,
+          ko: item.korean, en: item.meaning,
+          correct, attempt: state.currentAttempts.length, given: userAnswer, mode: "typed",
+          dir: lang[state.questionMode] + ">" + lang[state.answerMode],
+          run: state.repeatWrong ? "repeat" : "regular"
+        });
+      }
 
       if (correct) {
         if (!state.currentHadWrong) state.score += 1;

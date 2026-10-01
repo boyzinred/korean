@@ -8,6 +8,8 @@
   it always has; this file never changes how a page works. It watches for
   writes to any key with "Familiarity" in its name, and in the background
   pushes the words that changed and pulls the ones another device changed.
+  The dashboard's settings key (korean.dashboard.v1: your name, the pages it
+  shows) rides along the same way, one row per setting.
   Signed out, offline, or with no project configured, it does nothing and the
   page runs on this browser alone.
 
@@ -27,6 +29,10 @@
     signOut()             -> Promise; the stars stay on this browser
     syncNow()             -> Promise
     session()             -> Promise<session | null>
+    client()              -> Promise<the supabase client>, for study-log.js
+                             and the dashboard
+    hasSavedSession()     true when this browser holds a sign-in, known
+                          without loading the library
 
   Events
     "korean-cloud-sync" on window, cancelable, detail { keys }, after a pull
@@ -47,7 +53,9 @@
   const PAGE_SIZE = 1000;
   const PUSH_CHUNK = 500;
 
-  const isSynced = key => typeof key === "string" && /familiarity/i.test(key);
+  const SETTINGS_KEYS = ["korean.dashboard.v1"];
+  const isSynced = key => typeof key === "string"
+    && (/familiarity/i.test(key) || SETTINGS_KEYS.includes(key));
 
   /* ---- watching the page's writes --------------------------------------
      Patched on the prototype because localStorage itself cannot take an own
@@ -318,7 +326,10 @@
     paintStatus("signed-out", "Sign in");
   }
 
-  window.KoreanCloud = { configured, signIn, signOut, syncNow, session, status: () => status };
+  window.KoreanCloud = {
+    configured, signIn, signOut, syncNow, session, client, hasSavedSession,
+    status: () => status
+  };
 
   /* ---- when to sync ---------------------------------------------------------
      On load, when the tab is put away (so a run's stars leave before the

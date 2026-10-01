@@ -16,7 +16,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4706,6 +4707,7 @@
         ? `${test.answerNote} Time limit: ${durationMinutes} ${minuteLabel}.`
         : `${test.answerNote} This attempt is untimed.`;
 
+      if (window.KoreanStudy) window.KoreanStudy.start(state.results);
       showOnly(quizView);
       renderQuestion();
       startTimer();
@@ -4784,6 +4786,22 @@
         selectedIndex,
         correct
       });
+
+      /* Every answer goes to the study log (shared-vocab/study-log.js). A run
+         is one attempt at a test, and state.results is new for each. */
+      if (window.KoreanStudy) {
+        window.KoreanStudy.answer(state.results, {
+          page: "topik-tests",
+          exercise: "test",
+          item: `${state.test.id}#${state.questionIndex + 1}`,
+          ko: question.prompt,
+          en: question.options[question.answer],
+          correct,
+          given: question.options[selectedIndex],
+          mode: "mc",
+          extra: { test: state.test.id, section: question.section || "", timed: Boolean(state.durationMinutes) }
+        });
+      }
 
       quizScore.textContent = String(state.score);
 

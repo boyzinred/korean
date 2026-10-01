@@ -13,7 +13,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2809,6 +2810,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         vocabState.pending = null;
         if (!queueSpacedQuestion()) { paintPoolNote(); return; }
       }
+      if (window.KoreanStudy) window.KoreanStudy.start(vocabState);
       $v(".exercise-menu").classList.add("hidden");
       $v(".finish").classList.add("hidden");
       $v(".live").classList.remove("hidden");
@@ -3015,6 +3017,14 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       vocabState.locked = true;
       vocabState.attempts[vocabState.i] += 1;
       const attempts = vocabState.attempts[vocabState.i];
+      /* Every answer goes to the study log (shared-vocab/study-log.js); Count
+         as correct below rewrites it. */
+      vocabState.logId = window.KoreanStudy ? window.KoreanStudy.answer(vocabState, {
+        page: "moon", exercise: "vocab", item: entry.id, ko: entry.ko, en: entry.en,
+        correct, attempt: attempts, given, mode: settings.mode,
+        dir: direction ? direction.promptLang + ">" + direction.answerLang : "",
+        run: vocabState.run === "spaced" ? "spaced" : (settings.repeat ? "repeat" : "regular")
+      }) : null;
       /* The score keeps the first try: a word drilled until it sticks is still
          a word you missed. Later tries only record that it came good. */
       if (!vocabState.results[vocabState.i]) {
@@ -3090,6 +3100,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           const result = vocabState.results[vocabState.i];
           result.correct = true;
           result.selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(vocabState.logId, { correct: true, overridden: true });
           vocabState.retry = false;
           /* The ladder has not been told anything yet, so it hears the
              corrected verdict rather than the checker's. */

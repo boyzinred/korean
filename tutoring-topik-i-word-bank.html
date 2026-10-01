@@ -14,7 +14,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -3566,6 +3567,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       }
 
       STATES.set(exerciseId, state);
+      if (window.KoreanStudy) window.KoreanStudy.start(state);
 
       document.getElementById(`menu-${exerciseId}`).classList.add("hidden");
       document.getElementById(`quiz-card-${exerciseId}`).classList.remove("hidden");
@@ -3811,6 +3813,17 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const feedback = document.getElementById(`feedback-${exerciseId}`);
       state.answered = true;
       state.currentAttempts.push({ userAnswer, correct });
+      // Every answer goes to the study log (shared-vocab/study-log.js); Count
+      // as correct rewrites it.
+      state.logId = window.KoreanStudy ? window.KoreanStudy.answer(state, {
+        page: "topik-i", exercise: "vocab", item: item.id,
+        ko: item.shownKorean, en: item.shownMeaning,
+        correct, attempt: state.currentAttempts.length, given: userAnswer,
+        mode: state.handwriting ? "handwriting" : "typed",
+        dir: STUDY_LANG[state.questionMode] + ">" + STUDY_LANG[state.answerMode],
+        run: state.mode === "spaced" ? "spaced" : (state.repeatWrong ? "repeat" : "regular"),
+        extra: { exercise: exerciseId }
+      }) : null;
 
       if (correct) {
         if (!state.currentHadWrong) state.score += 1;
@@ -3907,6 +3920,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // A typed answer can be right in a way the checker cannot see: another
     // good gloss, a different spacing. Rather than argue with the exercise,
     // take the point yourself and move straight on to the next question.
+    // The study log's short names for the three languages.
+    const STUDY_LANG = { korean: "ko", english: "en", romanization: "ro" };
+
     function countAsCorrect(exerciseId) {
       const state = STATES.get(exerciseId);
       if (!state || !state.answered || state.finished) return;
@@ -3922,6 +3938,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         result.correct = true;
         result.selfMarked = true;
       }
+      if (window.KoreanStudy) window.KoreanStudy.amend(state.logId, { correct: true, overridden: true });
       // The ladder has not been told anything yet, so it hears the corrected
       // verdict rather than the checker's.
       if (state.mode === "spaced") state.pending = true;
@@ -4425,6 +4442,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       drillRun = {
         questions, at: 0, right: 0, locked: false, placed: [], results: []
       };
+      if (window.KoreanStudy) window.KoreanStudy.start(drillRun);
       document.getElementById("menu-drill").classList.add("hidden");
       document.getElementById("quiz-card-drill").classList.remove("hidden");
       drillEl("live").classList.remove("hidden");
@@ -4520,6 +4538,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 
       const correct = index === question.answer;
       drillRun.results[drillRun.at] = { correct, given: question.choices[index] };
+      drillRun.logId = window.KoreanStudy ? window.KoreanStudy.answer(drillRun, {
+        page: "topik-i", exercise: "drill", ko: question.prompt, en: question.answerText,
+        correct, given: question.choices[index], mode: question.mode,
+        extra: { type: question.type, tag: question.tag }
+      }) : null;
       if (correct) drillRun.right += 1;
 
       drillEl("choices").querySelectorAll(".choice").forEach(button => {
@@ -4539,6 +4562,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       const given = drillRun.placed.map(index => question.tiles[index]);
       const correct = given.join("") === question.solution.join("");
       drillRun.results[drillRun.at] = { correct, given: given.join(question.join) };
+      drillRun.logId = window.KoreanStudy ? window.KoreanStudy.answer(drillRun, {
+        page: "topik-i", exercise: "drill", ko: question.prompt, en: question.solution.join(question.join),
+        correct, given: given.join(question.join), mode: question.mode,
+        extra: { type: question.type, tag: question.tag }
+      }) : null;
       if (correct) drillRun.right += 1;
 
       const order = drillEl("order");
@@ -4575,6 +4603,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           if (!result || result.correct) return;
           result.correct = true;
           result.selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(drillRun.logId, { correct: true, overridden: true });
           drillRun.right += 1;
           event.currentTarget.disabled = true;
           event.currentTarget.textContent = "Counted";

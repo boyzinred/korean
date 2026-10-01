@@ -14,7 +14,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -719,6 +720,468 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
 .directory-section > summary.section-header::-webkit-details-marker { display: none; }
 .directory-section > summary.section-header h2 { margin: 0; }
 
+/* ---------------------------------------------------------------------------
+   Greeting and dashboard
+   The marks share one hue per theme (--chart-mark), stepped toward the card
+   for magnitude; text never wears it.
+--------------------------------------------------------------------------- */
+:root {
+  --chart-mark: #4F5FBF;
+  --chart-empty: #DCE1EC;
+  --chart-grid: #D5DAE6;
+  --dash-card: #FFFFFF;
+  --dash-ink-soft: #4A5F94;
+}
+html[data-theme='dark'] {
+  --chart-mark: #6CC2D0;
+  --chart-empty: #2C3746;
+  --chart-grid: #334155;
+  --dash-card: #18212F;
+  --dash-ink-soft: #AAB6C8;
+}
+.greeting {
+  padding: clamp(28px, 5vw, 56px) clamp(22px, 5vw, 64px) clamp(20px, 3vw, 32px);
+  border-bottom: 1px solid var(--border);
+}
+.greeting-kicker {
+  margin: 0 0 8px;
+  color: var(--dash-ink-soft);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.greeting h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+}
+.greeting-line {
+  max-width: 70ch;
+  margin: 12px 0 0;
+  font-size: 1.08rem;
+}
+.greeting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.greeting-actions .btn { min-height: 48px; display: inline-flex; align-items: center; text-decoration: none; }
+.name-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+.name-form label { font-weight: 700; }
+.name-form input { width: min(260px, 100%); min-height: 48px; }
+.name-form .btn { min-height: 48px; }
+
+.dashboard {
+  display: grid;
+  gap: 18px;
+  padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 48px) clamp(28px, 5vw, 56px);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+.dash-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dash-range {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dash-range .mode-btn { min-height: 44px; padding: 0 14px; }
+.dash-range .mode-btn:hover:not(:disabled) { transform: none; }
+.dash-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.dash-actions .btn { min-height: 44px; display: inline-flex; align-items: center; text-decoration: none; }
+.dash-actions .btn:hover:not(:disabled) { transform: none; }
+.dash-notice {
+  padding: 14px 16px;
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--dash-card);
+}
+.dash-notice p { margin: 0; }
+.dash-notice p + p { margin-top: 6px; }
+.dash-notice code { font-size: .9em; }
+
+.dash-card {
+  min-width: 0;
+  padding: 20px;
+  color: var(--surface-text);
+  background: var(--dash-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.dash-card h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+.dash-card .dash-sub {
+  margin: 2px 0 14px;
+  color: var(--dash-ink-soft);
+  font-size: .88rem;
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.dash-wide { grid-column: 1 / -1; }
+.dash-loading { opacity: .55; transition: opacity 200ms ease; }
+
+.dash-tiles {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+.dash-tile {
+  padding: 16px 18px;
+  background: var(--dash-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.dash-tile-label {
+  display: block;
+  color: var(--dash-ink-soft);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.dash-tile-value {
+  display: block;
+  margin-top: 2px;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+.dash-tile-note {
+  display: block;
+  margin-top: 4px;
+  color: var(--dash-ink-soft);
+  font-size: .82rem;
+}
+.dash-delta { font-weight: 800; }
+
+/* Activity: one cell per day, a week per column. */
+.heatmap-wrap { overflow-x: auto; }
+.heatmap {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(7, auto);
+  gap: 3px;
+  min-width: 330px;
+  max-width: 620px;
+}
+.heat-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--chart-empty);
+}
+.heat-cell.future { background: transparent; }
+.heat-cell[data-level="1"] { background: color-mix(in srgb, var(--chart-mark) 30%, var(--chart-empty)); }
+.heat-cell[data-level="2"] { background: color-mix(in srgb, var(--chart-mark) 55%, var(--chart-empty)); }
+.heat-cell[data-level="3"] { background: color-mix(in srgb, var(--chart-mark) 78%, var(--chart-empty)); }
+.heat-cell[data-level="4"] { background: var(--chart-mark); }
+.heat-cell.today { outline: 2px solid var(--surface-text); outline-offset: 1px; }
+.heat-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--dash-ink-soft);
+  font-size: .8rem;
+}
+.heat-scale { display: inline-flex; align-items: center; gap: 4px; }
+.heat-scale .heat-cell { width: 12px; }
+
+/* Columns: one per day (per week over a year), from a single baseline. */
+.col-chart {
+  position: relative;
+  height: 190px;
+  margin: 6px 0 0 36px;
+}
+.col-grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--chart-grid);
+}
+.col-grid span {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: -.6em;
+  color: var(--dash-ink-soft);
+  font-size: .72rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.col-bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+.col-slot {
+  flex: 1 1 0;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: default;
+  outline-offset: 1px;
+}
+.col-bar {
+  width: 100%;
+  max-width: 24px;
+  min-height: 0;
+  background: var(--chart-mark);
+  border-radius: 4px 4px 0 0;
+}
+.col-slot:hover .col-bar,
+.col-slot:focus-visible .col-bar { filter: brightness(1.15); }
+.col-axis {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0 0 36px;
+  color: var(--dash-ink-soft);
+  font-size: .72rem;
+}
+
+/* Accuracy: a 2px line over the days that had questions. */
+.line-chart {
+  position: relative;
+  height: 190px;
+  margin: 6px 0 0 36px;
+}
+.line-chart svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.line-chart path {
+  fill: none;
+  stroke: var(--chart-mark);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.line-dot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  display: grid;
+  place-items: center;
+  cursor: default;
+  border-radius: 50%;
+}
+.line-dot::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--chart-mark);
+  box-shadow: 0 0 0 2px var(--dash-card);
+}
+.line-dot:hover::after,
+.line-dot:focus-visible::after { width: 12px; height: 12px; }
+.chart-empty {
+  display: grid;
+  place-items: center;
+  height: 190px;
+  color: var(--dash-ink-soft);
+  text-align: center;
+}
+.chart-table { margin-top: 10px; font-size: .86rem; }
+.chart-table summary { cursor: pointer; color: var(--dash-ink-soft); font-weight: 700; }
+
+/* Tables */
+.dash-table-wrap { overflow-x: auto; }
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .92rem;
+}
+.dash-table th {
+  padding: 8px 10px;
+  color: var(--dash-ink-soft);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.dash-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--chart-grid);
+  vertical-align: middle;
+}
+.dash-table tr:last-child td { border-bottom: 0; }
+.dash-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dash-table .ko { font-size: 1.05rem; font-weight: 700; }
+.dash-table .muted { color: var(--dash-ink-soft); }
+.dash-table a { font-weight: 700; }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.row-actions .btn {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: .82rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.row-actions .btn:hover:not(:disabled) { transform: none; }
+
+/* Stars: one stacked bar per page, no star → three stars. */
+.star-bar {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  min-width: 140px;
+}
+.star-seg { height: 100%; min-width: 0; }
+.star-seg:first-child { border-radius: 4px 0 0 4px; }
+.star-seg:last-child { border-radius: 0 4px 4px 0; }
+.star-seg:only-child { border-radius: 4px; }
+.star-seg[data-star="0"], .star-key[data-star="0"] { background: var(--chart-empty); }
+.star-seg[data-star="1"], .star-key[data-star="1"] { background: color-mix(in srgb, var(--chart-mark) 38%, var(--chart-empty)); }
+.star-seg[data-star="2"], .star-key[data-star="2"] { background: color-mix(in srgb, var(--chart-mark) 68%, var(--chart-empty)); }
+.star-seg[data-star="3"], .star-key[data-star="3"] { background: var(--chart-mark); }
+.star-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0 0 12px;
+  color: var(--dash-ink-soft);
+  font-size: .8rem;
+}
+.star-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.star-key { width: 14px; height: 10px; border-radius: 2px; }
+
+/* Breakdowns: a bar per kind, its share of the questions. */
+.break-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.break-row { display: grid; gap: 4px; }
+.break-head { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; }
+.break-head strong { font-weight: 700; }
+.break-head span { color: var(--dash-ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.break-track { height: 10px; border-radius: 4px; background: var(--chart-empty); overflow: hidden; }
+.break-fill { height: 100%; border-radius: 4px; background: var(--chart-mark); }
+
+/* Customize */
+.dash-customize { display: grid; gap: 16px; }
+.dash-customize fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.dash-customize legend { margin-bottom: 8px; font-weight: 800; }
+.pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+.pick-grid label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 8px 12px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.pick-grid input { width: 20px; min-height: 20px; height: 20px; flex: none; accent-color: var(--chart-mark); }
+.pick-grid small { display: block; color: var(--dash-ink-soft); font-size: .76rem; }
+.dash-customize .name-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.dash-customize .name-row input { width: min(280px, 100%); min-height: 48px; }
+.dash-customize .form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.dash-customize .form-actions .btn { min-height: 48px; }
+
+/* One tooltip for every mark, on hover and on focus. */
+.dash-tip {
+  position: fixed;
+  z-index: 60;
+  max-width: 240px;
+  padding: 8px 10px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .22);
+  font-size: .82rem;
+  line-height: 1.35;
+  pointer-events: none;
+}
+.dash-tip strong { display: block; font-size: .98rem; }
+
+@media (max-width: 1100px) {
+  .dash-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .dash-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 680px) {
+  .dash-card { padding: 16px; }
+  .dash-tile-value { font-size: 1.6rem; }
+  .dash-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash-table .hide-narrow { display: none; }
+  /* The site's buttons go full width on a phone; these stay in a row. */
+  .dash-range .mode-btn,
+  .dash-actions .btn,
+  .row-actions .btn,
+  .greeting-actions .btn { width: auto; }
+  .dash-range .mode-btn { padding: 0 12px; }
+  .dash-bar { align-items: stretch; }
+  /* Each page becomes a small card: name and buttons, stars, then numbers. */
+  .pages-table thead { display: none; }
+  .pages-table tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--chart-grid);
+  }
+  .pages-table tr:last-child { border-bottom: 0; }
+  .pages-table td { padding: 0; border: 0; }
+  .pages-table td.cell-page { grid-column: 1 / 3; }
+  .pages-table td.cell-actions { grid-column: 3; }
+  .pages-table td.cell-stars { grid-column: 1 / -1; }
+  .pages-table td.num { text-align: left; }
+  .pages-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--dash-ink-soft);
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .pages-table td.hide-narrow { display: block; }
+  .star-bar { min-width: 0; }
+}
+
 </style>
 </head>
 <body id="top">
@@ -726,6 +1189,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
     <div class="header-inner">
       <a class="brand" href="./index.html">Korean Language Resources</a>
       <div class="header-actions">
+        <a class="header-link hidden" href="#dashboard" id="dashboardLink">Dashboard</a>
         <a class="header-link" href="#directory">Pages</a>
         <a class="header-link" href="./login.html" data-cloud-status>Sign in</a>
       </div>
@@ -733,11 +1197,71 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
   </header>
 
   <main class="page-main">
-    <section class="hero" aria-labelledby="page-title">
-      <div class="hero-inner">
-        <p class="hero-kicker">Korean Language Resources</p>
-        <h1 id="page-title">Vocabulary and Grammar</h1>
+    <section class="greeting" aria-labelledby="page-title">
+      <p class="greeting-kicker" id="greetingDate"></p>
+      <h1 id="page-title">Hi there,</h1>
+      <p class="greeting-line" id="greetingLine">Pick a page below to study.</p>
+      <div id="greetingExtra"></div>
+    </section>
+
+    <section class="dashboard hidden" id="dashboard" aria-label="Your progress">
+      <article class="dash-card" id="activityCard">
+        <h2>Activity</h2>
+        <p class="dash-sub">Questions answered each day over the last 26 weeks, on every page.</p>
+        <div id="dashHeatmap"></div>
+      </article>
+
+      <div class="dash-bar">
+        <div class="dash-range" role="group" aria-label="Time range" id="dashRange"></div>
+        <div class="dash-actions">
+          <a class="btn primary" id="dashReview" href="./progress-review.html">Review weak words</a>
+          <button class="btn secondary" type="button" id="dashCustomizeOpen" aria-expanded="false" aria-controls="dashCustomize">Customize</button>
+        </div>
       </div>
+
+      <div class="dash-notice hidden" id="dashNotice" role="status"></div>
+      <form class="dash-card dash-customize hidden" id="dashCustomize" aria-label="Customize the dashboard"></form>
+
+      <div class="dash-tiles" id="dashTiles"></div>
+
+      <div class="dash-grid" id="dashGrid">
+        <article class="dash-card">
+          <h2>Questions per day</h2>
+          <p class="dash-sub" id="dayChartSub">First tries, on the pages you picked.</p>
+          <div id="dashDayChart"></div>
+        </article>
+        <article class="dash-card">
+          <h2>First-try accuracy</h2>
+          <p class="dash-sub" id="accChartSub">Share of questions right the first time, each day you studied.</p>
+          <div id="dashAccChart"></div>
+        </article>
+        <article class="dash-card dash-wide">
+          <h2>Your pages</h2>
+          <p class="dash-sub">Stars are where each page's words stand now; the rest is the time range above.</p>
+          <div id="dashPages"></div>
+        </article>
+        <article class="dash-card">
+          <h2>By exercise</h2>
+          <p class="dash-sub">Questions, and how many were right first time.</p>
+          <div id="dashExercises"></div>
+        </article>
+        <article class="dash-card">
+          <h2>By direction</h2>
+          <p class="dash-sub">What you were shown → what you answered in.</p>
+          <div id="dashDirections"></div>
+        </article>
+        <article class="dash-card dash-wide">
+          <h2>Most missed</h2>
+          <p class="dash-sub">The words and questions you've got wrong most often, all time, on the pages you picked. Words you've since taken to ★★★ are left off.</p>
+          <div id="dashMissed"></div>
+        </article>
+        <article class="dash-card dash-wide">
+          <h2>Recent sessions</h2>
+          <p class="dash-sub">Your last runs through an exercise, newest first.</p>
+          <div id="dashRuns"></div>
+        </article>
+      </div>
+      <div class="dash-tip hidden" id="dashTip" role="tooltip"></div>
     </section>
 
     <nav class="toc-card" id="toc" aria-label="Page groups">
@@ -766,24 +1290,26 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       - "quizzes/numbers.html"
 
       Keep these as relative links when using GitHub Pages.
+
+      `id` is the name the page logs its answers under (shared-vocab/study-log.js)
+      and, for a word bank, its id in shared-vocab/review-banks.js. The
+      dashboard offers every page that has one.
     */
     const PAGES = [
-      { title: "Review My Weak Words", href: "progress-review.html", group: "Review", tag: "Every word bank" },
+      { id: "topik-i", title: "TOPIK I Word Bank (1358)", href: "tutoring-topik-i-word-bank.html", group: "TOPIK I", tag: "Vocabulary" },
+      { id: "topik-tests", title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "TOPIK I", tag: "Practice Test" },
 
-      { title: "TOPIK I Word Bank (1358)", href: "tutoring-topik-i-word-bank.html", group: "TOPIK I", tag: "Vocabulary" },
-      { title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "TOPIK I", tag: "Practice Test" },
+      { id: "reading-1", title: "읽고 답해요: Grade 1 Stories", href: "reading-comprehension-grade-1.html", group: "Reading comprehension", tag: "Grade 1" },
+      { id: "reading-2", title: "깊이 읽고 답해요: Grade 2 Passages", href: "reading-comprehension-grade-2.html", group: "Reading comprehension", tag: "Grade 2" },
 
-      { title: "읽고 답해요: Grade 1 Stories", href: "reading-comprehension-grade-1.html", group: "Reading comprehension", tag: "Grade 1" },
-      { title: "깊이 읽고 답해요: Grade 2 Passages", href: "reading-comprehension-grade-2.html", group: "Reading comprehension", tag: "Grade 2" },
+      { id: "htsk-1", title: "Unit 1: Lessons 1–25", href: "howtostudykorean-unit-1.html", group: "HowToStudyKorean", tag: "Unit 1" },
 
-      { title: "Unit 1: Lessons 1–25", href: "howtostudykorean-unit-1.html", group: "HowToStudyKorean", tag: "Unit 1" },
+      { id: "tue-wed", title: "Tue-Wed Korean", href: "tue-wed-korean.html", group: "숭실대 수업", tag: "Korean class" },
+      { id: "moon", title: "문지현", href: "soongsil-moon-ji-hyeon.html", group: "숭실대 수업", tag: "Prof. Moon" },
+      { id: "kang", title: "강태홍", href: "soongsil-kang-tae-hong.html", group: "숭실대 수업", tag: "Prof. Kang" },
+      { id: "engineering", title: "공학 학술한국어", href: "soongsil-advanced-korean-for-engineering.html", group: "숭실대 수업", tag: "Engineering" },
 
-      { title: "Tue-Wed Korean", href: "tue-wed-korean.html", group: "숭실대 수업", tag: "Korean class" },
-      { title: "문지현", href: "soongsil-moon-ji-hyeon.html", group: "숭실대 수업", tag: "Prof. Moon" },
-      { title: "강태홍", href: "soongsil-kang-tae-hong.html", group: "숭실대 수업", tag: "Prof. Kang" },
-      { title: "공학 학술한국어", href: "soongsil-advanced-korean-for-engineering.html", group: "숭실대 수업", tag: "Engineering" },
-
-      { title: "Paste Your Own List", href: "custom-word-list-practice.html", group: "Helper exercises", tag: "Custom List" }
+      { id: "custom-list", title: "Paste Your Own List", href: "custom-word-list-practice.html", group: "Helper exercises", tag: "Custom List" }
     ];
 
     function esc(value) {
@@ -862,7 +1388,913 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
     const groups = groupPages();
     renderTOC(groups);
     renderSections(groups);
-  
+
+  </script>
+
+  <script>
+  /* -------------------------------------------------------------------------
+     THE GREETING AND THE DASHBOARD
+     Signed out, the page is the directory with a hello on top. Signed in, the
+     dashboard reads two things:
+       - the study log, as the summaries in supabase/schema.sql (study_daily,
+         study_items, study_runs): what you answered, when, and how it went;
+       - the stars, from this browser's storage (kept in step by
+         cloud-sync.js), set against each word bank's words, which
+         review-banks.js reads out of the bank's own page.
+     Your name and the pages it covers are a setting, korean.dashboard.v1,
+     which cloud-sync.js carries to your other devices.
+  ------------------------------------------------------------------------- */
+  (() => {
+    "use strict";
+
+    const PREFS_KEY = "korean.dashboard.v1";
+    const RANGE_KEY = "korean.dashboardRange";
+    const RANGES = [
+      { days: 7, label: "7 days" },
+      { days: 30, label: "30 days" },
+      { days: 90, label: "90 days" },
+      { days: 365, label: "1 year" }
+    ];
+    const HEAT_WEEKS = 26;
+    const PAGE_SIZE = 1000;
+    const MAX_STAR = 3;
+
+    const STUDY_PAGES = PAGES.filter(page => page.id);
+    const PAGE_BY_ID = new Map(STUDY_PAGES.map(page => [page.id, page]));
+    const EXERCISE_LABELS = {
+      vocab: "Vocabulary tests",
+      review: "Weak-words review",
+      drill: "Drills",
+      comprehension: "Story questions",
+      sentence: "Sentences",
+      test: "Practice tests"
+    };
+    const LANG_LABELS = { en: "English", ko: "Korean", ro: "Romanization" };
+    const MODE_LABELS = { typed: "typed", mc: "multiple choice", handwriting: "handwriting", order: "ordering" };
+
+    const $ = id => document.getElementById(id);
+
+    /* ---- small helpers ---------------------------------------------------- */
+    function load(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (_) { return fallback; }
+    }
+
+    function dayOf(date) {
+      return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-"
+        + String(date.getDate()).padStart(2, "0");
+    }
+    function dateOf(day) {
+      const [y, m, d] = day.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+    function addDays(day, n) {
+      const date = dateOf(day);
+      date.setDate(date.getDate() + n);
+      return dayOf(date);
+    }
+    function daysBetween(a, b) {
+      return Math.round((dateOf(b) - dateOf(a)) / 86400000);
+    }
+    const today = () => dayOf(new Date());
+
+    const fmtInt = n => Number(n || 0).toLocaleString();
+    function fmtPct(right, total) {
+      return total ? Math.round((right / total) * 100) + "%" : "—";
+    }
+    function fmtDuration(ms) {
+      const minutes = Math.round((ms || 0) / 60000);
+      if (!ms) return "0 m";
+      if (minutes < 1) return "<1 m";
+      if (minutes < 60) return minutes + " m";
+      const hours = Math.floor(minutes / 60);
+      return hours + " h" + (minutes % 60 ? " " + (minutes % 60) + " m" : "");
+    }
+    function fmtShortDate(day) {
+      return dateOf(day).toLocaleDateString([], { month: "short", day: "numeric" });
+    }
+    function fmtWhen(iso) {
+      const when = new Date(iso);
+      if (isNaN(when)) return "";
+      const day = dayOf(when);
+      const gap = daysBetween(day, today());
+      const time = when.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      if (gap === 0) return "Today, " + time;
+      if (gap === 1) return "Yesterday, " + time;
+      if (gap < 7) return when.toLocaleDateString([], { weekday: "long" }) + ", " + time;
+      return fmtShortDate(day);
+    }
+    function relDay(day) {
+      const gap = daysBetween(day, today());
+      if (gap <= 0) return "today";
+      if (gap === 1) return "yesterday";
+      if (gap < 14) return gap + " days ago";
+      return "on " + fmtShortDate(day);
+    }
+    const plural = (n, one, many) => fmtInt(n) + " " + (n === 1 ? one : many);
+    const pageTitle = id => (PAGE_BY_ID.get(id) || { title: id }).title;
+    function dirLabel(dir) {
+      const [from, to] = String(dir || "").split(">");
+      if (!from || !to) return "";
+      return (LANG_LABELS[from] || from) + " → " + (LANG_LABELS[to] || to);
+    }
+
+    /* ---- settings --------------------------------------------------------- */
+    function readPrefs() {
+      const raw = load(PREFS_KEY, {}) || {};
+      const pages = Array.isArray(raw.pages) ? raw.pages.filter(id => PAGE_BY_ID.has(id)) : null;
+      return {
+        name: typeof raw.name === "string" ? raw.name.trim() : "",
+        pages: pages || STUDY_PAGES.map(page => page.id)
+      };
+    }
+    function writePrefs(prefs) {
+      try {
+        localStorage.setItem(PREFS_KEY, JSON.stringify({ name: prefs.name, pages: prefs.pages }));
+      } catch (_) {}
+    }
+    function readRange() {
+      const saved = Number(load(RANGE_KEY, 30));
+      return RANGES.some(range => range.days === saved) ? saved : 30;
+    }
+
+    /* ---- state ------------------------------------------------------------ */
+    const state = {
+      signedIn: false,
+      prefs: readPrefs(),
+      range: readRange(),
+      daily: [],
+      items: [],
+      runs: [],
+      banks: new Map(),
+      error: "",
+      loaded: false
+    };
+
+    /* ---- the greeting ----------------------------------------------------- */
+    function paintDate() {
+      $("greetingDate").textContent = new Date().toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" });
+    }
+
+    function paintSignedOut() {
+      $("page-title").textContent = "Hi there,";
+      $("greetingLine").textContent = "Pick a page below to study. Sign in and this page becomes your dashboard: streaks, time, accuracy and the words you keep missing.";
+      $("greetingExtra").innerHTML = '<div class="greeting-actions">'
+        + '<a class="btn primary" href="./login.html">Sign in</a>'
+        + '<a class="btn secondary" href="./progress-review.html">Review weak words</a></div>';
+      $("dashboard").classList.add("hidden");
+      $("dashboardLink").classList.add("hidden");
+    }
+
+    function paintGreeting(stats) {
+      const name = state.prefs.name;
+      $("page-title").textContent = name ? "Hi " + name + "," : "Hi,";
+      $("greetingLine").textContent = stats ? greetingSentence(stats) : "Getting your progress…";
+      if (!name) {
+        $("greetingExtra").innerHTML = '<form class="name-form" id="nameForm">'
+          + '<label for="nameInput">What should this page call you?</label>'
+          + '<input id="nameInput" type="text" autocomplete="given-name" maxlength="40" placeholder="Your name">'
+          + '<button class="btn primary" type="submit">Save</button></form>';
+        $("nameForm").addEventListener("submit", event => {
+          event.preventDefault();
+          const value = $("nameInput").value.trim();
+          if (!value) return;
+          state.prefs.name = value;
+          writePrefs(state.prefs);
+          paintAll();
+        });
+      } else {
+        $("greetingExtra").innerHTML = "";
+      }
+    }
+
+    /* A sentence or two about where things stand, picked from what is most
+       worth saying today. */
+    function greetingSentence(stats) {
+      if (state.error === "missing-table") {
+        return "Your stars are below. Answers start counting once the study log is set up in Supabase (see the note under the range buttons).";
+      }
+      const parts = [];
+      const day = stats.byDay.get(today());
+      if (day && day.questions) {
+        parts.push("Today you've answered " + plural(day.questions, "question", "questions")
+          + ", " + fmtPct(day.right, day.questions) + " right first time, in " + fmtDuration(day.ms) + ".");
+        if (stats.streak.current > 1) parts.push("That's " + stats.streak.current + " days in a row.");
+      } else if (stats.streak.current > 0) {
+        parts.push("Your " + plural(stats.streak.current, "day", "days")
+          + " streak is waiting on today's study.");
+      } else if (stats.lastDay) {
+        parts.push("You last studied " + relDay(stats.lastDay) + ", on " + pageTitle(stats.lastPage) + ".");
+      } else {
+        parts.push("Nothing logged yet. Answer a few questions on any page and they'll show up here.");
+      }
+      const weakest = stats.pages
+        .filter(page => page.questions >= 10)
+        .sort((a, b) => a.right / a.questions - b.right / b.questions)[0];
+      if (weakest && weakest.right / weakest.questions < 0.8) {
+        parts.push(pageTitle(weakest.id) + " is your shakiest page lately, at "
+          + fmtPct(weakest.right, weakest.questions) + " first time.");
+      } else if (stats.toReview > 0) {
+        parts.push(plural(stats.toReview, "word", "words") + " on your pages have no star yet.");
+      }
+      return parts.join(" ");
+    }
+
+    /* ---- loading ---------------------------------------------------------- */
+    async function fetchAll(build) {
+      const rows = [];
+      for (let from = 0; ; from += PAGE_SIZE) {
+        const { data, error } = await build().range(from, from + PAGE_SIZE - 1);
+        if (error) throw error;
+        rows.push(...data);
+        if (data.length < PAGE_SIZE) break;
+      }
+      return rows;
+    }
+
+    function missingTable(error) {
+      const text = String((error && error.code) || "") + " " + String((error && error.message) || "");
+      return /42P01|PGRST205|does not exist|Could not find the (table|relation)/i.test(text);
+    }
+
+    async function loadLog() {
+      const cloud = window.KoreanCloud;
+      if (window.KoreanStudy) await window.KoreanStudy.flush();
+      const supa = await cloud.client();
+      const since = addDays(today(), -400);
+      try {
+        const [daily, items, runs] = await Promise.all([
+          fetchAll(() => supa.from("study_daily")
+            .select("day, page, exercise, mode, dir, questions, first_right, answers, ms")
+            .gte("day", since).order("day")),
+          fetchAll(() => supa.from("study_items")
+            .select("page, item_id, ko, en, questions, missed, last_at, last_missed_at, last_right_at")
+            .order("page").order("item_id")),
+          supa.from("study_runs")
+            .select("run_id, page, exercise, started, ended, questions, first_right, answers, ms, mode, run")
+            .order("started", { ascending: false }).limit(60)
+            .then(({ data, error }) => { if (error) throw error; return data; })
+        ]);
+        state.daily = daily.map(row => Object.assign({}, row, {
+          questions: Number(row.questions) || 0,
+          first_right: Number(row.first_right) || 0,
+          answers: Number(row.answers) || 0,
+          ms: Number(row.ms) || 0
+        }));
+        state.items = items;
+        state.runs = runs;
+        state.error = "";
+      } catch (error) {
+        state.error = missingTable(error) ? "missing-table" : "network";
+        console.warn("[dashboard]", error);
+      }
+    }
+
+    /* The word banks, read out of their own pages the way the review does it.
+       Only the picked pages are fetched, and each only once a visit. */
+    let banksScript = null;
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("could not load " + src));
+        document.head.appendChild(script);
+      });
+    }
+    const scriptsLoaded = new Map();
+    function needScript(src) {
+      if (!scriptsLoaded.has(src)) scriptsLoaded.set(src, loadScript("./" + src));
+      return scriptsLoaded.get(src);
+    }
+
+    async function loadBanks() {
+      if (!banksScript) banksScript = loadScript("./shared-vocab/review-banks.js?v=1.0.0");
+      await banksScript;
+      const configs = window.ReviewBanks.BANKS.filter(bank =>
+        state.prefs.pages.includes(bank.id) && !state.banks.has(bank.id));
+      await Promise.all(configs.map(async config => {
+        try {
+          /* In order: the grade 2 reading data builds on grade 1's. */
+          for (const src of config.scripts || []) await needScript(src);
+          const response = await fetch("./" + config.href, { cache: "no-cache" });
+          if (!response.ok) throw new Error(response.status + " " + response.statusText);
+          const built = window.ReviewBanks.build(config, await response.text(), { window });
+          state.banks.set(config.id, { config, ids: built.words.map(word => word.id), words: new Map(built.words.map(word => [word.id, word])) });
+        } catch (error) {
+          console.warn("[dashboard] " + config.href + ": " + error.message);
+          state.banks.set(config.id, { config, ids: null, words: new Map(), failed: true });
+        }
+      }));
+    }
+
+    function starStore(bank) {
+      const store = load(bank.config.starKey, {}) || {};
+      return id => {
+        const held = store[id];
+        const level = held && typeof held === "object" ? held.l : held;
+        return Math.min(MAX_STAR, Math.max(0, Number(level) || 0));
+      };
+    }
+
+    /* ---- the numbers ------------------------------------------------------ */
+    function emptyTally() { return { questions: 0, right: 0, answers: 0, ms: 0 }; }
+    function addTo(tally, row) {
+      tally.questions += row.questions;
+      tally.right += row.first_right;
+      tally.answers += row.answers;
+      tally.ms += row.ms;
+      return tally;
+    }
+
+    function streakOf(dayList) {
+      const days = new Set(dayList);
+      let current = 0;
+      let cursor = days.has(today()) ? today() : addDays(today(), -1);
+      while (days.has(cursor)) { current += 1; cursor = addDays(cursor, -1); }
+      let best = 0;
+      let run = 0;
+      let prev = "";
+      [...days].sort().forEach(day => {
+        run = prev && addDays(prev, 1) === day ? run + 1 : 1;
+        best = Math.max(best, run);
+        prev = day;
+      });
+      return { current, best };
+    }
+
+    function computeStats() {
+      const picked = new Set(state.prefs.pages);
+      const end = today();
+      const start = addDays(end, -(state.range - 1));
+      const prevStart = addDays(start, -state.range);
+
+      /* Every page counts toward the streak and the heatmap: a day you
+         studied is a day you studied, whatever the page. */
+      const allDays = new Map();
+      state.daily.forEach(row => {
+        if (!row.questions && !row.answers) return;
+        addTo(allDays.get(row.day) || allDays.set(row.day, emptyTally()).get(row.day), row);
+      });
+      const streak = streakOf([...allDays.keys()]);
+
+      const total = emptyTally();
+      const previous = emptyTally();
+      const byDay = new Map();
+      const byPage = new Map();
+      const byExercise = new Map();
+      const byDir = new Map();
+      let lastDay = "";
+      let lastPage = "";
+      state.daily.forEach(row => {
+        if (row.day > lastDay && row.questions) { lastDay = row.day; lastPage = row.page; }
+        if (!picked.has(row.page)) return;
+        if (row.day >= prevStart && row.day < start) addTo(previous, row);
+        if (row.day < start || row.day > end) return;
+        addTo(total, row);
+        addTo(byDay.get(row.day) || byDay.set(row.day, emptyTally()).get(row.day), row);
+        const page = byPage.get(row.page) || byPage.set(row.page, Object.assign(emptyTally(), { last: "" })).get(row.page);
+        addTo(page, row);
+        if (row.day > page.last) page.last = row.day;
+        addTo(byExercise.get(row.exercise) || byExercise.set(row.exercise, emptyTally()).get(row.exercise), row);
+        if (row.dir) addTo(byDir.get(row.dir) || byDir.set(row.dir, emptyTally()).get(row.dir), row);
+      });
+      /* The last day each page was studied, whatever the range. */
+      const lastByPage = new Map();
+      state.daily.forEach(row => {
+        if (row.questions && (!lastByPage.has(row.page) || row.day > lastByPage.get(row.page))) lastByPage.set(row.page, row.day);
+      });
+
+      let studiedDays = 0;
+      byDay.forEach(tally => { if (tally.questions) studiedDays += 1; });
+
+      /* Stars across the picked word banks. */
+      let words = 0;
+      let mastered = 0;
+      let unstarred = 0;
+      const seen = new Map();
+      state.items.forEach(item => {
+        if (!picked.has(item.page)) return;
+        if (!seen.has(item.page)) seen.set(item.page, new Set());
+        seen.get(item.page).add(item.item_id);
+      });
+      const pages = state.prefs.pages.map(id => {
+        const bank = state.banks.get(id);
+        const tally = byPage.get(id) || Object.assign(emptyTally(), { last: "" });
+        const row = { id, questions: tally.questions, right: tally.right, ms: tally.ms, answers: tally.answers,
+          last: lastByPage.get(id) || "", stars: null, words: 0, seen: 0 };
+        if (bank && bank.ids) {
+          const level = starStore(bank);
+          const counts = [0, 0, 0, 0];
+          bank.ids.forEach(wordId => { counts[level(wordId)] += 1; });
+          row.stars = counts;
+          row.words = bank.ids.length;
+          const asked = seen.get(id) || new Set();
+          row.seen = bank.ids.filter(wordId => asked.has(wordId)).length;
+          words += row.words;
+          mastered += counts[3];
+          unstarred += counts[0];
+        }
+        return row;
+      });
+
+      return {
+        start, end, total, previous, byDay, byExercise, byDir, pages,
+        allDays, streak, studiedDays, lastDay, lastPage,
+        words, mastered, toReview: unstarred
+      };
+    }
+
+    /* ---- painting ---------------------------------------------------------- */
+    function paintRange() {
+      $("dashRange").innerHTML = RANGES.map(range =>
+        '<button class="mode-btn' + (range.days === state.range ? " active" : "") + '" type="button" data-range="'
+        + range.days + '" aria-pressed="' + (range.days === state.range) + '">' + esc(range.label) + '</button>').join("");
+      const banks = state.prefs.pages.filter(id => window.ReviewBanks
+        ? window.ReviewBanks.BANKS.some(bank => bank.id === id) : true);
+      $("dashReview").href = "./progress-review.html" + (banks.length ? "?bank=" + encodeURIComponent(banks.join(",")) : "");
+    }
+
+    function paintNotice() {
+      const notice = $("dashNotice");
+      const queued = window.KoreanStudy ? window.KoreanStudy.queued() : 0;
+      let html = "";
+      if (state.error === "missing-table") {
+        html = "<p><strong>The study log isn't set up yet.</strong> Run <code>supabase/schema.sql</code> in Supabase → SQL Editor once."
+          + " Until then your answers wait on this device"
+          + (queued ? " (" + plural(queued, "answer", "answers") + " so far)" : "") + " and nothing is lost.</p>";
+      } else if (state.error === "network") {
+        html = "<p><strong>Couldn't reach Supabase.</strong> The stars below are this device's; the rest comes back once you're online.</p>";
+      } else if (queued) {
+        html = "<p>" + plural(queued, "answer is", "answers are") + " still waiting to sync from this device.</p>";
+      }
+      notice.innerHTML = html;
+      notice.classList.toggle("hidden", !html);
+    }
+
+    function tile(label, value, note) {
+      return '<div class="dash-tile"><span class="dash-tile-label">' + esc(label) + '</span>'
+        + '<span class="dash-tile-value">' + esc(value) + '</span>'
+        + (note ? '<span class="dash-tile-note">' + note + '</span>' : "") + '</div>';
+    }
+
+    function paintTiles(stats) {
+      const t = stats.total;
+      const p = stats.previous;
+      const rangeName = RANGES.find(range => range.days === state.range).label;
+      let accNote = "of " + plural(t.questions, "question", "questions");
+      /* The year before a year is past what is loaded, so only the shorter
+         ranges compare. */
+      if (state.range < 365 && p.questions >= 5 && t.questions) {
+        const delta = Math.round((t.right / t.questions - p.right / p.questions) * 100);
+        const sign = delta > 0 ? "+" : delta < 0 ? "−" : "±";
+        accNote = '<span class="dash-delta">' + sign + Math.abs(delta) + ' pts</span> vs the ' + esc(rangeName) + " before";
+      }
+      $("dashTiles").innerHTML = [
+        tile("Streak", plural(stats.streak.current, "day", "days"),
+          "Best " + plural(stats.streak.best, "day", "days")),
+        tile("Days studied", fmtInt(stats.studiedDays) + " / " + fmtInt(state.range), "in the last " + esc(rangeName)),
+        tile("Study time", fmtDuration(t.ms),
+          stats.studiedDays ? fmtDuration(t.ms / stats.studiedDays) + " a study day" : "in the last " + esc(rangeName)),
+        tile("Questions", fmtInt(t.questions),
+          t.answers > t.questions ? "+ " + plural(t.answers - t.questions, "retry", "retries") : "in the last " + esc(rangeName)),
+        tile("Right first time", fmtPct(t.right, t.questions), accNote),
+        tile("Words at ★★★", stats.words ? fmtInt(stats.mastered) : "—",
+          stats.words ? "of " + fmtInt(stats.words) + " · " + fmtPct(stats.mastered, stats.words) : "Pick a word bank in Customize")
+      ].join("");
+    }
+
+    function paintHeatmap(stats) {
+      const end = today();
+      /* Columns are weeks starting Monday, the last one holding today. */
+      const weekday = (dateOf(end).getDay() + 6) % 7;
+      const first = addDays(end, -(weekday + (HEAT_WEEKS - 1) * 7));
+      const counts = [];
+      for (let i = 0; i < HEAT_WEEKS * 7; i += 1) {
+        const day = addDays(first, i);
+        const tally = stats.allDays.get(day);
+        counts.push({ day, tally, future: day > end });
+      }
+      const max = Math.max(1, ...counts.map(cell => (cell.tally ? cell.tally.questions : 0)));
+      const levelOf = n => (!n ? 0 : Math.min(4, Math.ceil((n / max) * 4)));
+      let studied = 0;
+      const cells = counts.map(cell => {
+        if (cell.future) return '<div class="heat-cell future" aria-hidden="true"></div>';
+        const n = cell.tally ? cell.tally.questions : 0;
+        if (n) studied += 1;
+        const tip = cell.tally
+          ? plural(n, "question", "questions") + "\n" + dateOf(cell.day).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })
+            + "\n" + fmtPct(cell.tally.right, n) + " right first time · " + fmtDuration(cell.tally.ms)
+          : "No study\n" + dateOf(cell.day).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+        return '<div class="heat-cell' + (cell.day === end ? " today" : "") + '" data-level="' + levelOf(n)
+          + '" data-tip="' + esc(tip) + '"></div>';
+      }).join("");
+      $("dashHeatmap").innerHTML = '<div class="heatmap-wrap"><div class="heatmap" role="img" aria-label="'
+        + esc("Studied on " + studied + " of the last " + HEAT_WEEKS * 7 + " days") + '">' + cells + '</div></div>'
+        + '<div class="heat-foot"><span>' + esc(fmtShortDate(first)) + " – today · studied " + studied + " days</span>"
+        + '<span class="heat-scale" aria-hidden="true">Less'
+        + [0, 1, 2, 3, 4].map(level => '<span class="heat-cell" data-level="' + level + '"></span>').join("")
+        + "More</span></div>";
+    }
+
+    /* The days of the range, or its weeks once a range is too long for a
+       column a day to stay legible. */
+    function buckets(stats) {
+      const weekly = state.range > 90;
+      const list = [];
+      if (!weekly) {
+        for (let day = stats.start; day <= stats.end; day = addDays(day, 1)) {
+          list.push({ from: day, to: day, tally: stats.byDay.get(day) || emptyTally() });
+        }
+        return { weekly, list };
+      }
+      const weekday = (dateOf(stats.start).getDay() + 6) % 7;
+      for (let from = addDays(stats.start, -weekday); from <= stats.end; from = addDays(from, 7)) {
+        const tally = emptyTally();
+        for (let i = 0; i < 7; i += 1) {
+          const day = addDays(from, i);
+          if (day < stats.start || day > stats.end) continue;
+          const held = stats.byDay.get(day);
+          if (held) { tally.questions += held.questions; tally.right += held.right; tally.answers += held.answers; tally.ms += held.ms; }
+        }
+        list.push({ from, to: addDays(from, 6), tally });
+      }
+      return { weekly, list };
+    }
+
+    function niceMax(value) {
+      if (value <= 5) return 5;
+      const power = Math.pow(10, Math.floor(Math.log10(value)));
+      const steps = [1, 2, 2.5, 5, 10];
+      for (const step of steps) if (step * power >= value) return step * power;
+      return 10 * power;
+    }
+
+    function bucketLabel(bucket, weekly) {
+      return weekly ? "Week of " + fmtShortDate(bucket.from) : dateOf(bucket.from).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+    }
+
+    function paintDayChart(stats) {
+      const { weekly, list } = buckets(stats);
+      $("dayChartSub").textContent = (weekly ? "Each week" : "Each day") + ", first tries on the pages you picked.";
+      if (!stats.total.questions) {
+        $("dashDayChart").innerHTML = '<div class="chart-empty">No questions in this range yet.</div>';
+        return;
+      }
+      const max = niceMax(Math.max(...list.map(bucket => bucket.tally.questions)));
+      const grid = [0, 0.5, 1].map(share => '<div class="col-grid" style="bottom:' + share * 100 + '%"><span>'
+        + fmtInt(Math.round(max * share)) + '</span></div>').join("");
+      const bars = list.map(bucket => {
+        const n = bucket.tally.questions;
+        const tip = plural(n, "question", "questions") + "\n" + bucketLabel(bucket, weekly)
+          + (n ? "\n" + fmtPct(bucket.tally.right, n) + " right first time · " + fmtDuration(bucket.tally.ms) : "");
+        return '<div class="col-slot" tabindex="0" data-tip="' + esc(tip) + '" aria-label="' + esc(tip.replace(/\n/g, ", ")) + '">'
+          + '<div class="col-bar" style="height:' + (n ? Math.max(1.5, (n / max) * 100) : 0) + '%"></div></div>';
+      }).join("");
+      $("dashDayChart").innerHTML = '<div class="col-chart">' + grid + '<div class="col-bars">' + bars + '</div></div>'
+        + '<div class="col-axis"><span>' + esc(fmtShortDate(list[0].from)) + '</span><span>'
+        + esc(weekly ? "this week" : "today") + '</span></div>'
+        + chartTable(list, weekly);
+    }
+
+    function chartTable(list, weekly) {
+      const rows = list.filter(bucket => bucket.tally.questions).reverse();
+      return '<details class="chart-table"><summary>Show as a table</summary><div class="dash-table-wrap"><table class="dash-table">'
+        + '<thead><tr><th>' + (weekly ? "Week of" : "Day") + '</th><th class="num">Questions</th><th class="num">Right first time</th><th class="num">Time</th></tr></thead><tbody>'
+        + rows.map(bucket => '<tr><td>' + esc(fmtShortDate(bucket.from)) + '</td><td class="num">' + fmtInt(bucket.tally.questions)
+          + '</td><td class="num">' + fmtPct(bucket.tally.right, bucket.tally.questions) + '</td><td class="num">'
+          + fmtDuration(bucket.tally.ms) + '</td></tr>').join("")
+        + '</tbody></table></div></details>';
+    }
+
+    function paintAccChart(stats) {
+      const { weekly, list } = buckets(stats);
+      $("accChartSub").textContent = "Share of questions right the first time, each " + (weekly ? "week" : "day") + " you studied.";
+      const points = list.map((bucket, index) => ({ bucket, index })).filter(point => point.bucket.tally.questions);
+      if (!points.length) {
+        $("dashAccChart").innerHTML = '<div class="chart-empty">No questions in this range yet.</div>';
+        return;
+      }
+      const span = Math.max(1, list.length - 1);
+      const x = index => (list.length === 1 ? 50 : (index / span) * 100);
+      const y = point => 100 - (point.bucket.tally.right / point.bucket.tally.questions) * 100;
+      const path = points.map((point, i) => (i ? "L" : "M") + x(point.index).toFixed(2) + " " + y(point).toFixed(2)).join(" ");
+      const grid = [0, 0.5, 1].map(share => '<div class="col-grid" style="bottom:' + share * 100 + '%"><span>'
+        + Math.round(share * 100) + '%</span></div>').join("");
+      const dots = points.map(point => {
+        const t = point.bucket.tally;
+        const tip = fmtPct(t.right, t.questions) + " right first time\n" + bucketLabel(point.bucket, weekly)
+          + "\n" + fmtInt(t.right) + " of " + plural(t.questions, "question", "questions");
+        return '<div class="line-dot" tabindex="0" style="left:' + x(point.index) + '%;top:' + y(point) + '%" data-tip="'
+          + esc(tip) + '" aria-label="' + esc(tip.replace(/\n/g, ", ")) + '"></div>';
+      }).join("");
+      $("dashAccChart").innerHTML = '<div class="line-chart">' + grid
+        + '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="' + path + '"></path></svg>'
+        + dots + '</div>'
+        + '<div class="col-axis"><span>' + esc(fmtShortDate(list[0].from)) + '</span><span>'
+        + esc(weekly ? "this week" : "today") + '</span></div>';
+    }
+
+    function starBar(counts) {
+      const total = counts.reduce((a, b) => a + b, 0);
+      if (!total) return "";
+      const names = ["no star", "★", "★★", "★★★"];
+      return '<div class="star-bar" role="img" aria-label="' + esc(counts.map((n, i) => n + " " + names[i]).join(", ")) + '">'
+        + counts.map((n, i) => n ? '<div class="star-seg" data-star="' + i + '" style="flex:' + n + '" data-tip="'
+          + esc(fmtInt(n) + " " + (n === 1 ? "word" : "words") + "\n" + names[i] + " · " + fmtPct(n, total)) + '"></div>' : "").join("")
+        + '</div>';
+    }
+
+    function paintPages(stats) {
+      if (!stats.pages.length) {
+        $("dashPages").innerHTML = '<div class="chart-empty">No pages picked. Choose some under Customize.</div>';
+        return;
+      }
+      const anyStars = stats.pages.some(page => page.stars);
+      const legend = anyStars ? '<div class="star-legend">'
+        + ["No star", "★", "★★", "★★★"].map((label, i) => '<span><span class="star-key" data-star="' + i + '"></span>' + label + '</span>').join("")
+        + '</div>' : "";
+      const rows = stats.pages.map(page => {
+        const meta = PAGE_BY_ID.get(page.id);
+        const bank = state.banks.get(page.id);
+        const isBank = Boolean(window.ReviewBanks && window.ReviewBanks.BANKS.some(b => b.id === page.id));
+        let starsCell = '<span class="muted">No stars on this page</span>';
+        if (bank && bank.failed) starsCell = '<span class="muted">Couldn\'t load its words</span>';
+        else if (isBank && !bank) starsCell = '<span class="muted">Loading…</span>';
+        else if (page.stars) starsCell = starBar(page.stars)
+          + '<div class="muted" style="font-size:.8rem;margin-top:4px">' + fmtInt(page.stars[3]) + " of " + fmtInt(page.words) + " at ★★★ · "
+          + fmtInt(page.seen) + " asked so far</div>";
+        return '<tr><td class="cell-page"><a href="./' + esc(meta.href) + '">' + esc(meta.title) + '</a><div class="muted" style="font-size:.8rem">'
+          + esc(page.last ? "Last studied " + relDay(page.last) : "Not studied yet") + '</div></td>'
+          + '<td class="cell-stars">' + starsCell + '</td>'
+          + '<td class="num" data-label="Questions">' + fmtInt(page.questions) + '</td>'
+          + '<td class="num" data-label="Right 1st">' + fmtPct(page.right, page.questions) + '</td>'
+          + '<td class="num hide-narrow" data-label="Time">' + fmtDuration(page.ms) + '</td>'
+          + '<td class="cell-actions"><div class="row-actions">'
+          + (isBank ? '<a class="btn secondary" href="./progress-review.html?bank=' + encodeURIComponent(page.id) + '">Review</a>' : "")
+          + '<a class="btn primary" href="./' + esc(meta.href) + '">Open</a></div></td></tr>';
+      }).join("");
+      $("dashPages").innerHTML = legend + '<div class="dash-table-wrap"><table class="dash-table pages-table"><thead><tr>'
+        + '<th>Page</th><th>Stars</th><th class="num">Questions</th><th class="num">Right 1st</th><th class="num hide-narrow">Time</th><th><span class="sr-only">Actions</span></th>'
+        + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }
+
+    function breakList(entries, labelOf) {
+      if (!entries.length) return '<div class="chart-empty" style="height:auto;padding:24px 0">Nothing in this range yet.</div>';
+      const max = Math.max(...entries.map(([, t]) => t.questions));
+      return '<ul class="break-list">' + entries.map(([key, t]) =>
+        '<li class="break-row"><div class="break-head"><strong>' + esc(labelOf(key)) + '</strong><span>'
+        + fmtInt(t.questions) + " · " + fmtPct(t.right, t.questions) + ' right</span></div>'
+        + '<div class="break-track" data-tip="' + esc(plural(t.questions, "question", "questions") + "\n" + labelOf(key)
+          + "\n" + fmtPct(t.right, t.questions) + " right first time · " + fmtDuration(t.ms)) + '">'
+        + '<div class="break-fill" style="width:' + (t.questions / max) * 100 + '%"></div></div></li>').join("") + '</ul>';
+    }
+
+    function paintBreakdowns(stats) {
+      const order = (a, b) => b[1].questions - a[1].questions;
+      $("dashExercises").innerHTML = breakList([...stats.byExercise.entries()].filter(([, t]) => t.questions).sort(order),
+        key => EXERCISE_LABELS[key] || key);
+      $("dashDirections").innerHTML = breakList([...stats.byDir.entries()].filter(([, t]) => t.questions).sort(order),
+        key => dirLabel(key) || key);
+    }
+
+    function paintMissed() {
+      const picked = new Set(state.prefs.pages);
+      const levels = new Map();
+      const levelFor = item => {
+        const bank = state.banks.get(item.page);
+        if (!bank || !bank.ids || !bank.words.has(item.item_id)) return null;
+        if (!levels.has(item.page)) levels.set(item.page, starStore(bank));
+        return levels.get(item.page)(item.item_id);
+      };
+      const rows = state.items
+        .filter(item => picked.has(item.page) && Number(item.missed) > 0)
+        .map(item => Object.assign({}, item, { level: levelFor(item), missed: Number(item.missed), questions: Number(item.questions) }))
+        .filter(item => item.level !== MAX_STAR)
+        .sort((a, b) => b.missed - a.missed
+          || b.missed / b.questions - a.missed / a.questions
+          || String(b.last_missed_at).localeCompare(String(a.last_missed_at)))
+        .slice(0, 20);
+      if (!rows.length) {
+        $("dashMissed").innerHTML = '<div class="chart-empty" style="height:auto;padding:24px 0">'
+          + (state.items.length ? "Nothing missed on these pages. 잘했어요!" : "Nothing yet: misses show up here once you've answered some questions.") + '</div>';
+        return;
+      }
+      const stars = level => level === null ? '<span class="muted">—</span>' : (level ? "★".repeat(level) : '<span class="muted">none</span>');
+      $("dashMissed").innerHTML = '<div class="dash-table-wrap"><table class="dash-table"><thead><tr>'
+        + '<th>Word</th><th class="hide-narrow">Page</th><th class="num">Missed</th><th class="num hide-narrow">Last missed</th><th>Star now</th>'
+        + '</tr></thead><tbody>' + rows.map(item =>
+          '<tr><td><span class="ko">' + esc(item.ko || item.item_id) + '</span><div class="muted" style="font-size:.84rem">' + esc(item.en || "") + '</div></td>'
+          + '<td class="hide-narrow">' + esc(pageTitle(item.page)) + '</td>'
+          + '<td class="num">' + fmtInt(item.missed) + " of " + fmtInt(item.questions) + '</td>'
+          + '<td class="num hide-narrow">' + esc(item.last_missed_at ? fmtWhen(item.last_missed_at) : "") + '</td>'
+          + '<td>' + stars(item.level) + '</td></tr>').join("")
+        + '</tbody></table></div>';
+    }
+
+    function paintRuns() {
+      const picked = new Set(state.prefs.pages);
+      const runs = state.runs.filter(run => picked.has(run.page)).slice(0, 12);
+      if (!runs.length) {
+        $("dashRuns").innerHTML = '<div class="chart-empty" style="height:auto;padding:24px 0">No sessions on these pages yet.</div>';
+        return;
+      }
+      $("dashRuns").innerHTML = '<div class="dash-table-wrap"><table class="dash-table"><thead><tr>'
+        + '<th>When</th><th>Page</th><th class="hide-narrow">Exercise</th><th class="num">Score</th><th class="num hide-narrow">Time</th>'
+        + '</tr></thead><tbody>' + runs.map(run => {
+          const q = Number(run.questions) || 0;
+          const r = Number(run.first_right) || 0;
+          const how = [EXERCISE_LABELS[run.exercise] || run.exercise, MODE_LABELS[run.mode] || run.mode,
+            run.run === "spaced" ? "spaced" : run.run === "repeat" ? "repeat misses" : ""].filter(Boolean).join(" · ");
+          return '<tr><td>' + esc(fmtWhen(run.started)) + '</td><td>' + esc(pageTitle(run.page))
+            + '</td><td class="hide-narrow muted">' + esc(how) + '</td><td class="num">' + fmtInt(r) + " / " + fmtInt(q)
+            + ' <span class="muted">' + fmtPct(r, q) + '</span></td><td class="num hide-narrow">' + fmtDuration(Number(run.ms) || 0) + '</td></tr>';
+        }).join("") + '</tbody></table></div>';
+    }
+
+    function paintCustomize() {
+      const form = $("dashCustomize");
+      const picked = new Set(state.prefs.pages);
+      const bankIds = new Set(window.ReviewBanks ? window.ReviewBanks.BANKS.map(bank => bank.id) : []);
+      form.innerHTML = '<h2>Customize</h2>'
+        + '<div class="name-row"><label for="prefName"><strong>Your name</strong></label>'
+        + '<input id="prefName" type="text" maxlength="40" autocomplete="given-name" value="' + esc(state.prefs.name) + '"></div>'
+        + '<fieldset><legend>Pages on the dashboard</legend><div class="pick-grid">'
+        + STUDY_PAGES.map(page => '<label><input type="checkbox" name="page" value="' + esc(page.id) + '"'
+          + (picked.has(page.id) ? " checked" : "") + '><span>' + esc(page.title) + '<small>' + esc(page.group)
+          + (bankIds.has(page.id) ? " · stars" : "") + '</small></span></label>').join("")
+        + '</div></fieldset>'
+        + '<div class="form-actions"><button class="btn primary" type="submit">Save</button>'
+        + '<button class="btn secondary" type="button" data-pick="all">Select all</button>'
+        + '<button class="btn secondary" type="button" data-pick="none">Select none</button>'
+        + '<button class="btn secondary" type="button" data-close>Cancel</button></div>'
+        + '<p class="muted" style="margin:0;font-size:.85rem">Saved to your account, so your other devices show the same dashboard.</p>';
+    }
+
+    function paintAll() {
+      if (!state.signedIn) { paintSignedOut(); return; }
+      const stats = state.loaded ? computeStats() : null;
+      paintGreeting(stats);
+      paintRange();
+      paintNotice();
+      if (!stats) return;
+      paintTiles(stats);
+      paintHeatmap(stats);
+      paintDayChart(stats);
+      paintAccChart(stats);
+      paintPages(stats);
+      paintBreakdowns(stats);
+      paintMissed();
+      paintRuns();
+    }
+
+    /* ---- the tooltip ------------------------------------------------------- */
+    function wireTooltip() {
+      const tip = $("dashTip");
+      const dashboard = $("dashboard");
+      let current = null;
+      const show = target => {
+        current = target;
+        const lines = target.dataset.tip.split("\n");
+        tip.textContent = "";
+        const strong = document.createElement("strong");
+        strong.textContent = lines[0];
+        tip.appendChild(strong);
+        lines.slice(1).forEach(line => {
+          const row = document.createElement("div");
+          row.textContent = line;
+          tip.appendChild(row);
+        });
+        tip.classList.remove("hidden");
+        const rect = target.getBoundingClientRect();
+        const box = tip.getBoundingClientRect();
+        let left = rect.left + rect.width / 2 - box.width / 2;
+        left = Math.max(8, Math.min(window.innerWidth - box.width - 8, left));
+        let top = rect.top - box.height - 8;
+        if (top < 8) top = rect.bottom + 8;
+        tip.style.left = left + "px";
+        tip.style.top = top + "px";
+      };
+      const hide = () => { current = null; tip.classList.add("hidden"); };
+      dashboard.addEventListener("pointerover", event => {
+        const target = event.target.closest("[data-tip]");
+        if (target && target !== current) show(target);
+        else if (!target) hide();
+      });
+      dashboard.addEventListener("pointerleave", hide);
+      dashboard.addEventListener("focusin", event => {
+        const target = event.target.closest("[data-tip]");
+        if (target) show(target); else hide();
+      });
+      dashboard.addEventListener("focusout", hide);
+      window.addEventListener("scroll", hide, { passive: true });
+    }
+
+    /* ---- controls ---------------------------------------------------------- */
+    function wireControls() {
+      $("dashRange").addEventListener("click", event => {
+        const button = event.target.closest("[data-range]");
+        if (!button) return;
+        state.range = Number(button.dataset.range);
+        try { localStorage.setItem(RANGE_KEY, JSON.stringify(state.range)); } catch (_) {}
+        paintAll();
+      });
+
+      const form = $("dashCustomize");
+      const opener = $("dashCustomizeOpen");
+      const close = () => {
+        form.classList.add("hidden");
+        opener.setAttribute("aria-expanded", "false");
+      };
+      opener.addEventListener("click", () => {
+        const opening = form.classList.contains("hidden");
+        if (!opening) { close(); return; }
+        paintCustomize();
+        form.classList.remove("hidden");
+        opener.setAttribute("aria-expanded", "true");
+        form.querySelector("input").focus();
+      });
+      form.addEventListener("click", event => {
+        const pick = event.target.closest("[data-pick]");
+        if (pick) {
+          form.querySelectorAll('input[name="page"]').forEach(box => { box.checked = pick.dataset.pick === "all"; });
+          return;
+        }
+        if (event.target.closest("[data-close]")) close();
+      });
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        state.prefs = {
+          name: $("prefName").value.trim(),
+          pages: [...form.querySelectorAll('input[name="page"]:checked')].map(box => box.value)
+        };
+        writePrefs(state.prefs);
+        close();
+        paintAll();
+        await loadBanks();
+        paintAll();
+      });
+    }
+
+    /* ---- starting ---------------------------------------------------------- */
+    async function refresh() {
+      $("dashGrid").classList.add("dash-loading");
+      await Promise.all([loadLog(), loadBanks().catch(error => console.warn("[dashboard]", error))]);
+      state.loaded = true;
+      $("dashGrid").classList.remove("dash-loading");
+      paintAll();
+    }
+
+    async function start() {
+      paintDate();
+      const cloud = window.KoreanCloud;
+      if (!cloud || !cloud.configured || !cloud.hasSavedSession()) {
+        state.signedIn = false;
+        paintAll();
+        return;
+      }
+      let session = null;
+      try { session = await cloud.session(); } catch (_) {}
+      if (!session) {
+        state.signedIn = false;
+        paintAll();
+        return;
+      }
+      state.signedIn = true;
+      $("dashboard").classList.remove("hidden");
+      $("dashboardLink").classList.remove("hidden");
+      wireTooltip();
+      wireControls();
+      paintAll();
+      await refresh();
+    }
+
+    /* Stars or settings that another device changed: repaint in place rather
+       than offering a reload. */
+    window.addEventListener("korean-cloud-sync", event => {
+      event.preventDefault();
+      if (!state.signedIn) return;
+      state.prefs = readPrefs();
+      paintAll();
+      loadBanks().then(paintAll).catch(() => {});
+    });
+    window.addEventListener("korean-cloud-status", event => {
+      if (event.detail && event.detail.state === "signed-out" && state.signedIn) {
+        state.signedIn = false;
+        paintAll();
+      }
+    });
+    /* Back to this tab after studying in another: fetch what was answered. */
+    let hiddenAt = 0;
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") { hiddenAt = Date.now(); return; }
+      if (state.signedIn && state.loaded && Date.now() - hiddenAt > 30000) refresh();
+    });
+
+    start();
+  })();
   </script>
 
   <script>

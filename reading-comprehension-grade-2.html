@@ -13,7 +13,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -3757,6 +3758,17 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         ranOutOfTime: Boolean(ranOutOfTime),
         assisted: state.assist[state.i].hint || state.assist[state.i].lookups.size > 0
       };
+      /* Every answer goes to the study log (shared-vocab/study-log.js); Count
+         as correct below rewrites it. */
+      state.logId = window.KoreanStudy ? window.KoreanStudy.answer(state, {
+        page: "reading-2", exercise: "comprehension",
+        item: state.story.id + "#q" + (state.story.questions.indexOf(question) + 1),
+        ko: plain(question.q, "ko"), en: plain(question.q, "en"),
+        correct, given: chosen >= 0 && item.choices[chosen] ? plain(item.choices[chosen], "ko") : "",
+        mode: "mc",
+        extra: { story: state.story.id, skill: question.skill, timedOut: Boolean(ranOutOfTime),
+          assisted: state.results[state.i].assisted }
+      }) : null;
 
       $(".choice-list").querySelectorAll(".choice").forEach(node => {
         const index = Number(node.dataset.choice);
@@ -3786,6 +3798,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         feedback.querySelector(".count-correct").addEventListener("click", () => {
           state.results[state.i].correct = true;
           state.results[state.i].selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(state.logId, { correct: true, overridden: true });
           paintScore();
           goNext();
         });
@@ -3940,6 +3953,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
     function begin(settings) {
       state = buildState(settings);
+      if (window.KoreanStudy) window.KoreanStudy.start(state);
       $(".menu-story").value = state.story.id;
       $(".exercise-menu").classList.add("hidden");
       $(".finish").classList.add("hidden");
@@ -5012,6 +5026,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         vocabState.pending = null;
         if (!queueSpacedQuestion()) { paintPoolNote(); return; }
       }
+      if (window.KoreanStudy) window.KoreanStudy.start(vocabState);
       $v(".exercise-menu").classList.add("hidden");
       $v(".finish").classList.add("hidden");
       $v(".live").classList.remove("hidden");
@@ -5211,6 +5226,14 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       vocabState.locked = true;
       vocabState.attempts[vocabState.i] += 1;
       const attempts = vocabState.attempts[vocabState.i];
+      /* Every answer goes to the study log (shared-vocab/study-log.js); Count
+         as correct below rewrites it. */
+      vocabState.logId = window.KoreanStudy ? window.KoreanStudy.answer(vocabState, {
+        page: "reading-2", exercise: "vocab", item: entry.id, ko: entry.ko, en: entry.en,
+        correct, attempt: attempts, given, mode: settings.mode,
+        dir: direction ? direction.promptLang + ">" + direction.answerLang : "",
+        run: vocabState.run === "spaced" ? "spaced" : (settings.repeat ? "repeat" : "regular")
+      }) : null;
       /* The score keeps the first try: a word drilled until it sticks is still
          a word you missed. Later tries only record that it came good. */
       if (!vocabState.results[vocabState.i]) {
@@ -5286,6 +5309,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           const result = vocabState.results[vocabState.i];
           result.correct = true;
           result.selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(vocabState.logId, { correct: true, overridden: true });
           vocabState.retry = false;
           /* The ladder has not been told anything yet, so it hears the
              corrected verdict rather than the checker's. */
@@ -5994,6 +6018,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         assisted: false,
         results: items.map(() => null)
       };
+      if (window.KoreanStudy) window.KoreanStudy.start(sentenceState);
       $s(".exercise-menu").classList.add("hidden");
       $s(".finish").classList.add("hidden");
       $s(".live").classList.remove("hidden");
@@ -6079,6 +6104,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         given: given || "",
         assisted: sentenceState.assisted
       };
+      sentenceState.logId = window.KoreanStudy ? window.KoreanStudy.answer(sentenceState, {
+        page: "reading-2", exercise: "sentence", ko: item.ko, en: item.en,
+        correct, given, mode: "typed",
+        dir: item.direction === "en-ko" ? "en>ko" : "ko>en",
+        extra: { point: item.point.id, form: item.point.form, assisted: sentenceState.assisted }
+      }) : null;
 
       const input = $s(".answer-input");
       if (input) input.disabled = true;
@@ -6107,6 +6138,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         countCorrect.addEventListener("click", () => {
           sentenceState.results[sentenceState.i].correct = true;
           sentenceState.results[sentenceState.i].selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(sentenceState.logId, { correct: true, overridden: true });
           paintSentenceScore();
           nextSentenceQuestion();
         });
@@ -6560,6 +6592,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       drillRun = {
         questions, at: 0, right: 0, locked: false, placed: [], results: []
       };
+      if (window.KoreanStudy) window.KoreanStudy.start(drillRun);
       $d(".exercise-menu").classList.add("hidden");
       $d(".finish").classList.add("hidden");
       $d(".live").classList.remove("hidden");
@@ -6666,6 +6699,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
       const correct = index === question.answer;
       drillRun.results[drillRun.at] = { correct, given: question.choices[index] };
+      drillRun.logId = window.KoreanStudy ? window.KoreanStudy.answer(drillRun, {
+        page: "reading-2", exercise: "drill", ko: question.prompt, en: question.answerText,
+        correct, given: question.choices[index], mode: question.mode,
+        extra: { type: question.type, tag: question.tag }
+      }) : null;
       if (correct) drillRun.right += 1;
 
       $d(".choice-list").querySelectorAll(".choice").forEach(node => {
@@ -6687,6 +6725,11 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const given = drillRun.placed.map(index => question.tiles[index]);
       const correct = given.join("") === question.solution.join("");
       drillRun.results[drillRun.at] = { correct, given: given.join(question.join) };
+      drillRun.logId = window.KoreanStudy ? window.KoreanStudy.answer(drillRun, {
+        page: "reading-2", exercise: "drill", ko: question.prompt, en: question.solution.join(question.join),
+        correct, given: given.join(question.join), mode: question.mode,
+        extra: { type: question.type, tag: question.tag }
+      }) : null;
       if (correct) drillRun.right += 1;
 
       $d(".order-slot").querySelectorAll("[data-drill-placed]").forEach((tile, position) => {
@@ -6719,6 +6762,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           if (!result || result.correct) return;
           result.correct = true;
           result.selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(drillRun.logId, { correct: true, overridden: true });
           drillRun.right += 1;
           event.currentTarget.disabled = true;
           event.currentTarget.textContent = "Counted";

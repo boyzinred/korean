@@ -13,7 +13,8 @@
   </script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2452,6 +2453,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         vocabState.pending = null;
         if (!queueSpacedQuestion()) { paintPoolNote(); return; }
       }
+      if (window.KoreanStudy) window.KoreanStudy.start(vocabState);
       $v(".exercise-menu").classList.add("hidden");
       $v(".finish").classList.add("hidden");
       $v(".live").classList.remove("hidden");
@@ -2643,6 +2645,14 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       vocabState.locked = true;
       vocabState.attempts[vocabState.i] += 1;
       const attempts = vocabState.attempts[vocabState.i];
+      /* Every answer goes to the study log (shared-vocab/study-log.js); Count
+         as correct below rewrites it. */
+      vocabState.logId = window.KoreanStudy ? window.KoreanStudy.answer(vocabState, {
+        page: entry.bank.id, exercise: "review", item: entry.wordId, ko: entry.ko, en: entry.en,
+        correct, attempt: attempts, given, mode: settings.mode,
+        dir: direction ? direction.promptLang + ">" + direction.answerLang : "",
+        run: vocabState.run === "spaced" ? "spaced" : (settings.repeat ? "repeat" : "regular")
+      }) : null;
       if (!vocabState.results[vocabState.i]) {
         vocabState.results[vocabState.i] = { correct, given: given || "" };
       } else if (correct) {
@@ -2702,6 +2712,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           const result = vocabState.results[vocabState.i];
           result.correct = true;
           result.selfMarked = true;
+          if (window.KoreanStudy) window.KoreanStudy.amend(vocabState.logId, { correct: true, overridden: true });
           vocabState.retry = false;
           if (vocabState.run === "spaced") vocabState.pending = true;
           paintVocabScore();
@@ -2834,6 +2845,26 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       paintVocabScore();
     }
 
+    /* A link from the dashboard, progress-review.html?bank=htsk-1 (or several,
+       comma-separated), sets the review up over those pages: every group of
+       each picked, open, and nothing picked anywhere else. It is a setup like
+       any other, so it is remembered for next time. */
+    function applyBankLink() {
+      let wanted;
+      try { wanted = new URLSearchParams(location.search).get("bank"); } catch (_) { return; }
+      if (!wanted) return;
+      const ids = new Set(wanted.split(",").map(id => id.trim()).filter(id => BANK_BY_ID.has(id)));
+      if (!ids.size) return;
+      BANKS.forEach(bank => {
+        /* The mode first: bankSetup hands back a fresh record each call. */
+        const mode = currentMode(bank);
+        bankSetup(bank).picks = ids.has(bank.id) ? { [mode.id]: mode.groups.map(group => group.id) } : {};
+      });
+      setup.open = [...ids];
+      saveSetup();
+      requestAnimationFrame(() => vEl.scrollIntoView({ block: "start" }));
+    }
+
     buildVocabTest();
     loadBanks().then(failed => {
       if (!BANKS.length) {
@@ -2842,6 +2873,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
           + ' (GitHub Pages, or a local server) rather than opened as a file.</span></p>';
         return;
       }
+      applyBankLink();
       paintPicker();
       if (failed.length) {
         picker.insertAdjacentHTML("beforeend", '<p class="assistant-status"><span class="assistance-used">Could not load: '
