@@ -12,6 +12,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HowToStudyKorean &middot; Unit 1</title>
@@ -1753,6 +1756,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
          usages    [[ko, en]]  the lesson's "Common Usages"
          examples  [[ko, en]]  the lesson's example sentences
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const UNIT = {
       number: 1,
       lessons: [
@@ -1969,6 +1973,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         });
       });
     });
+    /* review-bank:end */
 
     /* -----------------------------------------------------------------------
        Helpers
@@ -2129,6 +2134,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        lessons call 안, 위 and 밑 adverbs, and so do these tables. Lesson 1's
        "Adverbs and Other words" (이다, 네, 아니) sits with the adverbs.
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const REF_MODES = ["lesson", "pos"];
     const REF_MODE_LABELS = { lesson: "Lesson", pos: "Part of speech" };
     const REF_MODE_KEY = "korean.htskWordBankMode.u1";
@@ -2162,6 +2168,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         words: BANK_WORDS.filter(entry => entry.lesson === lesson.number)
       }));
     }
+    /* review-bank:end */
 
     let refMode = (() => {
       try {

@@ -12,6 +12,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tue-Wed Korean</title>
@@ -1754,6 +1757,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
                    handout prints the word with more around it, e.g.
                    "(옷을) 입다"
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const WORD_ROWS = [
       ["나라", "country", "noun", 2, "어느 나라 사람이에요?"],
       ["직업", "job, occupation", "noun", 3, "유진 씨는 직업이 뭐예요?"],
@@ -2209,6 +2213,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         });
       });
     const SECTION_COUNT = Math.ceil(WORDS.length / SECTION_SIZE);
+    /* review-bank:end */
 
     /* -----------------------------------------------------------------------
        Helpers
@@ -2366,6 +2371,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        hardest, or part of speech by part of speech. Either way a table runs
        easy to hard, so the top of the verbs is the verbs to learn first.
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const REF_MODES = ["section", "pos"];
     const REF_MODE_LABELS = { section: "Section", pos: "Part of speech" };
     const REF_MODE_KEY = "korean.tueWedWordBankMode";
@@ -2405,6 +2411,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         };
       });
     }
+    /* review-bank:end */
 
     let refMode = (() => {
       try {

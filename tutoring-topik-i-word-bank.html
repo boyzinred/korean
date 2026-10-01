@@ -13,6 +13,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TOPIK I Vocabulary Bank</title>
@@ -2060,6 +2063,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // Strict character-by-character transliteration using the supplied system.
     // Initial/final pairs: ㄱ g/k, ㄷ d/t, ㄹ r/l, ㅂ b/p.
     // Syllable dashes are display-only; answer checking removes them.
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     function romanizeKorean(text) {
       const CHO = ["g", "gg", "n", "d", "dd", "r", "m", "b", "bb", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
       const JUNG = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "oa", "oae", "oi", "yo", "u", "ueo", "ue", "ui", "yu", "eu", "eui", "i"];
@@ -2237,6 +2241,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     const TOPICS = [...new Set(BANK.map(w => w.topic))].sort((a, b) =>
       (TOPIC_LABELS[a] || a).localeCompare(TOPIC_LABELS[b] || b));
     const USED_POS = POS_GROUPS.filter(group => BANK.some(w => w.partOfSpeech === group.id));
+    /* review-bank:end */
 
     function countBy(field, value) { return BANK.filter(w => w[field] === value).length; }
 

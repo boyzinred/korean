@@ -12,6 +12,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Korean Reading Comprehension &middot; Beginner</title>
@@ -2089,6 +2092,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
          why      { ko, en }  shown with the instant feedback
          skill    the comprehension skill the question practises
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const STORIES = [
       {
         id: "minsu",
@@ -3171,6 +3175,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         ]
       }
     ];
+    /* review-bank:end */
 
     /* -----------------------------------------------------------------------
        Helpers
@@ -4023,6 +4028,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     };
 
     /* One name for this page's bank, whichever file defines it. */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const BANK = window.ReadingVocab;
 
     /* -----------------------------------------------------------------------
@@ -4113,6 +4119,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         words: BANK_WORDS.filter(entry => entry.group === group.id).sort(byKorean)
       }));
     }
+    /* review-bank:end */
 
     let refMode = (() => {
       try {

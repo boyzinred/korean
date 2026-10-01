@@ -13,6 +13,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Korean Study Hub</title>
@@ -724,6 +727,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       <a class="brand" href="./index.html">Korean Language Resources</a>
       <div class="header-actions">
         <a class="header-link" href="#directory">Pages</a>
+        <a class="header-link" href="./login.html" data-cloud-status>Sign in</a>
       </div>
     </div>
   </header>
@@ -764,14 +768,10 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       Keep these as relative links when using GitHub Pages.
     */
     const PAGES = [
+      { title: "Review My Weak Words", href: "progress-review.html", group: "Review", tag: "Every word bank" },
+
       { title: "TOPIK I Word Bank (1358)", href: "tutoring-topik-i-word-bank.html", group: "TOPIK I", tag: "Vocabulary" },
-      { title: "TOPIK II Level 3 Vocabulary", href: "tutoring-topik-ii-level-3-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
-      { title: "TOPIK II Level 3 Word Bank (1500)", href: "tutoring-topik-1500-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
-      { title: "TOPIK II Level 3 Grammar", href: "tutoring-topik-ii-level-3-grammar.html", group: "TOPIK II", tag: "Grammar" },
-      { title: "TOPIK II Level 4 Vocabulary", href: "tutoring-topik-ii-level-4-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
-      { title: "TOPIK II Level 4 Grammar", href: "tutoring-topik-ii-level-4-grammar.html", group: "TOPIK II", tag: "Grammar" },
-      { title: "TOPIK II Level 5 Vocabulary", href: "tutoring-topik-ii-level-5-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
-      { title: "TOPIK II Level 5 Grammar", href: "tutoring-topik-ii-level-5-grammar.html", group: "TOPIK II", tag: "Grammar" },
+      { title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "TOPIK I", tag: "Practice Test" },
 
       { title: "읽고 답해요: Grade 1 Stories", href: "reading-comprehension-grade-1.html", group: "Reading comprehension", tag: "Grade 1" },
       { title: "깊이 읽고 답해요: Grade 2 Passages", href: "reading-comprehension-grade-2.html", group: "Reading comprehension", tag: "Grade 2" },
@@ -783,10 +783,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monos
       { title: "강태홍", href: "soongsil-kang-tae-hong.html", group: "숭실대 수업", tag: "Prof. Kang" },
       { title: "공학 학술한국어", href: "soongsil-advanced-korean-for-engineering.html", group: "숭실대 수업", tag: "Engineering" },
 
-      { title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "Helper exercises", tag: "TOPIK Practice Test" },
-      { title: "Romanization Practice", href: "romanization-practice.html", group: "Helper exercises", tag: "Romanization" },
-      { title: "Conjugation Practice", href: "conjugation-practice.html", group: "Helper exercises", tag: "Conjugation" },
-      { title: "Numbers Practice", href: "numbers-practice.html", group: "Helper exercises", tag: "Numbers" },
       { title: "Paste Your Own List", href: "custom-word-list-practice.html", group: "Helper exercises", tag: "Custom List" }
     ];
 

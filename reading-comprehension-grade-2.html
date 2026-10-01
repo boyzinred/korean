@@ -12,6 +12,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Korean Reading Comprehension &middot; Grade 2</title>
@@ -2114,6 +2117,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
          why      { ko, en }  shown with the instant feedback
          skill    the comprehension skill the question practises
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const STORIES = [
       {
         id: "agisae",
@@ -3284,6 +3288,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         ]
       }
     ];
+    /* review-bank:end */
 
     /* -----------------------------------------------------------------------
        Helpers
@@ -3339,7 +3344,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
     /* Grade 2 bank: its own words for the tables and the test, plus the grade 1
        words underneath so anything a passage reuses still opens a popover. */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const BANK = window.ReadingVocab2;
+    /* review-bank:end */
 
     const el = document.getElementById("readingExercise");
     const $ = selector => el.querySelector(selector);
@@ -4152,6 +4159,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
        A group's rows are built the first time it is opened, because grouping by
        story multiplies the row count several times over.
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const REF_MODES = ["group", "pos", "story"];
     const REF_MODE_LABELS = { group: "Topic", pos: "Part of speech", story: "Story" };
     const REF_MODE_KEY = "korean.readingWordBankMode.g2";
@@ -4228,6 +4236,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         words: BANK_WORDS.filter(entry => entry.group === group.id).sort(byKorean)
       }));
     }
+    /* review-bank:end */
 
     let refMode = (() => {
       try {

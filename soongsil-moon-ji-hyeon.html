@@ -12,6 +12,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>문지현 &middot; Soongsil</title>
@@ -1750,6 +1753,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
        Word fields  [ko, en, parts]   parts: [[ko, en], ...]
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const WEEKS = [
       { number: 1, words: [
         ["공적개발원조", "Official Development Assistance", [["공적", "official"], ["개발", "development"], ["원조", "assistance"]]],
@@ -1828,6 +1832,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         });
       });
     });
+    /* review-bank:end */
 
     /* -----------------------------------------------------------------------
        Helpers
@@ -1984,6 +1989,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        One group per week, and one way of grouping, so the Group by buttons
        are hidden until there is a second way to offer.
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const REF_MODES = ["week"];
     const REF_MODE_LABELS = { week: "Week" };
     const REF_MODE_KEY = "korean.moonWordBankMode";
@@ -1999,6 +2005,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         words: BANK_WORDS.filter(entry => entry.week === week.number)
       }));
     }
+    /* review-bank:end */
 
     let refMode = "week";
 

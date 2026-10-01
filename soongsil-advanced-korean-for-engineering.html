@@ -12,6 +12,9 @@
     })();
   </script>
 
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>공학 학술한국어 &middot; Soongsil</title>
@@ -1750,6 +1753,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        Word fields  [ko, en, pos, parts]   parts: [[ko, en], ...]
        pos: noun · verb · adjective · adverb · expression
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const WEEKS = [
       { number: 1, topic: "무인 소방 로봇 · Unmanned firefighting robot", words: [
         /* Core words, pages 5–6 */
@@ -1888,6 +1892,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         });
       });
     });
+    /* review-bank:end */
 
     /* -----------------------------------------------------------------------
        Helpers
@@ -2044,6 +2049,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        The same words two ways: one group per part of speech, or one group
        per week. A word's stars belong to the word, so both show the same.
     ----------------------------------------------------------------------- */
+    /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const REF_MODES = ["pos", "week"];
     const REF_MODE_LABELS = { pos: "Part of speech", week: "Week" };
     const REF_MODE_KEY = "korean.engineeringWordBankMode";
@@ -2067,6 +2073,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         words: BANK_WORDS.filter(entry => entry.pos === pos)
       })).filter(group => group.words.length);
     }
+    /* review-bank:end */
 
     let refMode = (() => {
       try {

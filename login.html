@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("koreanQuizThemeV2");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    })();
+  </script>
+
+  <script src="./shared-vocab/cloud-config.js"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.0.0"></script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  /* The class pages' palette: five browns, from the cream the page sits on
+     to the dark brown its text is set in. Buttons and wrong answers take the
+     two darker browns, with cream text; section bands and right answers take
+     the tan, with near-black text. */
+  --light-background: #EFE3D6;
+  --light-foreground: #70593C;
+  --light-primary: #8C6A47;
+  --light-primary-hover: #7B5F42;
+  --light-secondary: #C6B29A;
+  --light-secondary-soft: #EFE7DC;
+  --light-accent: #7B5F42;
+  --light-accent-soft: #E3D2BF;
+  --light-muted: #E6D9C8;
+  --light-muted-strong: #D8C7B2;
+  --light-blue-soft: #F3EBE1;
+  --light-border: #D4C2AC;
+  --light-subtle: #E6D9C8;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #FBF7F2;
+  --surface-text: #70593C;
+  --surface-muted: #F3EBE1;
+  --inverse: #70593C;
+  --inverse-text: #EFE3D6;
+  --hero-heading: #70593C;
+  --hero-text: #70593C;
+  /* Text on a filled colour: cream on the dark browns (primary, accent),
+     near-black on the tan (secondary) and on the white chip. */
+  --on-primary: #FFF8EE;
+  --on-secondary: #2B1F12;
+  --chip: #FFFFFF;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  /* Outfit has no Hangul, so Korean falls past it to IBM Plex Sans KR, picked
+     for its branching ㅈ: the two legs meet at one point under the bar instead
+     of hooking off its left end. As a batchim, where the jamo is squeezed into
+     the bottom third of the block, that is the difference between reading 갖
+     and guessing at it. Latin never reaches Plex — Outfit covers that, and the
+     fallback runs character by character, not run by run. Plex KR stops at
+     700, so the 800s below land on its bold instead of a synthesised one,
+     which on Hangul would fill the counters straight back in. */
+  --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
+  --transition: all 200ms ease;
+  /* The handwriting test's own colour, kept off every other control so the
+     button reads as a different way of taking the test: olive brown, the one brown with some green in it. */
+  --handwrite: #8A7A4A;
+  --handwrite-hover: #786A3F;
+  --on-handwrite: #FFF8EE;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --light-background: #0A0A0A;
+  --light-foreground: #F5F5F5;
+  --light-primary: #E5E5E5;
+  --light-primary-hover: #CFCFCF;
+  --light-secondary: #A3A3A3;
+  --light-secondary-soft: #262626;
+  --light-accent: #737373;
+  --light-accent-soft: #1C1C1C;
+  --light-muted: #262626;
+  --light-muted-strong: #404040;
+  --light-blue-soft: #262626;
+  --light-border: #3A3A3A;
+  --light-subtle: #A3A3A3;
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --primary: var(--light-primary);
+  --primary-hover: var(--light-primary-hover);
+  --secondary: var(--light-secondary);
+  --secondary-soft: var(--light-secondary-soft);
+  --accent: var(--light-accent);
+  --accent-soft: var(--light-accent-soft);
+  --muted: var(--light-muted);
+  --muted-strong: var(--light-muted-strong);
+  --blue-soft: var(--light-blue-soft);
+  --border: var(--light-border);
+  --subtle: var(--light-subtle);
+
+  --surface: #171717;
+  --surface-text: #F5F5F5;
+  --surface-muted: #262626;
+  --inverse: #000000;
+  --inverse-text: #F5F5F5;
+  --hero-heading: #FFFFFF;
+  --hero-text: #D4D4D4;
+  --on-primary: #0A0A0A;
+  --on-secondary: #0A0A0A;
+  --chip: #F5F5F5;
+  --handwrite: #525252;
+  --handwrite-hover: #5E5E5E;
+  --on-handwrite: #F5F5F5;
+}
+
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  /* Base text 6pt larger than the browser default (16px -> 24px), the same as
+     the word bank pages. Every size below is in rem, so the layout scales. */
+  font-size: calc(100% + 6pt);
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  line-height: 1.6;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.hidden { display: none !important; }
+
+.site-header {
+  color: var(--surface-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner,
+.page-main {
+  width: min(1320px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.header-inner {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--surface-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.header-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-link:hover {
+  border-color: var(--primary);
+  background: var(--blue-soft);
+  color: var(--foreground);
+}
+.page-main {
+  margin-top: 24px;
+  margin-bottom: 72px;
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+}
+.hero { color: var(--hero-heading); background: var(--background); }
+.hero-inner { padding: clamp(48px, 7vw, 82px); }
+.hero-kicker {
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.02em;
+}
+.hero p { max-width: 62ch; margin: 24px 0 0; color: var(--hero-text); font-size: 1.05rem; }
+
+.section { scroll-margin-top: 18px; border-bottom: 1px solid var(--border); }
+details.section > summary {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(30px, 5vw, 64px);
+  color: var(--on-secondary);
+  background: var(--secondary);
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  cursor: pointer;
+  list-style: none;
+}
+details.section:nth-of-type(2) > summary { background: var(--primary); }
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after {
+  content: "Collapse";
+  min-height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: var(--on-secondary);
+  background: var(--chip);
+  border: 4px solid var(--on-secondary);
+  border-radius: var(--radius-md);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+details.section:not([open]) > summary::after { content: "Expand"; }
+.section-body {
+  display: grid;
+  gap: 22px;
+  padding: clamp(18px, 3vw, 40px);
+  color: var(--surface-text);
+  background: var(--surface);
+}
+.info-card {
+  padding: 22px;
+  color: var(--surface-text);
+  background: var(--blue-soft);
+  border-radius: var(--radius-lg);
+}
+.info-card h4 { margin: 0 0 8px; font-size: 1.15rem; }
+.info-card p { margin: 0; }
+
+.wordbank-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.wordbank-tools input { max-width: 20rem; }
+.wordbank-count { font-size: .86rem; font-weight: 800; opacity: .78; }
+.blur-toggle {
+  min-height: 56px;
+  padding: 0 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.blur-toggle:hover { transform: scale(1.04); }
+.blur-toggle[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); }
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--inverse-text);
+  background: var(--inverse);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td .roman { opacity: .78; }
+
+/* A covered cell hides behind a solid bar of one fixed width, whatever the
+   word under it: a blur still showed the shape and the length of the word,
+   which was enough of a hint to give the answer away. */
+.is-blurred .blur-target {
+  display: inline-block;
+  width: min(6em, 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: transparent;
+  background: var(--muted-strong);
+  border-radius: var(--radius-md);
+  opacity: 1;
+  user-select: none;
+}
+.is-blurred .blur-target * { color: transparent; }
+/* Every vocab and grammar cell blurs and unblurs on its own click, whether or
+   not the toolbar has blurred the whole column it sits in. */
+[data-vocab-field] { cursor: pointer; }
+
+.vocab-category-stack { display: grid; gap: 14px; }
+.vocab-category {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.vocab-category > summary {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  color: var(--inverse-text);
+  background: var(--inverse);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+.vocab-category > summary::-webkit-details-marker { display: none; }
+.vocab-category > summary::after {
+  content: '−';
+  width: 2.125rem;
+  height: 2.125rem;
+  flex: 0 0 2.125rem;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+}
+.vocab-category:not([open]) > summary::after { content: '+'; }
+.vocab-category-count {
+  display: block;
+  margin-top: 2px;
+  color: var(--subtle);
+  font-size: .76rem;
+  font-weight: 700;
+}
+.vocab-category .table-wrap { border: 0; border-radius: 0; }
+/* Every cell centres on its own column, headers included, so a column reads as
+   one straight line from top to bottom. */
+.vocab-category table {
+  width: 100%;
+  min-width: 720px;
+  /* Fixed layout so the five content columns split the width evenly instead of
+     each one sizing to its longest word. The ＋ is left out of that split: it
+     takes a narrow strip on the far left and the button sits in the middle of
+     it, which is why the columns no longer start off-centre. */
+  table-layout: fixed;
+}
+.vocab-category th,
+.vocab-category td { text-align: center; vertical-align: middle; }
+/* The small print under a row is prose, and prose still reads from the left. */
+.vocab-category .vocab-note-row > td { text-align: left; }
+
+/* The word bank toolbar: how the same words are regrouped, and the search that
+   runs across every group at once. */
+.ref-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.ref-modes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.ref-modes__label {
+  padding: 0 8px;
+  color: var(--surface-text);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.mode-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.mode-btn:hover { transform: scale(1.04); }
+.mode-btn.active { color: var(--on-primary); background: var(--primary); }
+.ref-filter { flex: 1 1 15rem; max-width: 24rem; }
+.section-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 18px 18px;
+}
+.section-toolbar .blur-toggle { min-height: 44px; font-size: .84rem; }
+/* A zero-height item that eats the rest of a toolbar line, so the sort control
+   below it starts a line of its own. */
+.toolbar-break { flex: 0 0 100%; height: 0; }
+/* The sort control is the quiet one of the row, so it sits under the toggles
+   rather than beside them, and runs smaller. Its left padding is the toggles'
+   own, which puts "Sort" directly under the B of "Blur English". */
+.sort-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 16px;
+}
+.sort-field__label {
+  font-size: .64rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+/* The select wears its own chevron: the native one cannot be made this small,
+   and a border drawn in currentColor follows the theme for free. */
+.sort-select-wrap { position: relative; display: inline-flex; align-items: center; }
+.sort-select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  opacity: .55;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 36px;
+  padding: 0 28px 0 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+}
+.sort-select:focus { border-color: var(--primary); outline: none; }
+.group-note {
+  margin: 10px 18px 12px;
+  font-size: .86rem;
+  font-weight: 600;
+  opacity: .8;
+}
+
+/* The ＋ on a row opens that word's small print underneath it: how the word
+   behaves, and one model sentence in all three scripts. */
+.vocab-note-head, .vocab-note-cell {
+  width: 4.5rem;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+/* No line box in the cell, so nothing pushes the button off the middle. */
+.vocab-note-cell { line-height: 0; }
+.vocab-note-toggle {
+  width: 2.125rem;
+  height: 2.125rem;
+  display: grid;
+  place-items: center;
+  /* A grid box is block-level, so the cell's text-align does nothing for it —
+     auto side margins are what put it in the middle of its strip. */
+  margin-inline: auto;
+  padding: 0;
+  line-height: 1;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.vocab-note-toggle:hover { transform: scale(1.08); }
+.vocab-note-toggle[aria-expanded="true"] { color: var(--on-primary); background: var(--primary); }
+.vocab-note-row > td {
+  padding: 2px 4.5rem 20px;
+  background: var(--surface-muted);
+}
+.word-note { display: grid; gap: 10px; }
+/* The example box spends 4px on its coloured rail and 14px on padding before
+   its text starts, so the plain paragraphs take the same 18px and every line
+   in a note begins on one left edge. */
+.word-note-usage, .word-note-tags { padding-left: 18px; }
+.word-note-usage { margin: 0; font-weight: 600; }
+.word-note-example {
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--secondary);
+  border-radius: var(--radius-md);
+}
+.word-note-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+.word-note-example p { margin: 0; }
+.word-note-ko { font-weight: 800; }
+.word-note-en { opacity: .82; }
+.word-note-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.word-tag {
+  padding: 3px 9px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+}
+.grammar-form { font-size: 1.05rem; letter-spacing: .01em; }
+.story-quote { border-left-color: var(--muted-strong); }
+.word-note-rule {
+  height: 0;
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px dashed var(--border);
+}
+
+.vocab-category tbody tr.is-hidden { display: none; }
+.vocab-category.is-hidden { display: none; }
+
+/* The star pill sits in the middle of its column, header and all, so a
+   column of them reads as one line instead of a ragged left edge. */
+.familiarity-head, .familiarity-cell { min-width: 7rem; text-align: center; vertical-align: middle; }
+/* Same trick as the ＋ column: no line box in the cell, and the pill lines up
+   on its middle rather than on a baseline the stars do not really have. */
+.familiarity-cell { line-height: 0; }
+.familiarity-stars {
+  display: inline-flex;
+  vertical-align: middle;
+  gap: 3px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.familiarity-star {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+  color: var(--border);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.3rem;
+}
+.familiarity-star:hover { transform: scale(1.12); }
+/* A rating lights the stars up to it: the first at one star, both at two. */
+.familiarity-stars[data-level="1"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="1"],
+.familiarity-stars[data-level="2"] .familiarity-star[data-level="2"],
+.familiarity-stars[data-level="3"] .familiarity-star { color: var(--accent); }
+
+.lang-picks {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.group-picker {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.group-picker legend {
+  padding: 0 8px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.group-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* The translation picker stacks one grid per grammar type, so a point is
+   found under the heading it is filed under in the bank above. */
+.group-stack > .ref-modes__label { display: block; margin: 14px 0 0; }
+.group-stack > .ref-modes__label:first-child { margin-top: 0; }
+.sentence-cue { margin: 6px 0 0; font-size: .86rem; font-weight: 700; opacity: .8; }
+.answer-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.answer-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.answer-input:focus { background: var(--surface); border-color: var(--primary); }
+.word-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.word-card { padding: 12px 14px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.word-card .word-ko { display: block; font-size: 1.1rem; font-weight: 800; }
+.word-card .word-ro { display: block; font-size: .8rem; font-weight: 700; opacity: .72; }
+.word-card .word-en { display: block; margin-top: 2px; font-size: .86rem; }
+
+.exercise {
+  overflow: hidden;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.exercise-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(158px, auto);
+  color: var(--inverse-text);
+  background: var(--inverse);
+}
+.exercise-head-copy { padding: 24px 28px; }
+.exercise-kicker,
+.prompt-label {
+  color: var(--primary);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.exercise-head h3 {
+  margin: 7px 0 0;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.exercise-head p { margin: 10px 0 0; color: var(--subtle); }
+.score {
+  min-width: 158px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: var(--on-primary);
+  background: var(--accent);
+  font-size: .9rem;
+  font-weight: 800;
+  text-align: center;
+}
+.exercise-body { padding: clamp(24px, 4vw, 38px); }
+
+.exercise-menu { display: grid; gap: 20px; }
+.exercise-menu h4 { margin: 0; font-size: 1.45rem; }
+.exercise-menu p { margin: 0; opacity: .82; }
+.exercise-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.exercise-menu-grid label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-grid label > * { width: 100%; height: 56px; min-width: 0; }
+.exercise-menu-grid .wide { grid-column: span 2; }
+/* The story picker is the only control left in its row, so it takes the
+   whole width rather than leaving half the grid empty. */
+.exercise-menu-grid.story-pick .wide { grid-column: 1 / -1; }
+.option-stack { display: grid; gap: 8px; }
+.exercise-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.exercise-option input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  padding: 0;
+}
+.exercise-option small { display: block; font-weight: 600; opacity: .74; }
+.timed-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.timed-fields label {
+  display: grid;
+  grid-template-rows: auto 56px;
+  gap: 7px;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.exercise-menu-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+/* The export writes out whatever the setup selects, so the separator it uses
+   is picked in the same row rather than in a dialog the download would wait
+   on. */
+.export-sep,
+.export-what { width: auto; flex: 0 0 auto; font-size: .82rem; font-weight: 700; }
+
+input, select {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 14px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+}
+input:focus, select:focus { background: var(--surface); border-color: var(--primary); }
+input:disabled, select:disabled { color: var(--surface-text); background: var(--muted-strong); cursor: not-allowed; opacity: .6; }
+
+.btn {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  transition: var(--transition);
+}
+.btn:hover:not(:disabled) { transform: scale(1.04); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn.primary { color: var(--on-primary); background: var(--primary); }
+.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn.positive { color: var(--on-secondary); background: var(--secondary); }
+.btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
+.btn.warning { color: var(--on-primary); background: var(--accent); }
+.btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
+
+.btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); }
+.btn.handwrite:hover:not(:disabled) { background: var(--handwrite-hover); }
+
+/* ---------------------------------------------------------------------------
+   Handwriting test
+   One blank writing area, deliberately without a box per syllable: boxes
+   would say how long the answer is. A single faint midline is the only guide.
+--------------------------------------------------------------------------- */
+.hw { display: grid; gap: 12px; }
+.hw-pad-wrap {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat,
+    var(--surface-muted);
+  border: 2px dashed var(--handwrite);
+  border-radius: var(--radius-lg);
+}
+.hw-pad {
+  display: block;
+  width: 100%;
+  height: clamp(240px, 42vh, 440px);
+  /* The page must not scroll or zoom while a finger or pen is writing. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+}
+.hw-hint {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .5;
+  pointer-events: none;
+}
+.hw.is-written .hw-hint { display: none; }
+.hw.is-revealed .hw-pad { cursor: default; }
+.hw-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.hw-tools .hw-reveal { margin-left: auto; }
+.hw-pen-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 800;
+}
+.hw-pen-only input { width: 18px; height: 18px; min-height: 18px; margin: 0; }
+.hw-answer {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  /* The same pairing as the question hint: on some palettes blue-soft is a
+     deep tint that only the page's own text colour reads on. */
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--handwrite);
+  border-radius: var(--radius-md);
+}
+.hw-answer-ko { font-size: calc(1.6rem * var(--ko-size)); font-weight: 800; line-height: 1.5; }
+.hw-answer-sub { font-size: .9rem; font-weight: 700; opacity: .8; }
+.hw-grade { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+.runtime-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.timer-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.timer-chip.is-low { color: var(--on-primary); background: var(--accent); }
+.timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .86rem;
+  font-weight: 800;
+}
+.progress { height: 12px; overflow: hidden; background: var(--muted-strong); }
+.progress > div { height: 100%; background: var(--secondary); transition: width 200ms ease; }
+
+.story-panel {
+  margin: 20px 0;
+  padding: 22px;
+  background: var(--surface-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.story-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.story-panel-head h4 { margin: 0; font-size: 1.35rem; letter-spacing: -.01em; }
+.story-skill {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.story-purpose { margin: 0 0 14px; font-size: .92rem; font-weight: 700; opacity: .82; }
+.story-text {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  font-size: clamp(1.1rem, 2vw, 1.32rem);
+  font-weight: 600;
+  line-height: 2;
+}
+.story-line { display: block; }
+
+.prompt {
+  margin: 8px 0 6px;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.8;
+}
+.prompt-hint-legend {
+  display: none;
+  margin: 0 0 16px;
+  font-size: .82rem;
+  font-weight: 800;
+  opacity: .76;
+}
+.prompt-hint-legend.is-visible { display: block; }
+
+.choice-list { display: grid; gap: 10px; }
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 16px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  line-height: 1.9;
+  text-align: left;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.choice:hover:not(.is-locked) { color: var(--on-primary); background: var(--primary); transform: scale(1.01); }
+.choice.is-locked { cursor: default; }
+.choice-letter {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .85rem;
+  font-weight: 800;
+}
+.choice-text { min-width: 0; }
+.choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.choice.correct .choice-letter { color: var(--surface-text); }
+.choice.wrong { color: var(--on-primary); background: var(--accent); border-color: var(--accent); }
+.choice.wrong .choice-letter { color: var(--surface-text); }
+.choice.faded { opacity: .55; }
+
+/* ---------------------------------------------------------------------------
+   Question drill
+   Two things the other exercises on this page do not have: a sentence with a
+   hole in it, and a puzzle assembled by clicking. Everything else it shows —
+   the card, the choices, the feedback, the review — is the exercise furniture
+   already defined above.
+--------------------------------------------------------------------------- */
+.drill-sentence {
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.95;
+}
+/* Fixed width whatever word is missing, so the size of the gap never says how
+   long the answer is. */
+.drill-blank {
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.drill-passage { margin-bottom: 18px; }
+
+/* The mix sliders. One row per ticked passage, saying how much of the run that
+   passage is to fill — the number on the right is the share it works out to
+   once every other slider is counted in, so the column always adds to 100%. */
+/* The note under the mode select: one line for the regular run, a short list
+   for the spaced one, because four rules read as four rules and not as a
+   paragraph to wade through. */
+.mode-note ul {
+  margin: 4px 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 3px;
+}
+.mode-note li { line-height: 1.5; }
+
+.mix-grid { display: grid; gap: 8px; margin-top: 8px; }
+.mix-row {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) 1fr 3.4rem;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 700;
+}
+.mix-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mix-row input[type="range"] { width: 100%; margin: 0; min-height: 0; accent-color: var(--primary); }
+.mix-share { text-align: right; font-variant-numeric: tabular-nums; opacity: .75; }
+.mix-row.off { opacity: .55; }
+.mix-row.off .mix-share { color: var(--accent); opacity: 1; }
+
+.order-zone { display: grid; gap: 12px; }
+.order-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  min-height: 76px;
+  padding: 12px;
+  background: var(--surface-muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.order-slot:empty::after {
+  content: "여기에 차례대로 놓으세요";
+  font-size: .9rem;
+  font-weight: 700;
+  opacity: .62;
+}
+.order-bank { display: flex; flex-wrap: wrap; gap: 8px; }
+.order-tile {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-height: 52px;
+  padding: 12px 15px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.order-tile:hover:not(:disabled) { color: var(--on-primary); background: var(--primary); transform: scale(1.02); }
+.order-tile:disabled { cursor: default; }
+.order-tile .order-no {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 50%;
+  font-size: .74rem;
+  font-weight: 800;
+}
+.order-tile.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.order-tile.wrong { color: var(--on-primary); background: var(--accent); border-color: var(--accent); }
+.order-tile.correct .order-no,
+.order-tile.wrong .order-no { color: var(--surface-text); }
+.order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.hint-row { display: grid; gap: 8px; margin: 16px 0; }
+.question-hint {
+  display: none;
+  padding: 14px;
+  color: var(--foreground);
+  background: var(--blue-soft);
+  border-left: 8px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+.question-hint.is-open { display: block; }
+.assistant-status { margin: 0; font-size: .84rem; font-weight: 800; }
+.assistance-used {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+}
+.feedback strong { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+.feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
+.feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
+.next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+/* Scrolled to after an answer; the margin keeps it clear of the floating buttons. */
+.next-row .next { scroll-margin-bottom: 88px; }
+
+.finish { display: grid; gap: 20px; }
+.finish h4 { margin: 0; font-size: 1.6rem; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+.summary-tile { padding: 16px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.summary-tile strong { display: block; font-size: 1.8rem; line-height: 1.1; }
+.summary-tile small {
+  display: block;
+  margin-top: 4px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .78;
+}
+.review { display: grid; gap: 10px; }
+.review-item {
+  padding: 14px 16px;
+  background: var(--surface-muted);
+  border-left: 8px solid var(--secondary);
+  border-radius: var(--radius-md);
+  font-size: .92rem;
+}
+.review-item.is-wrong { border-left-color: var(--accent); }
+.review-item .review-q { display: block; font-weight: 800; margin-bottom: 6px; }
+.review-item .review-line { display: block; opacity: .86; }
+.review-tag {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  background: var(--surface);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.skill-breakdown { display: grid; gap: 8px; }
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+}
+.finish-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+/* The button under the missed words belongs to that list, not to the row of
+   buttons that ends the summary, so it gets room on both sides to say so. */
+.word-list + .finish-actions { margin: 22px 0 16px; }
+.feedback-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-bottom: 4px;
+}
+.feedback-head > :first-child { flex: 1 1 12ch; min-width: 0; margin-bottom: 0; }
+.feedback-head .count-correct { flex: none; min-height: 40px; padding: 0 14px; font-size: .88rem; }
+
+.vocab-token {
+  position: relative;
+  display: inline-block;
+  border-bottom: 4px solid var(--accent);
+  border-radius: 2px;
+  cursor: pointer;
+  line-height: 1.08;
+  outline: none;
+}
+.vocab-token::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 7px;
+}
+.vocab-token:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; }
+.vocab-popover {
+  --arrow-left: 50%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  isolation: isolate;
+  width: min(21rem, calc(100vw - 24px));
+  max-height: min(70vh, 520px);
+  display: none;
+  padding: 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 54px rgba(15,23,42,.38);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.42;
+  text-align: left;
+  white-space: normal;
+  cursor: default;
+}
+.vocab-popover::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left);
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 2;
+}
+.vocab-token.is-pinned > .vocab-popover { display: grid; }
+.vocab-popover-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.vocab-popover-heading strong { font-size: .82rem; }
+.vocab-popover-heading small { opacity: .68; }
+.hint-content .roman { opacity: .75; }
+.hint-content em { opacity: .7; }
+.popover-close-btn {
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-text);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: var(--transition);
+}
+.popover-close-btn:hover { color: var(--accent); background: var(--surface-muted); }
+.hint-levels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  max-height: min(50vh, 380px);
+  overflow-y: auto;
+}
+.hint-step {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-weight: 800;
+}
+.hint-step:hover, .hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
+.hint-step.is-open { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
+.hint-content {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: 7px;
+  padding: 10px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.42;
+}
+.hint-content.is-open { display: block; }
+
+.utility-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.utility-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
+.utility-button.nav { background: var(--accent); }
+.utility-button[disabled] { opacity: .4; cursor: default; }
+.utility-button[disabled]:hover { background: var(--accent); transform: none; }
+
+/* Quick section navigation */
+.toc-card { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.toc-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.toc-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.toc-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  color: var(--surface-text);
+  background: var(--surface-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.toc-link:hover { color: var(--foreground); background: var(--blue-soft); border-color: var(--primary); }
+.exercise, .vocab-category { scroll-margin-top: 18px; }
+
+@media (max-width: 1000px) {
+  .exercise-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .exercise-menu-grid .wide { grid-column: span 2; }
+}
+@media (max-width: 900px) {
+  .exercise-head { grid-template-columns: 1fr; }
+  .score { min-height: 74px; }
+}
+@media (max-width: 680px) {
+  .header-inner, .page-main { width: 100%; }
+  .header-inner { min-height: 60px; padding: 0 14px; }
+  .page-main { margin-top: 0; border-radius: 0; }
+  .hero-inner { padding: 48px 22px; }
+  .toc-card { overflow-x: auto; }
+  .toc-grid { width: max-content; flex-wrap: nowrap; }
+  details.section > summary {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 30px 22px;
+  }
+  details.section > summary::after { width: 100%; }
+  .section-body, .exercise-body { padding: 22px; }
+  .exercise-menu-grid, .timed-fields { grid-template-columns: 1fr; }
+  .exercise-menu-grid .wide { grid-column: span 1; }
+  .btn { width: 100%; }
+  .btn.small { width: auto; }
+  .exercise-menu-actions .btn, .exercise-menu-actions .export-sep,
+  .exercise-menu-actions .export-what, .finish-actions .btn { width: 100%; }
+  .sort-field { flex: 1 1 100%; padding-left: 0; }
+  .sort-select-wrap { flex: 1; min-width: 0; }
+  .sort-select { width: 100%; min-height: 44px; }
+  .utility-controls { right: 10px; bottom: 10px; }
+}
+@media (max-width: 680px) {
+  .hw-tools .btn.small { flex: 1 1 auto; }
+  .hw-tools .hw-reveal, .hw-grade .btn { width: 100%; margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; transform: none !important; }
+}
+
+/* ---------------------------------------------------------------------------
+   Korean leading
+   Korean is set in IBM Plex Sans KR (see --font above), but no face fixes the
+   spacing on its own: a syllable block stacks two or three jamo into the
+   height a Latin letter spends on one, so the leading the English reads
+   comfortably at still closes Korean up. The strokes inside 왔 run together,
+   을 and 늘 stop being tellable apart at a glance, and in a table the word
+   ends up pressed against the rule under its row. Everything below hands
+   Korean a taller line box. Two numbers drive the lot — one for running text,
+   one for the small boxes (popovers, notes, feedback) where full leading would
+   push the content out of the box it sits in.
+
+   These rules come last in the sheet on purpose: each component sets its own
+   line-height beside the rest of its styling, and this is what overrides them
+   without scattering the number across the file.
+--------------------------------------------------------------------------- */
+:root {
+  /* How much bigger Korean is set than the Latin it sits beside. Every size in
+     the block at the bottom of this sheet is the page's original number times
+     this, so the proportions the layout was drawn to still hold and only this
+     one value moves. */
+  --ko-size: 1.25;
+  /* Eased back from 2.3 now that the larger size carries the legibility; at
+     2.3 the taller Korean was leaving holes between the rows. */
+  --ko-leading: 2;
+  --ko-leading-tight: 1.75;
+}
+.story-text,
+.story-purpose,
+.story-panel-head h4,
+.prompt,
+.choice,
+.drill-sentence,
+.order-tile,
+.table-wrap td[data-vocab-field],
+.word-note-ko { line-height: var(--ko-leading); }
+
+.order-slot:empty::after,
+.vocab-popover,
+.hint-content,
+.feedback,
+.word-note-usage,
+.word-note-en { line-height: var(--ko-leading-tight); }
+
+/* Hangul is drawn on a square body with no side bearings to spare, so negative
+   tracking pushes the blocks into each other rather than closing a gap. */
+.story-panel-head h4,
+.prompt,
+.drill-sentence { letter-spacing: normal; }
+
+/* The token is an inline-block, so its underline is drawn at the bottom of its
+   own box — and a box barely taller than the text put that rule straight
+   through the descending stroke of 을 or 늘. The taller box drops it clear.
+   It stays shorter than the passage's own line box, so nothing opens up
+   around a token that has one. */
+.vocab-token { line-height: 1.55; }
+
+/* Taller lines need the row to grow with them, or the new leading just eats
+   the padding that was keeping the words off the rules above and below. The
+   note row keeps its own padding: it is meant to hug the word it belongs to. */
+.table-wrap th,
+.table-wrap td { padding-top: 18px; padding-bottom: 18px; }
+
+/* ---------------------------------------------------------------------------
+   Korean size
+   Leading alone did not do it. A Hangul block spends its height on two or
+   three stacked jamo, so at the size the Latin is set at, the counters inside
+   ㅁ and ㅇ and the whole batchim close up well before an English word of the
+   same measure gets hard to read — which is why Korean here is set a quarter
+   larger than everything around it rather than matching it.
+
+   Each rule keeps the page's original size inside the calc(), so what the
+   layout was drawn to is still legible in the source and --ko-size is the only
+   thing to turn.
+
+   Story lines, prompts and choices carry whichever language the exercise is
+   set to, so on an English run these grow too. That is the trade for not
+   wrapping every Korean fragment in a span the scripts would have to emit.
+--------------------------------------------------------------------------- */
+.story-text { font-size: calc(clamp(1.1rem, 2vw, 1.32rem) * var(--ko-size)); }
+.prompt { font-size: calc(clamp(1.15rem, 2.2vw, 1.6rem) * var(--ko-size)); }
+.drill-sentence { font-size: calc(clamp(1.1rem, 2vw, 1.4rem) * var(--ko-size)); }
+.order-tile { font-size: calc(1.02rem * var(--ko-size)); }
+.choice,
+.word-note-ko { font-size: calc(1rem * var(--ko-size)); }
+.table-wrap td[data-vocab-field="korean"] strong,
+.grammar-form { font-size: calc(1.15rem * var(--ko-size)); }
+
+/* The sign-in card: one narrow column, so the passcode field is not a
+   page-wide bar. */
+.login-card .section-body { max-width: 560px; margin: 0 auto; }
+.login-form { display: grid; gap: 8px; }
+.login-form label { font-weight: 800; }
+  </style>
+</head>
+<body id="top">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <div class="header-actions">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <p class="hero-kicker">Sync</p>
+        <h1 id="page-title">Sign in</h1>
+        <p>Signed in, your stars follow you between devices: a word starred on the phone is starred on the laptop. Signed out, every page still works on this browser alone.</p>
+      </div>
+    </section>
+
+    <section class="section login-card" aria-labelledby="loginHeading">
+      <div class="section-body">
+        <h2 class="sr-only" id="loginHeading">Passcode</h2>
+
+        <form class="login-form" id="loginForm" hidden>
+          <label for="passcode">Passcode</label>
+          <div class="answer-row">
+            <input class="answer-input" id="passcode" type="password" autocomplete="current-password" required minlength="6" autofocus>
+            <button class="btn primary" type="submit">Sign in</button>
+          </div>
+        </form>
+
+        <div class="login-signed-in" id="signedIn" hidden>
+          <p><strong>Signed in.</strong> <span data-cloud-status></span></p>
+          <div class="group-actions">
+            <button class="btn primary" type="button" id="syncNow">Sync now</button>
+            <a class="btn secondary" href="./progress-review.html">Review my weak words</a>
+            <button class="btn secondary" type="button" id="signOut">Sign out</button>
+          </div>
+        </div>
+
+        <div id="notConfigured" hidden>
+          <p><strong>Sync is not set up yet.</strong> Fill in <code>shared-vocab/cloud-config.js</code> with the Supabase project's URL, its anon key and the account's address, and this page will ask for the passcode.</p>
+        </div>
+
+        <p class="assistant-status" id="loginMessage" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <div class="utility-controls" aria-label="Page utilities">
+    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
+  </div>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const form = document.getElementById("loginForm");
+    const signedIn = document.getElementById("signedIn");
+    const message = document.getElementById("loginMessage");
+    const passcode = document.getElementById("passcode");
+
+    function say(text, bad) {
+      message.innerHTML = text ? (bad ? '<span class="assistance-used">' : "<span>") + text + "</span>" : "";
+    }
+
+    async function paint() {
+      const cloud = window.KoreanCloud;
+      if (!cloud || !cloud.configured) {
+        document.getElementById("notConfigured").hidden = false;
+        return;
+      }
+      let current = null;
+      try { current = await cloud.session(); }
+      catch (error) { say(error.message, true); }
+      form.hidden = Boolean(current);
+      signedIn.hidden = !current;
+      if (!current) passcode.focus();
+    }
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = form.querySelector("button");
+      button.disabled = true;
+      say("Signing in…");
+      try {
+        await window.KoreanCloud.signIn(passcode.value);
+        passcode.value = "";
+        say("");
+        await paint();
+      } catch (error) {
+        say(/invalid/i.test(error.message) ? "That passcode is not right." : error.message, true);
+        passcode.select();
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document.getElementById("syncNow").addEventListener("click", () => window.KoreanCloud.syncNow());
+    document.getElementById("signOut").addEventListener("click", async () => {
+      await window.KoreanCloud.signOut();
+      say("Signed out. Your stars stay on this browser.");
+      await paint();
+    });
+
+    paint();
+  })();
+  </script>
+
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "koreanQuizThemeV2";
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
+
+      function savedTheme() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "dark" ? "dark" : "light";
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        if (persist) {
+          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
+        }
+        toggles.forEach(toggle => {
+          const dark = next === "dark";
+          toggle.setAttribute("aria-pressed", String(dark));
+          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+          const icon = toggle.querySelector("[data-theme-icon]");
+          if (icon) icon.textContent = dark ? "☀" : "☾";
+        });
+      }
+
+      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
+      toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
+      });
+      media.addEventListener?.("change", event => {
+        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
+      });
+    })();
+  </script>
+
+</body>
+</html>
