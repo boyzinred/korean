@@ -25,10 +25,10 @@ The script reads `shared-vocab.csv` as its curated base and re-derives every fil
 
 | Input page | Source ids produced |
 | --- | --- |
-| `tutoring-topik-i-vocab.html` | `topik1-vocab` |
-| `tutoring-topik-ii-level-3-vocab.html` | `topik2-level3-vocab` |
-| `tutoring-topik-ii-level-4-vocab.html` | `topik2-level4-vocab` |
-| `tutoring-topik-ii-level-5-vocab.html` | `topik2-level5-vocab` |
+| `archive/tutoring-topik-i-vocab.html` | `topik1-vocab` |
+| `archive/tutoring-topik-ii-level-3-vocab.html` | `topik2-level3-vocab` |
+| `archive/tutoring-topik-ii-level-4-vocab.html` | `topik2-level4-vocab` |
+| `archive/tutoring-topik-ii-level-5-vocab.html` | `topik2-level5-vocab` |
 | `tutoring-topik-multiple-choice-test-library.html` | `test-<test id>` (10 of them) |
 | `lessons` column of the base CSV, plus `BAB20_LOCAL_VOCAB` in `tutoring-bab20.html` | `bab01` … `bab20` |
 | base CSV | `topik-core` |

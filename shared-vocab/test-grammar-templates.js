@@ -12,9 +12,9 @@ const T = require("./grammar-templates.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const PAGES = [
-  "tutoring-topik-ii-level-3-grammar.html",
-  "tutoring-topik-ii-level-4-grammar.html",
-  "tutoring-topik-ii-level-5-grammar.html"
+  "archive/tutoring-topik-ii-level-3-grammar.html",
+  "archive/tutoring-topik-ii-level-4-grammar.html",
+  "archive/tutoring-topik-ii-level-5-grammar.html"
 ];
 
 const problems = [];

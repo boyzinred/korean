@@ -6,9 +6,9 @@
  * Inputs
  *   shared-vocab.csv                             existing curated records (base)
  *   archive/tutoring-topik-i-vocab.html          TOPIK vocabulary reference
- *   tutoring-topik-ii-level-3-vocab.html         TOPIK vocabulary reference
- *   tutoring-topik-ii-level-4-vocab.html         TOPIK vocabulary reference
- *   tutoring-topik-ii-level-5-vocab.html         TOPIK vocabulary reference
+ *   archive/tutoring-topik-ii-level-3-vocab.html TOPIK vocabulary reference
+ *   archive/tutoring-topik-ii-level-4-vocab.html TOPIK vocabulary reference
+ *   archive/tutoring-topik-ii-level-5-vocab.html TOPIK vocabulary reference
  *   tutoring-topik-multiple-choice-test-library.html   practice tests
  *
  * Run: node shared-vocab/build-shared-vocab.js
@@ -94,14 +94,14 @@ const SOURCE_GROUPS = [
   }
 ];
 
-// Two of the pages read below now live in archive/ — they are off the landing
-// page but their vocabulary is still part of the shared library, so the build
-// still reads them where they sit.
+// Every page read below now lives in archive/ — they are off the landing page
+// but their vocabulary is still part of the shared library, so the build still
+// reads them where they sit.
 const TOPIK_VOCAB_FILES = [
   { id: "topik1-vocab", file: "archive/tutoring-topik-i-vocab.html", label: "TOPIK I vocabulary", level: 1 },
-  { id: "topik2-level3-vocab", file: "tutoring-topik-ii-level-3-vocab.html", label: "TOPIK II level 3 vocabulary", level: 3 },
-  { id: "topik2-level4-vocab", file: "tutoring-topik-ii-level-4-vocab.html", label: "TOPIK II level 4 vocabulary", level: 4 },
-  { id: "topik2-level5-vocab", file: "tutoring-topik-ii-level-5-vocab.html", label: "TOPIK II level 5 vocabulary", level: 5 }
+  { id: "topik2-level3-vocab", file: "archive/tutoring-topik-ii-level-3-vocab.html", label: "TOPIK II level 3 vocabulary", level: 3 },
+  { id: "topik2-level4-vocab", file: "archive/tutoring-topik-ii-level-4-vocab.html", label: "TOPIK II level 4 vocabulary", level: 4 },
+  { id: "topik2-level5-vocab", file: "archive/tutoring-topik-ii-level-5-vocab.html", label: "TOPIK II level 5 vocabulary", level: 5 }
 ];
 
 const TEST_LIBRARY_FILE = "tutoring-topik-multiple-choice-test-library.html";

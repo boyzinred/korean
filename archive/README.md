@@ -6,7 +6,8 @@ works: open one directly and it loads, because its relative links were rewritten
 to point up one level (`../shared-vocab/…`, `../index.html`). GitHub Pages
 uploads the whole repository, so the old URLs keep resolving under `/archive/`.
 
-Archived on 23 September 2026.
+The Bab series and the first TOPIK I pages were archived on 23 September 2026;
+the TOPIK II pages and the conjugation and numbers practice on 1 October 2026.
 
 ## What is here
 
@@ -20,6 +21,14 @@ Archived on 23 September 2026.
   headwords over 27 study days.
 - `tutoring-topik-i-grammar.html` — TOPIK I grammar, 32 drills generated from
   the shared vocabulary.
+- `tutoring-topik-ii-level-{3,4,5}-{vocab,grammar}.html` — TOPIK II reference
+  vocabulary and generated grammar drills by level. The vocabulary pages are
+  still read by `shared-vocab/build-shared-vocab.js`, and the grammar pages by
+  `test-grammar-templates.js`, here where they sit.
+- `tutoring-topik-1500-vocab.html` — the TOPIK II 1,500-word bank. Its stars
+  are still in the browser under `topik2000FamiliarityV1`.
+- `conjugation-practice.html`, `numbers-practice.html` — the helper drills for
+  verb and adjective conjugation and for choosing a number system.
 
 ## Bringing one back
 

@@ -1262,9 +1262,9 @@ th {
 <body id="top">
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <a class="brand" href="../index.html">Korean Language Resources</a>
       <div class="header-actions">
-        <a class="header-link" href="./index.html">Home</a>
+        <a class="header-link" href="../index.html">Home</a>
       </div>
     </div>
   </header>
@@ -1312,7 +1312,7 @@ th {
     <a class="utility-button top" href="#top" aria-label="Back to top">&uarr;</a>
   </div>
 
-  <script src="./shared-vocab/topik-vocab-1500.js?v=1.0.0"></script>
+  <script src="../shared-vocab/topik-vocab-1500.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2388,7 +2388,7 @@ th {
     function sendToPastePractice(exerciseId) {
       const text = document.getElementById(`export-text-${exerciseId}`).value;
       try { localStorage.setItem(HANDOFF_KEY, text); } catch (_) {}
-      window.location.href = "./custom-word-list-practice.html#paste=" + encodeURIComponent(text);
+      window.location.href = "../custom-word-list-practice.html#paste=" + encodeURIComponent(text);
     }
 
     // ------------------------------------------------------------------ page
