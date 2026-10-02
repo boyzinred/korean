@@ -1570,7 +1570,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
       <div class="hero-inner">
         <p class="hero-kicker">HowToStudyKorean &middot; Unit 1</p>
         <h1 id="page-title">Unit 1</h1>
-        <p>The vocabulary from every HowToStudyKorean lesson in Unit 1 so far (Lessons 1&ndash;4), filed the way the lessons file it: by lesson, or by part of speech. Blur a column to test yourself, star what you know, and drill any mix in the vocabulary test.</p>
+        <p>The vocabulary from every HowToStudyKorean lesson in Unit 1 so far (Lessons 1&ndash;5), filed the way the lessons file it: by lesson, or by part of speech. Blur a column to test yourself, star what you know, and drill any mix in the vocabulary test.</p>
       </div>
     </section>
 
@@ -1746,7 +1746,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        adverbs and 있다 as both a verb and an adjective, and so does this page.
        The English is the lesson's gloss as written. A lesson's greeting words
        are filed as phrases, and a word the lesson teaches outside its
-       Vocabulary list goes under "Other Words in the Lesson".
+       Vocabulary list goes under "Other Words in the Lesson" (or "Other
+       Nouns/Verbs/Adjectives in the Lesson"). Where the lesson uses a word
+       without glossing it, the English is the word's common sense.
 
        Lesson fields
          number, title
@@ -2009,6 +2011,166 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
                   ["저는 한국어도 말하다", "I speak Korean as well (in addition to other languages)"],
                   ["나도 피곤하다", "I am tired, too"],
                   ["나의 딸도 행복하다", "My daughter is happy, too"]
+                ] }
+            ] }
+          ]
+        },
+        {
+          number: 5,
+          title: "Past, Present, Future Tense",
+          sections: [
+            { pos: "noun", label: "Nouns", words: [
+              { ko: "동생", en: "younger sibling" },
+              { ko: "남동생", en: "younger brother" },
+              { ko: "여동생", en: "younger sister" },
+              { ko: "형", en: "older brother, when you are a man" },
+              { ko: "오빠", en: "older brother, when you are a woman",
+                note: "A woman can call a man 오빠 even if he is not her older brother, as long as she is close to him.",
+                examples: [
+                  ["오빠는 영어를 배웠다", "(My) older brother learned English"]
+                ] },
+              { ko: "누나", en: "older sister, when you are a man" },
+              { ko: "언니", en: "older sister, when you are a woman" },
+              { ko: "삼촌", en: "uncle",
+                examples: [
+                  ["삼촌은 가게에 왔다", "(My) uncle came to the store"]
+                ] },
+              { ko: "이모", en: "aunt (on mother’s side)" },
+              { ko: "고모", en: "aunt (on father’s side)" },
+              { ko: "아저씨", en: "older man not related to you",
+                note: "What you can call any man you don’t know." },
+              { ko: "아주머니", en: "older woman not related to you",
+                note: "What you can call any woman you don’t know." },
+              { ko: "할아버지", en: "grandfather",
+                note: "You can call any man who looks very old 할아버지." },
+              { ko: "할머니", en: "grandmother",
+                note: "You can call any woman who looks very old 할머니." },
+              { ko: "친구", en: "friend",
+                examples: [
+                  ["나는 친구를 만난다", "I meet a friend"],
+                  ["나는 친구를 만났다", "I met friends"]
+                ] },
+              { ko: "사진", en: "picture" },
+              { ko: "안경", en: "glasses" },
+              { ko: "비밀", en: "secret" },
+              { ko: "비", en: "rain" },
+              { ko: "가게", en: "store/shop",
+                examples: [
+                  ["삼촌은 가게에 왔다", "(My) uncle came to the store"]
+                ] },
+              { ko: "박물관", en: "museum",
+                examples: [
+                  ["나는 박물관에 갔다", "I went to the museum"]
+                ] },
+              { ko: "가스 레인지", en: "stove (gas range)" },
+              { ko: "오리", en: "duck (animal)" },
+              { ko: "꼬리", en: "tail" }
+            ] },
+            { pos: "verb", label: "Verbs", words: [
+              { ko: "보고싶다", en: "to miss a person" },
+              { ko: "기대하다", en: "to expect" },
+              { ko: "건너다", en: "to cross (a road/etc)",
+                examples: [
+                  ["나는 길을 건넜다", "I crossed the street"]
+                ] },
+              { ko: "싫어하다", en: "to not like" },
+              { ko: "떠나다", en: "to leave a place" },
+              { ko: "농담하다", en: "to joke" },
+              { ko: "던지다", en: "to throw",
+                examples: [
+                  ["나는 공을 던졌다", "I threw the ball"]
+                ] }
+            ] },
+            { pos: "adjective", label: "Adjectives", words: [
+              { ko: "지루하다", en: "to be boring" },
+              { ko: "마르다", en: "for a person to be too thin" },
+              { ko: "멀다", en: "to be far away" },
+              { ko: "마르다", en: "to be dry", id: "l5-adjective-ma-reu-da-dry" },
+              { ko: "비슷하다", en: "to be similar" },
+              { ko: "싫다", en: "to not be good" },
+              { ko: "오래되다", en: "for an object to be old",
+                note: "Not “old” in a bad sense: something has existed for a long time. For “old and decrepit” the word is 낡다, and for an old person it is 늙다. ~ㄴ can attach to it to describe a noun (오래된 집).",
+                examples: [
+                  ["그 식당이 오래되었다", "That restaurant is old"],
+                  ["우리는 오래된 집에 갔다", "We went to the old house"]
+                ] }
+            ] },
+            { pos: "adverb", label: "Adverbs and Other Words", words: [
+              { ko: "오늘", en: "today" },
+              { ko: "월요일", en: "Monday" },
+              { ko: "화요일", en: "Tuesday" },
+              { ko: "수요일", en: "Wednesday" },
+              { ko: "목요일", en: "Thursday" },
+              { ko: "금요일", en: "Friday" },
+              { ko: "토요일", en: "Saturday" },
+              { ko: "일요일", en: "Sunday" },
+              { ko: "어제", en: "yesterday" },
+              { ko: "내일", en: "tomorrow" },
+              { ko: "모레", en: "the day after tomorrow" },
+              { ko: "년", en: "year" },
+              { ko: "일", en: "day" },
+              { ko: "시간", en: "time" }
+            ] },
+            { pos: "noun", label: "Other Nouns in the Lesson", words: [
+              { ko: "내가", en: "I (informal, with ~가)",
+                note: "When ~가 attaches to 나, 나 changes to 내." },
+              { ko: "제가", en: "I (formal, with ~가)",
+                note: "When ~가 attaches to 저, 저 changes to 제." },
+              { ko: "너", en: "you (informal)",
+                note: "Used in informal situations. ~는 and ~를 attach to it as usual (너는, 너를)." },
+              { ko: "네가", en: "you (informal, with ~가)",
+                note: "When ~가 attaches to 너, 너 changes to 네. It is pronounced “knee-ga” so that it doesn’t sound like 내가." },
+              { ko: "당신", en: "you",
+                note: "You may say it to anybody, but Korean people rarely use it; most people who say 당신 are foreigners used to saying “you” in English." },
+              { ko: "부장님", en: "boss",
+                note: "Instead of “you,” Koreans usually call a person by their (usually job) position." },
+              { ko: "교장선생님", en: "principal" },
+              { ko: "교감선생님", en: "vice principal" },
+              { ko: "고객님", en: "customer" },
+              { ko: "손님", en: "guest" },
+              { ko: "회장님", en: "president/CEO of a company" },
+              { ko: "사장님", en: "president/CEO of a company" },
+              { ko: "공", en: "ball",
+                examples: [
+                  ["나는 공을 던졌다", "I threw the ball"]
+                ] },
+              { ko: "밥", en: "rice",
+                examples: [
+                  ["나는 밥을 먹는다", "I eat rice"],
+                  ["나는 밥을 먹었다", "I ate rice"]
+                ] }
+            ] },
+            { pos: "verb", label: "Other Verbs in the Lesson", words: [
+              { ko: "공부하다", en: "to study",
+                examples: [
+                  ["나는 한국어를 공부한다", "I study Korean"],
+                  ["나는 한국어를 공부했다", "I studied Korean"]
+                ] },
+              { ko: "모르다", en: "to not know",
+                note: "Like 알다, often said in the future form (모르겠다, 알겠다) to mean that somebody doesn’t know or knows something now." },
+              { ko: "바래다", en: "to fade",
+                note: "Past tense: 바랬다 or 바래었다." },
+              { ko: "매다", en: "to tie up",
+                note: "Past tense: 맸다 or 매었다." },
+              { ko: "메다", en: "to put on/carry something on one’s shoulder",
+                note: "Past tense: 멨다 or 메었다." },
+              { ko: "잠그다", en: "to lock",
+                note: "A stem whose last vowel is ㅡ; the lesson leaves its conjugation to Lesson 7." },
+              { ko: "나서다", en: "to step forward, to set out",
+                note: "The lesson uses it only as a conjugation example: 나서 + 었다 = 나섰다." },
+              { ko: "끼다", en: "to put on (a ring, gloves)",
+                note: "The lesson uses it only as a conjugation example: 끼 + 었다 = 꼈다." },
+              { ko: "켜다", en: "to turn on",
+                note: "The lesson uses it only as a conjugation example: 켜 + 었다 = 켰다." },
+              { ko: "되다", en: "to become",
+                note: "Usually a verb, but 오래되다 is an adjective. 되었다 can be contracted, which Lessons 9 and 14 cover." }
+            ] },
+            { pos: "adjective", label: "Other Adjectives in the Lesson", words: [
+              { ko: "늙다", en: "to be old (a person)",
+                note: "Not to be confused with 낡다, which means old and decrepit." },
+              { ko: "배고프다", en: "to be hungry",
+                examples: [
+                  ["나는 배고프겠다", "I will be hungry"]
                 ] }
             ] }
           ]
