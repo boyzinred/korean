@@ -23,7 +23,7 @@
         correct    true / false
         attempt    1 for the first try at this question, 2+ for a retry
         given      what was typed or picked
-        mode, dir, run   how it was asked: "typed" / "mc" / "handwriting",
+        mode, dir, run   how it was asked: "typed" / "mc" / "handwriting" / "speaking",
                    "en>ko", and the run type ("regular", "repeat", "spaced")
         extra      anything else worth keeping, as a plain object
     amend(id, changes)          rewrite an answer already logged, e.g.

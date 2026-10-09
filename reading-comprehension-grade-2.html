@@ -77,6 +77,11 @@
   --handwrite: #E3B448;
   --handwrite-hover: #D2A43A;
   --on-handwrite: #28468A;
+  /* The speaking test's, for the same reason: its own colour, so the three
+     ways of taking the test sit side by side and still read as three. */
+  --speak: #8CC7B0;
+  --speak-hover: #79B59E;
+  --on-speak: #28468A;
 }
 
 html[data-theme='dark'] {
@@ -117,6 +122,9 @@ html[data-theme='dark'] {
   --handwrite: #D4A93F;
   --handwrite-hover: #C29834;
   --on-handwrite: #111827;
+  --speak: #6FAE97;
+  --speak-hover: #5F9D86;
+  --on-speak: #111827;
 }
 
 * { box-sizing: border-box; }
@@ -822,6 +830,8 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
 
 .btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); }
 .btn.handwrite:hover:not(:disabled) { background: var(--handwrite-hover); }
+.btn.speak { color: var(--on-speak); background: var(--speak); }
+.btn.speak:hover:not(:disabled) { background: var(--speak-hover); }
 
 /* ---------------------------------------------------------------------------
    Handwriting test
@@ -890,6 +900,43 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
 .hw-answer-ko { font-size: calc(1.6rem * var(--ko-size)); font-weight: 800; line-height: 1.5; }
 .hw-answer-sub { font-size: .9rem; font-weight: 700; opacity: .8; }
 .hw-grade { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* ---------------------------------------------------------------------------
+   Speaking test
+   The handwriting test without the writing area: say the answer, reveal it,
+   and mark yourself.
+--------------------------------------------------------------------------- */
+.sp { display: grid; gap: 12px; }
+.sp-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sp-hint { margin: 0; font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   Star changes
+   What a finished test would do to the stars, listed before anything is
+   written, with one button to keep it and one to throw it away.
+--------------------------------------------------------------------------- */
+.star-changes {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.star-changes h4 { margin: 0; }
+.star-change-list {
+  display: grid;
+  gap: 6px;
+  max-height: 320px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.star-change-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.star-change-word { font-weight: 800; }
+.star-change-en { opacity: .8; }
+.star-change-move { margin-left: auto; font-weight: 800; white-space: nowrap; }
+.star-change-actions { margin-top: 0; }
 
 .runtime-bar {
   display: flex;
@@ -1654,12 +1701,6 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                     <option value="spaced">Spaced &mdash; until each word sticks</option>
                   </select>
                 </label>
-                <label>Mode
-                  <select class="menu-mode">
-                    <option value="mc">Multiple choice</option>
-                    <option value="typed" selected>Typed</option>
-                  </select>
-                </label>
                 <label>Length
                   <select class="menu-passes">
                     <option value="1" selected>Every word once</option>
@@ -1698,8 +1739,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
               </label>
 
               <div class="exercise-menu-actions">
-                <button class="btn primary begin" type="button">Begin vocabulary test</button>
+                <button class="btn primary begin" type="button">Typed test</button>
                 <button class="btn handwrite begin-handwriting" type="button">&#9998; Handwriting test</button>
+                <button class="btn speak begin-speaking" type="button">&#127908; Speaking test</button>
                 <button class="btn secondary export-md" type="button">Export as .md</button>
                 <label class="sr-only" for="vocabSep">Separator between question and answer</label>
                 <select class="export-sep" id="vocabSep">
@@ -1712,7 +1754,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
                 </select>
               </div>
               <p class="assistant-status vocab-pool-note"></p>
-              <p class="wordbank-count">Handwriting test: write each word in 한국어 on the screen with a finger or a pen, reveal the answer, and mark yourself. The question comes from the English or romanization you ticked; the Mode and Answer in settings sit it out.</p>
+              <p class="wordbank-count">Typed test: type each answer in the script the question asks for. Handwriting test: write each word in 한국어 with a finger or a pen, reveal the answer, and mark yourself. Speaking test: say each word in 한국어, reveal the answer, and mark yourself. Handwriting and speaking always answer in 한국어, so their questions come from the English or romanization you ticked.</p>
             </div>
 
             <div class="live hidden">
@@ -2092,7 +2134,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   <script src="./shared-vocab/reading-grammar-2.js?v=1.0.0"></script>
   <script src="./shared-vocab/korean-grammar.js?v=1.0.0"></script>
   <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
-  <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
+  <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
   <script>
@@ -4056,8 +4098,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
          ★★    carried clean — right every time it came round
          ★★★   carried clean on a later day than the last clean run
 
-       Every rung can still be set by hand, and a hand-set star is never taken
-       down by a run — only stars a run awarded can fall. */
+       Every rung can still be set by hand, and a test can move a hand-set
+       star like any other — but only once the change is confirmed at the end. */
     function entryOf(id) {
       const held = familiarity[id];
       if (!held || typeof held !== "object") {
@@ -4069,7 +4111,6 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
     /* The day the word was last carried clean, which is what the third star
        waits for. Nothing else is stored against a word. */
     const cleanDayOf = id => entryOf(id).d || "";
-    const isManual = id => Boolean(entryOf(id).m);
 
     /* The one way a rating is written. `manual` marks a star a person chose,
        and `cleanDay` is stamped by a spaced run that carried the word without
@@ -4628,13 +4669,41 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return acceptedAnswers(entry, lang).some(answer => normalizeAnswer(answer, lang) === given);
     }
 
+    function checkTypedFor(entry, direction, input) {
+      return checkTyped(entry, direction.answerLang, input);
+    }
+
+    /* Two words the bank glosses the same — 아주 and 매우 are both "very" —
+       cannot be told apart from the English. Answering with the other one is
+       the right meaning and the wrong word, not a miss, so the question stays
+       open for another go and nothing is counted. Returns the word given, or
+       null. */
+    function otherWordMeant(entry, direction, input) {
+      if (direction.promptLang !== "en" || direction.answerLang === "en") return null;
+      if (checkTyped(entry, direction.answerLang, input)) return null;
+      const meaning = normalizeAnswer(entry.en, "en");
+      return BANK_WORDS.find(other => other.id !== entry.id
+        && normalizeAnswer(other.en, "en") === meaning
+        && checkTyped(other, direction.answerLang, input)) || null;
+    }
+
+    function offerRetake(entry, direction, given) {
+      const other = otherWordMeant(entry, direction, given);
+      if (!other) return false;
+      const feedback = $v(".feedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "<strong>" + esc(other.ko) + "</strong> also means “" + esc(other.en)
+        + "”, but this question wants a different word. Try again — this one doesn’t count.";
+      return true;
+    }
+
     function readVocabSettings() {
       return {
         groups: [...vEl.querySelectorAll(".vocab-group:checked")].map(input => input.value),
         stars: tickedStars(vEl),
         run: $v(".menu-run").value === "spaced" ? "spaced" : "regular",
         repeat: $v(".menu-repeat").checked,
-        mode: $v(".menu-mode").value,
+        mode: "typed",
         passes: Math.max(1, Math.min(5, Number($v(".menu-passes").value) || 1)),
         promptLangs: [...vEl.querySelectorAll(".prompt-lang:checked")].map(input => input.value),
         answerLangs: [...vEl.querySelectorAll(".answer-lang:checked")].map(input => input.value)
@@ -4765,25 +4834,42 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return true;
     }
 
-    /* What a finished word is worth, written to its star. Only an answer given
-       in Korean can raise one — reading 사람 and typing "person" is a different
-       thing from being asked for the word and producing it — while a miss in
-       any direction can bring one down. */
-    function settleVocabStar(card, clean) {
-      const id = card.item.id;
+    /* What a word's run is worth to its star, kept as a proposal rather than
+       written: the results list every change, and nothing reaches the tables
+       until it is confirmed there. A star set by hand moves like any other. A
+       word never once answered right has earned nothing, not even the bottom
+       rung, so it can fall but not rise. */
+    function proposeStar(entry, clean, produced, solved) {
+      const id = entry.id;
       const level = ratingOf(id);
       const stamp = todayStamp();
       const earned = window.SpacedSession.stars.earned(clean, cleanDayOf(id), stamp);
-      const next = window.SpacedSession.stars.after(level, earned,
-        { produced: card.produced, manual: isManual(id) });
-
+      let next = window.SpacedSession.stars.after(level, earned, { produced });
+      if (!solved) next = Math.min(next, level);
       if (clean) vocabState.stars.clean += 1;
-      if (next > level) vocabState.stars.raised += 1;
-      if (next < level) vocabState.stars.lowered += 1;
-      setRating(id, next, {
-        cleanDay: clean ? stamp : "",
-        manual: next === level ? undefined : false
+      vocabState.proposals.push({ entry, from: level, to: next, cleanDay: clean ? stamp : "" });
+    }
+
+    function settleVocabStar(card, clean) {
+      proposeStar(card.item, clean, Boolean(card.produced), card.retired);
+    }
+
+    /* A regular run is judged the same way, word by word over every time it
+       came round: clean if each first try was right, produced if it was ever
+       answered right in 한국어, solved if it came good in the end. */
+    function settleRegularVocab() {
+      const tallies = new Map();
+      vocabState.words.forEach((entry, index) => {
+        const result = vocabState.results[index];
+        if (!result) return;
+        const tally = tallies.get(entry.id) || { entry, clean: true, solved: true, produced: false };
+        const right = result.correct || result.solved;
+        if (!result.correct) tally.clean = false;
+        if (!right) tally.solved = false;
+        if (right && vocabState.directions[index].answerLang === "ko") tally.produced = true;
+        tallies.set(entry.id, tally);
       });
+      tallies.forEach(tally => proposeStar(tally.entry, tally.clean, tally.produced, tally.solved));
     }
 
     function gradeSpacedCard(correct) {
@@ -4831,8 +4917,9 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
           + "<li>A miss drops it a rung and brings it round sooner.</li>"
           + "<li>Stars: ★ got there in the end · ★★ never missed · ★★★ clean on a later day than the last.</li>"
           + "<li>Only an answer in 한국어 can raise a star. Length and the retry switch sit this one out.</li>"
+          + "<li>Star changes are listed at the end, to confirm or reject.</li>"
           + "</ul>"
-        : "Every word is asked the same number of times, in a shuffled order. Nothing is written to the stars.";
+        : "Every word is asked the same number of times, in a shuffled order. Stars follow the spaced run's rules — ★★ never missed, ★★★ clean on a later day, a miss takes a rung off, only an answer in 한국어 raises one — and are shown at the end to confirm or reject.";
     }
 
     function paintPoolNote() {
@@ -4913,7 +5000,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         paintPoolNote();
       });
       $v(".begin").addEventListener("click", () => startVocabTest());
-      $v(".begin-handwriting").addEventListener("click", () => startVocabTest({ handwriting: true }));
+      $v(".begin-handwriting").addEventListener("click", () => startVocabTest({ kind: "handwriting" }));
+      $v(".begin-speaking").addEventListener("click", () => startVocabTest({ kind: "speaking" }));
       $v(".export-md").addEventListener("click", event => exportVocabSelection(event.currentTarget));
       $v(".next").addEventListener("click", nextVocabQuestion);
 
@@ -4929,6 +5017,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         if (event.target && event.target.closest
           && event.target.closest("button, a, input, select, textarea")) return;
         if (!$v(".finish").classList.contains("hidden")) {
+          if ($v(".finish .star-change-actions")) return;
           const again = $v(".finish .again");
           if (again) { event.preventDefault(); again.click(); }
           return;
@@ -4964,23 +5053,23 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       return out;
     }
 
-    /* A handwritten answer is always Korean — writing out "firefighter" by
-       hand is not the practice this is for — so the run keeps the ticked
-       question scripts other than 한국어 and sets the answer side itself. The
-       Mode setting has nothing to choose between here. */
-    function handwritingSettings(settings) {
+    /* A handwritten or spoken answer is always Korean — writing out
+       "firefighter" by hand is not the practice this is for — so the run keeps
+       the ticked question scripts other than 한국어 and sets the answer side
+       itself. */
+    function koreanAnswerSettings(settings, mode) {
       return Object.assign({}, settings, {
-        mode: "handwriting",
+        mode,
         promptLangs: settings.promptLangs.filter(lang => lang !== "ko"),
         answerLangs: ["ko"]
       });
     }
 
     function startVocabTest(options) {
-      const handwriting = Boolean(options && options.handwriting);
-      const settings = handwriting ? handwritingSettings(readVocabSettings()) : readVocabSettings();
-      if (handwriting && !settings.promptLangs.length) {
-        $v(".vocab-pool-note").innerHTML = '<span class="assistance-used">The handwriting test answers in 한국어, so tick English or Romanization under Question shows.</span>';
+      const kind = (options && options.kind) || "typed";
+      const settings = kind === "typed" ? readVocabSettings() : koreanAnswerSettings(readVocabSettings(), kind);
+      if (kind !== "typed" && !settings.promptLangs.length) {
+        $v(".vocab-pool-note").innerHTML = '<span class="assistance-used">The ' + kind + ' test answers in 한국어, so tick English or Romanization under Question shows.</span>';
         return;
       }
       if (!canPair(settings)) {
@@ -4996,7 +5085,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const picked = spaced ? [] : buildRun(pool, settings.passes);
       vocabState = {
         settings,
-        handwriting,
+        kind,
         run: settings.run,
         pool,
         words: picked,
@@ -5010,6 +5099,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         directions: picked.map(() => pickDirection(settings)),
         results: picked.map(() => null)
       };
+      vocabState.stars = { clean: 0 };
+      vocabState.proposals = [];
       if (spaced) {
         vocabState.session = window.SpacedSession.create({
           items: pool.map(entry => ({ id: entry.id, item: entry, box: startingBox(entry) })),
@@ -5018,7 +5109,6 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
              the other way out. */
           cap: Math.max(20, pool.length * 6)
         });
-        vocabState.stars = { raised: 0, lowered: 0, clean: 0 };
         vocabState.card = null;
         /* The verdict waits until the question is left rather than landing the
            moment it is answered, so Count as correct still has something to
@@ -5075,43 +5165,16 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
 
       /* The answer script is named on every question, because a mixed run can
          change it from one word to the next. */
-      $v(".prompt-label").textContent = (settings.mode === "mc"
-        ? "Choose the matching word"
-        : settings.mode === "handwriting" ? "Write the answer" : "Type the answer")
+      $v(".prompt-label").textContent = (settings.mode === "handwriting" ? "Write the answer"
+        : settings.mode === "speaking" ? "Say the answer" : "Type the answer")
         + " in " + LANG_NAMES[direction.answerLang];
       $v(".prompt").textContent = wordIn(entry, direction.promptLang);
 
       const zone = $v(".zone");
       if (settings.mode === "handwriting") {
         showHandwritingPad(zone, entry);
-      } else if (settings.mode === "mc") {
-        const others = shuffled(vocabState.pool.filter(item => item.id !== entry.id)).slice(0, 3);
-        const options = shuffled([entry, ...others]);
-        vocabState.options = options;
-        zone.innerHTML = '<div class="choice-list">' + options.map((option, index) =>
-          '<div class="choice" role="button" tabindex="0" data-choice="' + index + '">'
-          + '<span class="choice-letter">' + LETTERS[index] + '</span>'
-          + '<span class="choice-text">' + esc(wordIn(option, direction.answerLang)) + '</span></div>').join("")
-          + '</div>';
-        zone.querySelectorAll(".choice").forEach(node => {
-          const pick = () => {
-            if (vocabState.locked || vocabState.finished) return;
-            lockVocabQuestion(options[Number(node.dataset.choice)].id === entry.id,
-              wordIn(options[Number(node.dataset.choice)], direction.answerLang));
-          };
-          node.addEventListener("click", pick);
-          node.addEventListener("keydown", event => {
-            if (event.key !== "Enter" && event.key !== " ") return;
-            /* Once the question is locked Enter belongs to the shortcut below,
-               so leave it alone and only swallow the space bar's scroll. */
-            if (vocabState.locked || vocabState.finished) {
-              if (event.key === " ") event.preventDefault();
-              return;
-            }
-            event.preventDefault();
-            pick();
-          });
-        });
+      } else if (settings.mode === "speaking") {
+        showSpeakingPrompt(zone, entry);
       } else {
         zone.innerHTML = '<div class="answer-row">'
           + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
@@ -5120,7 +5183,12 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         const input = zone.querySelector(".answer-input");
         const submit = () => {
           if (vocabState.locked || vocabState.finished) return;
-          lockVocabQuestion(checkTyped(entry, direction.answerLang, input.value), input.value.trim());
+          if (offerRetake(entry, direction, input.value)) {
+            input.value = "";
+            input.focus({ preventScroll: true });
+            return;
+          }
+          lockVocabQuestion(checkTypedFor(entry, direction, input.value), input.value.trim());
         };
         zone.querySelector(".submit").addEventListener("click", submit);
         input.addEventListener("keydown", event => {
@@ -5219,6 +5287,45 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       answer.querySelector(".hw-missed").addEventListener("click", () => mark(false));
     }
 
+
+    /* ---- the speaking test ------------------------------------------------
+       The handwriting test without the writing area. Nothing listens: the
+       learner says the answer, reveals it, and marks themselves; the mark then
+       goes through lockVocabQuestion like any other answer, so the score, the
+       retry queue and the stars all treat it the same. A self-marked right
+       answer counts as producing the word in 한국어, so it can raise a star. */
+    function showSpeakingPrompt(zone, entry) {
+      zone.innerHTML = '<div class="sp">'
+        + '<p class="sp-hint">Say the word in 한국어, then reveal the answer and mark yourself.</p>'
+        + '<div class="sp-tools"><button class="btn primary sp-reveal" type="button">Reveal answer</button></div>'
+        + '<div class="hw-answer hidden" aria-live="polite">'
+        + '<span class="word-note-label">Answer</span>'
+        + '<span class="hw-answer-ko">' + esc(entry.ko) + '</span>'
+        + '<span class="hw-answer-sub">' + esc(wordIn(entry, "ro")) + ' · ' + esc(wordIn(entry, "en")) + '</span>'
+        + '<div class="hw-grade">'
+        + '<button class="btn positive hw-got" type="button">✓ Got it</button>'
+        + '<button class="btn warning hw-missed" type="button">✗ Missed it</button>'
+        + '</div></div>'
+        + '</div>';
+      const reveal = zone.querySelector(".sp-reveal");
+      const answer = zone.querySelector(".hw-answer");
+      reveal.addEventListener("click", () => {
+        if (vocabState.locked || vocabState.finished) return;
+        reveal.classList.add("hidden");
+        answer.classList.remove("hidden");
+        answer.querySelector(".hw-got").focus({ preventScroll: true });
+        answer.scrollIntoView({ block: "nearest" });
+      });
+      const mark = correct => {
+        if (vocabState.locked || vocabState.finished) return;
+        answer.querySelector(".hw-grade").classList.add("hidden");
+        lockVocabQuestion(correct, "");
+      };
+      answer.querySelector(".hw-got").addEventListener("click", () => mark(true));
+      answer.querySelector(".hw-missed").addEventListener("click", () => mark(false));
+      reveal.focus({ preventScroll: true });
+    }
+
     function lockVocabQuestion(correct, given) {
       const settings = vocabState.settings;
       const entry = vocabState.words[vocabState.i];
@@ -5255,16 +5362,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       const settle = correct || !retry || attempts >= 3;
       const shown = settle && !correct;
 
-      if (settings.mode === "mc") {
-        $v(".zone").querySelectorAll(".choice").forEach((node, index) => {
-          node.classList.add("is-locked");
-          node.setAttribute("aria-disabled", "true");
-          const option = vocabState.options[index];
-          if (option.id === entry.id) { if (settle) node.classList.add("correct"); }
-          else if (wordIn(option, direction.answerLang) === given && !correct) node.classList.add("wrong");
-          else if (settle) node.classList.add("faded");
-        });
-      } else if (settings.mode !== "handwriting") {
+      if (settings.mode === "typed") {
         const input = $v(".answer-input");
         if (input) input.disabled = true;
         const submit = $v(".submit");
@@ -5278,10 +5376,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
          Rather than argue with the exercise, mark it yourself from the headline
          line: the word counts as known, drops out of the retry queue, and the
          run moves straight on. */
-      /* A handwritten answer was marked with the answer in view, so there is
-         nothing left to hide — but a mis-tapped Missed it can still be put
-         right with Count as correct, the same as a typed miss. */
-      const handwritten = settings.mode === "handwriting";
+      /* A handwritten or spoken answer was marked with the answer in view, so
+         there is nothing left to hide — but a mis-tapped Missed it can still be
+         put right with Count as correct, the same as a typed miss. */
+      const handwritten = settings.mode !== "typed";
       const head = correct
         ? "<strong>맞아요!</strong>"
         : '<div class="feedback-head"><strong>아니에요.</strong>'
@@ -5289,7 +5387,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       if (handwritten) {
         feedback.innerHTML = head + full
           + (entry.usage ? "<br><small>" + esc(entry.usage) + "</small>" : "")
-          + (retry ? "<br><small>This word comes straight back — write it again without looking.</small>" : "");
+          + (retry ? "<br><small>This word comes straight back — " + (settings.mode === "speaking" ? "say" : "write") + " it again without looking.</small>" : "");
       } else if (correct) {
         feedback.innerHTML = head + full
           + "<br><small>" + esc(entry.usage) + "</small>";
@@ -5376,6 +5474,8 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
       if (vocabState.run === "spaced") {
         if (vocabState.pending !== null) gradeSpacedCard(vocabState.pending);
         settleUnfinishedVocab();
+      } else {
+        settleRegularVocab();
       }
       vocabState.finished = true;
       dropPad();
@@ -5397,26 +5497,32 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
             '<div class="word-card"><span class="word-ko">' + esc(entry.ko) + '</span>'
             + '<span class="word-ro">' + esc(ReadingVocab.romanize(entry.ko)) + '</span>'
             + '<span class="word-en">' + esc(entry.en) + '</span></div>').join("") + '</div>'
-          /* A spaced run has already settled every star it is entitled to, so
-             offering to lower them again would take a rung twice. */
-          + (vocabState.run === "spaced" ? ""
-            : '<div class="finish-actions"><button class="btn secondary mark-weak" type="button">'
-              + 'Lower the stars on these ' + missed.length + '</button></div>')
         : "<p>Nothing missed. 잘했어요!</p>";
 
-      /* What the run wrote to the tables above, said plainly, because a star
-         moving on its own is the sort of thing a page should own up to. */
-      const stats = vocabState.run === "spaced" ? vocabState.session.stats() : null;
-      const moved = [];
-      if (stats && vocabState.stars.raised) moved.push(vocabState.stars.raised + " raised");
-      if (stats && vocabState.stars.lowered) moved.push(vocabState.stars.lowered + " lowered");
-      const starHtml = !stats ? ""
-        : '<p class="wordbank-count">' + (stats.asked
-          ? "<strong>Stars</strong> — " + vocabState.stars.clean + " of " + stats.total
-            + " carried clean · " + (moved.length ? moved.join(", ") : "nothing moved")
-            + ". Only an answer in 한국어 can raise a star; only a miss can lower one, by a rung;"
-            + " a star you set by hand stays where you put it."
-          : "<strong>Stars</strong> — nothing was asked, so nothing moved.") + "</p>";
+      /* What the run would do to the tables above, word by word, and nothing
+         written until it is confirmed: a star moving on its own is the sort
+         of thing a page should ask about first. */
+      const starText = level => level ? "★".repeat(level) : "no star";
+      const proposals = vocabState.proposals;
+      const changes = proposals.filter(change => change.to !== change.from);
+      const dated = proposals.filter(change => change.to === change.from && change.cleanDay).length;
+      const starHtml = !proposals.length
+        ? '<p class="wordbank-count"><strong>Stars</strong> — nothing was answered, so nothing moves.</p>'
+        : '<div class="star-changes"><h4>Star changes</h4>'
+          + (changes.length
+            ? '<ul class="star-change-list">' + changes.map(change =>
+                '<li><span class="star-change-word">' + esc(change.entry.ko) + '</span>'
+                + '<span class="star-change-en">' + esc(change.entry.en) + '</span>'
+                + '<span class="star-change-move">' + starText(change.from) + ' → ' + starText(change.to) + '</span></li>').join("")
+              + '</ul>'
+            : "<p>No star moves.</p>")
+          + '<p class="wordbank-count">' + vocabState.stars.clean + " of " + proposals.length + " words carried clean"
+          + (dated ? " — " + dated + " that keep their stars are dated today, toward ★★★ on a later day" : "")
+          + ". Only an answer in 한국어 can raise a star; only a miss can lower one, by a rung. Stars you set by hand move too.</p>"
+          + '<div class="finish-actions star-change-actions">'
+          + '<button class="btn primary confirm-stars" type="button">Confirm these changes</button>'
+          + '<button class="btn secondary reject-stars" type="button">Reject these changes</button>'
+          + '</div></div>';
 
       $v(".live").classList.add("hidden");
       const finishEl = $v(".finish");
@@ -5439,19 +5545,24 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
         + '<button class="btn secondary change-setup" type="button">Change setup</button>'
         + '</div>';
 
-      const markWeak = finishEl.querySelector(".mark-weak");
-      if (markWeak) {
-        markWeak.addEventListener("click", () => {
-          /* A miss demotes rather than resets: two stars fall to one, one
-             falls to none. */
-          missed.forEach(entry => setRating(entry.id, ratingOf(entry.id) - 1, { manual: true }));
-          repaintRatings();
-          markWeak.disabled = true;
-          markWeak.textContent = "Stars lowered";
-        });
+      const starActions = finishEl.querySelector(".star-change-actions");
+      if (starActions) {
+        const decide = keep => {
+          if (keep) {
+            proposals.forEach(change => setRating(change.entry.id, change.to, {
+              cleanDay: change.cleanDay,
+              manual: change.to === change.from ? undefined : false
+            }));
+            repaintRatings();
+          }
+          starActions.outerHTML = '<p class="wordbank-count"><strong>'
+            + (keep ? "Star changes saved." : "Star changes rejected — nothing was written.") + "</strong></p>";
+        };
+        starActions.querySelector(".confirm-stars").addEventListener("click", () => decide(true));
+        starActions.querySelector(".reject-stars").addEventListener("click", () => decide(false));
       }
-      const handwritingRun = vocabState.handwriting;
-      finishEl.querySelector(".again").addEventListener("click", () => startVocabTest({ handwriting: handwritingRun }));
+      const kind = vocabState.kind;
+      finishEl.querySelector(".again").addEventListener("click", () => startVocabTest({ kind }));
       finishEl.querySelector(".change-setup").addEventListener("click", () => {
         $v(".live").classList.add("hidden");
         $v(".finish").classList.add("hidden");

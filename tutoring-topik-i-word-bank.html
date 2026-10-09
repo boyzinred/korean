@@ -78,6 +78,11 @@
   --handwrite: #E3B448;
   --handwrite-hover: #D2A43A;
   --on-handwrite: #28468A;
+  /* The speaking test's, for the same reason: its own colour, so the three
+     ways of taking the test sit side by side and still read as three. */
+  --speak: #8CC7B0;
+  --speak-hover: #79B59E;
+  --on-speak: #28468A;
 }
 
 html[data-theme='dark'] {
@@ -118,6 +123,9 @@ html[data-theme='dark'] {
   --handwrite: #D4A93F;
   --handwrite-hover: #C29834;
   --on-handwrite: #111827;
+  --speak: #6FAE97;
+  --speak-hover: #5F9D86;
+  --on-speak: #111827;
 }
 
 * { box-sizing: border-box; }
@@ -1247,6 +1255,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 }
 .btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); }
 .btn.handwrite:hover:not(:disabled) { background: var(--handwrite-hover); }
+.btn.speak { color: var(--on-speak); background: var(--speak); }
+.btn.speak:hover:not(:disabled) { background: var(--speak-hover); }
 
 /* ---------------------------------------------------------------------------
    Handwriting test
@@ -1315,6 +1325,43 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
 .hw-answer-ko { font-size: calc(1.6rem * var(--ko-size)); font-weight: 800; line-height: 1.5; }
 .hw-answer-sub { font-size: .9rem; font-weight: 700; opacity: .8; }
 .hw-grade { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* ---------------------------------------------------------------------------
+   Speaking test
+   The handwriting test without the writing area: say the answer, reveal it,
+   and mark yourself.
+--------------------------------------------------------------------------- */
+.sp { display: grid; gap: 12px; }
+.sp-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sp-hint { margin: 0; font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   Star changes
+   What a finished test would do to the stars, listed before anything is
+   written, with one button to keep it and one to throw it away.
+--------------------------------------------------------------------------- */
+.star-changes {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+.star-changes h4 { margin: 0; }
+.star-change-list {
+  display: grid;
+  gap: 6px;
+  max-height: 320px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.star-change-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.star-change-word { font-weight: 800; }
+.star-change-en { opacity: .8; }
+.star-change-move { margin-left: auto; font-weight: 800; white-space: nowrap; }
+.star-change-actions { margin-top: 0; }
 
 .hw-tools .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
 
@@ -2053,7 +2100,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
   <script src="./shared-vocab/word-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-notes.js?v=1.0.0"></script>
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
-  <script src="./shared-vocab/spaced-session.js?v=1.1.0"></script>
+  <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
@@ -2352,8 +2399,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     // Homographs share a prompt (이 is a numeral, a determiner and a particle),
-    // so every word showing the same prompt contributes an accepted answer.
+    // so every word showing the same prompt contributes an accepted answer —
+    // when the answer is a meaning. Two words sharing a meaning (아주 and 매우
+    // are both "very") do not make either one right: that is a retake, below.
     function acceptedAnswers(pool, item, qMode, aMode) {
+      if (aMode !== "english") return answerValues(item, aMode);
       const promptValue = normalizeByMode(displayValue(item, qMode), qMode);
       const matching = pool.filter(other => normalizeByMode(displayValue(other, qMode), qMode) === promptValue);
       return [...new Set((matching.length ? matching : [item]).flatMap(other => answerValues(other, aMode)))];
@@ -2364,6 +2414,21 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       if (!normalizedUser) return false;
       return acceptedAnswers(pool, item, qMode, aMode)
         .some(ans => normalizeByMode(ans, aMode) === normalizedUser);
+    }
+
+    // Answering "very" with 매우 when the question wants 아주 is the right
+    // meaning and the wrong word, not a miss: the question stays open for
+    // another go and nothing is counted. The bank's own English decides what
+    // counts as the same meaning. Returns the word given, or null.
+    function otherWordMeant(item, qMode, aMode, userText) {
+      if (qMode !== "english" || aMode === "english") return null;
+      const given = normalizeByMode(userText, aMode);
+      if (!given) return null;
+      const matches = other => answerValues(other, aMode).some(ans => normalizeByMode(ans, aMode) === given);
+      if (matches(item)) return null;
+      const meaning = normalizeEnglish(item.shownMeaning);
+      return BANK.find(other => other.id !== item.id
+        && normalizeEnglish(other.shownMeaning) === meaning && matches(other)) || null;
     }
 
     function itemAnswerDisplay(item, mode) {
@@ -2497,7 +2562,6 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // The day the word was last carried clean, which is what the third star
     // waits for. Nothing else is stored against a word.
     const cleanDayOf = id => entryOf(id).d || "";
-    const isManual = id => Boolean(entryOf(id).m);
 
     // The one way a rating is written. `manual` marks a star a person chose,
     // and `cleanDay` is stamped by a spaced run that carried the word without
@@ -3240,13 +3304,14 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           <div class="menu-summary" id="menu-count-${id}"></div>
           <p class="menu-error hidden" id="menu-error-${id}">${esc(exercise.emptyMessage)}</p>
           <div class="exercise-menu-actions">
-            <button class="primary-btn" type="button" data-start="${id}">Start exercise</button>
+            <button class="primary-btn" type="button" data-start="${id}">Typed test</button>
             <button class="btn handwrite" type="button" data-start-handwriting="${id}">&#9998; Handwriting test</button>
+            <button class="btn speak" type="button" data-start-speaking="${id}">&#127908; Speaking test</button>
             <button class="btn secondary" type="button" data-export-menu="${id}">Export as .md</button>
             <label class="sr-only" for="menu-sep-${id}">Separator between question and answer</label>
             <select class="export-sep" id="menu-sep-${id}">${SEPARATORS.map(sep => `<option value="${sep.key}">Separator: ${esc(sep.label)}</option>`).join("")}</select>
           </div>
-          <p class="menu-note">Handwriting test: write each word in Korean on the screen with a finger or a pen, reveal the answer, and mark yourself. The question comes from the English or romanization you ticked; the Answer in setting sits it out.</p>
+          <p class="menu-note">Typed test: type each answer in the language the question asks for. Handwriting test: write each word in Korean with a finger or a pen, reveal the answer, and mark yourself. Speaking test: say each word in Korean, reveal the answer, and mark yourself. Handwriting and speaking always answer in Korean, so their questions come from the English or romanization you ticked.</p>
         </div>`;
     }
 
@@ -3284,7 +3349,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <div class="finish-panel" id="finish-${id}">
               <span class="prompt-label" id="finish-kicker-${id}">Exercise complete</span>
               <p class="finish-headline" id="final-score-${id}"></p>
-              <p class="menu-summary hidden" id="stars-${id}"></p>
+              <div class="menu-summary hidden" id="stars-${id}"></div>
               <div class="finish-block export-block hidden" id="export-${id}">
                 <div class="export-head">
                   <h4>Words to review</h4>
@@ -3356,8 +3421,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
             <li>A miss drops it a rung and brings it round sooner.</li>
             <li>Stars: ★ got there in the end · ★★ never missed · ★★★ clean on a later day than the last.</li>
             <li>Only an answer in Korean can raise a star. Repetitions and the retry switch sit this one out.</li>
+            <li>Star changes are listed at the end, to confirm or reject.</li>
           </ul>`
-        : "Every word is asked the same number of times, in the order the run shuffled them into. Nothing is written to the stars.";
+        : "Every word is asked the same number of times, in the order the run shuffled them into. Stars follow the spaced run's rules — ★★ never missed, ★★★ clean on a later day, a miss takes a rung off, only an answer in Korean raises one — and are shown at the end to confirm or reject.";
     }
 
     function refreshCount(exerciseId) {
@@ -3415,7 +3481,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         const start = event.target.closest("[data-start]");
         if (start) { startQuiz(start.dataset.start); return; }
         const startHandwriting = event.target.closest("[data-start-handwriting]");
-        if (startHandwriting) { startQuiz(startHandwriting.dataset.startHandwriting, { handwriting: true }); return; }
+        if (startHandwriting) { startQuiz(startHandwriting.dataset.startHandwriting, { kind: "handwriting" }); return; }
+        const startSpeaking = event.target.closest("[data-start-speaking]");
+        if (startSpeaking) { startQuiz(startSpeaking.dataset.startSpeaking, { kind: "speaking" }); return; }
+        const decideStars = event.target.closest("[data-stars]");
+        if (decideStars) { decideStarChanges(decideStars.dataset.stars, decideStars.dataset.keep === "1"); return; }
         const exportMenu = event.target.closest("[data-export-menu]");
         if (exportMenu) { exportSelection(exportMenu.dataset.exportMenu, exportMenu); return; }
         const countCorrect = event.target.closest("[data-count-correct]");
@@ -3471,7 +3541,9 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     }
 
     function startQuiz(exerciseId, options) {
-      const handwriting = Boolean(options && options.handwriting);
+      const kind = (options && options.kind) || "typed";
+      // Handwriting and speaking both answer in Korean.
+      const korean = kind !== "typed";
       const exercise = EXERCISES.find(e => e.id === exerciseId);
       // Shuffled up front, so a run never follows the order the words were
       // listed, pasted, or sorted in — and the cap takes a random slice.
@@ -3497,15 +3569,15 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       // The modes decide what a question looks like, so the ordering needs
       // them: each copy of a word is tagged with its own direction first, and
       // the spacing pass then keeps identical-looking questions apart.
-      // A handwritten answer is always Korean — writing out "person" by hand is
-      // not the practice this is for — so the run keeps the ticked question
-      // languages other than Korean and sets the answer side itself.
+      // A handwritten or spoken answer is always Korean — writing out "person"
+      // by hand is not the practice this is for — so the run keeps the ticked
+      // question languages other than Korean and sets the answer side itself.
       const questionModes = checkedValues(`${exerciseId}-qlang`)
-        .filter(mode => !handwriting || mode !== "korean");
-      const answerModes = handwriting ? ["korean"] : checkedValues(`${exerciseId}-alang`);
+        .filter(mode => !korean || mode !== "korean");
+      const answerModes = korean ? ["korean"] : checkedValues(`${exerciseId}-alang`);
       const pairs = modePairs(questionModes, answerModes);
-      if (handwriting && !pairs.length) {
-        error.textContent = "The handwriting test answers in Korean, so tick English or Romanization under Question shows.";
+      if (korean && !pairs.length) {
+        error.textContent = `The ${kind} test answers in Korean, so tick English or Romanization under Question shows.`;
         error.classList.remove("hidden");
         return;
       }
@@ -3520,12 +3592,16 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         return { ...word, questionMode: pair.q, answerMode: pair.a };
       });
 
-      // Only this exercise's previous run is discarded; the others keep theirs.
+      // Only this exercise's previous run is discarded; the others keep theirs,
+      // and an undecided change list from the last run is dropped with it.
       clearTimer(STATES.get(exerciseId));
+      FINISHED.delete(exerciseId);
       const state = {
         exerciseId,
         mode,
-        handwriting,
+        kind,
+        handwriting: kind === "handwriting",
+        speaking: kind === "speaking",
         pool: words,
         questions: spacedOrder(tagged, word => questionKeys(word, word.questionMode, word.answerMode)),
         index: 0,
@@ -3545,7 +3621,10 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         questionMode: pairs[0].q,
         answerMode: pairs[0].a,
         timer: null,
-        label: `${exercise.title} · ${words.length} words`
+        label: `${exercise.title} · ${words.length} words`,
+        // What the run would do to the stars, kept until it is confirmed.
+        stars: { clean: 0 },
+        proposals: []
       };
 
       if (mode === "spaced") {
@@ -3558,7 +3637,6 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
           retireAt: SPACED_RUNGS,
           cap: Math.max(20, words.length * 6)
         });
-        state.stars = { raised: 0, lowered: 0, clean: 0 };
         state.card = null;
         // The verdict waits until the question is left rather than being
         // applied the moment it is answered, so Count as correct still has
@@ -3572,8 +3650,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       document.getElementById(`menu-${exerciseId}`).classList.add("hidden");
       document.getElementById(`quiz-card-${exerciseId}`).classList.remove("hidden");
       showPhase(exerciseId, "live");
-      document.querySelector(`.answer-form[data-exercise="${exerciseId}"]`).classList.toggle("hidden", handwriting);
-      document.getElementById(`hw-${exerciseId}`).classList.toggle("hidden", !handwriting);
+      document.querySelector(`.answer-form[data-exercise="${exerciseId}"]`).classList.toggle("hidden", korean);
+      document.getElementById(`hw-${exerciseId}`).classList.toggle("hidden", !korean);
       document.getElementById(`pool-label-${exerciseId}`).textContent = state.label;
 
       const minutes = Math.max(0, Number(document.getElementById(`menu-timer-${exerciseId}`).value) || 0);
@@ -3697,6 +3775,11 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         showHandwritingPad(exerciseId, item);
         return;
       }
+      if (state.speaking) {
+        document.getElementById(`answer-mode-${exerciseId}`).innerHTML = "Say the answer in <strong>Korean</strong>";
+        showSpeakingPrompt(exerciseId, item);
+        return;
+      }
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
     }
 
@@ -3707,6 +3790,8 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
     // run's stars all treat it the same. A self-marked right answer counts as
     // producing the word in Korean, so it can raise a star.
     const PEN_ONLY_KEY = "korean.handwritingPenOnly";
+    // A finished run whose star changes are still waiting on Confirm or Reject.
+    const FINISHED = new Map();
     const PADS = new Map();
 
     function dropPad(exerciseId) {
@@ -3788,6 +3873,60 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       answerBox.querySelector(".hw-missed").addEventListener("click", () => mark(false));
     }
 
+    // A synonym given for the word asked: say so, clear the box, and leave the
+    // question open. Nothing is logged or scored.
+    function offerRetake(exerciseId, state, item, userAnswer) {
+      const other = otherWordMeant(item, state.questionMode, state.answerMode, userAnswer);
+      if (!other) return false;
+      const feedback = document.getElementById(`feedback-${exerciseId}`);
+      feedback.className = "feedback";
+      feedback.innerHTML = `<strong>${esc(other.shownKorean)}</strong> also means “${esc(other.shownMeaning)}”, but this question wants a different word. Try again — this one doesn’t count.`;
+      const input = document.getElementById(`input-${exerciseId}`);
+      input.value = "";
+      requestAnimationFrame(() => input.focus({ preventScroll: true }));
+      return true;
+    }
+
+    // ------------------------------------------------------------ speaking
+    // The handwriting test without the writing area. Nothing listens: the
+    // learner says the answer, reveals it, and marks themselves; the mark goes
+    // through answer() like a typed one, so the score, the retry queue and the
+    // stars all treat it the same.
+    function showSpeakingPrompt(exerciseId, item) {
+      const zone = document.getElementById(`hw-${exerciseId}`);
+      zone.innerHTML = '<div class="sp">'
+        + '<p class="sp-hint">Say the word in Korean, then reveal the answer and mark yourself.</p>'
+        + '<div class="sp-tools"><button class="btn primary sp-reveal" type="button">Reveal answer</button></div>'
+        + '<div class="hw-answer hidden" aria-live="polite">'
+        + '<span class="word-note-label">Answer</span>'
+        + '<span class="hw-answer-ko">' + esc(itemAnswerDisplay(item, "korean")) + '</span>'
+        + '<span class="hw-answer-sub">' + esc(displayValue(item, "romanization")) + ' · ' + esc(displayValue(item, "english")) + '</span>'
+        + '<div class="hw-grade">'
+        + '<button class="btn positive hw-got" type="button">✓ Got it</button>'
+        + '<button class="btn warning hw-missed" type="button">✗ Missed it</button>'
+        + '</div></div>'
+        + '</div>';
+      const reveal = zone.querySelector(".sp-reveal");
+      const answerBox = zone.querySelector(".hw-answer");
+      reveal.addEventListener("click", () => {
+        const state = STATES.get(exerciseId);
+        if (!state || state.answered || state.finished) return;
+        reveal.classList.add("hidden");
+        answerBox.classList.remove("hidden");
+        answerBox.querySelector(".hw-got").focus({ preventScroll: true });
+        answerBox.scrollIntoView({ block: "nearest" });
+      });
+      const mark = correct => {
+        const state = STATES.get(exerciseId);
+        if (!state || state.answered || state.finished) return;
+        answerBox.querySelector(".hw-grade").classList.add("hidden");
+        answer(exerciseId, "(spoken)", correct);
+      };
+      answerBox.querySelector(".hw-got").addEventListener("click", () => mark(true));
+      answerBox.querySelector(".hw-missed").addEventListener("click", () => mark(false));
+      requestAnimationFrame(() => reveal.focus({ preventScroll: true }));
+    }
+
     function pushResult(state, item, userAnswer, correct, masteredAfterRetry) {
       state.results.push({
         id: item.id,
@@ -3797,6 +3936,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         full: fullEntry(item),
         userAnswer,
         attempts: [...state.currentAttempts],
+        answerMode: state.answerMode,
         correct,
         masteredAfterRetry
       });
@@ -3807,6 +3947,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
       if (!state || state.answered || state.finished) return;
       const item = currentItem(state);
       if (!item) return;
+      if (typeof selfMark !== "boolean" && offerRetake(exerciseId, state, item, userAnswer)) return;
       const correct = typeof selfMark === "boolean"
         ? selfMark
         : isCorrect(state.pool, item, state.questionMode, state.answerMode, userAnswer);
@@ -3819,7 +3960,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         page: "topik-i", exercise: "vocab", item: item.id,
         ko: item.shownKorean, en: item.shownMeaning,
         correct, attempt: state.currentAttempts.length, given: userAnswer,
-        mode: state.handwriting ? "handwriting" : "typed",
+        mode: state.kind,
         dir: STUDY_LANG[state.questionMode] + ">" + STUDY_LANG[state.answerMode],
         run: state.mode === "spaced" ? "spaced" : (state.repeatWrong ? "repeat" : "regular"),
         extra: { exercise: exerciseId }
@@ -3837,7 +3978,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         // A handwritten miss gets the same Count as correct as a typed one, so
         // a mis-tapped Missed it can still be put right.
         feedback.innerHTML = `<div class="feedback-head"><span>Not quite. Correct answer: <span class="answer-key">${esc(itemAnswerDisplay(item, state.answerMode))}</span></span><button class="btn secondary" type="button" data-count-correct="${exerciseId}">Count as correct →</button></div><span class="small">Full entry: ${esc(fullEntry(item))}</span>`
-          + (state.handwriting && state.repeatWrong ? '<br><span class="small">This word comes straight back — write it again without looking.</span>' : "");
+          + (state.kind !== "typed" && state.repeatWrong ? `<br><span class="small">This word comes straight back — ${state.speaking ? "say" : "write"} it again without looking.</span>` : "");
         if (state.repeatWrong) {
           state.retryCurrent = true;
         } else {
@@ -3860,32 +4001,68 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         : state.index === state.questions.length - 1;
       next.textContent = state.retryCurrent ? "Retry question" : (lastOne ? "Finish" : "Next");
       next.classList.remove("hidden");
-      if (state.handwriting) {
+      if (state.kind !== "typed") {
         requestAnimationFrame(() => { next.focus({ preventScroll: true }); next.scrollIntoView({ block: "nearest" }); });
         return;
       }
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
     }
 
-    // Writing what a finished card is worth to the word's star. What it is
-    // worth, and what that does to the star it has, are SpacedSession.stars —
-    // the same two rules the reading pages settle their runs with. `clean` is the
-    // run's verdict: a word it never had to ask twice.
-    function settleStar(state, card, clean) {
-      const id = card.item.id;
+    // What a word's run is worth to its star. What it is worth, and what that
+    // does to the star it has, are SpacedSession.stars — the same two rules the
+    // reading pages settle their runs with. Nothing is written here: the
+    // change is kept as a proposal, listed when the run ends, and written only
+    // once it is confirmed. A star set by hand moves like any other. A word
+    // never once answered right has earned nothing, not even the bottom rung,
+    // so it can fall but not rise.
+    function proposeStar(state, item, clean, produced, solved) {
+      const id = item.id;
       const level = ratingOf(id);
       const stamp = today();
       const earned = window.SpacedSession.stars.earned(clean, cleanDayOf(id), stamp);
-      const next = window.SpacedSession.stars.after(level, earned,
-        { produced: card.produced, manual: isManual(id) });
-
+      let next = window.SpacedSession.stars.after(level, earned, { produced });
+      if (!solved) next = Math.min(next, level);
       if (clean) state.stars.clean += 1;
-      if (next > level) state.stars.raised += 1;
-      if (next < level) state.stars.lowered += 1;
-      setRating(id, next, {
-        cleanDay: clean ? stamp : "",
-        manual: next === level ? undefined : false
+      state.proposals.push({ item, from: level, to: next, cleanDay: clean ? stamp : "" });
+    }
+
+    // `clean` is the spaced run's verdict: a word it never had to ask twice.
+    function settleStar(state, card, clean) {
+      proposeStar(state, card.item, clean, Boolean(card.produced), card.retired);
+    }
+
+    // A regular run is judged the same way, word by word over every time it
+    // came round: clean if each first try was right, produced if it was ever
+    // answered right in Korean, solved if it came good in the end.
+    function settleRegular(state) {
+      const tallies = new Map();
+      state.results.forEach(result => {
+        const tally = tallies.get(result.id) || { item: result.item, clean: true, solved: true, produced: false };
+        const right = result.correct || result.masteredAfterRetry;
+        if (!result.correct) tally.clean = false;
+        if (!right) tally.solved = false;
+        if (right && result.answerMode === "korean") tally.produced = true;
+        tallies.set(result.id, tally);
       });
+      tallies.forEach(tally => proposeStar(state, tally.item, tally.clean, tally.produced, tally.solved));
+    }
+
+    const starText = level => level ? "★".repeat(level) : "no star";
+
+    function decideStarChanges(exerciseId, keep) {
+      const state = FINISHED.get(exerciseId);
+      const box = document.getElementById(`stars-${exerciseId}`);
+      const actions = box && box.querySelector(".star-change-actions");
+      if (!state || !actions) return;
+      if (keep) {
+        state.proposals.forEach(change => setRating(change.item.id, change.to, {
+          cleanDay: change.cleanDay,
+          manual: change.to === change.from ? undefined : false
+        }));
+        paintAllRatings(document.getElementById("referenceTables"));
+      }
+      FINISHED.delete(exerciseId);
+      actions.outerHTML = `<p><strong>${keep ? "Star changes saved." : "Star changes rejected — nothing was written."}</strong></p>`;
     }
 
     // The words a run never got to the top of the ladder — because the timer
@@ -3976,6 +4153,7 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         pushResult(state, item, state.currentAttempts[state.currentAttempts.length - 1].userAnswer, false, false);
         state.retryCurrent = false;
       }
+      if (state.mode !== "spaced") settleRegular(state);
       state.finished = true;
       clearTimer(state);
       dropPad(exerciseId);
@@ -4003,21 +4181,27 @@ html[data-theme="light"] .roman { color: #28468A; opacity: 1; }
         ? `First-try score <strong>${state.score} / ${answered}</strong><span class="finish-sub">${esc(tail)}</span>`
         : "No questions were answered.";
 
-      // What the run wrote to the tables above, said plainly, because a star
-      // moving on its own is the sort of thing a page should own up to.
+      // What the run would do to the tables above, word by word, and nothing
+      // written until it is confirmed: a star moving on its own is the sort of
+      // thing a page should ask about first.
       const starNote = document.getElementById(`stars-${exerciseId}`);
-      if (state.mode === "spaced" && stats) {
-        const moved = [];
-        if (state.stars.raised) moved.push(`${state.stars.raised} raised`);
-        if (state.stars.lowered) moved.push(`${state.stars.lowered} lowered`);
-        starNote.classList.remove("hidden");
-        starNote.innerHTML = stats.asked
-          ? `<strong>Stars</strong> — ${state.stars.clean} of ${stats.total} carried clean · ${moved.length ? esc(moved.join(", ")) : "nothing moved"}. Only an answer given in Korean can raise a star; only a miss can lower one, by a rung; a star you set by hand stays where you put it.`
-          : "<strong>Stars</strong> — nothing was asked, so nothing moved.";
-        paintAllRatings(document.getElementById("referenceTables"));
+      const proposals = state.proposals;
+      const changes = proposals.filter(change => change.to !== change.from);
+      const dated = proposals.filter(change => change.to === change.from && change.cleanDay).length;
+      starNote.classList.remove("hidden");
+      if (!proposals.length) {
+        starNote.innerHTML = "<strong>Stars</strong> — nothing was answered, so nothing moves.";
       } else {
-        starNote.classList.add("hidden");
-        starNote.innerHTML = "";
+        FINISHED.set(exerciseId, state);
+        starNote.innerHTML = `<div class="star-changes"><h4>Star changes</h4>`
+          + (changes.length
+            ? `<ul class="star-change-list">${changes.map(change => `<li><span class="star-change-word">${esc(change.item.shownKorean)}</span><span class="star-change-en">${esc(change.item.shownMeaning)}</span><span class="star-change-move">${starText(change.from)} → ${starText(change.to)}</span></li>`).join("")}</ul>`
+            : "<p>No star moves.</p>")
+          + `<p>${state.stars.clean} of ${proposals.length} words carried clean${dated ? ` — ${dated} that keep their stars are dated today, toward ★★★ on a later day` : ""}. Only an answer given in Korean can raise a star; only a miss can lower one, by a rung. Stars you set by hand move too.</p>`
+          + `<div class="finish-actions star-change-actions">`
+          + `<button class="primary-btn" type="button" data-stars="${exerciseId}" data-keep="1">Confirm these changes</button>`
+          + `<button class="secondary-btn" type="button" data-stars="${exerciseId}" data-keep="0">Reject these changes</button>`
+          + `</div></div>`;
       }
 
       renderExport(exerciseId, state);

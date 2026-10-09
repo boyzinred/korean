@@ -55,15 +55,16 @@
 
   The stars
   ---------
-  A page decides for itself what a finished card is worth, but all three pages
-  that use this decide it the same way, so the two rules live here rather than
+  A page decides for itself what a finished card is worth, but every page
+  that uses this decides it the same way, so the two rules live here rather than
   in three copies:
 
     SpacedSession.stars.earned(clean, lastCleanDay, today)  -> 1, 2 or 3
-    SpacedSession.stars.after(level, earned, { produced, manual })  -> the level
+    SpacedSession.stars.after(level, earned, { produced })  -> the level
 
   What a page still owns is its own store: which word the card was, where the
-  rating is kept, and when it is written.
+  rating is kept, and when it is written — which on every page is only after
+  the learner has seen the changes and confirmed them.
 */
 (function (global) {
   "use strict";
@@ -240,7 +241,7 @@
     return lastCleanDay && lastCleanDay !== stamp ? STAR_RUNGS : 2;
   }
 
-  /* And where that leaves the star the word already had. Three rules:
+  /* And where that leaves the star the word already had. Two rules:
 
        a run may only raise a star on the strength of an answer given in the
          language being learnt, since the higher rungs are meant to mean
@@ -248,12 +249,15 @@
        only a miss can take a star down, and it takes it down one rung rather
          than resetting it — carrying a three-star word clean a second time in
          one evening proves less than the third star did, but it disproves
-         nothing, and must not cost the word anything;
-       a star set by hand is left exactly where it was put. */
+         nothing, and must not cost the word anything.
+
+     A star set by hand follows the same two rules. Nothing a run decides is
+     written until the learner has confirmed it, so a hand-set star no longer
+     needs protecting from the run. */
   function starAfter(level, earned, options) {
     const settings = options || {};
     if (earned > level) return settings.produced ? earned : level;
-    if (earned === 1 && level > 1) return settings.manual ? level : level - 1;
+    if (earned === 1 && level > 1) return level - 1;
     return level;
   }
 
