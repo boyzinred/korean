@@ -1793,8 +1793,12 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        the quiz's English and its breakdown into the parts it is built from
        (공적개발원조 = 공적 + 개발 + 원조), which is the Parts column and the
        ＋ note. The quiz lists no parts for 센서 and 레이더.
+       Week 3 is the class slide of policy-document words; a two-syllable
+       Sino-Korean term is taken apart into its two hanja, and each term
+       carries the slide's example phrase.
 
-       Word fields  [ko, en, parts]   parts: [[ko, en], ...]
+       Word fields  [ko, en, parts, example]
+                    parts: [[ko, en], ...]   example: [ko, en], optional
     ----------------------------------------------------------------------- */
     /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const WEEKS = [
@@ -1829,6 +1833,22 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         ["데이터센터", "Data Center", [["데이터", "data"], ["센터", "center"]]],
         ["통합 운영 센터", "Integrated Operations Center", [["통합", "integration"], ["운영", "operation"], ["센터", "center"]]],
         ["기후 변화", "Climate Change", [["기후", "climate"], ["변화", "change"]]]
+      ] },
+      { number: 3, words: [
+        ["구축", "build / establish", [["구", "構 · structure"], ["축", "築 · build"]], ["AI 고속도로 구축", "building an AI highway"]],
+        ["확충", "expand / strengthen", [["확", "擴 · expand"], ["충", "充 · fill"]], ["인프라 확충", "expanding infrastructure"]],
+        ["확보", "secure", [["확", "確 · firm / certain"], ["보", "保 · keep"]], ["인재·기술 확보", "securing talent and technology"]],
+        ["육성", "foster / develop", [["육", "育 · raise"], ["성", "成 · make / grow"]], ["스타트업 육성", "fostering startups"]],
+        ["추진", "promote / implement", [["추", "推 · push"], ["진", "進 · advance"]], ["사업 추진", "pushing a project forward"]],
+        ["전환", "transformation / transition", [["전", "轉 · turn"], ["환", "換 · change / exchange"]], ["AI 전환(AX)", "AI transformation (AX)"]],
+        ["실증", "demonstration / validation", [["실", "實 · real / actual"], ["증", "證 · prove"]], ["기술 실증", "demonstrating a technology in practice"]],
+        ["상용화", "commercialization", [["상용", "commercial use"], ["-화", "-ization"]], ["제품 상용화", "commercializing a product"]],
+        ["사업화", "commercialization / deployment", [["사업", "project / business"], ["-화", "-ization"]], ["R&D 성과 사업화", "turning R&D results into a business"]],
+        ["확산", "diffusion / scale-up", [["확", "擴 · expand"], ["산", "散 · scatter / spread"]], ["AI 활용 확산", "spreading the use of AI"]],
+        ["선점", "gain early leadership", [["선", "先 · first / ahead"], ["점", "占 · occupy"]], ["기술 선점", "taking the lead in a technology first"]],
+        ["생태계", "ecosystem", [["생태", "ecology"], ["-계", "system / world"]], ["산업생태계", "industrial ecosystem"]],
+        ["민관협업", "public-private cooperation", [["민관", "the public (people) and the government"], ["협업", "collaboration"]], ["민·관 협력", "public-private cooperation"]],
+        ["기반", "foundation / infrastructure", [["기", "基 · base"], ["반", "盤 · board / foundation"]], ["신뢰 기반", "a foundation of trust"]]
       ] }
     ];
 
@@ -1864,9 +1884,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
        its stars follow it if it comes back in a later week. */
     const WORDS = [];
     WEEKS.forEach(week => {
-      week.words.forEach(([ko, en, parts]) => {
+      week.words.forEach(([ko, en, parts, example]) => {
         WORDS.push({
-          ko, en, parts,
+          ko, en, parts, example,
           id: romanize(ko).replace(/\s+/g, "_"),
           week: week.number,
           groupLabel: "Week " + week.number,
@@ -2157,7 +2177,16 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         const empty = '<tr class="vocab-note-row" data-note-group="' + esc(noteId) + '" hidden><td colspan="5">'
           + '<div class="word-note"><p class="word-note-usage">A loanword: the quiz does not split this one into parts.</p></div>'
           + '</td></tr>';
-        return main + (entry.parts.length ? parts : empty);
+        /* The class's example phrase, where it gives one, closes the dropdown. */
+        const example = entry.example
+          ? '<tr class="vocab-note-row" data-note-group="' + esc(noteId) + '" hidden><td colspan="5">'
+            + '<div class="word-note"><div class="word-note-example"><span class="word-note-label">Example</span>'
+            + '<p class="word-note-ko">' + esc(entry.example[0]) + '</p>'
+            + '<p class="roman">' + esc(romanize(entry.example[0])) + '</p>'
+            + '<p class="word-note-en">' + esc(entry.example[1]) + '</p></div></div>'
+            + '</td></tr>'
+          : "";
+        return main + (entry.parts.length ? parts : empty) + example;
       }
 
       /* ---- blur, remembered per section so each group keeps its own state --- */

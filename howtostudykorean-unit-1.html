@@ -573,7 +573,7 @@ td .roman { opacity: .78; }
 /* The example box spends 4px on its coloured rail and 14px on padding before
    its text starts, so the plain paragraphs take the same 18px and every line
    in a note begins on one left edge. */
-.word-note-usage, .word-note-tags { padding-left: 18px; }
+.word-note-usage, .word-note-tags, .word-note > .word-note-label { padding-left: 18px; }
 .word-note-usage { margin: 0; font-weight: 600; }
 .word-note-example {
   display: grid;
@@ -594,6 +594,12 @@ td .roman { opacity: .78; }
 .word-note-example p { margin: 0; }
 .word-note-ko { font-weight: 800; }
 .word-note-en { opacity: .82; }
+.word-note-form {
+  margin-top: 4px !important;
+  font-size: .84rem;
+  font-weight: 600;
+  opacity: .85;
+}
 .word-note-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .word-tag {
   padding: 3px 9px;
@@ -1776,6 +1782,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
   <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
+  <script src="./shared-vocab/htsk-unit-1-notes.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2854,8 +2861,24 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         const tags = '<div class="word-note-tags">'
           + '<span class="word-tag">' + esc(entry.groupLabel) + '</span>'
           + '</div>';
-        /* A note shows only what the lesson itself gives: most words carry
-           nothing past their gloss, so most notes are just the tag. */
+        /* The note opens with the word's context from htsk-unit-1-notes.js,
+           laid out like the TOPIK word bank's: how the word is used, and one
+           example with what happened to its words. What the lesson itself
+           gives follows below a rule. */
+        const context = (window.HtskUnit1Notes || { NOTES: {} }).NOTES[entry.id];
+        const contextHtml = context
+          ? '<p class="word-note-usage">' + esc(context.note) + '</p>'
+            + (context.example
+                ? '<div class="word-note-example"><span class="word-note-label">Example</span>'
+                  + '<p class="word-note-ko">' + esc(context.example.ko) + '</p>'
+                  + '<p class="roman">' + esc(romanize(context.example.ko)) + '</p>'
+                  + '<p class="word-note-en">' + esc(context.example.en) + '</p>'
+                  + (context.example.form
+                      ? '<p class="word-note-form"><strong>Form:</strong> ' + esc(context.example.form) + '</p>'
+                      : "")
+                  + '</div>'
+                : "")
+          : "";
         const pairs = (label, list) => (list || []).length
           ? '<div class="word-note-example"><span class="word-note-label">' + label + '</span>'
             + list.map(([ko, en]) => '<p class="word-note-ko">' + esc(ko) + '</p>'
@@ -2863,10 +2886,14 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
               + '<p class="word-note-en">' + esc(en) + '</p>').join("")
             + '</div>'
           : "";
-        const note = '<div class="word-note">'
-          + (entry.note ? '<p class="word-note-usage">' + esc(entry.note) + '</p>' : "")
+        const lesson = (entry.note ? '<p class="word-note-usage">' + esc(entry.note) + '</p>' : "")
           + pairs("Common usages", entry.usages)
-          + pairs("Examples", entry.examples)
+          + pairs("Examples", entry.examples);
+        const note = '<div class="word-note">'
+          + contextHtml
+          + (contextHtml && lesson ? '<hr class="word-note-rule">'
+              + '<span class="word-note-label">From the lesson</span>' : "")
+          + lesson
           + tags + '</div>';
         return main + '<tr class="vocab-note-row" id="' + esc(noteId) + '" hidden><td colspan="6">' + note + '</td></tr>';
       }
