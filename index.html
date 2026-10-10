@@ -453,11 +453,9 @@ textarea:disabled,
   cursor: not-allowed;
   opacity: 1;
 }
-.btn,
 .primary-btn,
 .secondary-btn,
 .restart-top-btn,
-.mode-btn,
 .choice,
 .blur-toggle {
   min-height: 56px;
@@ -467,39 +465,81 @@ textarea:disabled,
   font-weight: 800;
   transition: var(--transition);
 }
-.btn:hover:not(:disabled),
 .primary-btn:hover:not(:disabled),
 .secondary-btn:hover:not(:disabled),
-.mode-btn:hover:not(:disabled),
 .choice:hover:not(:disabled),
 .blur-toggle:hover:not(:disabled) {
   transform: scale(1.04);
 }
-.primary-btn,
-.btn.primary {
+.primary-btn {
   color: var(--on-primary);
   background: var(--primary);
 }
-.primary-btn:hover:not(:disabled),
-.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
-.secondary-btn,
-.btn.positive {
+.primary-btn:hover:not(:disabled) { background: var(--primary-hover); }
+.secondary-btn {
   color: var(--on-secondary);
   background: var(--secondary);
 }
-.btn.warning { color: var(--on-accent); background: var(--accent); }
-.btn.secondary,
 .restart-top-btn,
-.mode-btn,
 .blur-toggle {
   color: var(--surface-text);
   background: var(--surface-muted);
 }
-.mode-btn.active,
 .blur-toggle[aria-pressed="true"] {
   color: var(--on-primary);
   background: var(--primary);
 }
+
+/* Tactile buttons: flat, two colors. A face and a darker lip under it that
+   the face sinks into on click. One size (sm) for the whole page. Each
+   variant only sets --btn-bg and --btn-ink. */
+.btn,
+.mode-btn,
+.utility-button {
+  --btn-bg: var(--surface);
+  --btn-ink: var(--surface-text);
+  --btn-edge: color-mix(in srgb, var(--btn-bg) 72%, #000);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  color: var(--btn-ink);
+  background: var(--btn-bg);
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 var(--btn-edge);
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+.btn:hover:not(:disabled),
+.mode-btn:hover:not(:disabled),
+.utility-button:hover {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 var(--btn-edge);
+}
+.btn:active:not(:disabled),
+.mode-btn:active:not(:disabled),
+.utility-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--btn-edge);
+}
+.btn:disabled,
+.mode-btn:disabled { opacity: .55; cursor: not-allowed; }
+/* Dark mode's surface is the dashboard's color darkened, so its lip would
+   vanish; the next step up keeps the key visible. */
+:where(html[data-theme='dark']) .btn,
+:where(html[data-theme='dark']) .mode-btn { --btn-bg: var(--muted-strong); }
+.btn.primary,
+.mode-btn.active { --btn-bg: var(--primary); --btn-ink: var(--on-primary); }
+.btn.positive { --btn-bg: var(--secondary); --btn-ink: var(--on-secondary); }
+.btn.warning { --btn-bg: var(--accent); --btn-ink: var(--on-accent); }
+.btn-icon { width: 14px; height: 14px; flex: none; fill: currentColor; }
 .choice {
   width: 100%;
   min-height: 58px;
@@ -550,20 +590,13 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   display: grid;
   place-items: center;
   padding: 0;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
+  --btn-bg: var(--primary);
+  --btn-ink: var(--on-primary);
   border-radius: 50%;
   font-size: 1.1rem;
   font-weight: 800;
-  text-decoration: none;
-  transition: var(--transition);
 }
-.utility-button:hover {
-  background: var(--primary-hover);
-  transform: scale(1.05);
-}
-.utility-button.top { color: var(--on-accent); background: var(--accent); }
+.utility-button.top { --btn-bg: var(--accent); --btn-ink: var(--on-accent); }
 
 .hidden { display: none !important; }
 
@@ -780,7 +813,6 @@ html[data-theme='dark'] {
   gap: 10px;
   margin-top: 18px;
 }
-.greeting-actions .btn { min-height: 48px; display: inline-flex; align-items: center; text-decoration: none; }
 .name-form {
   display: flex;
   flex-wrap: wrap;
@@ -790,7 +822,6 @@ html[data-theme='dark'] {
 }
 .name-form label { font-weight: 700; }
 .name-form input { width: min(260px, 100%); min-height: 48px; }
-.name-form .btn { min-height: 48px; }
 
 .dashboard {
   display: grid;
@@ -811,11 +842,7 @@ html[data-theme='dark'] {
   flex-wrap: wrap;
   gap: 6px;
 }
-.dash-range .mode-btn { min-height: 44px; padding: 0 14px; }
-.dash-range .mode-btn:hover:not(:disabled) { transform: none; }
 .dash-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.dash-actions .btn { min-height: 44px; display: inline-flex; align-items: center; text-decoration: none; }
-.dash-actions .btn:hover:not(:disabled) { transform: none; }
 .dash-notice {
   padding: 14px 16px;
   border-left: 6px solid var(--accent);
@@ -1055,16 +1082,7 @@ html[data-theme='dark'] {
 .dash-table .muted { color: var(--dash-ink-soft); }
 .dash-table a { font-weight: 700; }
 .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
-.row-actions .btn {
-  min-height: 36px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 12px;
-  font-size: .82rem;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.row-actions .btn:hover:not(:disabled) { transform: none; }
+.row-actions .btn { padding: 0 12px; }
 
 /* Stars: one stacked bar per page, no star → three stars. */
 .star-bar {
@@ -1129,7 +1147,6 @@ html[data-theme='dark'] {
 .dash-customize .name-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .dash-customize .name-row input { width: min(280px, 100%); min-height: 48px; }
 .dash-customize .form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.dash-customize .form-actions .btn { min-height: 48px; }
 
 /* One tooltip for every mark, on hover and on focus. */
 .dash-tip {
@@ -1163,7 +1180,6 @@ html[data-theme='dark'] {
   .dash-actions .btn,
   .row-actions .btn,
   .greeting-actions .btn { width: auto; }
-  .dash-range .mode-btn { padding: 0 12px; }
   .dash-bar { align-items: stretch; }
   /* Each page becomes a small card: name and buttons, stars, then numbers. */
   .pages-table thead { display: none; }
@@ -1225,7 +1241,7 @@ html[data-theme='dark'] {
       <div class="dash-bar">
         <div class="dash-range" role="group" aria-label="Time range" id="dashRange"></div>
         <div class="dash-actions">
-          <a class="btn primary" id="dashReview" href="./progress-review.html">Review weak words</a>
+          <a class="btn primary" id="dashReview" href="./progress-review.html"><span>Review weak words</span><svg class="btn-icon" viewBox="0 0 256 256" aria-hidden="true"><path d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"/></svg></a>
           <button class="btn secondary" type="button" id="dashCustomizeOpen" aria-expanded="false" aria-controls="dashCustomize">Customize</button>
         </div>
       </div>
@@ -1331,6 +1347,9 @@ html[data-theme='dark'] {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
+
+    // Phosphor's bold arrow-right, for buttons that take you to another page.
+    const ARROW = '<svg class="btn-icon" viewBox="0 0 256 256" aria-hidden="true"><path d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"/></svg>';
 
     function slugify(text) {
       return String(text)
@@ -1553,7 +1572,7 @@ html[data-theme='dark'] {
       $("page-title").textContent = "Hi there,";
       $("greetingLine").textContent = "Pick a page below to study. Sign in and this page becomes your dashboard: streaks, time, accuracy and the words you keep missing.";
       $("greetingExtra").innerHTML = '<div class="greeting-actions">'
-        + '<a class="btn primary" href="./login.html">Sign in</a>'
+        + '<a class="btn primary" href="./login.html"><span>Sign in</span>' + ARROW + '</a>'
         + '<a class="btn secondary" href="./progress-review.html">Review weak words</a></div>';
       $("dashboard").classList.add("hidden");
       $("dashboardLink").classList.add("hidden");
@@ -2045,7 +2064,7 @@ html[data-theme='dark'] {
           + '<td class="num hide-narrow" data-label="Time">' + fmtDuration(page.ms) + '</td>'
           + '<td class="cell-actions"><div class="row-actions">'
           + (isBank ? '<a class="btn secondary" href="./progress-review.html?bank=' + encodeURIComponent(page.id) + '">Review</a>' : "")
-          + '<a class="btn primary" href="./' + esc(meta.href) + '">Open</a></div></td></tr>';
+          + '<a class="btn primary" href="./' + esc(meta.href) + '"><span>Open</span>' + ARROW + '</a></div></td></tr>';
       }).join("");
       $("dashPages").innerHTML = legend + '<div class="dash-table-wrap"><table class="dash-table pages-table"><thead><tr>'
         + '<th>Page</th><th>Stars</th><th class="num">Questions</th><th class="num">Right 1st</th><th class="num hide-narrow">Time</th><th><span class="sr-only">Actions</span></th>'

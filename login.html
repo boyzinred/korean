@@ -317,9 +317,9 @@ details.section:not([open]) > summary::after { content: "Expand"; }
   border-radius: var(--radius-md);
   font-weight: 800;
   transition: var(--transition);
+  --btn-bg: var(--surface-muted);
 }
-.blur-toggle:hover { transform: scale(1.04); }
-.blur-toggle[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); }
+.blur-toggle[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 
 .table-wrap {
   overflow: auto;
@@ -459,9 +459,9 @@ td .roman { opacity: .78; }
   border-radius: 4px;
   font-weight: 800;
   transition: var(--transition);
+  --btn-bg: initial;
 }
-.mode-btn:hover { transform: scale(1.04); }
-.mode-btn.active { color: var(--on-primary); background: var(--primary); }
+.mode-btn.active { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 .ref-filter { flex: 1 1 15rem; max-width: 24rem; }
 .section-toolbar {
   display: flex;
@@ -823,17 +823,14 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
   transition: var(--transition);
 }
-.btn:hover:not(:disabled) { transform: scale(1.04); }
 .btn:disabled { opacity: .55; cursor: not-allowed; }
-.btn.primary { color: var(--on-primary); background: var(--primary); }
-.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
-.btn.positive { color: var(--on-secondary); background: var(--secondary); }
-.btn.secondary { color: var(--surface-text); background: var(--surface-muted); }
-.btn.warning { color: var(--on-primary); background: var(--accent); }
+.btn.primary { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
+.btn.positive { color: var(--on-secondary); background: var(--secondary); --btn-bg: var(--secondary); }
+.btn.secondary { color: var(--surface-text); background: var(--surface-muted); --btn-bg: var(--surface-muted); }
+.btn.warning { color: var(--on-primary); background: var(--accent); --btn-bg: var(--accent); }
 .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
 
-.btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); }
-.btn.handwrite:hover:not(:disabled) { background: var(--handwrite-hover); }
+.btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); --btn-bg: var(--handwrite); }
 
 /* ---------------------------------------------------------------------------
    Handwriting test
@@ -1010,8 +1007,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   text-align: left;
   transition: var(--transition);
   cursor: pointer;
+  --btn-bg: var(--surface-muted);
 }
-.choice:hover:not(.is-locked) { color: var(--on-primary); background: var(--primary); transform: scale(1.01); }
+.choice:hover:not(.is-locked) { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 .choice.is-locked { cursor: default; }
 .choice-letter {
   flex: 0 0 auto;
@@ -1025,9 +1023,9 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
 }
 .choice-text { min-width: 0; }
-.choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); --btn-bg: var(--secondary); }
 .choice.correct .choice-letter { color: var(--surface-text); }
-.choice.wrong { color: var(--on-primary); background: var(--accent); border-color: var(--accent); }
+.choice.wrong { color: var(--on-primary); background: var(--accent); border-color: var(--accent); --btn-bg: var(--accent); }
 .choice.wrong .choice-letter { color: var(--surface-text); }
 .choice.faded { opacity: .55; }
 
@@ -1389,11 +1387,10 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
   text-decoration: none;
   transition: var(--transition);
+  --btn-bg: var(--primary);
 }
-.utility-button:hover { background: var(--primary-hover); transform: scale(1.05); }
-.utility-button.nav { background: var(--accent); }
+.utility-button.nav { background: var(--accent); --btn-bg: var(--accent); }
 .utility-button[disabled] { opacity: .4; cursor: default; }
-.utility-button[disabled]:hover { background: var(--accent); transform: none; }
 
 /* Quick section navigation */
 .toc-card { padding: 18px 22px; border-bottom: 1px solid var(--border); }
@@ -1559,6 +1556,46 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 .login-card .section-body { max-width: 560px; margin: 0 auto; }
 .login-form { display: grid; gap: 8px; }
 .login-form label { font-weight: 800; }
+
+/* Tactile buttons: flat, two colors. A face and a darker lip under it that
+   the face sinks into on click. A button gets its lip from --btn-bg, which
+   every rule that colors a button sets alongside its background. */
+.btn, .mode-btn, .blur-toggle, .notes-toggle, .expr-toggle, .utility-button,
+.primary-btn, .secondary-btn, .restart-top-btn, .button {
+  --btn-edge: color-mix(in srgb, var(--btn-bg) 72%, #000);
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 var(--btn-edge, transparent);
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+.utility-button { border-radius: 50%; }
+:is(.btn, .mode-btn, .blur-toggle, .notes-toggle, .expr-toggle, .utility-button,
+    .primary-btn, .secondary-btn, .restart-top-btn, .button):hover:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 var(--btn-edge, transparent);
+}
+:is(.btn, .mode-btn, .blur-toggle, .notes-toggle, .expr-toggle, .utility-button,
+    .primary-btn, .secondary-btn, .restart-top-btn, .button):active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--btn-edge, transparent);
+}
+
+/* Answer choices get the same lip. Once answered (.is-locked or disabled)
+   they stay raised but no longer press. */
+.choice {
+  --btn-edge: color-mix(in srgb, var(--btn-bg) 72%, #000);
+  border-radius: 10px;
+  box-shadow: 0 3px 0 var(--btn-edge, transparent);
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+.choice:hover:not(:disabled, .is-locked) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 var(--btn-edge, transparent);
+}
+.choice:active:not(:disabled, .is-locked) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--btn-edge, transparent);
+}
   </style>
 </head>
 <body id="top">

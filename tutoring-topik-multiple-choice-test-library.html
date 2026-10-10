@@ -397,27 +397,22 @@
         background var(--transition);
     }
 
-    .button:hover:not(:disabled) {
-      transform: scale(1.03);
-    }
-
     .button.primary {
       color: #192B5D;
       background: var(--primary);
-    }
-
-    .button.primary:hover:not(:disabled) {
-      background: var(--primary-hover);
+      --btn-bg: var(--primary);
     }
 
     .button.secondary {
       color: var(--surface-text);
       background: var(--surface-muted);
+      --btn-bg: var(--surface-muted);
     }
 
     .button.warning {
       color: #FFFFFF;
       background: var(--accent);
+      --btn-bg: var(--accent);
     }
 
     .button.full {
@@ -616,11 +611,7 @@
         transform var(--transition),
         background var(--transition),
         border-color var(--transition);
-    }
-
-    .choice:hover:not(:disabled) {
-      border-color: var(--primary);
-      transform: scale(1.01);
+      --btn-bg: var(--surface-muted);
     }
 
     .choice-number {
@@ -632,11 +623,13 @@
     .choice.correct {
       color: #FFFFFF;
       background: var(--secondary);
+      --btn-bg: var(--secondary);
     }
 
     .choice.wrong {
       color: #FFFFFF;
       background: var(--accent);
+      --btn-bg: var(--accent);
     }
 
     .feedback {
@@ -780,10 +773,7 @@
       font-size: 1.1rem;
       font-weight: 800;
       transition: transform var(--transition);
-    }
-
-    .utility-button:hover {
-      transform: scale(1.05);
+      --btn-bg: var(--primary);
     }
 
     @media (max-width: 820px) {
@@ -871,6 +861,46 @@
         transition: none !important;
         transform: none !important;
       }
+    }
+
+    /* Tactile buttons: flat, two colors. A face and a darker lip under it that
+       the face sinks into on click. A button gets its lip from --btn-bg, which
+       every rule that colors a button sets alongside its background. */
+    .btn, .mode-btn, .blur-toggle, .notes-toggle, .expr-toggle, .utility-button,
+    .primary-btn, .secondary-btn, .restart-top-btn, .button {
+      --btn-edge: color-mix(in srgb, var(--btn-bg) 72%, #000);
+      border: 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 0 var(--btn-edge, transparent);
+      transition: transform 100ms ease, box-shadow 100ms ease;
+    }
+    .utility-button { border-radius: 50%; }
+    :is(.btn, .mode-btn, .blur-toggle, .notes-toggle, .expr-toggle, .utility-button,
+        .primary-btn, .secondary-btn, .restart-top-btn, .button):hover:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 var(--btn-edge, transparent);
+    }
+    :is(.btn, .mode-btn, .blur-toggle, .notes-toggle, .expr-toggle, .utility-button,
+        .primary-btn, .secondary-btn, .restart-top-btn, .button):active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 var(--btn-edge, transparent);
+    }
+
+    /* Answer choices get the same lip. Once answered (.is-locked or disabled)
+       they stay raised but no longer press. */
+    .choice {
+      --btn-edge: color-mix(in srgb, var(--btn-bg) 72%, #000);
+      border-radius: 10px;
+      box-shadow: 0 3px 0 var(--btn-edge, transparent);
+      transition: transform 100ms ease, box-shadow 100ms ease;
+    }
+    .choice:hover:not(:disabled, .is-locked) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 var(--btn-edge, transparent);
+    }
+    .choice:active:not(:disabled, .is-locked) {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 var(--btn-edge, transparent);
     }
   </style>
 </head>
