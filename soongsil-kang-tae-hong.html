@@ -1647,6 +1647,135 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   transform: translateY(3px);
   box-shadow: 0 0 0 var(--btn-edge, transparent);
 }
+/* ---------------------------------------------------------------------------
+   Pop-out test (shared-vocab/quiz-popout.js)
+   Pop out pins the running test's card over the whole screen, so a test on a
+   phone is done without scrolling the page. The card follows the visible
+   viewport (--popout-top, --popout-height), which shrinks when the keyboard
+   comes up. The question and the answer box get the room; Check, Got it and
+   Missed it are kept small.
+--------------------------------------------------------------------------- */
+.runtime-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.end-confirm {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+  border-radius: var(--radius-lg);
+}
+.end-confirm p { flex: 1 1 22ch; margin: 0; font-size: .92rem; font-weight: 700; line-height: 1.45; }
+.end-confirm-actions { display: flex; gap: 8px; }
+.popout-exit-bar { display: none; }
+
+html.has-quiz-popout,
+html.has-quiz-popout body { overflow: hidden; }
+html.has-quiz-popout .utility-controls { display: none; }
+
+.exercise.is-popout {
+  --popout-gutter: clamp(16px, 4vw, 32px);
+  position: fixed;
+  top: var(--popout-top, 0px);
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  height: var(--popout-height, 100dvh);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  border-radius: 0;
+}
+.exercise.is-popout > .exercise-head { display: none; }
+.exercise.is-popout > .exercise-body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 0 var(--popout-gutter) 20px;
+}
+.exercise.is-popout .live:not(.hidden) { flex: 1 0 auto; display: flex; flex-direction: column; }
+.exercise.is-popout .finish { padding-top: 18px; }
+
+/* The bar stays at the top while the card scrolls under it. */
+.exercise.is-popout .runtime-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 calc(-1 * var(--popout-gutter)) 12px;
+  padding: 10px var(--popout-gutter);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+/* The prompt label already names the answer script. */
+.exercise.is-popout .runtime-bar > .wordbank-count { display: none; }
+.exercise.is-popout .runtime-actions .btn { min-height: 40px; padding: 0 12px; font-size: .78rem; white-space: nowrap; }
+.exercise.is-popout.popout-results > .popout-exit-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px var(--popout-gutter);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.exercise.is-popout .popout-exit-bar .btn { min-height: 40px; padding: 0 12px; font-size: .78rem; }
+
+/* The question sits in the middle of what is left, and gets most of it. */
+.exercise.is-popout .prompt-label { margin-top: auto; padding-top: 12px; text-align: center; }
+.exercise.is-popout .prompt {
+  margin: 6px 0 20px;
+  text-align: center;
+  font-size: calc(clamp(2.1rem, 9vw, 3.6rem) * var(--ko-size, 1));
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.exercise.is-popout .prompt.is-long {
+  font-size: calc(clamp(1.35rem, 5.5vw, 2.2rem) * var(--ko-size, 1));
+  line-height: 1.45;
+}
+
+/* A 16px answer or larger, or iOS zooms the page in on focus. */
+.exercise.is-popout .answer-input {
+  min-height: 68px;
+  padding: 0 16px;
+  font-size: calc(1.5rem * var(--ko-size, 1));
+  text-align: center;
+}
+.exercise.is-popout .answer-row .submit { width: auto; min-height: 0; padding: 0 16px; font-size: .82rem; }
+
+.exercise.is-popout .hw-pad { height: clamp(180px, calc(var(--popout-height, 100dvh) - 500px), 480px); }
+.exercise.is-popout .hw-tools .btn { min-height: 44px; font-size: .82rem; }
+.exercise.is-popout .hw-answer { justify-items: center; text-align: center; }
+.exercise.is-popout .hw-answer-ko { font-size: calc(2.2rem * var(--ko-size, 1)); line-height: 1.3; }
+.exercise.is-popout .hw-grade { flex-wrap: nowrap; justify-content: center; width: 100%; }
+.exercise.is-popout .hw-grade .btn {
+  flex: 1 1 0;
+  width: auto;
+  max-width: 200px;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: .82rem;
+}
+.exercise.is-popout .sp-hint { text-align: center; }
+.exercise.is-popout .sp-tools { justify-content: center; }
+
+.exercise.is-popout .feedback { margin-top: 12px; padding: 14px 16px; font-size: .92rem; line-height: 1.5; }
+.exercise.is-popout .next-row { margin-bottom: auto; padding-bottom: 8px; }
+.exercise.is-popout .next-row .next { scroll-margin-bottom: 16px; }
+
+@media (max-width: 680px) {
+  .end-confirm-actions { flex: 1 1 100%; }
+  .end-confirm-actions .btn { flex: 1 1 0; }
+}
 </style>
 </head>
 <body id="top">
@@ -1793,7 +1922,17 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
             <div class="live hidden">
               <div class="runtime-bar">
                 <span class="wordbank-count vocab-direction"></span>
-                <button class="btn warning small end-early" type="button">End test early</button>
+                <div class="runtime-actions">
+                  <button class="btn secondary small popout-toggle" type="button" data-quiz-popout aria-label="Pop the test out to fill the screen">&#10530; Pop out</button>
+                  <button class="btn warning small end-early" type="button">End test early</button>
+                </div>
+                <div class="end-confirm hidden" role="group" aria-label="End the test early?">
+                  <p>End the test now? Words you have not reached keep their stars.</p>
+                  <div class="end-confirm-actions">
+                    <button class="btn secondary small" type="button" data-end-keep>Keep going</button>
+                    <button class="btn warning small" type="button" data-end-yes>End test</button>
+                  </div>
+                </div>
               </div>
               <div class="status">
                 <span class="count"></span>
@@ -1824,6 +1963,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
   <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
+  <script src="./shared-vocab/quiz-popout.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2889,9 +3029,16 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
         event.preventDefault();
         nextVocabQuestion();
       });
-      $v(".end-early").addEventListener("click", () => {
+      /* End test early asks first (shared-vocab/quiz-popout.js): a stray tap
+         on a phone should not throw a run away. */
+      $v(".end-early").addEventListener("click", event => {
         if (!vocabState || vocabState.finished) return;
-        finishVocabTest("You ended the test early.");
+        const end = () => {
+          if (!vocabState || vocabState.finished) return;
+          finishVocabTest("You ended the test early.");
+        };
+        if (window.QuizPopout) window.QuizPopout.confirmEnd(event.currentTarget, end);
+        else end();
       });
       paintPoolNote();
     }
