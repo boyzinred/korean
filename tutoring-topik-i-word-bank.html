@@ -2078,6 +2078,18 @@ html.has-quiz-popout .utility-controls { display: none; }
 .quiz-card.is-popout .feedback { margin-top: 12px; padding: 14px 16px; font-size: .92rem; line-height: 1.5; }
 .quiz-card.is-popout [data-next] { width: 100%; }
 
+/* The Question Drill in the pop-out. A passage stays above its question, so
+   the question sits right under it at a reading size; the answer choices are
+   the input, so they get the size. */
+.quiz-card.is-popout .drill-passage:not(.hidden) { margin-top: 0; }
+.quiz-card.is-popout .drill-passage:not(.hidden) ~ .prompt-label { margin-top: 12px; }
+.quiz-card.is-popout .drill-passage:not(.hidden) ~ .prompt {
+  font-size: calc(clamp(1.25rem, 4.8vw, 1.8rem) * var(--ko-size, 1));
+  line-height: 1.5;
+}
+.quiz-card.is-popout .drill-sentence { text-align: center; }
+.quiz-card.is-popout .drill-choices .choice { min-height: 64px; font-size: calc(1.15rem * var(--ko-size, 1)); }
+
 @media (max-width: 680px) {
   .runtime-actions { margin-left: 0; }
   .runtime-actions .restart-top-btn { flex: 1 1 0; }
@@ -2210,10 +2222,20 @@ html.has-quiz-popout .utility-controls { display: none; }
             <div class="score" id="score-drill" aria-live="polite">Not started</div>
           </div>
           <div class="quiz-body">
-            <div id="live-drill">
+            <div class="quiz-live" id="live-drill">
               <div class="runtime-bar">
                 <span class="runtime-timer" id="kind-drill"></span>
-                <button class="restart-top-btn" type="button" data-drill-end>End exercise</button>
+                <div class="runtime-actions">
+                  <button class="restart-top-btn popout-toggle" type="button" data-quiz-popout aria-label="Pop the test out to fill the screen">&#10530; Pop out</button>
+                  <button class="restart-top-btn" type="button" data-drill-end>End exercise</button>
+                </div>
+                <div class="end-confirm hidden" role="group" aria-label="End the drill early?">
+                  <p>End the drill now? Questions you have not reached are not counted.</p>
+                  <div class="end-confirm-actions">
+                    <button class="restart-top-btn" type="button" data-end-keep>Keep going</button>
+                    <button class="btn warning" type="button" data-end-yes>End now</button>
+                  </div>
+                </div>
               </div>
               <div class="status-row">
                 <div id="question-number-drill"></div>
@@ -2274,7 +2296,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/topik-i-expressions.js?v=1.0.0"></script>
   <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
-  <script src="./shared-vocab/quiz-popout.js?v=1.0.0"></script>
+  <script src="./shared-vocab/quiz-popout.js?v=1.1.0"></script>
   <script src="./shared-vocab/drill-passages-topik-i.js?v=1.0.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
   <script>
@@ -5119,9 +5141,16 @@ html.has-quiz-popout .utility-controls { display: none; }
         if (event.target.closest("[data-drill-setup]")) { showDrillMenu(); return; }
         if (!drillRun) return;
 
-        if (event.target.closest("[data-drill-end]")) {
-          if (drillRun.results.filter(Boolean).length) finishDrill();
-          else showDrillMenu();
+        // End exercise asks first (shared-vocab/quiz-popout.js).
+        const endDrill = event.target.closest("[data-drill-end]");
+        if (endDrill) {
+          const end = () => {
+            if (!drillRun) return;
+            if (drillRun.results.filter(Boolean).length) finishDrill();
+            else showDrillMenu();
+          };
+          if (window.QuizPopout) window.QuizPopout.confirmEnd(endDrill, end);
+          else end();
           return;
         }
         if (event.target.closest("[data-drill-next]")) { nextDrillQuestion(); return; }

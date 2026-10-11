@@ -18,6 +18,7 @@
   <script src="./shared-vocab/cloud-config.js"></script>
   <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
   <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
+  <script src="./shared-vocab/quiz-popout.js?v=1.1.0"></script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -902,6 +903,121 @@
       transform: translateY(3px);
       box-shadow: 0 0 0 var(--btn-edge, transparent);
     }
+    /* ---------------------------------------------------------------------
+       Pop-out test (shared-vocab/quiz-popout.js)
+       Pop out pins the running test over the whole screen, so a test on a
+       phone is done without scrolling the page. It follows the visible
+       viewport (--popout-top, --popout-height), which shrinks when the
+       keyboard comes up. The banner shrinks to a strip that keeps the score
+       and the clock; the question and its choices get the room. Test library
+       leaves the test, so it waits outside the pop-out.
+    --------------------------------------------------------------------- */
+    .runtime-actions { flex-wrap: wrap; }
+    .end-confirm {
+      flex: 1 1 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      color: var(--surface-text);
+      background: var(--accent-soft);
+      border-left: 8px solid var(--accent);
+      border-radius: var(--radius-large);
+    }
+    html[data-theme="light"] .end-confirm { color: #FFFFFF; }
+    .end-confirm p { flex: 1 1 22ch; margin: 0; font-size: .92rem; font-weight: 700; line-height: 1.45; }
+    .end-confirm-actions { display: flex; gap: 8px; }
+    .end-confirm-actions .button { width: auto; min-height: 40px; padding: 0 14px; }
+    .runtime-bar { flex-wrap: wrap; }
+    .popout-exit-bar { display: none; }
+
+    html.has-quiz-popout,
+    html.has-quiz-popout body { overflow: hidden; }
+    html.has-quiz-popout .utility-controls { display: none; }
+
+    .quiz-shell.is-popout {
+      --popout-gutter: clamp(16px, 4vw, 32px);
+      position: fixed;
+      top: var(--popout-top, 0px);
+      left: 0;
+      right: 0;
+      z-index: 1100;
+      height: var(--popout-height, 100dvh);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      color: var(--surface-text);
+      background: var(--surface);
+      border-top: 0;
+    }
+    .quiz-shell.is-popout .quiz-banner {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      height: 40px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .quiz-shell.is-popout .quiz-banner-copy { display: none; }
+    .quiz-shell.is-popout .quiz-stat {
+      min-width: 0;
+      min-height: 0;
+      grid-auto-flow: column;
+      gap: 8px;
+      padding: 0 12px;
+    }
+    .quiz-shell.is-popout .quiz-stat-value { font-size: 1rem; }
+    .quiz-shell.is-popout .quiz-body {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 0 var(--popout-gutter) 20px;
+    }
+
+    /* The bar stays under the strip while the test scrolls under them. */
+    .quiz-shell.is-popout .runtime-bar {
+      position: sticky;
+      top: 40px;
+      z-index: 2;
+      flex-direction: row;
+      align-items: center;
+      margin: 0 calc(-1 * var(--popout-gutter)) 12px;
+      padding: 8px var(--popout-gutter);
+      border-radius: 0;
+    }
+    .quiz-shell.is-popout #testAnswerNote,
+    .quiz-shell.is-popout #backToLibrary { display: none; }
+    .quiz-shell.is-popout .runtime-actions { flex-direction: row; margin-left: auto; }
+    .quiz-shell.is-popout .runtime-actions .button {
+      width: auto;
+      min-height: 40px;
+      padding: 0 12px;
+      font-size: .78rem;
+      white-space: nowrap;
+    }
+    .quiz-shell.is-popout .progress { margin-bottom: 16px; }
+
+    /* The question sits in the middle of what is left, and the choices are
+       the input, so they get the size. */
+    .quiz-shell.is-popout .question-card { margin: auto 0; padding: 0; border: 0; }
+    .quiz-shell.is-popout .question-prompt {
+      margin: 12px 0 20px;
+      font-size: clamp(1.6rem, 7vw, 2.4rem);
+      line-height: 1.45;
+    }
+    .quiz-shell.is-popout .choice { min-height: 64px; font-size: 1.25rem; }
+    .quiz-shell.is-popout .feedback { margin-top: 12px; padding: 14px 16px; font-size: .92rem; line-height: 1.5; }
+
+    @media (max-width: 680px) {
+      .end-confirm-actions { flex: 1 1 100%; }
+      .end-confirm-actions .button { flex: 1 1 0; }
+      /* The keyboard shortcuts are no use on a phone. */
+      .quiz-shell.is-popout .status-row > span:last-child { display: none; }
+    }
   </style>
 </head>
 
@@ -964,9 +1080,18 @@
             <button class="button secondary" id="backToLibrary" type="button">
               Test library
             </button>
+            <button class="button secondary popout-toggle" type="button" data-quiz-popout aria-label="Pop the test out to fill the screen">&#10530; Pop out</button>
             <button class="button warning" id="endEarly" type="button">
               End test early
             </button>
+          </div>
+
+          <div class="end-confirm hidden" role="group" aria-label="End the test early?">
+            <p>End the test now? Questions you have not answered are left unanswered.</p>
+            <div class="end-confirm-actions">
+              <button class="button secondary" type="button" data-end-keep>Keep going</button>
+              <button class="button warning" type="button" data-end-yes>End now</button>
+            </div>
           </div>
         </div>
 
@@ -5029,8 +5154,12 @@
       returnToLibrary
     );
 
-    document.getElementById("endEarly").addEventListener("click", () => {
-      finishTest("Test ended early");
+    // End test early asks first (shared-vocab/quiz-popout.js): a stray tap
+    // on a phone should not throw a test away.
+    document.getElementById("endEarly").addEventListener("click", event => {
+      const end = () => finishTest("Test ended early");
+      if (window.QuizPopout) window.QuizPopout.confirmEnd(event.currentTarget, end);
+      else end();
     });
 
     document.getElementById("restartTest").addEventListener("click", () => {

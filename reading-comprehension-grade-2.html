@@ -1355,6 +1355,10 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   z-index: 2;
 }
 .vocab-token.is-pinned > .vocab-popover { display: grid; }
+/* A tapped choice keeps its hover lift, and a lifted choice is a layer of
+   its own, so the choices after it were painting over a popover opened
+   from inside it. The choice holding an open popover is lifted above them. */
+:is(.choice, .order-tile):has(> .vocab-token.is-pinned, .vocab-token.is-pinned) { position: relative; z-index: 5; }
 .vocab-popover-heading {
   position: relative;
   z-index: 1;
@@ -1773,6 +1777,32 @@ html.has-quiz-popout .utility-controls { display: none; }
   .end-confirm-actions { flex: 1 1 100%; }
   .end-confirm-actions .btn { flex: 1 1 0; }
 }
+
+/* The page's other exercises in the pop-out. A passage stays above its
+   question, so the question sits right under it, at a reading size, instead
+   of in the middle of what is left. Answer choices are the input there, so
+   they get the size the answer box gets in the vocabulary test, and a
+   translation is a sentence, so its box is set for one. */
+.exercise.is-popout .runtime-bar > .timer-chip { min-height: 36px; font-size: .82rem; }
+.exercise.is-popout .story-panel:not(.hidden) { margin: 0 0 4px; }
+.exercise.is-popout .story-panel .story-text {
+  gap: 4px;
+  font-size: calc(1.05rem * var(--ko-size, 1));
+  line-height: 1.8;
+}
+.exercise.is-popout .story-panel:not(.hidden) ~ .prompt-label { margin-top: 0; }
+.exercise.is-popout .story-panel:not(.hidden) ~ .prompt {
+  font-size: calc(clamp(1.25rem, 4.8vw, 1.8rem) * var(--ko-size, 1));
+  line-height: 1.5;
+}
+.exercise.is-popout .choice { min-height: 64px; font-size: calc(1.15rem * var(--ko-size, 1)); }
+.exercise.is-popout .sentence-cue,
+.exercise.is-popout .drill-sentence { text-align: center; }
+.exercise.is-popout .hint-row { margin: 12px 0 0; }
+#sentenceExercise.is-popout .answer-input {
+  font-size: calc(1.15rem * var(--ko-size, 1));
+  text-align: left;
+}
   </style>
 </head>
 <body id="top">
@@ -2049,7 +2079,17 @@ html.has-quiz-popout .utility-controls { display: none; }
             <div class="live hidden">
               <div class="runtime-bar">
                 <span class="wordbank-count sentence-direction"></span>
-                <button class="btn warning small end-early" type="button">End exercise early</button>
+                <div class="runtime-actions">
+                  <button class="btn secondary small popout-toggle" type="button" data-quiz-popout aria-label="Pop the test out to fill the screen">&#10530; Pop out</button>
+                  <button class="btn warning small end-early" type="button">End exercise early</button>
+                </div>
+                <div class="end-confirm hidden" role="group" aria-label="End the exercise early?">
+                  <p>End the exercise now? Questions you have not reached are not counted.</p>
+                  <div class="end-confirm-actions">
+                    <button class="btn secondary small" type="button" data-end-keep>Keep going</button>
+                    <button class="btn warning small" type="button" data-end-yes>End now</button>
+                  </div>
+                </div>
               </div>
               <div class="status">
                 <span class="count"></span>
@@ -2133,7 +2173,17 @@ html.has-quiz-popout .utility-controls { display: none; }
             <div class="live hidden">
               <div class="runtime-bar">
                 <div class="timer-chip hidden"><small>Time left</small><span class="timer-value">--:--</span></div>
-                <button class="btn warning small end-early" type="button">End exercise early</button>
+                <div class="runtime-actions">
+                  <button class="btn secondary small popout-toggle" type="button" data-quiz-popout aria-label="Pop the test out to fill the screen">&#10530; Pop out</button>
+                  <button class="btn warning small end-early" type="button">End exercise early</button>
+                </div>
+                <div class="end-confirm hidden" role="group" aria-label="End the exercise early?">
+                  <p>End the exercise now? Questions you have not reached are not counted.</p>
+                  <div class="end-confirm-actions">
+                    <button class="btn secondary small" type="button" data-end-keep>Keep going</button>
+                    <button class="btn warning small" type="button" data-end-yes>End now</button>
+                  </div>
+                </div>
               </div>
 
               <div class="status">
@@ -2259,7 +2309,17 @@ html.has-quiz-popout .utility-controls { display: none; }
             <div class="live hidden">
               <div class="runtime-bar">
                 <span class="wordbank-count drill-kind"></span>
-                <button class="btn warning small end-early" type="button">End drill early</button>
+                <div class="runtime-actions">
+                  <button class="btn secondary small popout-toggle" type="button" data-quiz-popout aria-label="Pop the test out to fill the screen">&#10530; Pop out</button>
+                  <button class="btn warning small end-early" type="button">End drill early</button>
+                </div>
+                <div class="end-confirm hidden" role="group" aria-label="End the drill early?">
+                  <p>End the drill now? Questions you have not reached are not counted.</p>
+                  <div class="end-confirm-actions">
+                    <button class="btn secondary small" type="button" data-end-keep>Keep going</button>
+                    <button class="btn warning small" type="button" data-end-yes>End now</button>
+                  </div>
+                </div>
               </div>
               <div class="status">
                 <span class="count"></span>
@@ -2311,7 +2371,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/reading-sentences.js?v=1.0.0"></script>
   <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
-  <script src="./shared-vocab/quiz-popout.js?v=1.0.0"></script>
+  <script src="./shared-vocab/quiz-popout.js?v=1.1.0"></script>
   <script src="./shared-vocab/drill-questions.js?v=1.2.0"></script>
   <script>
   (() => {
@@ -4232,9 +4292,15 @@ html.has-quiz-popout .utility-controls { display: none; }
         paintAssistStatus();
       });
 
-      $(".end-early").addEventListener("click", () => {
+      /* End exercise early asks first (shared-vocab/quiz-popout.js). */
+      $(".end-early").addEventListener("click", event => {
         if (!state || state.finished) return;
-        finish("You ended the exercise early. Questions you did not reach are not counted as correct.");
+        const end = () => {
+          if (!state || state.finished) return;
+          finish("You ended the exercise early. Questions you did not reach are not counted as correct.");
+        };
+        if (window.QuizPopout) window.QuizPopout.confirmEnd(event.currentTarget, end);
+        else end();
       });
     }
 
@@ -6601,9 +6667,15 @@ html.has-quiz-popout .utility-controls { display: none; }
       $s(".export-md").addEventListener("click", event => exportSentenceSelection(event.currentTarget));
       $s(".next").addEventListener("click", nextSentenceQuestion);
       $s(".show-words").addEventListener("click", showSentenceWords);
-      $s(".end-early").addEventListener("click", () => {
+      /* End exercise early asks first (shared-vocab/quiz-popout.js). */
+      $s(".end-early").addEventListener("click", event => {
         if (!sentenceState || sentenceState.finished) return;
-        finishSentenceRun("You ended the exercise early.");
+        const end = () => {
+          if (!sentenceState || sentenceState.finished) return;
+          finishSentenceRun("You ended the exercise early.");
+        };
+        if (window.QuizPopout) window.QuizPopout.confirmEnd(event.currentTarget, end);
+        else end();
       });
 
       /* Enter moves an answered sentence on, the same as it does in the
@@ -7201,9 +7273,16 @@ html.has-quiz-popout .utility-controls { display: none; }
         if (event.target.closest(".begin")) { startDrill(); return; }
         if (!drillRun) return;
 
-        if (event.target.closest(".end-early")) {
-          if (drillRun.results.filter(Boolean).length) finishDrill();
-          else showDrillMenu();
+        /* End drill early asks first (shared-vocab/quiz-popout.js). */
+        const endEarly = event.target.closest(".end-early");
+        if (endEarly) {
+          const end = () => {
+            if (!drillRun) return;
+            if (drillRun.results.filter(Boolean).length) finishDrill();
+            else showDrillMenu();
+          };
+          if (window.QuizPopout) window.QuizPopout.confirmEnd(endEarly, end);
+          else end();
           return;
         }
         if (event.target.closest(".next")) { nextDrillQuestion(); return; }

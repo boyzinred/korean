@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
    QuizPopout
-   Two things for a running vocabulary test.
+   Two things for a running test or exercise.
 
    Pop out. A button in the test's runtime bar pins the test's own card over
    the whole screen, and puts it back. It is the same card, not a copy, so the
@@ -9,10 +9,11 @@
 
      <button type="button" data-quiz-popout>⤢ Pop out</button>
 
-   The card is the button's nearest .exercise or .quiz-card. It stays out
-   through the results, and goes back by itself when the setup menu comes
-   back into it or the card is hidden. Esc and the phone's back gesture put it
-   back too. The page's stylesheet does the rest from .is-popout on the card,
+   The card is the button's nearest .exercise, .quiz-card or .quiz-shell. It
+   stays out through the results, and goes back by itself when the setup menu
+   comes back into it or the card is hidden; then the page is left where the
+   page's own script put it. Back to page, Esc and the phone's back gesture put
+   it back where it was. The page's stylesheet does the rest from .is-popout on the card,
    .popout-results while the runtime bar is gone (the results), .is-long on a
    prompt too long for the big size, and .has-quiz-popout on <html>.
 
@@ -29,9 +30,14 @@
 
   const LABEL_OUT = "⤢ Pop out";
   const LABEL_BACK = "⤡ Back to page";
-  /* A prompt longer than this is set smaller, so a long English gloss does
-     not push the answer box under a phone's keyboard. */
+  /* A prompt longer than this is set smaller, so a long English gloss or a
+     Korean instruction does not push the answer box under a phone's
+     keyboard. A Hangul block is nearly twice as wide as a Latin letter, so it
+     counts for nearly two. */
   const LONG_PROMPT = 26;
+  const HANGUL_WIDTH = 1.8;
+  const promptLength = text => [...text.trim()]
+    .reduce((sum, char) => sum + (/[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7AF]/.test(char) ? HANGUL_WIDTH : 1), 0);
   /* A second tap on End lands on the confirm row before a finger can lift,
      so the row ignores taps for this long after it opens. */
   const CONFIRM_GUARD_MS = 400;
@@ -42,7 +48,7 @@
      the popstate that follows is not taken for the back gesture. */
   let steppingBack = false;
 
-  const cardOf = button => button.closest(".exercise, .quiz-card");
+  const cardOf = button => button.closest(".exercise, .quiz-card, .quiz-shell");
   const shown = node => Boolean(node) && node.getClientRects().length > 0;
 
   function labelToggles(card, out) {
@@ -84,13 +90,13 @@
     const card = open.card;
     const menu = card.querySelector(".exercise-menu");
     if (!shown(card) || shown(menu)) {
-      closePopout();
+      closePopout({ auto: true });
       return;
     }
     const results = !shown(card.querySelector(".runtime-bar"));
     if (card.classList.contains("popout-results") !== results) card.classList.toggle("popout-results", results);
     card.querySelectorAll(".prompt").forEach(prompt => {
-      const long = prompt.textContent.trim().length > LONG_PROMPT;
+      const long = promptLength(prompt.textContent) > LONG_PROMPT;
       if (prompt.classList.contains("is-long") !== long) prompt.classList.toggle("is-long", long);
     });
   }
@@ -113,7 +119,7 @@
     card.classList.add("is-popout");
     card.setAttribute("role", "dialog");
     card.setAttribute("aria-modal", "true");
-    const title = card.querySelector("h3");
+    const title = card.querySelector("h2, h3");
     if (title) card.setAttribute("aria-label", title.textContent.trim());
     document.documentElement.classList.add("has-quiz-popout");
     labelToggles(card, true);
@@ -157,12 +163,20 @@
     card.querySelectorAll(".prompt.is-long").forEach(prompt => prompt.classList.remove("is-long"));
     document.documentElement.classList.remove("has-quiz-popout");
     labelToggles(card, false);
-    /* The pages scroll smoothly; this is putting the page back, not moving it. */
-    window.scrollTo({ top: state.scrollY, behavior: "instant" });
+    /* Closed by hand, the page goes back to where it was. Closed because the
+       page moved on (to its setup or its results), it stays where the page's
+       script has just scrolled it. The pages scroll smoothly; putting the page
+       back is not a move, so it is instant. */
+    const auto = Boolean(options && options.auto);
+    if (!auto) window.scrollTo({ top: state.scrollY, behavior: "instant" });
 
     const fromHistory = Boolean(options && options.fromHistory);
     if (state.pushed && !fromHistory && history.state && history.state.quizPopout) {
-      steppingBack = true;
+      /* Stepping back over the entry would have the browser restore the
+         scroll it saved there, which is the old place — wrong after an
+         automatic close — so the page keeps charge of its scroll meanwhile. */
+      steppingBack = { restoration: history.scrollRestoration };
+      try { history.scrollRestoration = "manual"; } catch (_) {}
       history.back();
     }
 
@@ -179,6 +193,7 @@
 
   window.addEventListener("popstate", () => {
     if (steppingBack) {
+      try { history.scrollRestoration = steppingBack.restoration; } catch (_) {}
       steppingBack = false;
       return;
     }
