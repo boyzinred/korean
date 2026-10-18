@@ -1987,30 +1987,30 @@ html.has-quiz-popout .utility-controls { display: none; }
     /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
     const MIDTERM = "Midterm recap — 아래 용어를 한글로 옮기시오 (Translate the following terms into Korean)";
     const GLOSSARY = [
-      { part: MIDTERM + ", question 1", ko: "① 상수·변수·함수", en: "Constants, variables, functions", words: [
+      { part: MIDTERM + ", question 1", ko: "① 상수·변수·함수", en: "Constants, Variable, Function", words: [
         ["상수", "constant", "a, b, c", "변하지 않고 고정된 값", ""],
         ["변수", "variable", "x, y", "여러 값을 가질 수 있는 문자 (미지수)", ""],
         ["함수", "function", "f(x)", "입력 x 하나에 출력 하나를 대응시키는 규칙", "에프 오브 엑스"]
       ] },
-      { part: MIDTERM + ", question 2", ko: "② 실수·자연수·정수", en: "Real numbers, natural numbers, integers", words: [
+      { part: MIDTERM + ", question 2", ko: "② 실수·자연수·정수", en: "Real number, Natural number, Integer", words: [
         ["실수", "real number", "ℝ", "수직선 위의 모든 수", "알"],
         ["자연수", "natural number", "ℕ", "1, 2, 3, …의 양의 정수", "엔"],
         ["정수", "integer", "ℤ", "음의 정수, 0, 양의 정수", "제트"]
       ] },
-      { part: MIDTERM + ", question 3", ko: "③ 방정식·공식", en: "Equation, formula", words: [
-        ["방정식 / 수식", "equation", "ax + b = 0", "미지수의 값에 따라 참이 되기도 하고 거짓이 되기도 하는 등식", "에이 엑스 플러스 비 는 영"],
+      { part: MIDTERM + ", question 3", ko: "③ 방정식(수식)·공식", en: "Equation, formula", words: [
+        ["방정식(수식)", "equation", "ax + b = 0", "미지수의 값에 따라 참이 되기도 하고 거짓이 되기도 하는 등식", "에이 엑스 플러스 비 는 영"],
         ["공식", "formula", "(a+b)² = a²+2ab+b²", "언제나 성립해서 계산에 그대로 쓰는 식", ""]
       ] },
-      { part: MIDTERM + ", question 4", ko: "④ 제곱·제곱근", en: "Square, square root", words: [
+      { part: MIDTERM + ", question 4", ko: "④ 제곱·제곱근", en: "Square, Square root", words: [
         ["제곱", "square", "x²", "같은 수를 두 번 곱함", "엑스 제곱"],
         ["제곱근", "square root", "√x", "제곱하면 x가 되는 수", "루트 엑스"]
       ] },
       { part: MIDTERM + ", question 5", ko: "⑤ 다항 함수", en: "Polynomial function", words: [
         ["다항 함수", "polynomial function", "aₙxⁿ + … + a₁x + a₀", "다항식으로 나타낸 함수", "에이 엔 엑스의 엔 제곱 플러스 … 플러스 에이 영"]
       ] },
-      { part: MIDTERM + ", question 6", ko: "⑥ 난수·절댓값", en: "Random number, absolute value", words: [
+      { part: MIDTERM + ", question 6", ko: "⑥ 난수·절댓값", en: "Random number, Absolute number", words: [
         ["난수", "random number", "", "규칙 없이 무작위로 뽑은 수", ""],
-        ["절댓값", "absolute value", "|x|", "수직선에서 0까지의 거리", "엑스의 절댓값"]
+        ["절댓값", "absolute number / absolute value", "|x|", "수직선에서 0까지의 거리", "엑스의 절댓값"]
       ] },
       { part: MIDTERM + ", question 7", ko: "⑦ 총합·총곱", en: "∑, ∏", words: [
         ["총합", "summation (∑)", "∑", "여러 항을 모두 더한 값", "시그마"],
@@ -2025,28 +2025,28 @@ html.has-quiz-popout .utility-controls { display: none; }
         ["행렬", "matrix", "A", "수를 행과 열로 배열한 것 (2차원 배열)", "에이"],
         ["텐서", "tensor", "T", "스칼라·벡터·행렬을 더 높은 차원으로 일반화한 다차원 배열", "티"]
       ] },
-      { part: MIDTERM + ", question 10", ko: "⑩ 선형대수", en: "Linear algebra", words: [
+      { part: MIDTERM + ", question 10", ko: "⑩ 선형대수", en: "Linear Algebra", words: [
         ["선형대수", "linear algebra", "", "벡터와 행렬, 선형변환을 다루는 수학", ""]
       ] },
-      { part: MIDTERM + ", question 11", ko: "⑪ 선형 방정식·선형 변환", en: "Linear equation, linear transformation", words: [
+      { part: MIDTERM + ", question 11", ko: "⑪ 선형 방정식·선형 변환", en: "Linear Equation, Linear Transformation", words: [
         ["선형 방정식", "linear equation", "a₁x₁ + … + aₙxₙ = b", "미지수의 차수가 모두 1인 방정식", ""],
         ["선형 변환", "linear transformation", "T(x) = Ax", "덧셈과 스칼라배를 보존하는 변환", "티 오브 엑스 는 에이 엑스"]
       ] },
-      { part: MIDTERM + ", question 12", ko: "⑫ 선형 종속·선형 독립", en: "Linearly dependent / independent", words: [
-        ["선형 종속", "linearly dependent", "", "0이 아닌 계수로 영벡터를 만드는 선형결합이 있음", ""],
-        ["선형 독립", "linearly independent", "c₁v₁ + … + cₙvₙ = 0 ⇒ cᵢ = 0", "영벡터를 만드는 선형결합의 계수가 모두 0뿐임", ""]
+      { part: MIDTERM + ", question 12", ko: "⑫ 선형 종속·선형 독립", en: "Linear dependent/independent", words: [
+        ["선형 종속", "linear dependent / linearly dependent", "", "0이 아닌 계수로 영벡터를 만드는 선형결합이 있음", ""],
+        ["선형 독립", "linear independent / linearly independent", "c₁v₁ + … + cₙvₙ = 0 ⇒ cᵢ = 0", "영벡터를 만드는 선형결합의 계수가 모두 0뿐임", ""]
       ] },
       { part: MIDTERM + ", question 13", ko: "⑬ 정사각행렬·역행렬·전치행렬", en: "Square matrix, inverse matrix, transposed matrix", words: [
         ["정사각행렬", "square matrix", "n×n", "행과 열의 개수가 같은 행렬 (정방행렬)", "엔 바이 엔"],
         ["역행렬", "inverse matrix", "A⁻¹", "곱하면 단위행렬 I가 되는 행렬", "에이 인버스"],
         ["전치행렬", "transposed matrix", "Aᵀ", "행과 열을 서로 바꾼 행렬", "에이 트랜스포즈"]
       ] },
-      { part: MIDTERM + ", question 14", ko: "⑭ 기저 벡터·고유값·고유벡터", en: "Basis vector, eigenvalue, eigenvector", words: [
+      { part: MIDTERM + ", question 14", ko: "⑭ 기저 벡터·고유값·고유벡터", en: "Basis vector, Eigen value, Eigen vector", words: [
         ["기저 벡터", "basis vector", "e₁, e₂", "공간 전체를 만들어 내는 선형 독립인 벡터", "이 원, 이 투"],
-        ["고유값", "eigenvalue", "λ", "고유벡터가 변환될 때 곱해지는 배율", "람다"],
-        ["고유벡터", "eigenvector", "Av = λv", "선형변환 후에도 방향이 바뀌지 않는 0이 아닌 벡터", "에이 브이 는 람다 브이"]
+        ["고유값", "eigen value / eigenvalue", "λ", "고유벡터가 변환될 때 곱해지는 배율", "람다"],
+        ["고유벡터", "eigen vector / eigenvector", "Av = λv", "선형변환 후에도 방향이 바뀌지 않는 0이 아닌 벡터", "에이 브이 는 람다 브이"]
       ] },
-      { part: MIDTERM + ", question 15", ko: "⑮ 노름·내적·코사인 유사도", en: "Norm, inner product, cosine similarity", words: [
+      { part: MIDTERM + ", question 15", ko: "⑮ 노름·내적·코사인 유사도", en: "Norm, Inner product, Cosine similarity", words: [
         ["노름", "norm", "‖v‖", "벡터의 크기(길이)", "노름 브이"],
         ["내적", "inner product", "u·v", "두 벡터의 같은 자리 성분끼리 곱해서 더한 값", "유 닷 브이"],
         ["코사인 유사도", "cosine similarity", "(u·v) / (‖u‖‖v‖)", "두 벡터 사이 각의 코사인으로 잰 유사도", "코사인 세타"]
@@ -2250,18 +2250,26 @@ html.has-quiz-popout .utility-controls { display: none; }
 
     /* -----------------------------------------------------------------------
        WORD BANK TABLES
-       One group per recap question, in the recap's order, and one way
-       of grouping, so the Group by buttons are hidden.
+       Two ways of grouping: one group per recap question, in the recap's
+       order, or by week, where the whole recap is the one "Midterm" week.
     ----------------------------------------------------------------------- */
     /* review-bank:start — progress-review.html reads this block; keep it free of the DOM */
-    const REF_MODES = ["category"];
-    const REF_MODE_LABELS = { category: "Category" };
+    const REF_MODES = ["category", "week"];
+    const REF_MODE_LABELS = { category: "Category", week: "Week" };
     const REF_MODE_KEY = "korean.kangWordBankMode";
     const REF_BLUR_KEY = "korean.kangWordBankBlur";
 
     const BANK_WORDS = WORDS;
 
-    function refGroups() {
+    function refGroups(mode) {
+      if (mode === "week") {
+        return [{
+          id: "week-midterm",
+          label: "Midterm",
+          note: MIDTERM + ". Every term on the recap, in its order. Blur a column to test yourself, then rate each word.",
+          words: BANK_WORDS.slice()
+        }];
+      }
       return GLOSSARY.map(group => ({
         id: group.id,
         label: group.label,
@@ -2271,7 +2279,12 @@ html.has-quiz-popout .utility-controls { display: none; }
     }
     /* review-bank:end */
 
-    let refMode = "category";
+    let refMode = (() => {
+      try {
+        const saved = localStorage.getItem(REF_MODE_KEY);
+        return REF_MODES.indexOf(saved) >= 0 ? saved : "category";
+      } catch (_) { return "category"; }
+    })();
 
     let refBlur = (() => {
       try { return JSON.parse(localStorage.getItem(REF_BLUR_KEY) || "{}") || {}; }
