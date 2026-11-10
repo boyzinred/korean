@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem("koreanQuizThemeV2");
-        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
-      } catch (_) {}
-    })();
-  </script>
+  <script src="./shared-vocab/site-theme.js?v=1.0.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
   <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
@@ -24,49 +15,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  color-scheme: light;
-  /* Yonsei University Press pages carry their own palette: the book's navy
-     and the cyan of its part-of-speech badges, with a warm orange for a
-     wrong answer and a warning button. Everything else is a tint of them. */
-  --light-background: #EAF4FB;
-  --light-foreground: #0B3A75;
-  --light-primary: #2AA9E4;
-  --light-primary-hover: #1494D0;
-  --light-secondary: #9DBFE4;
-  --light-secondary-soft: #DDEAF7;
-  --light-accent: #EE8A5E;
-  --light-accent-soft: #FBE2D6;
-  --light-muted: #D5E9F6;
-  --light-muted-strong: #BBD9EF;
-  --light-blue-soft: #E2EFF9;
-  --light-border: #A8C9E5;
-  --light-subtle: #C8E0F2;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
-  --surface: #FFFFFF;
-  --surface-text: #0B3A75;
-  --surface-muted: #F1F7FC;
-  --inverse: #0B3A75;
-  --inverse-text: #EAF4FB;
-  --hero-heading: #0B3A75;
-  --hero-text: #0B3A75;
-  /* Text set on a filled colour — an orange or blue button, a section band —
-     and the white chip that sits on one. */
-  --on-fill: #062246;
-  --chip: #FFFFFF;
+  /* Colours: shared-vocab/site-theme.js, picked from the Theme menu in the header. */
   --radius-md: 6px;
   --radius-lg: 8px;
   /* Outfit has no Hangul, so Korean falls past it to IBM Plex Sans KR, picked
@@ -79,64 +28,8 @@
      which on Hangul would fill the counters straight back in. */
   --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
   --transition: all 200ms ease;
-  /* The handwriting test's own colour, kept off every other control so the
-     button reads as a different way of taking the test: the section's navy, which is otherwise only ever text. */
-  --handwrite: #0B3A75;
-  --handwrite-hover: #082C5B;
-  --on-handwrite: #FFFFFF;
-  /* The speaking test's, for the same reason: its own colour, so the three
-     ways of taking the test sit side by side and still read as three. */
-  --speak: #5B4E9C;
-  --speak-hover: #4A3F83;
-  --on-speak: #FFFFFF;
 }
 
-html[data-theme='dark'] {
-  color-scheme: dark;
-  --light-background: #0A0A0A;
-  --light-foreground: #F5F5F5;
-  --light-primary: #E5E5E5;
-  --light-primary-hover: #CFCFCF;
-  --light-secondary: #A3A3A3;
-  --light-secondary-soft: #262626;
-  --light-accent: #737373;
-  --light-accent-soft: #1C1C1C;
-  --light-muted: #262626;
-  --light-muted-strong: #404040;
-  --light-blue-soft: #262626;
-  --light-border: #3A3A3A;
-  --light-subtle: #A3A3A3;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
-  --surface: #171717;
-  --surface-text: #F5F5F5;
-  --surface-muted: #262626;
-  --inverse: #000000;
-  --inverse-text: #F5F5F5;
-  --hero-heading: #FFFFFF;
-  --hero-text: #D4D4D4;
-  --on-fill: #0A0A0A;
-  --chip: #F5F5F5;
-  --handwrite: #525252;
-  --handwrite-hover: #5E5E5E;
-  --on-handwrite: #F5F5F5;
-  --speak: #3E4A55;
-  --speak-hover: #4A5763;
-  --on-speak: #F5F5F5;
-}
 
 * { box-sizing: border-box; }
 html {
@@ -234,9 +127,9 @@ summary:focus-visible,
 }
 .hero { color: var(--hero-heading); background: var(--background); }
 .hero-inner { padding: clamp(48px, 7vw, 82px); }
-.hero-kicker {
+.hero .hero-kicker {
   margin: 0 0 18px;
-  color: var(--primary);
+  color: var(--hero-kicker);
   font-size: .76rem;
   font-weight: 800;
   letter-spacing: .16em;
@@ -260,7 +153,7 @@ details.section > summary {
   justify-content: space-between;
   gap: 24px;
   padding: clamp(30px, 5vw, 64px);
-  color: var(--on-fill);
+  color: var(--on-secondary);
   background: var(--secondary);
   font-size: clamp(2rem, 4.4vw, 4rem);
   font-weight: 800;
@@ -279,7 +172,7 @@ details.section > summary::after {
   align-items: center;
   justify-content: center;
   padding: 0 18px;
-  color: var(--on-fill);
+  color: var(--on-chip);
   background: var(--chip);
   border: 4px solid var(--on-fill);
   border-radius: var(--radius-md);
@@ -298,7 +191,7 @@ details.section:not([open]) > summary::after { content: "Expand"; }
 }
 .info-card {
   padding: 22px;
-  color: var(--surface-text);
+  color: var(--foreground);
   background: var(--blue-soft);
   border-radius: var(--radius-lg);
 }
@@ -324,7 +217,7 @@ details.section:not([open]) > summary::after { content: "Expand"; }
   transition: var(--transition);
   --btn-bg: var(--surface-muted);
 }
-.blur-toggle[aria-pressed="true"] { color: var(--on-fill); background: var(--primary); --btn-bg: var(--primary); }
+.blur-toggle[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 
 .table-wrap {
   overflow: auto;
@@ -400,7 +293,7 @@ td .roman { opacity: .78; }
   display: grid;
   place-items: center;
   line-height: 1;
-  color: var(--on-fill);
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: var(--radius-md);
   font-size: 1.15rem;
@@ -466,7 +359,7 @@ td .roman { opacity: .78; }
   transition: var(--transition);
   --btn-bg: initial;
 }
-.mode-btn.active { color: var(--on-fill); background: var(--primary); --btn-bg: var(--primary); }
+.mode-btn.active { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 .ref-filter { flex: 1 1 15rem; max-width: 24rem; }
 .section-toolbar {
   display: flex;
@@ -562,7 +455,7 @@ td .roman { opacity: .78; }
   transition: var(--transition);
 }
 .vocab-note-toggle:hover { transform: scale(1.08); }
-.vocab-note-toggle[aria-expanded="true"] { color: var(--on-fill); background: var(--primary); }
+.vocab-note-toggle[aria-expanded="true"] { color: var(--on-primary); background: var(--primary); }
 .vocab-note-row > td {
   padding: 2px 4.5rem 20px;
   background: var(--surface-muted);
@@ -717,9 +610,10 @@ td .roman { opacity: .78; }
   background: var(--inverse);
 }
 .exercise-head-copy { padding: 24px 28px; }
+.exercise-kicker { color: var(--inverse-kicker); }
+.prompt-label { color: var(--surface-kicker); }
 .exercise-kicker,
 .prompt-label {
-  color: var(--primary);
   font-size: .74rem;
   font-weight: 800;
   letter-spacing: .12em;
@@ -737,7 +631,7 @@ td .roman { opacity: .78; }
   display: grid;
   place-items: center;
   padding: 20px;
-  color: var(--on-fill);
+  color: var(--on-accent);
   background: var(--accent);
   font-size: .9rem;
   font-weight: 800;
@@ -824,7 +718,7 @@ input, select {
   border-radius: var(--radius-md);
 }
 input:focus, select:focus { background: var(--surface); border-color: var(--primary); }
-input:disabled, select:disabled { color: var(--surface-text); background: var(--muted-strong); cursor: not-allowed; opacity: .6; }
+input:disabled, select:disabled { color: var(--on-muted); background: var(--muted-strong); cursor: not-allowed; opacity: .6; }
 
 .btn {
   min-height: 56px;
@@ -835,10 +729,10 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   transition: var(--transition);
 }
 .btn:disabled { opacity: .55; cursor: not-allowed; }
-.btn.primary { color: var(--on-fill); background: var(--primary); --btn-bg: var(--primary); }
-.btn.positive { color: var(--on-fill); background: var(--secondary); --btn-bg: var(--secondary); }
+.btn.primary { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
+.btn.positive { color: var(--on-secondary); background: var(--secondary); --btn-bg: var(--secondary); }
 .btn.secondary { color: var(--surface-text); background: var(--surface-muted); --btn-bg: var(--surface-muted); }
-.btn.warning { color: var(--on-fill); background: var(--accent); --btn-bg: var(--accent); }
+.btn.warning { color: var(--on-accent); background: var(--accent); --btn-bg: var(--accent); }
 .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
 
 .btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); --btn-bg: var(--handwrite); }
@@ -963,14 +857,14 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   align-items: center;
   gap: 8px;
   padding: 0 14px;
-  color: var(--on-fill);
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: 999px;
   font-size: .95rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
-.timer-chip.is-low { color: var(--on-fill); background: var(--accent); }
+.timer-chip.is-low { color: var(--on-accent); background: var(--accent); }
 .timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
 .status {
   display: flex;
@@ -1005,7 +899,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   display: inline-flex;
   align-items: center;
   padding: 0 10px;
-  color: var(--on-fill);
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: 999px;
   font-size: .68rem;
@@ -1058,7 +952,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   cursor: pointer;
   --btn-bg: var(--surface-muted);
 }
-.choice:hover:not(.is-locked) { color: var(--on-fill); background: var(--primary); --btn-bg: var(--primary); }
+.choice:hover:not(.is-locked) { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 .choice.is-locked { cursor: default; }
 .choice-letter {
   flex: 0 0 auto;
@@ -1072,10 +966,10 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
 }
 .choice-text { min-width: 0; }
-.choice.correct { color: var(--on-fill); background: var(--secondary); border-color: var(--secondary); --btn-bg: var(--secondary); }
-.choice.correct .choice-letter { color: var(--on-fill); }
-.choice.wrong { color: var(--on-fill); background: var(--accent); border-color: var(--accent); --btn-bg: var(--accent); }
-.choice.wrong .choice-letter { color: var(--on-fill); }
+.choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); --btn-bg: var(--secondary); }
+.choice.correct .choice-letter { color: var(--on-secondary); }
+.choice.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); --btn-bg: var(--accent); }
+.choice.wrong .choice-letter { color: var(--on-accent); }
 .choice.faded { opacity: .55; }
 
 /* ---------------------------------------------------------------------------
@@ -1173,7 +1067,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   cursor: pointer;
   transition: var(--transition);
 }
-.order-tile:hover:not(:disabled) { color: var(--on-fill); background: var(--primary); transform: scale(1.02); }
+.order-tile:hover:not(:disabled) { color: var(--on-primary); background: var(--primary); transform: scale(1.02); }
 .order-tile:disabled { cursor: default; }
 .order-tile .order-no {
   flex: 0 0 auto;
@@ -1186,10 +1080,10 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-size: .74rem;
   font-weight: 800;
 }
-.order-tile.correct { color: var(--on-fill); background: var(--secondary); border-color: var(--secondary); }
-.order-tile.wrong { color: var(--on-fill); background: var(--accent); border-color: var(--accent); }
+.order-tile.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.order-tile.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
 .order-tile.correct .order-no,
-.order-tile.wrong .order-no { color: var(--on-fill); }
+.order-tile.wrong .order-no { color: var(--on-secondary); }
 .order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .hint-row { display: grid; gap: 8px; margin: 16px 0; }
@@ -1208,7 +1102,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   display: inline-flex;
   width: fit-content;
   padding: 4px 8px;
-  color: var(--on-fill);
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: 999px;
   font-size: .72rem;
@@ -1217,6 +1111,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
 
 .feedback {
   display: none;
+  color: var(--foreground);
   margin-top: 16px;
   padding: 18px;
   border-radius: var(--radius-lg);
@@ -1399,7 +1294,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   font-weight: 800;
 }
 .hint-step:hover, .hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
-.hint-step.is-open { color: var(--on-fill); background: var(--primary); border-color: var(--primary); }
+.hint-step.is-open { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
 .hint-content {
   position: relative;
   z-index: 1;
@@ -1428,7 +1323,7 @@ input:disabled, select:disabled { color: var(--surface-text); background: var(--
   display: grid;
   place-items: center;
   padding: 0;
-  color: var(--on-fill);
+  color: var(--on-primary);
   background: var(--primary);
   border: 0;
   border-radius: 50%;
@@ -1774,7 +1669,7 @@ html.has-quiz-popout .utility-controls { display: none; }
 .yb-pron { font-weight: 800; font-size: calc(1.05rem * var(--ko-size)); }
 .yb-pos {
   display: inline-block; padding: 1px 9px; border-radius: 999px;
-  background: var(--primary); color: var(--on-fill); font-weight: 700; font-size: .82rem;
+  background: var(--primary); color: var(--on-primary); font-weight: 700; font-size: .82rem;
 }
 .yb-gloss { font-weight: 600; opacity: .9; }
 .yb-sense { display: grid; gap: 10px; }
@@ -1980,7 +1875,6 @@ html.has-quiz-popout .utility-controls { display: none; }
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
-    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
     <button class="utility-button nav" type="button" data-section-nav="prev" aria-label="Previous section" title="Previous section">↑</button>
     <button class="utility-button nav" type="button" data-section-nav="next" aria-label="Next section" title="Next section">↓</button>
   </div>
@@ -4719,43 +4613,6 @@ html.has-quiz-popout .utility-controls { display: none; }
   })();
   </script>
 
-  <script>
-    (() => {
-      const STORAGE_KEY = "koreanQuizThemeV2";
-      const root = document.documentElement;
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
-
-      function savedTheme() {
-        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
-      }
-
-      function applyTheme(theme, persist = false) {
-        const next = theme === "dark" ? "dark" : "light";
-        root.dataset.theme = next;
-        root.style.colorScheme = next;
-        if (persist) {
-          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
-        }
-        toggles.forEach(toggle => {
-          const dark = next === "dark";
-          toggle.setAttribute("aria-pressed", String(dark));
-          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
-          const icon = toggle.querySelector("[data-theme-icon]");
-          if (icon) icon.textContent = dark ? "☀" : "☾";
-        });
-      }
-
-      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
-      toggles.forEach(toggle => {
-        toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
-      });
-      media.addEventListener?.("change", event => {
-        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
-      });
-    })();
-  </script>
 
   <script>
     /* Quick navigation: open every collapsed section the target sits inside. */

@@ -51,6 +51,8 @@ A task-first, flat interface for interactive quizzes. The system prioritizes cle
 
 ## 1. Color system
 
+> **Where the palettes live.** Pages no longer define colours: `shared-vocab/site-theme.js` holds every palette and writes the tokens below onto `<html data-palette>`, along with `--on-primary`, `--on-secondary`, `--on-accent`, `--on-muted`, `--on-chip` and the contrast-derived `--hero-kicker`, `--inverse-kicker` and `--surface-kicker`. The values in this section are the TOPIK Navy palette.
+
 > **Palette rule.** Use semantic tokens rather than hard-coded component colors. The light palette is the default; dark mode replaces token values while preserving component meaning and hierarchy.
 
 ### Light theme — default
@@ -155,7 +157,7 @@ A task-first, flat interface for interactive quizzes. The system prioritizes cle
 
 7. **Back-to-top control** — Fixed 46px circular control at bottom-right with an upward arrow. Contrasting colors for control background and arrow.
 
-8. **Light/Dark theme control** — Fixed 46px circular control at bottom-right next to back-to-top control with a sun/moon icon for light/dark mode. Contrasting colors for control background and icon.
+8. **Theme menu** — A "Theme" dropdown at the end of the header actions (shared-vocab/site-theme.js) picks one palette for the whole site; there is no floating theme button.
 
 ## 6. Component specifications
 
@@ -165,7 +167,7 @@ A task-first, flat interface for interactive quizzes. The system prioritizes cle
 | --- | --- |
 | **Structure** | 64px high, white/default surface, 1px bottom border, non-sticky. |
 | **Brand** | One text link, 1rem/800, -0.02em tracking. Recommended label: “Mitch – English Tutoring Resources.” |
-| **Actions** | Home link and theme toggle; 40px minimum height; 13px horizontal padding; 6px radius. |
+| **Actions** | Home link and the Theme dropdown; 40px minimum height; 13px horizontal padding; 6px radius. |
 | **Mobile** | 60px high. Keep brand on one line with ellipsis; hide the theme text label and retain the icon. |
 
 ### 6.2 Hero / lesson banner

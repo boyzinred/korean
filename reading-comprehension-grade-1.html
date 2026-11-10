@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem("koreanQuizThemeV2");
-        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
-      } catch (_) {}
-    })();
-  </script>
+  <script src="./shared-vocab/site-theme.js?v=1.0.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
   <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
@@ -24,42 +15,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  color-scheme: light;
-  --light-background: #28468A;
-  --light-foreground: #F5F5F5;
-  --light-primary: #BCE0E6;
-  --light-primary-hover: #ADC6CB;
-  --light-secondary: #AD8FE6;
-  --light-secondary-soft: #8E7EBF;
-  --light-accent: #C74E33;
-  --light-accent-soft: #A24B36;
-  --light-muted: #A0E090;
-  --light-muted-strong: #99C588;
-  --light-blue-soft: #6375CF;
-  --light-border: #6674C8;
-  --light-subtle: #DEEAAE;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
-  --surface: #F5F5F5;
-  --surface-text: #28468A;
-  --surface-muted: #E8ECF4;
-  --inverse: #20386E;
-  --inverse-text: #F5F5F5;
-  --hero-heading: #FFFFFF;
-  --hero-text: #EFF6FF;
+  /* Colours: shared-vocab/site-theme.js, picked from the Theme menu in the header. */
   --radius-md: 6px;
   --radius-lg: 8px;
   /* Outfit has no Hangul, so Korean falls past it to IBM Plex Sans KR, picked
@@ -72,60 +28,8 @@
      which on Hangul would fill the counters straight back in. */
   --font: 'Outfit', 'IBM Plex Sans KR', system-ui, sans-serif;
   --transition: all 200ms ease;
-  /* The handwriting test's own colour, kept off every other control so the
-     button reads as a different way of taking the test: gold against the navy. */
-  --handwrite: #E3B448;
-  --handwrite-hover: #D2A43A;
-  --on-handwrite: #28468A;
-  /* The speaking test's, for the same reason: its own colour, so the three
-     ways of taking the test sit side by side and still read as three. */
-  --speak: #8CC7B0;
-  --speak-hover: #79B59E;
-  --on-speak: #28468A;
 }
 
-html[data-theme='dark'] {
-  color-scheme: dark;
-  --light-background: #111827;
-  --light-foreground: #F9FAFB;
-  --light-primary: #6CC2D0;
-  --light-primary-hover: #6CC0D0;
-  --light-secondary: #8B61DC;
-  --light-secondary-soft: #201933;
-  --light-accent: #E29D8D;
-  --light-accent-soft: #391B13;
-  --light-muted: #1F2937;
-  --light-muted-strong: #374151;
-  --light-blue-soft: #12193B;
-  --light-border: #374151;
-  --light-subtle: #CBD5E1;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
-  --surface: #1F2937;
-  --surface-text: #F9FAFB;
-  --surface-muted: #111827;
-  --inverse: #0F172A;
-  --inverse-text: #F9FAFB;
-  --handwrite: #D4A93F;
-  --handwrite-hover: #C29834;
-  --on-handwrite: #111827;
-  --speak: #6FAE97;
-  --speak-hover: #5F9D86;
-  --on-speak: #111827;
-}
 
 * { box-sizing: border-box; }
 html {
@@ -223,9 +127,9 @@ summary:focus-visible,
 }
 .hero { color: var(--hero-heading); background: var(--background); }
 .hero-inner { padding: clamp(48px, 7vw, 82px); }
-.hero-kicker {
+.hero .hero-kicker {
   margin: 0 0 18px;
-  color: var(--primary);
+  color: var(--hero-kicker);
   font-size: .76rem;
   font-weight: 800;
   letter-spacing: .16em;
@@ -249,7 +153,7 @@ details.section > summary {
   justify-content: space-between;
   gap: 24px;
   padding: clamp(30px, 5vw, 64px);
-  color: #192B5D;
+  color: var(--on-secondary);
   background: var(--secondary);
   font-size: clamp(2rem, 4.4vw, 4rem);
   font-weight: 800;
@@ -268,9 +172,9 @@ details.section > summary::after {
   align-items: center;
   justify-content: center;
   padding: 0 18px;
-  color: #192B5D;
-  background: #FFFFFF;
-  border: 4px solid #192B5D;
+  color: var(--on-chip);
+  background: var(--chip);
+  border: 4px solid var(--on-chip);
   border-radius: var(--radius-md);
   font-size: .76rem;
   font-weight: 800;
@@ -287,11 +191,11 @@ details.section:not([open]) > summary::after { content: "Expand"; }
 }
 .info-card {
   padding: 22px;
-  color: var(--surface-text);
+  color: var(--foreground);
   background: var(--blue-soft);
   border-radius: var(--radius-lg);
 }
-html[data-theme="light"] .info-card { color: #F5F5F5; }
+.info-card { color: var(--foreground); }
 .info-card h4 { margin: 0 0 8px; font-size: 1.15rem; }
 .info-card p { margin: 0; }
 
@@ -314,7 +218,7 @@ html[data-theme="light"] .info-card { color: #F5F5F5; }
   transition: var(--transition);
   --btn-bg: var(--surface-muted);
 }
-.blur-toggle[aria-pressed="true"] { color: #192B5D; background: var(--primary); --btn-bg: var(--primary); }
+.blur-toggle[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 
 .table-wrap {
   overflow: auto;
@@ -390,7 +294,7 @@ td .roman { opacity: .78; }
   display: grid;
   place-items: center;
   line-height: 1;
-  color: #192B5D;
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: var(--radius-md);
   font-size: 1.15rem;
@@ -403,7 +307,7 @@ td .roman { opacity: .78; }
   font-size: .76rem;
   font-weight: 700;
 }
-html[data-theme="light"] .vocab-category > summary .vocab-category-count { color: #FFFFFF; opacity: 1; }
+.vocab-category > summary .vocab-category-count { color: var(--foreground); opacity: 1; }
 .vocab-category .table-wrap { border: 0; border-radius: 0; }
 /* Every cell centres on its own column, headers included, so a column reads as
    one straight line from top to bottom. */
@@ -457,7 +361,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   transition: var(--transition);
   --btn-bg: initial;
 }
-.mode-btn.active { color: #192B5D; background: var(--primary); --btn-bg: var(--primary); }
+.mode-btn.active { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 .ref-filter { flex: 1 1 15rem; max-width: 24rem; }
 .section-toolbar {
   display: flex;
@@ -553,7 +457,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   transition: var(--transition);
 }
 .vocab-note-toggle:hover { transform: scale(1.08); }
-.vocab-note-toggle[aria-expanded="true"] { color: #192B5D; background: var(--primary); }
+.vocab-note-toggle[aria-expanded="true"] { color: var(--on-primary); background: var(--primary); }
 .vocab-note-row > td {
   padding: 2px 4.5rem 20px;
   background: var(--surface-muted);
@@ -702,9 +606,10 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   background: var(--inverse);
 }
 .exercise-head-copy { padding: 24px 28px; }
+.exercise-kicker { color: var(--inverse-kicker); }
+.prompt-label { color: var(--surface-kicker); }
 .exercise-kicker,
 .prompt-label {
-  color: var(--primary);
   font-size: .74rem;
   font-weight: 800;
   letter-spacing: .12em;
@@ -722,7 +627,7 @@ html[data-theme="light"] .vocab-category > summary .vocab-category-count { color
   display: grid;
   place-items: center;
   padding: 20px;
-  color: #192B5D;
+  color: var(--on-accent);
   background: var(--accent);
   font-size: .9rem;
   font-weight: 800;
@@ -820,10 +725,10 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   transition: var(--transition);
 }
 .btn:disabled { opacity: .55; cursor: not-allowed; }
-.btn.primary { color: #192B5D; background: var(--primary); --btn-bg: var(--primary); }
-.btn.positive { color: #192B5D; background: var(--secondary); --btn-bg: var(--secondary); }
+.btn.primary { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
+.btn.positive { color: var(--on-secondary); background: var(--secondary); --btn-bg: var(--secondary); }
 .btn.secondary { color: var(--surface-text); background: var(--surface-muted); --btn-bg: var(--surface-muted); }
-.btn.warning { color: #FFFFFF; background: var(--accent); --btn-bg: var(--accent); }
+.btn.warning { color: var(--on-accent); background: var(--accent); --btn-bg: var(--accent); }
 .btn.small { min-height: 44px; padding: 0 14px; font-size: .82rem; }
 
 .btn.handwrite { color: var(--on-handwrite); background: var(--handwrite); --btn-bg: var(--handwrite); }
@@ -948,14 +853,14 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   align-items: center;
   gap: 8px;
   padding: 0 14px;
-  color: #192B5D;
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: 999px;
   font-size: .95rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
-.timer-chip.is-low { color: #FFFFFF; background: var(--accent); }
+.timer-chip.is-low { color: var(--on-accent); background: var(--accent); }
 .timer-chip small { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .82; }
 .status {
   display: flex;
@@ -990,7 +895,7 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   display: inline-flex;
   align-items: center;
   padding: 0 10px;
-  color: #192B5D;
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: 999px;
   font-size: .68rem;
@@ -1043,7 +948,7 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   cursor: pointer;
   --btn-bg: var(--surface-muted);
 }
-.choice:hover:not(.is-locked) { color: #192B5D; background: var(--primary); --btn-bg: var(--primary); }
+.choice:hover:not(.is-locked) { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
 .choice.is-locked { cursor: default; }
 .choice-letter {
   flex: 0 0 auto;
@@ -1057,10 +962,10 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   font-weight: 800;
 }
 .choice-text { min-width: 0; }
-.choice.correct { color: #FFFFFF; background: var(--secondary); border-color: var(--secondary); --btn-bg: var(--secondary); }
-.choice.correct .choice-letter { color: #192B5D; }
-.choice.wrong { color: #FFFFFF; background: var(--accent); border-color: var(--accent); --btn-bg: var(--accent); }
-.choice.wrong .choice-letter { color: #192B5D; }
+.choice.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); --btn-bg: var(--secondary); }
+.choice.correct .choice-letter { color: var(--on-secondary); }
+.choice.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); --btn-bg: var(--accent); }
+.choice.wrong .choice-letter { color: var(--on-accent); }
 .choice.faded { opacity: .55; }
 
 /* ---------------------------------------------------------------------------
@@ -1158,7 +1063,7 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   cursor: pointer;
   transition: var(--transition);
 }
-.order-tile:hover:not(:disabled) { color: #192B5D; background: var(--primary); transform: scale(1.02); }
+.order-tile:hover:not(:disabled) { color: var(--on-primary); background: var(--primary); transform: scale(1.02); }
 .order-tile:disabled { cursor: default; }
 .order-tile .order-no {
   flex: 0 0 auto;
@@ -1171,10 +1076,10 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   font-size: .74rem;
   font-weight: 800;
 }
-.order-tile.correct { color: #FFFFFF; background: var(--secondary); border-color: var(--secondary); }
-.order-tile.wrong { color: #FFFFFF; background: var(--accent); border-color: var(--accent); }
+.order-tile.correct { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.order-tile.wrong { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
 .order-tile.correct .order-no,
-.order-tile.wrong .order-no { color: #192B5D; }
+.order-tile.wrong .order-no { color: var(--on-secondary); }
 .order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .hint-row { display: grid; gap: 8px; margin: 16px 0; }
@@ -1193,7 +1098,7 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
   display: inline-flex;
   width: fit-content;
   padding: 4px 8px;
-  color: #192B5D;
+  color: var(--on-primary);
   background: var(--primary);
   border-radius: 999px;
   font-size: .72rem;
@@ -1202,6 +1107,7 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
 
 .feedback {
   display: none;
+  color: var(--foreground);
   margin-top: 16px;
   padding: 18px;
   border-radius: var(--radius-lg);
@@ -1210,7 +1116,7 @@ input:disabled, select:disabled { color: var(--subtle); background: var(--muted-
 .feedback strong { display: block; margin-bottom: 4px; font-size: 1.05rem; }
 .feedback.good { display: block; background: var(--secondary-soft); border-left: 8px solid var(--secondary); }
 .feedback.bad { display: block; background: var(--accent-soft); border-left: 8px solid var(--accent); }
-html[data-theme="light"] .feedback { color: #FFFFFF; }
+.feedback { color: var(--foreground); }
 .next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
 /* Scrolled to after an answer; the margin keeps it clear of the floating buttons. */
 .next-row .next { scroll-margin-bottom: 88px; }
@@ -1389,7 +1295,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   font-weight: 800;
 }
 .hint-step:hover, .hint-step:focus-visible { border-color: var(--primary); background: var(--surface); }
-.hint-step.is-open { color: #192B5D; background: var(--primary); border-color: var(--primary); }
+.hint-step.is-open { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
 .hint-content {
   position: relative;
   z-index: 1;
@@ -1418,7 +1324,7 @@ html[data-theme="light"] .feedback { color: #FFFFFF; }
   display: grid;
   place-items: center;
   padding: 0;
-  color: #192B5D;
+  color: var(--on-primary);
   background: var(--primary);
   border: 0;
   border-radius: 50%;
@@ -2335,7 +2241,6 @@ html.has-quiz-popout .utility-controls { display: none; }
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
-    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
     <button class="utility-button nav" type="button" data-section-nav="prev" aria-label="Previous section" title="Previous section">↑</button>
     <button class="utility-button nav" type="button" data-section-nav="next" aria-label="Next section" title="Next section">↓</button>
   </div>
@@ -7213,43 +7118,6 @@ html.has-quiz-popout .utility-controls { display: none; }
   })();
   </script>
 
-  <script>
-    (() => {
-      const STORAGE_KEY = "koreanQuizThemeV2";
-      const root = document.documentElement;
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
-
-      function savedTheme() {
-        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
-      }
-
-      function applyTheme(theme, persist = false) {
-        const next = theme === "dark" ? "dark" : "light";
-        root.dataset.theme = next;
-        root.style.colorScheme = next;
-        if (persist) {
-          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
-        }
-        toggles.forEach(toggle => {
-          const dark = next === "dark";
-          toggle.setAttribute("aria-pressed", String(dark));
-          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
-          const icon = toggle.querySelector("[data-theme-icon]");
-          if (icon) icon.textContent = dark ? "☀" : "☾";
-        });
-      }
-
-      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
-      toggles.forEach(toggle => {
-        toggle.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
-      });
-      media.addEventListener?.("change", event => {
-        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
-      });
-    })();
-  </script>
 
   <script>
     /* Quick navigation: open every collapsed section the target sits inside. */

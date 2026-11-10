@@ -2,16 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 
-  <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem("koreanQuizThemeV2");
-        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
-      } catch (_) {}
-    })();
-  </script>
+  <script src="./shared-vocab/site-theme.js?v=1.0.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
   <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
@@ -25,95 +16,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  color-scheme: light;
-  /* The palette: pink #EFD0CA, beige #C1BCAC, sage #979B8D, green #5C7457,
-     forest #214E34. The near-whites are pink taken toward white. */
-  --light-background: #214E34;
-  --light-foreground: #FBF5F3;
-  --light-primary: #5C7457;
-  --light-primary-hover: #4E6449;
-  --light-secondary: #C1BCAC;
-  --light-secondary-soft: #979B8D;
-  --light-accent: #EFD0CA;
-  --light-accent-soft: #C1BCAC;
-  --light-muted: #EFD0CA;
-  --light-muted-strong: #C1BCAC;
-  --light-blue-soft: #5C7457;
-  --light-border: #979B8D;
-  --light-subtle: #C1BCAC;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
-  /* Text on each fill. */
-  --on-primary: #FFFFFF;
-  --on-secondary: #214E34;
-  --on-accent: #214E34;
-
-  --surface: #FBF5F3;
-  --surface-text: #214E34;
-  --surface-muted: #F4E4E0;
-  --inverse: #214E34;
-  --inverse-text: #EFD0CA;
-  --hero-heading: #FFFFFF;
-  --hero-text: #EFD0CA;
+  /* Colours: shared-vocab/site-theme.js, picked from the Theme menu in the header. */
   --radius-md: 6px;
   --radius-lg: 8px;
   --font: 'Outfit', system-ui, sans-serif;
   --transition: all 200ms ease;
 }
 
-html[data-theme='dark'] {
-  color-scheme: dark;
-  --light-background: #0E2216;
-  --light-foreground: #EFD0CA;
-  --light-primary: #C1BCAC;
-  --light-primary-hover: #D0CCBF;
-  --light-secondary: #979B8D;
-  --light-secondary-soft: #2A4535;
-  --light-accent: #EFD0CA;
-  --light-accent-soft: #3A3230;
-  --light-muted: #17331F;
-  --light-muted-strong: #2A4535;
-  --light-blue-soft: #214E34;
-  --light-border: #3A5A45;
-  --light-subtle: #C1BCAC;
-
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --primary: var(--light-primary);
-  --primary-hover: var(--light-primary-hover);
-  --secondary: var(--light-secondary);
-  --secondary-soft: var(--light-secondary-soft);
-  --accent: var(--light-accent);
-  --accent-soft: var(--light-accent-soft);
-  --muted: var(--light-muted);
-  --muted-strong: var(--light-muted-strong);
-  --blue-soft: var(--light-blue-soft);
-  --border: var(--light-border);
-  --subtle: var(--light-subtle);
-
-  --on-primary: #10261A;
-  --on-secondary: #10261A;
-  --on-accent: #10261A;
-
-  --surface: #17331F;
-  --surface-text: #EFD0CA;
-  --surface-muted: #10261A;
-  --inverse: #0A1A10;
-  --inverse-text: #EFD0CA;
-}
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -213,9 +122,9 @@ summary:focus-visible {
 .hero-inner {
   padding: clamp(48px, 7vw, 82px);
 }
-.hero-kicker {
+.hero .hero-kicker {
   margin: 0 0 18px;
-  color: var(--primary);
+  color: var(--hero-kicker);
   font-size: .76rem;
   font-weight: 800;
   letter-spacing: .16em;
@@ -353,17 +262,17 @@ details.quiz-section:not([open]) > summary::after { content: "Expand"; }
 .grammar-card,
 .control-card {
   padding: 22px;
-  color: var(--surface-text);
+  color: var(--foreground);
   background: var(--blue-soft);
   border-radius: var(--radius-lg);
 }
-html[data-theme="light"] .rule-card,
-html[data-theme="light"] .info-card,
-html[data-theme="light"] .guide-card,
-html[data-theme="light"] .note-card,
-html[data-theme="light"] .grammar-card,
-html[data-theme="light"] .control-card {
-  color: #F5F5F5;
+.rule-card,
+.info-card,
+.guide-card,
+.note-card,
+.grammar-card,
+.control-card {
+  color: var(--foreground);
 }
 .exercise,
 .quiz-card {
@@ -382,10 +291,11 @@ html[data-theme="light"] .control-card {
 .exercise-head-copy {
   padding: 24px 28px;
 }
+.exercise-kicker { color: var(--inverse-kicker); }
+.prompt-label, .control-label { color: var(--surface-kicker); }
 .exercise-kicker,
 .prompt-label,
 .control-label {
-  color: var(--primary);
   font-size: .74rem;
   font-weight: 800;
   letter-spacing: .12em;
@@ -561,6 +471,7 @@ textarea:disabled,
 }
 .feedback {
   display: none;
+  color: var(--foreground);
   margin-top: 16px;
   padding: 18px;
   border-radius: var(--radius-lg);
@@ -575,7 +486,7 @@ textarea:disabled,
   background: var(--accent-soft);
   border-left: 8px solid var(--accent);
 }
-html[data-theme="light"] .feedback { color: #FFFFFF; }
+.feedback { color: var(--foreground); }
 .utility-controls {
   position: fixed;
   right: 18px;
@@ -1302,7 +1213,6 @@ html[data-theme='dark'] {
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
-    <button class="utility-button" type="button" data-theme-toggle aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span class="sr-only">Toggle color theme</span></button>
     <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
   </div>
 
@@ -2329,72 +2239,6 @@ html[data-theme='dark'] {
   })();
   </script>
 
-  <script>
-    (() => {
-      const STORAGE_KEY = "koreanQuizThemeV2";
-      const ANCHOR_KEY = `koreanStudyAnchor:${location.pathname}`;
-      const root = document.documentElement;
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
-
-      function savedTheme() {
-        try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
-      }
-
-      function applyTheme(theme, persist = false) {
-        const next = theme === "dark" ? "dark" : "light";
-        root.dataset.theme = next;
-        root.style.colorScheme = next;
-        if (persist) {
-          try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
-        }
-        toggles.forEach(toggle => {
-          const dark = next === "dark";
-          toggle.setAttribute("aria-pressed", String(dark));
-          toggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
-          const icon = toggle.querySelector("[data-theme-icon]");
-          if (icon) icon.textContent = dark ? "☀" : "☾";
-        });
-      }
-
-      applyTheme(savedTheme() || (media.matches ? "dark" : "light"));
-
-      toggles.forEach(toggle => {
-        toggle.addEventListener("click", () => {
-          applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
-        });
-      });
-
-      media.addEventListener?.("change", event => {
-        if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
-      });
-
-      function storeAnchor(hash) {
-        try {
-          if (hash && hash !== "#top") localStorage.setItem(ANCHOR_KEY, hash);
-          else localStorage.removeItem(ANCHOR_KEY);
-        } catch (_) {}
-      }
-
-      document.addEventListener("click", event => {
-        const link = event.target.closest('a[href^="#"]');
-        if (link) storeAnchor(link.getAttribute("href"));
-      });
-
-      window.addEventListener("hashchange", () => storeAnchor(location.hash));
-
-      if (!location.hash) {
-        let saved = "";
-        try { saved = localStorage.getItem(ANCHOR_KEY) || ""; } catch (_) {}
-        if (saved && document.querySelector(saved)) {
-          requestAnimationFrame(() => document.querySelector(saved)?.scrollIntoView());
-        } else {
-          requestAnimationFrame(() => window.scrollTo(0, 0));
-        }
-      }
-    })();
-  </script>
 
 </body>
 </html>

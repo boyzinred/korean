@@ -1,19 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script>
-    (() => {
-      try {
-        const savedTheme = localStorage.getItem("koreanQuizThemeV2");
-        const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
-
-        document.documentElement.dataset.theme = savedTheme || preferredTheme;
-        document.documentElement.style.colorScheme = savedTheme || preferredTheme;
-      } catch (_) {}
-    })();
-  </script>
+  <script src="./shared-vocab/site-theme.js?v=1.0.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
   <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
@@ -36,57 +24,14 @@
     --------------------------------------------------------------------- */
 
     :root {
-      color-scheme: light;
-
-      --background: #28468A;
-      --foreground: #F5F5F5;
-      --primary: #BCE0E6;
-      --primary-hover: #ADC6CB;
-      --secondary: #AD8FE6;
-      --secondary-soft: #8E7EBF;
-      --accent: #C74E33;
-      --accent-soft: #A24B36;
-      --muted: #A0E090;
-      --muted-strong: #99C588;
-      --blue-soft: #6375CF;
-      --border: #6674C8;
-      --subtle: #DEEAAE;
-
-      --surface: #F5F5F5;
-      --surface-text: #28468A;
-      --surface-muted: #E8ECF4;
-      --inverse: #20386E;
-      --inverse-text: #F5F5F5;
+  /* Colours: shared-vocab/site-theme.js, picked from the Theme menu in the header. */
 
       --radius-small: 6px;
       --radius-large: 8px;
       --font: "Outfit", system-ui, sans-serif;
       --transition: 180ms ease;
-    }
+}
 
-    html[data-theme="dark"] {
-      color-scheme: dark;
-
-      --background: #111827;
-      --foreground: #F9FAFB;
-      --primary: #6CC2D0;
-      --primary-hover: #6CC0D0;
-      --secondary: #8B61DC;
-      --secondary-soft: #201933;
-      --accent: #E29D8D;
-      --accent-soft: #391B13;
-      --muted: #1F2937;
-      --muted-strong: #374151;
-      --blue-soft: #12193B;
-      --border: #374151;
-      --subtle: #CBD5E1;
-
-      --surface: #1F2937;
-      --surface-text: #F9FAFB;
-      --surface-muted: #111827;
-      --inverse: #0F172A;
-      --inverse-text: #F9FAFB;
-    }
 
     /* ---------------------------------------------------------------------
        Base
@@ -212,7 +157,7 @@
     --------------------------------------------------------------------- */
 
     .hero {
-      color: #FFFFFF;
+      color: var(--hero-heading);
       background: var(--background);
     }
 
@@ -220,9 +165,9 @@
       padding: clamp(48px, 7vw, 82px);
     }
 
-    .hero-kicker {
+    .hero .hero-kicker {
       margin: 0 0 18px;
-      color: var(--primary);
+      color: var(--hero-kicker);
       font-size: 0.76rem;
       font-weight: 800;
       letter-spacing: 0.16em;
@@ -241,7 +186,7 @@
     .hero p {
       max-width: 66ch;
       margin: 24px 0 0;
-      color: #EFF6FF;
+      color: var(--hero-text);
       font-size: 1.05rem;
     }
 
@@ -293,12 +238,12 @@
     }
 
     .test-card:nth-child(3n + 2) .test-card-header {
-      color: #192B5D;
+      color: var(--on-secondary);
       background: var(--secondary);
     }
 
     .test-card:nth-child(3n + 3) .test-card-header {
-      color: #FFFFFF;
+      color: var(--on-accent);
       background: var(--accent);
     }
 
@@ -399,7 +344,7 @@
     }
 
     .button.primary {
-      color: #192B5D;
+      color: var(--on-primary);
       background: var(--primary);
       --btn-bg: var(--primary);
     }
@@ -411,7 +356,7 @@
     }
 
     .button.warning {
-      color: #FFFFFF;
+      color: var(--on-accent);
       background: var(--accent);
       --btn-bg: var(--accent);
     }
@@ -440,7 +385,7 @@
     }
 
     .quiz-banner-kicker {
-      color: var(--primary);
+      color: var(--inverse-kicker);
       font-size: 0.74rem;
       font-weight: 800;
       letter-spacing: 0.12em;
@@ -461,7 +406,7 @@
       align-content: center;
       gap: 4px;
       padding: 24px;
-      color: #192B5D;
+      color: var(--on-primary);
       font-weight: 800;
       text-align: center;
     }
@@ -486,7 +431,7 @@
     }
 
     .quiz-timer.urgent {
-      color: #FFFFFF;
+      color: var(--on-accent);
       background: var(--accent);
       animation: timerPulse 1s steps(2, end) infinite;
     }
@@ -622,13 +567,13 @@
     }
 
     .choice.correct {
-      color: #FFFFFF;
+      color: var(--on-secondary);
       background: var(--secondary);
       --btn-bg: var(--secondary);
     }
 
     .choice.wrong {
-      color: #FFFFFF;
+      color: var(--on-accent);
       background: var(--accent);
       --btn-bg: var(--accent);
     }
@@ -652,8 +597,8 @@
       border-left: 8px solid var(--accent);
     }
 
-    html[data-theme="light"] .feedback {
-      color: #FFFFFF;
+    .feedback {
+      color: var(--foreground);
     }
 
     .next-row {
@@ -767,7 +712,7 @@
       display: grid;
       place-items: center;
       padding: 0;
-      color: #192B5D;
+      color: var(--on-primary);
       background: var(--primary);
       border: 0;
       border-radius: 50%;
@@ -920,12 +865,12 @@
       align-items: center;
       gap: 10px;
       padding: 12px 14px;
-      color: var(--surface-text);
+      color: var(--foreground);
       background: var(--accent-soft);
       border-left: 8px solid var(--accent);
       border-radius: var(--radius-large);
     }
-    html[data-theme="light"] .end-confirm { color: #FFFFFF; }
+    .end-confirm { color: var(--foreground); }
     .end-confirm p { flex: 1 1 22ch; margin: 0; font-size: .92rem; font-weight: 700; line-height: 1.45; }
     .end-confirm-actions { display: flex; gap: 8px; }
     .end-confirm-actions .button { width: auto; min-height: 40px; padding: 0 14px; }
@@ -1025,7 +970,9 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">TOPIK Test Library (Tutoring)</div>
-      <a class="header-link" href="./index.html">Home</a>
+      <div class="header-actions" style="display:flex;align-items:center;gap:8px;">
+        <a class="header-link" href="./index.html">Home</a>
+      </div>
     </div>
   </header>
 
@@ -1146,17 +1093,6 @@
     </section>
   </main>
 
-  <div class="utility-controls">
-    <button
-      class="utility-button"
-      id="themeToggle"
-      type="button"
-      aria-label="Toggle color theme"
-      aria-pressed="false"
-    >
-      <span id="themeIcon" aria-hidden="true">☾</span>
-    </button>
-  </div>
 
   <script>
     "use strict";
@@ -5113,34 +5049,6 @@
     }
 
     // -----------------------------------------------------------------------
-    // Theme
-    // -----------------------------------------------------------------------
-
-    const root = document.documentElement;
-    const themeToggle = document.getElementById("themeToggle");
-    const themeIcon = document.getElementById("themeIcon");
-
-    function applyTheme(theme, persist = false) {
-      const nextTheme = theme === "dark" ? "dark" : "light";
-      const dark = nextTheme === "dark";
-
-      root.dataset.theme = nextTheme;
-      root.style.colorScheme = nextTheme;
-      themeToggle.setAttribute("aria-pressed", String(dark));
-      themeToggle.setAttribute(
-        "aria-label",
-        dark ? "Switch to light mode" : "Switch to dark mode"
-      );
-      themeIcon.textContent = dark ? "☀" : "☾";
-
-      if (persist) {
-        try {
-          localStorage.setItem("koreanQuizThemeV2", nextTheme);
-        } catch (_) {}
-      }
-    }
-
-    // -----------------------------------------------------------------------
     // Event wiring
     // -----------------------------------------------------------------------
 
@@ -5170,9 +5078,6 @@
 
     nextQuestion.addEventListener("click", goToNextQuestion);
 
-    themeToggle.addEventListener("click", () => {
-      applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
-    });
 
     document.addEventListener("keydown", event => {
       if (quizView.classList.contains("hidden")) {
@@ -5195,7 +5100,6 @@
     // Initialization
     // -----------------------------------------------------------------------
 
-    applyTheme(root.dataset.theme);
     updateTimerDisplay();
     renderTestLibrary();
   </script>
