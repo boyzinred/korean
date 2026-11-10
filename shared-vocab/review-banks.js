@@ -154,6 +154,15 @@
       word: plain
     },
     {
+      id: "yonsei-beginner",
+      title: "Yonsei · Beginner",
+      href: "yonsei-university-press-beginner.html",
+      starKey: "koreanYonseiFamiliarity:beginner:v1",
+      exports: STANDARD,
+      shape: standard,
+      word: plain
+    },
+    {
       id: "reading-1",
       title: "Reading · Grade 1",
       href: "reading-comprehension-grade-1.html",
