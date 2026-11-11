@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script src="./shared-vocab/site-theme.js?v=1.0.0"></script>
+  <script src="./shared-vocab/site-theme.js?v=1.1.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
   <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
@@ -1683,8 +1683,6 @@ html.has-quiz-popout .utility-controls { display: none; }
 .yb-related span strong { font-weight: 800; }
 .prompt.is-long { font-size: calc(clamp(1rem, 1.7vw, 1.2rem) * var(--ko-size)); line-height: 1.7; }
 .hw-answer-en { font-size: 1.05rem; font-weight: 700; line-height: 1.5; }
-.compare-zone { margin-top: 12px; }
-.compare-given { font-weight: 600; line-height: 1.6; }
 .field-note { margin-top: 8px; }
 [hidden] { display: none !important; }
 </style>
@@ -1835,7 +1833,7 @@ html.has-quiz-popout .utility-controls { display: none; }
                 </select>
               </div>
               <p class="assistant-status vocab-pool-note"></p>
-              <p class="wordbank-count">Typed test: type each answer. A word is checked for you; a definition, usage pattern, expression or sentence is checked word for word, and when it does not match exactly the book&rsquo;s answer goes up beside yours and you mark yourself (leave it blank to just compare). Handwriting test: write the answer in 한국어 with a finger or a pen, reveal it, and mark yourself. Speaking test: say it in 한국어, reveal it, and mark yourself. Handwriting and speaking always answer in 한국어, so their questions come from the English side (usage is 한국어 on both sides already).</p>
+              <p class="wordbank-count">Typed test: type each answer. A word is checked for you; a definition, usage pattern, expression or sentence is checked word for word (spaces and punctuation aside). Enter checks and Enter again moves on; a miss shows the book&rsquo;s answer beside yours, and <strong>Count as correct</strong> takes an answer that says the same thing. Handwriting test: write the answer in 한국어 with a finger or a pen, reveal it, and mark yourself. Speaking test: say it in 한국어, reveal it, and mark yourself. Handwriting and speaking always answer in 한국어, so their questions come from the English side (usage is 한국어 on both sides already).</p>
             </div>
 
             <div class="live hidden">
@@ -1881,7 +1879,7 @@ html.has-quiz-popout .utility-controls { display: none; }
 
   <script src="./shared-vocab/spaced-session.js?v=1.2.0"></script>
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
-  <script src="./shared-vocab/quiz-popout.js?v=1.1.0"></script>
+  <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script>
   (() => {
     "use strict";
@@ -3596,9 +3594,7 @@ html.has-quiz-popout .utility-controls { display: none; }
     }
 
     /* A sentence, a definition or a usage pattern is compared with every
-       space and mark taken out — and when that does not match, which is most
-       of the time, the run shows the book's answer beside yours and you mark
-       yourself. */
+       space and mark taken out. */
     function looseForm(text) {
       return String(text || "").toLowerCase()
         .replace(/[\s.,!?'"’‘“”~·…:;()\[\]\-–—/]+/g, "");
@@ -3624,9 +3620,10 @@ html.has-quiz-popout .utility-controls { display: none; }
       return acceptedAnswers(entry, lang).some(answer => normalizeAnswer(answer, lang) === given);
     }
 
-    /* Whether a question's answer is a word, which the checker can mark, or
-       a phrase, sentence, definition or pattern, which it can only match
-       exactly and otherwise hands to you. */
+    /* Whether a question's answer is a word, which the checker can mark the
+       usual way, or a phrase, sentence, definition or pattern, which it can
+       only match exactly — a miss on one shows the book's answer at once,
+       with Count as correct for an answer that says the same thing. */
     function isLongAnswer(item, lang) {
       if (!item.field || item.field === "translation") return false;
       return !(item.field === "definition" && lang === "ko");
@@ -3925,7 +3922,6 @@ html.has-quiz-popout .utility-controls { display: none; }
         if (!visibleTicked("prompt-lang")) vEl.querySelector('.prompt-lang[value="en"]').checked = true;
         if (!visibleTicked("answer-lang")) vEl.querySelector('.answer-lang[value="ko"]').checked = true;
       }
-      $v(".begin").textContent = field === "translation" ? "Typed test" : "Typed test (check or self-mark)";
     }
 
     function paintPoolNote() {
@@ -4172,7 +4168,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       if (direction.answerLang === "us") return verb + " how the word is used — its pattern, in 한국어";
       if (item.field === "definition") {
         return direction.answerLang === "ko" ? verb + " the word this defines, in 한국어"
-          : verb + " the definition, in English (then compare)";
+          : verb + " the definition, in English";
       }
       if (item.field === "expression") return verb + " the expression in " + LANG_NAMES[direction.answerLang];
       if (item.field === "example") return verb + " the sentence in " + LANG_NAMES[direction.answerLang];
@@ -4215,21 +4211,17 @@ html.has-quiz-popout .utility-controls { display: none; }
         const long = isLongAnswer(entry, direction.answerLang);
         zone.innerHTML = '<div class="answer-row">'
           + '<input class="answer-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
-          + 'placeholder="' + esc(long ? sideName(settings.field, direction.answerLang) + " — or leave blank to compare" : LANG_NAMES[direction.answerLang]) + '">'
-          + '<button class="btn primary submit" type="button">Check</button></div>'
-          + '<div class="compare-zone"></div>';
+          + 'placeholder="' + esc(long ? sideName(settings.field, direction.answerLang) : LANG_NAMES[direction.answerLang]) + '">'
+          + '<button class="btn primary submit" type="button">Check</button></div>';
         const input = zone.querySelector(".answer-input");
         const submit = () => {
           if (vocabState.locked || vocabState.finished) return;
-          if (vocabState.comparing) return;
           if (offerRetake(entry, direction, input.value)) {
             input.value = "";
             input.focus({ preventScroll: true });
             return;
           }
-          const right = checkTypedFor(entry, direction, input.value);
-          if (!right && long) { showCompare(zone, entry, direction, input.value.trim()); return; }
-          lockVocabQuestion(right, input.value.trim());
+          lockVocabQuestion(checkTypedFor(entry, direction, input.value), input.value.trim());
         };
         zone.querySelector(".submit").addEventListener("click", submit);
         input.addEventListener("keydown", event => {
@@ -4237,44 +4229,12 @@ html.has-quiz-popout .utility-controls { display: none; }
         });
         input.focus({ preventScroll: true });
       }
-      vocabState.comparing = false;
 
       const feedback = $v(".feedback");
       feedback.className = "feedback";
       feedback.innerHTML = "";
       $v(".next").classList.add("hidden");
       paintVocabScore();
-    }
-
-    /* A phrase, sentence, definition or pattern that did not match word for
-       word: the book's answer goes up beside yours, and you mark it. The
-       mark goes through lockVocabQuestion like any other answer. */
-    function showCompare(zone, item, direction, given) {
-      vocabState.comparing = true;
-      const input = zone.querySelector(".answer-input");
-      const submit = zone.querySelector(".submit");
-      if (input) input.disabled = true;
-      if (submit) submit.disabled = true;
-      const box = zone.querySelector(".compare-zone");
-      box.innerHTML = '<div class="hw-answer" aria-live="polite">'
-        + '<span class="word-note-label">You wrote</span>'
-        + '<span class="compare-given">' + (given ? esc(given) : "<em>(nothing — just comparing)</em>") + '</span>'
-        + '<span class="word-note-label">The book says</span>'
-        + answerHtml(item, direction)
-        + '<div class="hw-grade">'
-        + '<button class="btn positive hw-got" type="button">✓ I had it</button>'
-        + '<button class="btn warning hw-missed" type="button">✗ Missed it</button>'
-        + '</div></div>';
-      const mark = correct => {
-        if (vocabState.locked || vocabState.finished) return;
-        box.querySelector(".hw-grade").classList.add("hidden");
-        vocabState.comparing = false;
-        lockVocabQuestion(correct, given);
-      };
-      box.querySelector(".hw-got").addEventListener("click", () => mark(true));
-      box.querySelector(".hw-missed").addEventListener("click", () => mark(false));
-      box.querySelector(".hw-got").focus({ preventScroll: true });
-      box.scrollIntoView({ block: "nearest" });
     }
 
     /* ---- the handwriting test ---------------------------------------------
@@ -4433,7 +4393,16 @@ html.has-quiz-popout .utility-controls { display: none; }
         ? "<strong>맞아요!</strong>"
         : '<div class="feedback-head"><strong>아니에요.</strong>'
           + '<button class="btn secondary count-correct" type="button">Count as correct →</button></div>';
-      if (handwritten || compared) {
+      if (compared && !handwritten && !correct) {
+        /* A phrase, sentence, definition or pattern is only right when it
+           matches the book word for word (spaces and punctuation aside), so a
+           miss shows the book's answer straight away, beside what you typed:
+           Count as correct takes it if yours said the same thing. */
+        feedback.innerHTML = head + "The book: <em>" + esc(wordIn(entry, direction.answerLang)) + "</em>"
+          + (given ? "<br><small>You wrote: " + esc(given) + "</small>" : "")
+          + (entry.hint ? "<br><small>From " + esc(entry.hint) + "</small>" : "")
+          + (retry ? "<br><small>This one comes straight back — try it again without looking.</small>" : "");
+      } else if (handwritten || compared) {
         feedback.innerHTML = head + full + note
           + (retry ? "<br><small>This one comes straight back — try it again without looking.</small>" : "");
       } else if (correct) {

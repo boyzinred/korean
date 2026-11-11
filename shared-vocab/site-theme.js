@@ -66,8 +66,8 @@
       v: {
         background: "#214E34", foreground: "#FBF5F3",
         primary: "#5C7457", "primary-hover": "#4E6449",
-        secondary: "#C1BCAC", "secondary-soft": "#979B8D",
-        accent: "#EFD0CA", "accent-soft": "#C1BCAC",
+        secondary: "#C1BCAC", "secondary-soft": "#4F6E58",
+        accent: "#EFD0CA", "accent-soft": "#7C4C47",
         muted: "#EFD0CA", "muted-strong": "#C1BCAC", "blue-soft": "#5C7457",
         border: "#979B8D", subtle: "#C1BCAC",
         "on-primary": "#FFFFFF", "on-secondary": "#214E34", "on-accent": "#214E34", "on-muted": "#214E34",
@@ -83,9 +83,9 @@
       v: {
         background: "#28468A", foreground: "#F5F5F5",
         primary: "#BCE0E6", "primary-hover": "#ADC6CB",
-        secondary: "#AD8FE6", "secondary-soft": "#8E7EBF",
+        secondary: "#AD8FE6", "secondary-soft": "#705CAE",
         accent: "#C74E33", "accent-soft": "#A24B36",
-        muted: "#A0E090", "muted-strong": "#99C588", "blue-soft": "#6375CF",
+        muted: "#A0E090", "muted-strong": "#99C588", "blue-soft": "#4C60C8",
         border: "#6674C8", subtle: "#DEEAAE",
         "on-primary": "#192B5D", "on-secondary": "#192B5D", "on-accent": "#FFFFFF", "on-muted": "#192B5D",
         surface: "#F5F5F5", "surface-text": "#28468A", "surface-muted": "#E8ECF4",
@@ -101,15 +101,15 @@
         background: "#EFE3D6", foreground: "#70593C",
         primary: "#8C6A47", "primary-hover": "#7B5F42",
         secondary: "#C6B29A", "secondary-soft": "#EFE7DC",
-        accent: "#7B5F42", "accent-soft": "#E3D2BF",
+        accent: "#7B5F42", "accent-soft": "#ECE1D4",
         muted: "#E6D9C8", "muted-strong": "#D8C7B2", "blue-soft": "#F3EBE1",
         border: "#D4C2AC", subtle: "#E6D9C8",
         "on-primary": "#FFF8EE", "on-secondary": "#2B1F12", "on-accent": "#FFF8EE", "on-muted": "#70593C",
         surface: "#FBF7F2", "surface-text": "#70593C", "surface-muted": "#F3EBE1",
         inverse: "#70593C", "inverse-text": "#EFE3D6",
         "hero-heading": "#70593C", "hero-text": "#70593C", chip: "#FFFFFF",
-        handwrite: "#8A7A4A", "handwrite-hover": "#786A3F", "on-handwrite": "#FFF8EE",
-        speak: "#5E7A6E", "speak-hover": "#4F685D", "on-speak": "#FFF8EE"
+        handwrite: "#76683F", "handwrite-hover": "#665A36", "on-handwrite": "#FFF8EE",
+        speak: "#577166", "speak-hover": "#4A6157", "on-speak": "#FFF8EE"
       }
     },
     {
@@ -125,7 +125,7 @@
         surface: "#FBF8EF", "surface-text": "#1B2A1E", "surface-muted": "#F3EDDC",
         inverse: "#1B2A1E", "inverse-text": "#F2E8CF",
         "hero-heading": "#1B2A1E", "hero-text": "#1B2A1E", chip: "#FFFFFF",
-        handwrite: "#6A994E", "handwrite-hover": "#5A8741", "on-handwrite": "#1B2A1E",
+        handwrite: "#71A353", "handwrite-hover": "#639248", "on-handwrite": "#1B2A1E",
         speak: "#3D6E7A", "speak-hover": "#325C66", "on-speak": "#FFFFFF"
       }
     },
@@ -169,10 +169,10 @@
         background: "#F6F8AA", foreground: "#1D7735",
         primary: "#D86546", "primary-hover": "#C4553A",
         secondary: "#7FB5D7", "secondary-soft": "#DCEBF5",
-        accent: "#D86546", "accent-soft": "#F8DDD4",
+        accent: "#D86546", "accent-soft": "#FBEBE6",
         muted: "#EEF19C", "muted-strong": "#DDE187", "blue-soft": "#E6F1F8",
         border: "#C2D39A", subtle: "#D8EBB4",
-        "on-primary": "#0F3A1C", "on-secondary": "#0F3A1C", "on-accent": "#0F3A1C", "on-muted": "#1D7735",
+        "on-primary": "#082611", "on-secondary": "#082611", "on-accent": "#082611", "on-muted": "#1D7735",
         surface: "#FFFFF4", "surface-text": "#1D7735", "surface-muted": "#F9FAD2",
         inverse: "#1D7735", "inverse-text": "#F6F8AA",
         "hero-heading": "#1D7735", "hero-text": "#1D7735", chip: "#FFFFFF",
@@ -203,7 +203,7 @@
         background: "#0A0A0A", foreground: "#F5F5F5",
         primary: "#E5E5E5", "primary-hover": "#CFCFCF",
         secondary: "#A3A3A3", "secondary-soft": "#262626",
-        accent: "#737373", "accent-soft": "#1C1C1C",
+        accent: "#808080", "accent-soft": "#1C1C1C",
         muted: "#262626", "muted-strong": "#404040", "blue-soft": "#262626",
         border: "#3A3A3A", subtle: "#A3A3A3",
         "on-primary": "#0A0A0A", "on-secondary": "#0A0A0A", "on-accent": "#0A0A0A", "on-muted": "#F5F5F5",
@@ -219,9 +219,9 @@
       v: {
         background: "#111827", foreground: "#F9FAFB",
         primary: "#6CC2D0", "primary-hover": "#5BB3C2",
-        secondary: "#8B61DC", "secondary-soft": "#201933",
+        secondary: "#7C4CD7", "secondary-soft": "#201933",
         accent: "#E29D8D", "accent-soft": "#391B13",
-        muted: "#1F2937", "muted-strong": "#374151", "blue-soft": "#12193B",
+        muted: "#2C3A4E", "muted-strong": "#3B4A60", "blue-soft": "#12193B",
         border: "#374151", subtle: "#CBD5E1",
         "on-primary": "#111827", "on-secondary": "#F9FAFB", "on-accent": "#111827", "on-muted": "#F9FAFB",
         surface: "#1F2937", "surface-text": "#F9FAFB", "surface-muted": "#111827",
@@ -238,7 +238,7 @@
         primary: "#C1BCAC", "primary-hover": "#D0CCBF",
         secondary: "#979B8D", "secondary-soft": "#2A4535",
         accent: "#EFD0CA", "accent-soft": "#3A3230",
-        muted: "#17331F", "muted-strong": "#2A4535", "blue-soft": "#214E34",
+        muted: "#1F452A", "muted-strong": "#2E5A3C", "blue-soft": "#214E34",
         border: "#3A5A45", subtle: "#C1BCAC",
         "on-primary": "#10261A", "on-secondary": "#10261A", "on-accent": "#10261A", "on-muted": "#EFD0CA",
         surface: "#17331F", "surface-text": "#EFD0CA", "surface-muted": "#10261A",
@@ -286,21 +286,26 @@
     return 'html[data-palette="' + theme.id + '"]{color-scheme:' + theme.mode + ";" + lines.join("") + "}";
   }
 
+  /* The menu wears the header links' own look — the same height, padding,
+     fill, radius, weight and hover — so it reads as one more of them, with
+     only a small caret to say it opens. */
   const PICKER_CSS = ""
-    + ".theme-picker{position:relative;display:inline-flex;align-items:center;}"
-    + ".theme-picker select{appearance:none;-webkit-appearance:none;min-height:40px;padding:8px 34px 8px 12px;"
-    + "border:1px solid var(--border);border-radius:var(--radius-md,6px);background:var(--muted);color:var(--on-muted);"
-    + "font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;}"
-    + ".theme-picker select:hover{border-color:var(--primary);}"
+    + ".theme-picker{position:relative;display:inline-flex;align-items:center;flex:none;}"
+    + ".theme-picker select{appearance:none;-webkit-appearance:none;box-sizing:border-box;width:auto;min-width:0;"
+    + "height:auto;min-height:40px;margin:0;padding:0 28px 0 13px;color:var(--surface-text);background:var(--surface-muted);"
+    + "border:1px solid transparent;border-radius:var(--radius-md,6px);box-shadow:none;"
+    + "font-family:inherit;font-size:inherit;font-weight:700;line-height:normal;cursor:pointer;}"
+    + ".theme-picker select:hover{border-color:var(--primary);background:var(--blue-soft);color:var(--foreground);}"
+    + ".theme-picker select:focus{border-color:var(--primary);background:var(--surface-muted);color:var(--surface-text);}"
     + ".theme-picker select:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}"
-    + ".theme-picker::after{content:'';position:absolute;right:13px;top:50%;width:7px;height:7px;margin-top:-6px;"
-    + "border-right:2px solid var(--on-muted);border-bottom:2px solid var(--on-muted);transform:rotate(45deg);pointer-events:none;}"
+    + ".theme-picker select option,.theme-picker select optgroup{color:initial;background:initial;font-weight:400;}"
+    + ".theme-picker::after{content:'';position:absolute;right:12px;top:50%;width:5px;height:5px;margin-top:-4px;"
+    + "border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);"
+    + "color:var(--surface-text);opacity:.7;pointer-events:none;}"
     + ".theme-picker-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}"
-    + ".theme-picker{flex:none;}"
     + ".site-header .brand{flex:1 1 auto;min-width:0;}"
     + ".site-header .header-link{white-space:nowrap;}"
-    + "@media (max-width:560px){.theme-picker select{width:7.2rem;min-height:40px;padding-left:10px;padding-right:26px;font-size:.84rem;}"
-    + ".theme-picker::after{right:11px;}}"
+    + "@media (max-width:560px){.theme-picker select{max-width:8.5rem;}}"
     + "@media print{.theme-picker{display:none;}}";
 
   const style = document.createElement("style");

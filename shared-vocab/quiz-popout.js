@@ -17,6 +17,11 @@
    .popout-results while the runtime bar is gone (the results), .is-long on a
    prompt too long for the big size, and .has-quiz-popout on <html>.
 
+   The running score. A popped-out card hides its header, and the score
+   with it, so the score is copied into the runtime bar as .popout-score and
+   kept up to date while the card is out. A card whose score stays in view
+   when popped out (the test library's) is left alone.
+
    Ending early. The end button asks first:
 
      QuizPopout.confirmEnd(button, () => finish(...));
@@ -49,6 +54,48 @@
   let steppingBack = false;
 
   const cardOf = button => button.closest(".exercise, .quiz-card, .quiz-shell");
+
+  const style = document.createElement("style");
+  style.textContent = ".popout-score{display:none;}"
+    + ".is-popout .popout-score{display:inline-flex;align-items:center;gap:6px;margin-right:auto;padding:0 2px;"
+    + "color:var(--surface-text);font-size:.86rem;font-weight:800;white-space:nowrap;}"
+    + ".is-popout .popout-score small{font-size:.76rem;font-weight:700;opacity:.7;}";
+  (document.head || document.documentElement).appendChild(style);
+
+  /* The score's lines — "3 / 5 correct", "20 questions" — read from its
+     markup rather than its rendering, since it is hidden while the card is
+     out. */
+  function scoreLines(score) {
+    const lines = [""];
+    score.childNodes.forEach(node => {
+      if (node.nodeName === "BR") lines.push("");
+      else lines[lines.length - 1] += node.textContent;
+    });
+    return lines.map(line => line.replace(/\s+/g, " ").trim()).filter(Boolean);
+  }
+
+  function syncScore(card) {
+    const bar = [...card.querySelectorAll(".runtime-bar")].find(shown);
+    const score = card.querySelector(".score");
+    const chip = card.querySelector(".popout-score");
+    if (!bar || !score || shown(score)) {
+      if (chip) chip.remove();
+      return;
+    }
+    const lines = scoreLines(score);
+    const html = lines.length ? "<span>" + lines[0].replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])) + "</span>"
+      + (lines[1] ? "<small>" + lines.slice(1).join(" · ").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])) + "</small>" : "") : "";
+    const host = bar.querySelector(".runtime-actions") || bar;
+    let target = chip;
+    if (!target || target.parentNode !== host) {
+      if (target) target.remove();
+      target = document.createElement("span");
+      target.className = "popout-score";
+      target.setAttribute("aria-live", "polite");
+      host.insertBefore(target, host.firstChild);
+    }
+    if (target.innerHTML !== html) target.innerHTML = html;
+  }
   const shown = node => Boolean(node) && node.getClientRects().length > 0;
 
   function labelToggles(card, out) {
@@ -99,6 +146,7 @@
       const long = promptLength(prompt.textContent) > LONG_PROMPT;
       if (prompt.classList.contains("is-long") !== long) prompt.classList.toggle("is-long", long);
     });
+    syncScore(card);
   }
 
   function focusTarget(card) {
@@ -125,7 +173,7 @@
     labelToggles(card, true);
     card.scrollTop = 0;
 
-    open.observer.observe(card, { attributes: true, attributeFilter: ["class"], childList: true, subtree: true });
+    open.observer.observe(card, { attributes: true, attributeFilter: ["class"], childList: true, subtree: true, characterData: true });
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", fitToViewport);
       window.visualViewport.addEventListener("scroll", fitToViewport);
@@ -161,6 +209,7 @@
     card.style.removeProperty("--popout-top");
     card.style.removeProperty("--popout-height");
     card.querySelectorAll(".prompt.is-long").forEach(prompt => prompt.classList.remove("is-long"));
+    card.querySelectorAll(".popout-score").forEach(chip => chip.remove());
     document.documentElement.classList.remove("has-quiz-popout");
     labelToggles(card, false);
     /* Closed by hand, the page goes back to where it was. Closed because the
