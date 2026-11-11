@@ -1262,10 +1262,10 @@ html[data-theme='dark'] th {
 
 .answer-form {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   gap: 12px;
 }
-.answer-form .primary-btn { min-width: 118px; }
+.answer-form .primary-btn { width: 100%; }
 .answer-input { font-size: 1.1rem; }
 .secondary-btn { margin-top: 12px; }
 .answer-key {
@@ -1955,14 +1955,14 @@ html.has-quiz-popout .utility-controls { display: none; }
 .quiz-card.is-popout .answer-mode-note { margin: -8px 0 14px; text-align: center; }
 
 /* A 16px answer or larger, or iOS zooms the page in on focus. */
-.quiz-card.is-popout .answer-form { grid-template-columns: 1fr auto; gap: 8px; }
+.quiz-card.is-popout .answer-form { grid-template-columns: 1fr; gap: 8px; }
 .quiz-card.is-popout .answer-input {
   min-height: 68px;
   padding: 0 16px;
   font-size: calc(1.5rem * var(--ko-size, 1));
   text-align: center;
 }
-.quiz-card.is-popout .answer-form .primary-btn { width: auto; min-width: 0; min-height: 0; padding: 0 16px; font-size: .82rem; }
+.quiz-card.is-popout .answer-form .primary-btn { width: 100%; min-width: 0; min-height: 48px; padding: 0 16px; font-size: .9rem; }
 
 .quiz-card.is-popout .hw-pad { height: clamp(180px, calc(var(--popout-height, 100dvh) - 500px), 480px); }
 .quiz-card.is-popout .hw-tools .btn { min-height: 44px; font-size: .82rem; }
