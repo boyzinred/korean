@@ -392,15 +392,41 @@ test("a miss on word 3 of a 10-word group shows the answer and restarts at word 
   assert.strictEqual(run.phase, "srs", "1–10 was the last group; it passed on the clean attempt");
 });
 
-test("the attempt after a restart is the whole group, in order", () => {
+test("strict 5-word checkpoints: a miss on word 7 of 1–10 restarts at word 6, not word 1", () => {
   const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
   reachGroup(run, 1, 10);
   for (let i = 0; i < 6; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
-  StudyPlan.engine.answer(run, CONFIG, "f");
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w7");
+  const events = StudyPlan.engine.answer(run, CONFIG, "f");
+  assert.strictEqual(events.restartFrom, 6);
+  const asked = [];
+  for (let i = 0; i < 5; i += 1) {
+    asked.push(StudyPlan.engine.current(run).id);
+    StudyPlan.engine.answer(run, CONFIG, "s");
+  }
+  assert.deepStrictEqual(asked, ["w6", "w7", "w8", "w9", "w10"]);
+  assert.strictEqual(run.phase, "srs", "1–10 passes once words 6–10 go through clean");
+});
+
+test("strict 5-word checkpoints hold in a 50-word group: a miss on word 43 goes back to word 41", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(50), CONFIG, seeded(8));
+  reachGroup(run, 1, 50);
+  for (let i = 0; i < 42; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
+  assert.strictEqual(StudyPlan.engine.answer(run, CONFIG, "f").restartFrom, 41);
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w41");
+  assert.strictEqual(StudyPlan.engine.current(run).group.attempt, 2);
+});
+
+test("the immediate policy restarts the whole group, in order", () => {
+  const cfg = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "immediate" } });
+  const run = StudyPlan.engine.create("comprehensive", ids(10), cfg, seeded(2));
+  while (StudyPlan.engine.current(run).group.size !== 10) StudyPlan.engine.answer(run, cfg, "s");
+  for (let i = 0; i < 6; i += 1) StudyPlan.engine.answer(run, cfg, "s");
+  assert.strictEqual(StudyPlan.engine.answer(run, cfg, "f").restartFrom, 1);
   const asked = [];
   for (let i = 0; i < 10; i += 1) {
     asked.push(StudyPlan.engine.current(run).id);
-    StudyPlan.engine.answer(run, CONFIG, "s");
+    StudyPlan.engine.answer(run, cfg, "s");
   }
   assert.deepStrictEqual(asked, ids(10));
 });
@@ -423,7 +449,8 @@ test("restarts work the same for groups of any size", () => {
       if (last && now.group.attempt === 1) {
         assert(events.restarted, "n=" + n);
         const again = StudyPlan.engine.current(run);
-        assert.strictEqual(again.group.position, 1);
+        /* Back to the start of the missed word's 5-word segment. */
+        assert.strictEqual(again.group.position, Math.floor((now.group.position - 1) / 5) * 5 + 1);
         assert.strictEqual(again.group.from, now.group.from);
       }
     }
@@ -456,9 +483,10 @@ test("checkpoint policy: a big group restarts only its current segment; small gr
   assert.strictEqual(run.phase, "srs", "the group passes once the rest goes through without a miss");
 });
 
-test("strict full-group restart is the default", () => {
-  assert.strictEqual(StudyPlan.DEFAULTS.comprehensive.restartPolicy, "immediate");
-  assert.strictEqual(CONFIG.comprehensive.restartPolicy, "immediate");
+test("strict 5-word checkpoints are the default", () => {
+  assert.strictEqual(CONFIG.comprehensive.restartPolicy, "checkpoint");
+  assert.strictEqual(CONFIG.comprehensive.checkpointSegmentSize, 5);
+  assert(CONFIG.comprehensive.checkpointMinGroupSize <= 6, "every group over 5 words uses them");
 });
 
 test("a group failed mid-way pauses and resumes with earlier groups intact", () => {

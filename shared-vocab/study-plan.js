@@ -51,7 +51,8 @@
                       a time, merged into ever larger groups (hierarchy()),
                       each repeated until one attempt is all right. A miss
                       stops the attempt at once and the group starts again
-                      from its first word (restartPolicy).
+                      from the start of its current 5-word segment
+                      (restartPolicy).
                       Part 2 spaced: every word once more, shuffled, through
                       SpacedSession; what Part 1 found weak starts lower on
                       the ladder and comes round more.
@@ -114,18 +115,22 @@
       preserveOriginalOrder: true,
       requirePerfectGroupPass: true,
       /* What a miss inside a group does:
-           "immediate"       stop the attempt there, show the answer, and
-                             start the group again from its first word (the
-                             default)
-           "checkpoint"      the same, but a group of checkpointMinGroupSize
-                             words or more restarts only from the start of its
-                             current checkpointSegmentSize-word segment
+           "checkpoint"      stop the attempt there, show the answer, and
+                             start again from the first word of the current
+                             checkpointSegmentSize-word segment, in groups of
+                             checkpointMinGroupSize words or more (smaller
+                             groups restart whole). The default: strict
+                             5-word checkpoints, so a miss on word 7 of 1–10
+                             goes back to word 6, and a miss on word 3 to
+                             word 1
+           "immediate"       stop there and start the whole group again from
+                             its first word
            "finish-attempt"  finish the attempt, then repeat the whole group
-         Whichever it is, a group passes only on an attempt with no miss in
-         it (in "checkpoint", no miss since the segment started). */
-      restartPolicy: "immediate",
-      checkpointMinGroupSize: 21,
-      checkpointSegmentSize: 10,
+         Whichever it is, a group passes only once every word in it has been
+         answered right with no miss since its segment (or the group) began. */
+      restartPolicy: "checkpoint",
+      checkpointMinGroupSize: 6,
+      checkpointSegmentSize: 5,
       /* A safeguard, off by default: after this many failed attempts at one
          group, pass it anyway (its misses stay recorded). null = never. */
       maxGroupAttempts: null,
