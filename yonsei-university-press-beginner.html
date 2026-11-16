@@ -4,7 +4,7 @@
   <script src="./shared-vocab/site-theme.js?v=1.1.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.2.0"></script>
   <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
@@ -1734,7 +1734,6 @@ html.has-quiz-popout .utility-controls { display: none; }
             <div class="exercise-head-copy">
               <span class="exercise-kicker">Word bank</span>
               <h3>Vocabulary test</h3>
-              <p>Pick what to be tested on, then the chapters or parts of speech to draw from.</p>
             </div>
             <div class="score">Not started</div>
           </div>
@@ -1810,7 +1809,6 @@ html.has-quiz-popout .utility-controls { display: none; }
                 </fieldset>
               </div>
               <div class="wordbank-count mode-note vocab-mode-note"></div>
-              <p class="wordbank-count lang-help">Tick one box on each side for a run that always goes the same way. Tick more than one and the run mixes directions, and every question says what to answer with.</p>
 
               <label class="exercise-option" style="margin-top:12px;">
                 <input class="menu-repeat" type="checkbox" checked>
@@ -1833,7 +1831,6 @@ html.has-quiz-popout .utility-controls { display: none; }
                 </select>
               </div>
               <p class="assistant-status vocab-pool-note"></p>
-              <p class="wordbank-count">Typed test: type each answer. A word is checked for you; a definition, usage pattern, expression or sentence is checked word for word (spaces and punctuation aside). Enter checks and Enter again moves on; a miss shows the book&rsquo;s answer beside yours, and <strong>Count as correct</strong> takes an answer that says the same thing. Handwriting test: write the answer in 한국어 with a finger or a pen, reveal it, and mark yourself. Speaking test: say it in 한국어, reveal it, and mark yourself. Handwriting and speaking always answer in 한국어, so their questions come from the English side (usage is 한국어 on both sides already).</p>
             </div>
 
             <div class="live hidden">
@@ -3128,16 +3125,12 @@ html.has-quiz-popout .utility-controls { display: none; }
         return used.concat(extra).map(pos => ({
           id: "pos-" + pos,
           label: POS_LABELS[pos] || pos,
-          note: "Every word the book badges this way, chapter by chapter. Blur a column to test yourself, then rate each word.",
           words: BANK_WORDS.filter(entry => entry.pos === pos)
         }));
       }
       return CHAPTERS.map(chapter => ({
         id: "chapter-" + chapter.number,
         label: pad2(chapter.number) + " " + chapter.ko + " · " + chapter.en,
-        note: "The chapter's words in the book's order, sub-topic by sub-topic: "
-          + chapter.topics.map((topic, i) => (i + 1) + ". " + topic[0] + " (" + topic[1] + ")").join(", ")
-          + ". Open a word with ＋ for its pronunciation, definition, usage, expressions and examples.",
         words: BANK_WORDS.filter(entry => entry.chapter === chapter.number)
       }));
     }
@@ -3177,7 +3170,6 @@ html.has-quiz-popout .utility-controls { display: none; }
           + '<summary><span>' + esc(group.label)
           + '<span class="vocab-category-count">' + plural(group.words.length, "word", "words")
           + '</span></span></summary>'
-          + '<p class="group-note">' + esc(group.note) + '</p>'
           + '<div class="section-toolbar">'
           + '<button class="blur-toggle" type="button" data-field="english" aria-pressed="false">Blur English</button>'
           + '<button class="blur-toggle" type="button" data-field="romanization" aria-pressed="false">Blur Romanization</button>'
@@ -3907,7 +3899,6 @@ html.has-quiz-popout .utility-controls { display: none; }
       $v(".field-note").textContent = FIELD_NOTES[field];
       const picks = $v(".lang-picks");
       picks.hidden = field === "usage";
-      $v(".lang-help").hidden = field === "usage";
       vEl.querySelectorAll('[data-lang-pick="ro"]').forEach(label => { label.hidden = field !== "translation"; });
       vEl.querySelectorAll("[data-side-name]").forEach(span => {
         const lang = span.dataset.sideName;

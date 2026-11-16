@@ -4,7 +4,17 @@
   <script src="./shared-vocab/site-theme.js?v=1.1.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.2.0"></script>
+  <script>
+    /* Private page: only shown when signed in as Rio (privateAccess in
+       cloud-sync.js). Anyone else goes back to the home page. */
+    (function () {
+      const cloud = window.KoreanCloud;
+      const away = () => location.replace("./index.html");
+      if (!cloud || !cloud.privateAccess()) { document.documentElement.style.display = "none"; away(); return; }
+      cloud.session().then(current => { if (!current) away(); }, () => {});
+    })();
+  </script>
   <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
@@ -1787,7 +1797,6 @@ html.has-quiz-popout .utility-controls { display: none; }
             <div class="exercise-head-copy">
               <span class="exercise-kicker">Grammar bank</span>
               <h3>Grammar quiz</h3>
-              <p>Pick the kinds of question, then the years, units or functions to draw from.</p>
             </div>
             <div class="score">Not started</div>
           </div>
@@ -1825,7 +1834,6 @@ html.has-quiz-popout .utility-controls { display: none; }
                   <label class="exercise-option"><input class="menu-star" type="checkbox" value="2" checked><span>&#9733;&#9733;<small>Learning</small></span></label>
                   <label class="exercise-option"><input class="menu-star" type="checkbox" value="3" checked><span>&#9733;&#9733;&#9733;<small>Familiar</small></span></label>
                 </div>
-                <p class="wordbank-count">Stars belong to a grammar bundle (G01, G02, …). Passage questions have no bundle and are always included.</p>
               </fieldset>
 
               <div class="exercise-menu-grid">
@@ -1849,7 +1857,6 @@ html.has-quiz-popout .utility-controls { display: none; }
                 <button class="btn primary begin" type="button">Start quiz</button>
               </div>
               <p class="assistant-status quiz-pool-note"></p>
-              <p class="wordbank-count">Multiple choice: click a choice or press 1&ndash;4. Typed (형태): type the form and press Enter; Enter again moves on. A typed form is checked against the answer key, spaces and final punctuation aside; the only other spellings taken are the standard contractions 되었 &rarr; 됐 and 놓았 &rarr; 놨.</p>
             </div>
 
             <div class="live hidden">

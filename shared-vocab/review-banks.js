@@ -158,6 +158,7 @@
       title: "TOPIK II Workbook Vocabulary",
       href: "topik-ii-workbook-vocab.html",
       starKey: "koreanTopikIIWorkbookFamiliarity:v1",
+      private: true,
       exports: STANDARD,
       shape: standard,
       word: plain
@@ -261,5 +262,10 @@
     return { words, modes };
   }
 
-  return { BANKS, extract, build, romanize };
+  /* A private bank (see privateAccess in cloud-sync.js) is left out in a
+     browser that may not see it; outside a browser (the tests) every bank is. */
+  const cloud = typeof window !== "undefined" ? window.KoreanCloud : null;
+  const VISIBLE = BANKS.filter(bank => !bank.private || !cloud || cloud.privateAccess());
+
+  return { BANKS: VISIBLE, extract, build, romanize };
 }));

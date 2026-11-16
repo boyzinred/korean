@@ -33,6 +33,10 @@
                              and the dashboard
     hasSavedSession()     true when this browser holds a sign-in, known
                           without loading the library
+    privateAccess()       true when the private pages (the TOPIK II section)
+                          may show: signed in, with the dashboard name set to
+                          PRIVATE_NAME. The passcode itself is checked by
+                          Supabase at sign-in and lives nowhere in this repo.
 
   Events
     "korean-cloud-sync" on window, cancelable, detail { keys }, after a pull
@@ -111,6 +115,17 @@
       const ref = new URL(config.url).hostname.split(".")[0];
       return Boolean(nativeGet.call(localStorage, "sb-" + ref + "-auth-token"));
     } catch (_) { return false; }
+  }
+
+  /* The TOPIK II section is for one person only. This hides it from the home
+     page, the dashboard and the review and sends anyone else away from its
+     pages; it does not encrypt them, so it keeps the section out of sight
+     rather than secret. */
+  const PRIVATE_NAME = "rio";
+  function privateAccess() {
+    if (!configured || !hasSavedSession()) return false;
+    const prefs = load("korean.dashboard.v1", {}) || {};
+    return typeof prefs.name === "string" && prefs.name.trim().toLowerCase() === PRIVATE_NAME;
   }
 
   function client() {
@@ -327,7 +342,7 @@
   }
 
   window.KoreanCloud = {
-    configured, signIn, signOut, syncNow, session, client, hasSavedSession,
+    configured, signIn, signOut, syncNow, session, client, hasSavedSession, privateAccess,
     status: () => status
   };
 

@@ -5,7 +5,7 @@
   <script src="./shared-vocab/site-theme.js?v=1.1.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.1.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.2.0"></script>
   <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
@@ -1266,8 +1266,8 @@ html[data-theme='dark'] {
       { id: "topik-i", title: "TOPIK I Word Bank (1358)", href: "tutoring-topik-i-word-bank.html", group: "TOPIK I", tag: "Vocabulary" },
       { id: "topik-tests", title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "TOPIK I", tag: "Practice Test" },
 
-      { id: "topik-ii-vocab", title: "Workbook Vocabulary", href: "topik-ii-workbook-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
-      { id: "topik-ii-grammar", title: "Workbook Grammar", href: "topik-ii-workbook-grammar.html", group: "TOPIK II", tag: "Grammar" },
+      { id: "topik-ii-vocab", title: "Workbook Vocabulary", href: "topik-ii-workbook-vocab.html", group: "TOPIK II", tag: "Vocabulary", private: true },
+      { id: "topik-ii-grammar", title: "Workbook Grammar", href: "topik-ii-workbook-grammar.html", group: "TOPIK II", tag: "Grammar", private: true },
 
       { id: "reading-1", title: "읽고 답해요: Grade 1 Stories", href: "reading-comprehension-grade-1.html", group: "Reading comprehension", tag: "Grade 1" },
       { id: "reading-2", title: "깊이 읽고 답해요: Grade 2 Passages", href: "reading-comprehension-grade-2.html", group: "Reading comprehension", tag: "Grade 2" },
@@ -1282,7 +1282,7 @@ html[data-theme='dark'] {
       { id: "engineering", title: "공학 학술한국어", href: "soongsil-advanced-korean-for-engineering.html", group: "숭실대 수업", tag: "Engineering" },
 
       { id: "custom-list", title: "Paste Your Own List", href: "custom-word-list-practice.html", group: "Helper exercises", tag: "Custom List" }
-    ];
+    ].filter(page => !page.private || (window.KoreanCloud && window.KoreanCloud.privateAccess()));
 
     function esc(value) {
       return String(value ?? "")
@@ -1646,7 +1646,7 @@ html[data-theme='dark'] {
     }
 
     async function loadBanks() {
-      if (!banksScript) banksScript = loadScript("./shared-vocab/review-banks.js?v=1.0.0");
+      if (!banksScript) banksScript = loadScript("./shared-vocab/review-banks.js?v=1.1.0");
       await banksScript;
       const configs = window.ReviewBanks.BANKS.filter(bank =>
         state.prefs.pages.includes(bank.id) && !state.banks.has(bank.id));
