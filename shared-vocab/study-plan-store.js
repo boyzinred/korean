@@ -37,7 +37,8 @@
   COLLECTION ADAPTER — StudyPlanStore.collection(plan, options)
     The plan's words and units, read from the word bank's own page through
     review-banks.js, the way progress-review.html and the dashboard read
-    them. Units are the groups of the plan's grouping, in their own order.
+    them. Units are the groups of the plan's grouping that its `units`
+    patterns pick, in the patterns' order (see PLANS in study-plan.js).
 */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
@@ -47,7 +48,7 @@
 
   const PREFIX = "korean.studyPlan:";
   const keyOf = planId => PREFIX + planId + ":v1";
-  const unitsKeyOf = planId => "korean.studyPlanUnits:" + planId;
+  const unitsKeyOf = planId => "korean.studyPlanUnits:" + planId + ":v2";
 
   function token() {
     return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -160,8 +161,21 @@
     const built = RB.build(config, await response.text(), { window: options.window });
     const mode = built.modes.find(entry => entry.id === plan.collection.grouping);
     if (!mode) throw new Error(config.href + " has no grouping " + plan.collection.grouping);
-    const units = mode.groups.map((group, index) => ({ id: group.id, label: group.label, number: index + 1, ids: group.ids }));
+    const units = pickUnits(mode.groups, plan.collection.units)
+      .map((group, index) => ({ id: group.id, label: group.label, number: index + 1, ids: group.ids }));
     return { bank: config, words: built.words, byId: new Map(built.words.map(word => [word.id, word])), units };
+  }
+
+  /* The groups a plan uses, in the plan's order: those matching its first
+     pattern, then its second, …; each group once. No patterns: every group. */
+  function pickUnits(groups, patterns) {
+    if (!patterns || !patterns.length) return groups.slice();
+    const out = [];
+    patterns.forEach(pattern => {
+      const match = new RegExp(pattern);
+      groups.forEach(group => { if (match.test(group.id) && !out.includes(group)) out.push(group); });
+    });
+    return out;
   }
 
   /* The unit list, kept on this browser so the home page can draw today's
@@ -177,5 +191,5 @@
     } catch (_) {}
   }
 
-  return { PREFIX, keyOf, open, better, collection, cachedUnits, cacheUnits };
+  return { PREFIX, keyOf, open, better, collection, pickUnits, cachedUnits, cacheUnits };
 }));

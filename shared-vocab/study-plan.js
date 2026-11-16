@@ -166,9 +166,16 @@
     {
       id: "topik-ii-vocab",
       title: "TOPIK II section vocab",
-      /* review-banks.js bank id, and the grouping whose groups are the units.
-         The units are used as they are: same order, same words. */
-      collection: { bank: "topik-ii-vocab", grouping: "unit" }
+      /* review-banks.js bank id, the grouping whose groups are the units,
+         and which of those groups to use, in order: every group matching the
+         first pattern (in the bank's own order), then the second, … The units
+         themselves are used as they are: same words, same order inside.
+
+         2023 only for now. To add the 2018 workbook later, append
+         "^unit-2018-" — its units then follow 2023's rather than coming
+         first, so the schedule already walked is not disturbed. Only ever
+         append: a unit put ahead of ones already learnt would shift them. */
+      collection: { bank: "topik-ii-vocab", grouping: "unit", units: ["^unit-2023-"] }
     }
   ];
 

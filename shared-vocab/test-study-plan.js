@@ -655,14 +655,23 @@ const context = vm.createContext({});
 context.window = context;
 const built = ReviewBanks.build(bankConfig, fs.readFileSync(path.join(ROOT, bankConfig.href), "utf8"),
   { window: context, Function: vm.runInContext("Function", context) });
-const unitGroups = built.modes.find(mode => mode.id === StudyPlan.PLANS[0].collection.grouping).groups;
+const allGroups = built.modes.find(mode => mode.id === StudyPlan.PLANS[0].collection.grouping).groups;
+const unitGroups = StudyPlanStore.pickUnits(allGroups, StudyPlan.PLANS[0].collection.units);
 
-test("the plan reads the bank's units as they are, in order", () => {
-  assert.strictEqual(unitGroups.length, 14);
-  assert.strictEqual(unitGroups[0].id, "unit-2018-1");
+test("the plan uses the 2023 units only, in the book's order", () => {
+  assert.deepStrictEqual(unitGroups.map(g => g.id), [1, 2, 3, 4, 5, 6, 7].map(n => "unit-2023-" + n));
   const covered = unitGroups.flatMap(group => group.ids);
   assert.strictEqual(new Set(covered).size, covered.length, "no word in two units");
-  assert.strictEqual(covered.length, built.words.length);
+  assert(covered.every(id => id.startsWith("t23-")), "no 2018 word");
+  assert.strictEqual(covered.length, built.words.filter(w => w.id.startsWith("t23-")).length, "every 2023 word");
+});
+
+test("appending 2018 later puts its units after 2023's, leaving 2023's schedule alone", () => {
+  const later = StudyPlanStore.pickUnits(allGroups, ["^unit-2023-", "^unit-2018-"]);
+  assert.strictEqual(later.length, 14);
+  assert.deepStrictEqual(later.slice(0, 7), unitGroups);
+  assert.strictEqual(later[7].id, "unit-2018-1");
+  assert.strictEqual(StudyPlanStore.pickUnits(allGroups).length, 14, "no patterns: every unit");
 });
 
 test("every real session of the plan runs to the end, scored unit by unit", () => {
