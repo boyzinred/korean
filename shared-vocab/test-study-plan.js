@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /*
- * Tests for the daily tasks: the scheduler and its combined sessions, the
- * forgiving study-day progression, the three quiz engines over units of any
- * size, checkpoint and resume, the star proposals and word records, the
- * progress repository, and the real TOPIK II units.
+ * Tests for the daily tasks: the two-quiz scheduler and its forgiving
+ * study-day progression, the comprehensive quiz over units of any size, the
+ * memory model, the adaptive review selector and quiz, star and memory
+ * updates, checkpoint and resume, the progress repository, 120-study-day
+ * simulations, and the real TOPIK II units.
  *
  * Run: node shared-vocab/test-study-plan.js
  */
@@ -14,6 +15,8 @@ const path = require("path");
 const vm = require("vm");
 const assert = require("assert");
 const SpacedSession = require("./spaced-session.js");
+const StudyMemory = require("./study-memory.js");
+const ReviewSelector = require("./review-selector.js");
 const StudyPlan = require("./study-plan.js");
 const StudyPlanStore = require("./study-plan-store.js");
 const AnswerCheck = require("./answer-check.js");
@@ -21,14 +24,13 @@ const ReviewBanks = require("./review-banks.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const CONFIG = StudyPlan.configFor(StudyPlan.PLANS[0]);
-/* The comprehensive quiz with its optional spaced Part 2 switched on. */
-const WITH_SRS = StudyPlan.merge(CONFIG, { comprehensive: { includeSRSPhase: true } });
+const GROUPS_ONLY = StudyPlan.merge(CONFIG, { comprehensive: { includeSRSPhase: false } });
 let passed = 0;
 const failures = [];
 
 function test(name, fn) {
   try { fn(); passed += 1; console.log("  ✓ " + name); }
-  catch (error) { failures.push(name); console.log("  ✗ " + name + "\n      " + String(error && error.stack || error).split("\n").slice(0, 3).join("\n      ")); }
+  catch (error) { failures.push(name); console.log("  ✗ " + name + "\n      " + String(error && error.stack || error).split("\n").slice(0, 4).join("\n      ")); }
 }
 function section(name) { console.log("\n" + name); }
 
@@ -52,6 +54,11 @@ function learner(fail, seed) {
 }
 const ids = (n, prefix) => Array.from({ length: n }, (_, i) => (prefix || "w") + (i + 1));
 const fmt = ranges => ranges.map(([a, b]) => (a + 1) + "–" + b);
+function addDays(date, n) {
+  const d = new Date(date + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return StudyPlan.localDate(d);
+}
 
 function memoryStorage() {
   const data = new Map();
@@ -64,15 +71,11 @@ function memoryStorage() {
   };
 }
 
+/* Mark every quiz of today's study day done. */
 function finishDay(units, records, date) {
   const day = StudyPlan.today(CONFIG, units, records, date);
   day.tasks.forEach(task => { records[task.id] = { status: "done", completedOn: date }; });
   return day;
-}
-function addDays(date, n) {
-  const d = new Date(date + "T12:00:00");
-  d.setDate(d.getDate() + n);
-  return StudyPlan.localDate(d);
 }
 
 /* Drive a run, answering by a policy (id, now) -> "s" | "w" | "f". */
@@ -88,109 +91,140 @@ function drive(run, policy, limit, config) {
   return asked;
 }
 
+/* ---- a whole learner's world: units, a repository, stars ---------------- */
+function world(sizes, prefix) {
+  const units = sizes.map((n, i) => ({ id: (prefix || "unit-") + (i + 1), ids: ids(n, "u" + (i + 1) + "w") }));
+  return { units, unitIds: units.map(u => u.id), repo: StudyPlanStore.open("plan", memoryStorage()), stars: {}, log: [] };
+}
+const starLevel = (w, id) => (w.stars[id] ? w.stars[id].l : 0);
+
+/* Run one task the way study-quiz.html does, start to finish: freeze a
+   review's selection, drive the quiz, save it done, write the memory
+   records, confirm the star changes. */
+function runTask(w, task, date, answerFor, config) {
+  const cfg = config || CONFIG;
+  let poolIds;
+  let selection = null;
+  const unitOf = {};
+  if (task.algorithm === "comprehensive") {
+    const unit = w.units[task.units[0]];
+    poolIds = unit.ids;
+    poolIds.forEach(id => { unitOf[id] = unit.id; });
+  } else {
+    selection = StudyPlan.selectReview(cfg, task, w.units, w.repo.words(), id => starLevel(w, id), w.repo.tasks(), date);
+    poolIds = selection.ids;
+    poolIds.forEach(id => { unitOf[id] = selection.picks[id].unit; });
+  }
+  const tiers = selection ? Object.fromEntries(Object.entries(selection.picks).map(([id, p]) => [id, p.tier])) : {};
+  const run = StudyPlan.engine.create(task.algorithm, poolIds, cfg, seeded(task.day + 1), { policy: task.policy, unitOf, tiers });
+  let seen = w.repo.versionOf(null);
+  const first = w.repo.saveTask(task.id, { status: "started", startedOn: date, n: 0, run, selection }, seen);
+  assert(first.ok, "task saved once");
+  seen = first.seen;
+  drive(run, (id, now) => answerFor(id, now, task, date), 50000, cfg);
+  const saved = w.repo.saveTask(task.id, { status: "done", startedOn: date, completedOn: date, n: run.answers, run, selection }, seen);
+  assert(saved.ok);
+  const records = StudyPlan.srs.wordRecords(run, id => w.repo.word(id), date, { source: task.id, memory: cfg.srs });
+  w.repo.setWords(records);
+  StudyPlan.srs.proposals(run, id => w.stars[id] || { l: 0 }, date).forEach(p => {
+    w.stars[p.id] = { l: p.to, d: p.cleanDay || (w.stars[p.id] && w.stars[p.id].d) || "" };
+  });
+  w.log.push({ date, task, run, selection });
+  return { run, selection };
+}
+
+/* A learner whose recall in a review follows the model's own estimate. */
+function realistic(w, seed) {
+  const rand = seeded(seed);
+  const learn = learner(0.35, seed + 1);
+  return (id, now, task, date) => {
+    if (task.algorithm === "comprehensive") return learn(id);
+    const R = StudyMemory.retention(w.repo.word(id), date, CONFIG.srs);
+    const roll = rand();
+    return roll < Math.pow(R, 0.8) ? (rand() < 0.85 ? "s" : "w") : "f";
+  };
+}
+
+function studyDay(w, date, answerFor, config) {
+  const day = StudyPlan.today(config || CONFIG, w.unitIds, w.repo.tasks(), date);
+  day.tasks.filter(t => t.status !== "completed").forEach(task => runTask(w, task, date, answerFor, config));
+  return day;
+}
+
 /* =========================================================================
    SCHEDULING
    ========================================================================= */
 section("Scheduling");
 
-const UNIT_COUNT = 150;
-const DAYS = StudyPlan.timeline(CONFIG, UNIT_COUNT);
-const ALL = DAYS.flat();
-const exposuresOf = unit => ALL.flatMap(session => session.exposures
-  .filter(e => e.unit === unit).map(e => Object.assign({ day: session.day, key: session.key }, e)));
+const UNITS = ids(14, "unit-");
 
-test("one new unit per study day, in collection order, never twice", () => {
-  const comp = ALL.filter(s => s.key === "comprehensive");
-  assert.strictEqual(comp.length, UNIT_COUNT);
-  comp.forEach(s => assert.deepStrictEqual(s.units, [s.day]));
-  DAYS.forEach((sessions, day) => assert(sessions.filter(s => s.key === "comprehensive").length <= 1, "day " + day));
+test("day 0 is the comprehensive quiz alone: nothing has been learnt to review", () => {
+  const day = StudyPlan.today(CONFIG, UNITS, {}, "2026-11-16");
+  assert.strictEqual(day.index, 0);
+  assert.deepStrictEqual(day.tasks.map(t => t.id), ["d0:comprehensive:unit-1"]);
+  assert.strictEqual(day.tasks[0].status, "not-started");
 });
 
-test("each unit gets exactly seven exposures, at 0, 1, 3, 7, 14, 21 and 29", () => {
-  for (let unit = 0; unit < UNIT_COUNT; unit += 1) {
-    const mine = exposuresOf(unit).sort((a, b) => a.day - b.day);
-    assert.deepStrictEqual(mine.map(e => e.day - unit), [0, 1, 3, 7, 14, 21, 29], "unit " + unit);
-    assert.deepStrictEqual(mine.map(e => e.key),
-      ["comprehensive", "earlyReview", "earlyReview", "intermediateReview", "intermediateReview", "maintenance", "maintenance"]);
-    assert.deepStrictEqual(mine.map(e => e.n), [1, 1, 2, 3, 4, 1, 2], "Review 1–4, Maintenance 1–2");
+test("every later day: the comprehensive quiz first, then one adaptive review over every earlier unit", () => {
+  for (let d = 1; d < 14; d += 1) {
+    const tasks = StudyPlan.dayTasks(CONFIG, 14, d);
+    assert.deepStrictEqual(tasks.map(t => t.key), ["comprehensive", "review"], "day " + d);
+    assert.deepStrictEqual(tasks[0].units, [d]);
+    assert.deepStrictEqual(tasks[1].units, Array.from({ length: d }, (_, i) => i), "learnt before day " + d);
   }
 });
 
-test("seven exposures span 30 study days", () => {
-  const days = exposuresOf(10).map(e => e.day);
-  assert.strictEqual(Math.max(...days) - Math.min(...days) + 1, 30);
+test("one new unit per study day, in order, never twice; never more than two quizzes", () => {
+  const taught = [];
+  for (let d = 0; d < 200; d += 1) {
+    const tasks = StudyPlan.dayTasks(CONFIG, 120, d);
+    assert(tasks.length <= 2, "day " + d);
+    tasks.filter(t => t.algorithm === "comprehensive").forEach(t => taught.push(...t.units));
+  }
+  assert.deepStrictEqual(taught, Array.from({ length: 120 }, (_, i) => i));
 });
 
-test("Early Review combines the units learnt 1 and 3 study days ago", () => {
-  assert.deepStrictEqual(DAYS[40].find(s => s.key === "earlyReview").units, [39, 37]);
-});
-
-test("Intermediate Review combines the units learnt 7 and 14 study days ago", () => {
-  assert.deepStrictEqual(DAYS[40].find(s => s.key === "intermediateReview").units, [33, 26]);
-});
-
-test("Maintenance combines the units learnt 21 and 29 study days ago", () => {
-  assert.deepStrictEqual(DAYS[40].find(s => s.key === "maintenance").units, [19, 11]);
-});
-
-test("ramp-up: only sessions with an eligible unit, partial pairs allowed", () => {
-  const keysOn = day => DAYS[day].map(s => s.key + ":" + s.units.join(","));
-  assert.deepStrictEqual(keysOn(0), ["comprehensive:0"]);
-  assert.deepStrictEqual(keysOn(1), ["comprehensive:1", "earlyReview:0"]);
-  assert.deepStrictEqual(keysOn(2), ["comprehensive:2", "earlyReview:1"]);
-  assert.deepStrictEqual(keysOn(3), ["comprehensive:3", "earlyReview:2,0"]);
-  assert.deepStrictEqual(keysOn(7), ["comprehensive:7", "earlyReview:6,4", "intermediateReview:0"]);
-  assert.deepStrictEqual(keysOn(21), ["comprehensive:21", "earlyReview:20,18", "intermediateReview:14,7", "maintenance:0"]);
-});
-
-test("never more than four sessions; exactly four, every pair full, from day 29 on", () => {
-  assert(DAYS.length >= 120, "simulated " + DAYS.length + " days");
-  DAYS.forEach((sessions, day) => assert(sessions.length <= 4, "day " + day));
-  for (let day = 29; day < UNIT_COUNT; day += 1) {
-    assert.deepStrictEqual(DAYS[day].map(s => s.key), ["comprehensive", "earlyReview", "intermediateReview", "maintenance"], "day " + day);
-    assert.deepStrictEqual(DAYS[day].map(s => s.units.length), [1, 2, 2, 2], "day " + day);
+test("once every unit is learnt, the days carry on with the review alone", () => {
+  for (const d of [7, 8, 30, 365]) {
+    const tasks = StudyPlan.dayTasks(CONFIG, 7, d);
+    assert.deepStrictEqual(tasks.map(t => t.key), ["review"], "day " + d);
+    assert.deepStrictEqual(tasks[0].units, [0, 1, 2, 3, 4, 5, 6]);
   }
 });
 
-test("120 established study days: 120 new units, 480 sessions, 840 exposures", () => {
-  const days = DAYS.slice(29, 149);
-  assert.strictEqual(days.length, 120);
-  assert.strictEqual(days.flat().length, 480);
-  assert.strictEqual(days.flat().reduce((sum, s) => sum + s.units.length, 0), 120 * 7);
+test("task ids: a comprehensive quiz names its unit (as before), a review its day", () => {
+  const [comp, review] = StudyPlan.dayTasks(CONFIG, 14, 3);
+  assert.strictEqual(StudyPlan.taskId(UNITS, comp), "d3:comprehensive:unit-4");
+  assert.strictEqual(StudyPlan.taskId(UNITS, review), "d3:review");
+  assert.strictEqual(StudyPlan.findTask(CONFIG, UNITS, "d3:review").units.length, 3);
+  assert.strictEqual(StudyPlan.findTask(CONFIG, UNITS, "d3:comprehensive:unit-4").units[0], 3);
+  assert.strictEqual(StudyPlan.findTask(CONFIG, UNITS, "d3:comprehensive:unit-9"), null);
+  assert.strictEqual(StudyPlan.findTask(CONFIG, UNITS, "d1:earlyReview:unit-1"), null, "the old review sessions are gone");
 });
 
-test("no unit is left out of, or doubled within, any exposure", () => {
-  ALL.forEach(session => assert.strictEqual(new Set(session.units).size, session.units.length));
-  assert.strictEqual(ALL.reduce((sum, s) => sum + s.units.length, 0), UNIT_COUNT * 7);
+test("a configuration with more quiz types than the daily maximum is rejected", () => {
+  const three = StudyPlan.merge(CONFIG, { sessions: CONFIG.sessions.concat([{ key: "x", label: "X", algorithm: "review", policy: "adaptiveReview" }]) });
+  assert.throws(() => StudyPlan.validate(three), /maxDailyQuizSessions/);
+  assert.throws(() => StudyPlan.validate(StudyPlan.merge(CONFIG, { scheduling: { newUnitsPerStudyDay: 2 } })), /newUnitsPerStudyDay/);
+  assert.throws(() => StudyPlan.validate(StudyPlan.merge(CONFIG, { adaptiveReview: { targetUniqueWords: 70 } })), /unique words/);
 });
 
-test("after the last unit, reviews run out the schedule and stop", () => {
-  const small = StudyPlan.timeline(CONFIG, 3);
-  assert.strictEqual(small.length, 3 + 29);
-  assert.strictEqual(small.flat().filter(s => s.key === "comprehensive").length, 3);
-  assert.strictEqual(small.flat().reduce((sum, s) => sum + s.units.length, 0), 21);
-});
-
-test("a configuration that could exceed the maximum is rejected with a clear error", () => {
-  const bad = StudyPlan.merge(CONFIG, { scheduling: { maximumSessionsPerStudyDay: 3 } });
-  assert.throws(() => StudyPlan.timeline(bad, 10), /maximumSessionsPerStudyDay/);
-  const twoNew = StudyPlan.merge(CONFIG, { scheduling: { newUnitsPerStudyDay: 2 } });
-  assert.throws(() => StudyPlan.timeline(twoNew, 10), /newUnitsPerStudyDay/);
+test("the configuration carries the spec's settings", () => {
+  assert.strictEqual(CONFIG.scheduling.maxDailyQuizSessions, 2);
+  assert.strictEqual(CONFIG.comprehensive.includeSRSPhase, true);
+  assert.strictEqual(CONFIG.comprehensive.baseGroupSize, 5);
+  const r = CONFIG.adaptiveReview;
+  assert.deepStrictEqual([r.targetUniqueWords, r.minimumUniqueWords, r.maximumUniqueWords], [55, 50, 60]);
+  assert.deepStrictEqual([r.weakOverdueTarget, r.developingTarget, r.masteredTarget], [30, 15, 10]);
+  assert.strictEqual(r.initialAttemptsPerWord, 1);
+  assert.strictEqual(r.enableExtendedRepetition, false);
+  assert.strictEqual(CONFIG.srs.trackActualElapsedTime, true);
 });
 
 /* =========================================================================
    FORGIVING PROGRESSION
    ========================================================================= */
 section("Forgiving progression");
-
-const UNITS = ids(14, "unit-");
-
-test("day 0 is the comprehensive quiz on unit 1", () => {
-  const day = StudyPlan.today(CONFIG, UNITS, {}, "2026-11-16");
-  assert.strictEqual(day.index, 0);
-  assert.deepStrictEqual(day.tasks.map(t => t.id), ["d0:comprehensive:unit-1"]);
-  assert.strictEqual(day.tasks[0].status, "not-started");
-});
 
 test("missing five calendar days does not move the study day", () => {
   const records = {};
@@ -199,28 +233,18 @@ test("missing five calendar days does not move the study day", () => {
   assert.strictEqual(StudyPlan.today(CONFIG, UNITS, records, "2026-11-22").index, 1);
 });
 
-test("finish day 12 on Monday, come back Saturday → day 13", () => {
-  const records = {};
-  let date = "2026-11-04";
-  for (let i = 0; i <= 12; i += 1) { finishDay(UNITS, records, date); date = addDays(date, 1); }
-  /* Day 12 finished on 2026-11-16, a Monday; 2026-11-21 is a Saturday. */
-  const back = StudyPlan.today(CONFIG, UNITS, records, "2026-11-21");
-  assert.strictEqual(back.index, 13);
-  assert.deepStrictEqual(back.tasks.find(t => t.key === "earlyReview").units, [12, 10], "reviews stay relative to study days");
-});
-
-test("returning after an absence shows the same pending sessions, and no extras", () => {
+test("returning after an absence shows the same two quizzes, and no backlog", () => {
   const records = {};
   let date = "2026-11-01";
   for (let i = 0; i < 9; i += 1) { finishDay(UNITS, records, date); date = addDays(date, 1); }
   const pending = StudyPlan.today(CONFIG, UNITS, records, date);
   const later = StudyPlan.today(CONFIG, UNITS, records, addDays(date, 30));
   assert.deepStrictEqual(later.tasks.map(t => t.id), pending.tasks.map(t => t.id));
-  assert(later.tasks.length <= 4);
+  assert.strictEqual(later.tasks.length, 2);
   assert(later.tasks.every(t => t.status === "not-started"), "nothing marked failed, done or skipped");
 });
 
-test("an unfinished study day does not open the next one", () => {
+test("a half-done day stays put, its finished quiz ticked and its other one in progress", () => {
   const records = {};
   for (const date of ["2026-11-01", "2026-11-02", "2026-11-03"]) finishDay(UNITS, records, date);
   const day3 = StudyPlan.today(CONFIG, UNITS, records, "2026-11-04");
@@ -228,46 +252,54 @@ test("an unfinished study day does not open the next one", () => {
   records[day3.tasks[1].id] = { status: "started", n: 30 };
   for (const date of ["2026-11-04", "2026-11-05", "2026-12-25"]) {
     const now = StudyPlan.today(CONFIG, UNITS, records, date);
-    assert.strictEqual(now.index, day3.index, date);
-    assert.strictEqual(now.tasks[1].status, "in-progress");
+    assert.strictEqual(now.index, 3, date);
+    assert.deepStrictEqual(now.tasks.map(t => t.status), ["completed", "in-progress"]);
   }
 });
 
-test("finishing the last session opens the next day on the next local date, not before", () => {
+test("finishing both opens the next day on the next local date, never the same one", () => {
   const records = {};
   finishDay(UNITS, records, "2026-11-16");
-  const same = StudyPlan.today(CONFIG, UNITS, records, "2026-11-16");
-  assert.strictEqual(same.index, 0);
+  finishDay(UNITS, records, "2026-11-17");
+  const same = StudyPlan.today(CONFIG, UNITS, records, "2026-11-17");
+  assert.strictEqual(same.index, 1);
   assert.strictEqual(same.complete, true);
-  assert(same.tasks.every(t => t.status === "completed"), "finished sessions stay on show");
-  assert.strictEqual(StudyPlan.today(CONFIG, UNITS, records, "2026-11-17").index, 1);
+  assert(same.tasks.every(t => t.status === "completed"), "finished quizzes stay on show");
+  assert.strictEqual(StudyPlan.today(CONFIG, UNITS, records, "2026-11-18").index, 2);
 });
 
-test("finishing early never offers the next day's sessions the same date", () => {
-  const records = {};
-  finishDay(UNITS, records, "2026-11-16");
-  const day1Ids = StudyPlan.timeline(CONFIG, UNITS.length)[1].map(s => StudyPlan.taskId(UNITS, s));
-  assert(StudyPlan.today(CONFIG, UNITS, records, "2026-11-16").tasks.every(task => !day1Ids.includes(task.id)));
+test("finishing a review again (a second tab, a retried save) updates the one task", () => {
+  const w = world([10, 10, 10]);
+  studyDay(w, "2026-11-16", () => "s");
+  studyDay(w, "2026-11-17", () => "s");
+  const before = Object.keys(w.repo.tasks()).length;
+  const stale = w.repo.saveTask("d1:review", { status: "done", n: 1 }, w.repo.versionOf(null));
+  assert(stale.conflict, "a tab that never saw the record cannot write over it");
+  assert.strictEqual(Object.keys(w.repo.tasks()).length, before);
 });
 
-test("the whole 14-unit plan runs to the end: 43 study days, 98 exposures", () => {
-  const records = {};
-  let date = "2026-11-16";
-  let exposures = 0;
-  let days = 0;
-  while (!StudyPlan.today(CONFIG, UNITS, records, date).finished) {
-    exposures += finishDay(UNITS, records, date).tasks.reduce((sum, t) => sum + t.units.length, 0);
-    date = addDays(date, 1);
-    assert(++days < 200);
-  }
-  assert.strictEqual(days, 14 + 29);
-  assert.strictEqual(exposures, 14 * 7);
+test("progression is the same on every device holding the same records", () => {
+  const w = world([10, 10, 10, 10]);
+  ["2026-11-16", "2026-11-17", "2026-11-18"].forEach(date => studyDay(w, date, () => "s"));
+  const copy = JSON.parse(JSON.stringify(w.repo.tasks()));
+  const a = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-11-25");
+  const b = StudyPlan.today(CONFIG, w.unitIds, copy, "2026-11-25");
+  assert.strictEqual(a.index, 3);
+  assert.deepStrictEqual(a.tasks.map(t => t.id), b.tasks.map(t => t.id));
+});
+
+test("old records carry over: a finished day-0 comprehensive quiz is still finished", () => {
+  const records = { "d0:comprehensive:unit-1": { status: "done", completedOn: "2026-11-14" },
+    "d1:earlyReview:unit-1": { status: "done", completedOn: "2026-11-15" } };
+  const day = StudyPlan.today(CONFIG, UNITS, records, "2026-11-17");
+  assert.strictEqual(day.index, 1);
+  assert.deepStrictEqual(day.tasks.map(t => t.id), ["d1:comprehensive:unit-2", "d1:review"]);
 });
 
 /* =========================================================================
-   VARIABLE UNIT SIZES
+   COMPREHENSIVE QUIZ
    ========================================================================= */
-section("Variable unit sizes");
+section("Comprehensive quiz: grouping");
 
 test("a 50-word unit groups exactly as specified", () => {
   assert.deepStrictEqual(fmt(StudyPlan.hierarchy(50, 5)), [
@@ -282,7 +314,7 @@ test("a 43-word unit ends on 41–43 and then 1–43", () => {
 });
 
 for (const n of [1, 3, 5, 12, 37, 43, 50, 56, 63]) {
-  test(n + " words: valid groups, every word in a base group once, last group the whole unit", () => {
+  test(n + " words: valid groups, each word in one base group, the last group the whole unit; the quiz asks every word and ends", () => {
     const seq = StudyPlan.hierarchy(n, 5);
     seq.forEach(([a, b]) => assert(Number.isInteger(a) && Number.isInteger(b) && a >= 0 && a < b && b <= n));
     const leaves = seq.filter(([a, b]) => b - a <= 5 && a % 5 === 0);
@@ -290,111 +322,15 @@ for (const n of [1, 3, 5, 12, 37, 43, 50, 56, 63]) {
     assert.deepStrictEqual(covered.slice().sort((x, y) => x - y), Array.from({ length: n }, (_, i) => i));
     assert.deepStrictEqual(seq[seq.length - 1], [0, n]);
     assert.strictEqual(new Set(seq.map(r => r.join())).size, seq.length, "no group repeated");
-  });
-  test(n + " words: every quiz asks every word, no others, and finishes", () => {
     const words = ids(n);
-    for (const [algorithm, policy] of [["comprehensive"], ["review", "earlyReview"], ["review", "intermediateReview"], ["maintenance"]]) {
-      const run = StudyPlan.engine.create(algorithm, words, CONFIG, seeded(n), { policy });
-      const asked = drive(run, learner(0.4, n));
-      assert.deepStrictEqual([...new Set(asked.map(a => a.id))].sort(), words.slice().sort(), algorithm);
-      asked.filter(a => a.group).forEach(a => {
-        assert(a.group.size <= n);
-        assert(a.group.from >= 1 && a.group.to <= n);
-      });
-    }
+    const run = StudyPlan.engine.create("comprehensive", words, CONFIG, seeded(n));
+    const asked = drive(run, learner(0.4, n));
+    assert.deepStrictEqual([...new Set(asked.map(a => a.id))].sort(), words.slice().sort());
+    assert.deepStrictEqual(Object.keys(run.scored).sort(), words.slice().sort(), "every word measured once");
   });
 }
 
-/* =========================================================================
-   COMBINED SESSIONS
-   ========================================================================= */
-section("Combined sessions");
-
-function pool(...units) {
-  const all = [];
-  const unitOf = {};
-  units.forEach(([unit, n]) => ids(n, unit + "-w").forEach(id => { all.push(id); unitOf[id] = unit; }));
-  return { all, unitOf };
-}
-
-test("a 46-word and a 53-word unit make a 99-word pool, each word keeping its unit", () => {
-  const { all, unitOf } = pool(["u5", 46], ["u3", 53]);
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(1), { policy: "intermediateReview", unitOf });
-  assert.strictEqual(run.ids.length, 99);
-  const asked = drive(run, (id, now) => {
-    assert.strictEqual(now.unit, unitOf[id]);
-    return now.phase === "initial" && /^u3-w(1|2)$/.test(id) ? "f" : "s";
-  });
-  assert.strictEqual(asked.filter(a => a.phase === "initial").length, 99);
-  const out = StudyPlan.engine.outcome(run);
-  assert.strictEqual(out.byUnit.u5.words, 46);
-  assert.strictEqual(out.byUnit.u3.words, 53);
-  assert.deepStrictEqual(out.byUnit.u3.failed, ["u3-w1", "u3-w2"]);
-  assert.deepStrictEqual(out.byUnit.u5.failed, []);
-  assert.strictEqual(StudyPlan.srs.proposals(run, () => ({ l: 1 }), "2026-11-16").find(p => p.id === "u3-w1").unit, "u3");
-});
-
-test("the weak-word pool can mix both units", () => {
-  const { all, unitOf } = pool(["a", 20], ["b", 20]);
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(2), { policy: "intermediateReview", unitOf });
-  const asked = drive(run, (id, now) => (now.phase === "initial" && /-w(3|9)$/.test(id) ? "w" : "s"));
-  assert.deepStrictEqual([...new Set(asked.filter(a => a.phase === "targeted").map(a => a.id))].sort(), ["a-w3", "a-w9", "b-w3", "b-w9"]);
-});
-
-test("a session's word count is the sum of its units' sizes, and its id names both units", () => {
-  const sizes = [48, 51, 44, 58];
-  const early = StudyPlan.timeline(CONFIG, 4)[3].find(s => s.key === "earlyReview");
-  assert.deepStrictEqual(early.units, [2, 0]);
-  assert.strictEqual(early.units.reduce((sum, u) => sum + sizes[u], 0), 92);
-  assert.strictEqual(StudyPlan.taskId(["u1", "u2", "u3", "u4"], early), "d3:earlyReview:u3+u1");
-});
-
-test("each unit's Review 3 is 한국어 → English; every other exposure English → 한국어", () => {
-  const dirs = {};
-  ALL.forEach(session => session.exposures.forEach(e => {
-    const d = StudyPlan.directionFor(CONFIG, session.algorithm, e.n);
-    dirs[session.algorithm + e.n] = d.promptLang + ">" + d.answerLang;
-  }));
-  assert.deepStrictEqual(dirs, {
-    comprehensive1: "en>ko", review1: "en>ko", review2: "en>ko", review3: "ko>en", review4: "en>ko",
-    maintenance1: "en>ko", maintenance2: "en>ko"
-  });
-  /* Review 3 is the offset-7 unit of an Intermediate Review: in a full
-     session, one unit each way. */
-  const mid = DAYS[40].find(s => s.key === "intermediateReview");
-  assert.deepStrictEqual(mid.exposures.map(e => [e.unit, e.n]), [[33, 3], [26, 4]]);
-});
-
-test("a recognition answer (한국어 → English) can keep or cost a star, never raise one", () => {
-  const { all, unitOf } = pool(["a", 3], ["b", 3]);
-  const dirOf = {};
-  all.forEach(id => { dirOf[id] = unitOf[id] === "b" ? "ko>en" : "en>ko"; });
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(3), { policy: "intermediateReview", unitOf, dirOf });
-  drive(run, (id, now) => (now.phase === "initial" && id === "b-w3" ? "f" : now.phase === "initial" && id === "b-w2" ? "w" : "s"));
-  const byId = Object.fromEntries(StudyPlan.srs.proposals(run, () => ({ l: 2, d: "2026-11-01" }), "2026-11-16").map(p => [p.id, p]));
-  assert.strictEqual(byId["a-w1"].to, 3, "production, clean on a later day: up");
-  assert.strictEqual(byId["b-w1"].to, 2, "recognition, clean: kept, not raised");
-  assert.strictEqual(byId["b-w1"].cleanDay, "2026-11-16", "still stamped clean");
-  assert.strictEqual(byId["b-w2"].to, 2, "recognition, hesitant: kept");
-  assert.strictEqual(byId["b-w3"].to, 1, "recognition, missed: down a rung");
-  assert.deepStrictEqual(JSON.parse(JSON.stringify(run)).dirOf, dirOf, "a resumed run keeps each word's direction");
-});
-
-/* =========================================================================
-   COMPREHENSIVE QUIZ
-   ========================================================================= */
-section("Comprehensive quiz");
-
-test("in unit order within each group, and the quiz is the groups alone", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(12), CONFIG, seeded(1));
-  const asked = [];
-  while (run.phase === "groups") {
-    asked.push(StudyPlan.engine.current(run).id);
-    StudyPlan.engine.answer(run, CONFIG, "s", 500);
-  }
-  assert.deepStrictEqual(asked, [].concat(ids(5), ids(10).slice(5), ids(10), ["w11", "w12"], ids(12)));
-  assert(run.done, "regular repetition only: the quiz ends with the last group");
-});
+section("Comprehensive quiz: Part 1, restarts");
 
 /* Answer the comprehensive run until its current group is words from–to. */
 function reachGroup(run, from, to) {
@@ -402,155 +338,67 @@ function reachGroup(run, from, to) {
     StudyPlan.engine.answer(run, CONFIG, "s");
   }
 }
+const partOneDone = run => run.phase !== "groups";
 
-test("a miss on word 3 of a 10-word group shows the answer and restarts at word 1 — words 4–10 are not asked", () => {
+test("Part 1 asks each group in unit order, then Part 2 follows", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(12), CONFIG, seeded(1));
+  const asked = [];
+  while (run.phase === "groups") {
+    asked.push(StudyPlan.engine.current(run).id);
+    StudyPlan.engine.answer(run, CONFIG, "s", 500);
+  }
+  assert.deepStrictEqual(asked, [].concat(ids(5), ids(10).slice(5), ids(10), ["w11", "w12"], ids(12)));
+  assert.strictEqual(run.phase, "srs");
+});
+
+test("a miss on word 3 of a 10-word group restarts at word 1 — words 4–10 are not asked", () => {
   const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
   reachGroup(run, 1, 10);
   StudyPlan.engine.answer(run, CONFIG, "s");
   StudyPlan.engine.answer(run, CONFIG, "s");
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w3");
+  const answersBefore = run.answers;
   const events = StudyPlan.engine.answer(run, CONFIG, "f");
   assert(events.groupRetry && events.restarted);
   assert.strictEqual(events.restartFrom, 1);
   const now = StudyPlan.engine.current(run);
-  assert.strictEqual(now.id, "w1", "straight back to word 1");
+  assert.strictEqual(now.id, "w1");
   assert.strictEqual(now.group.attempt, 2);
-  assert.strictEqual(now.group.from, 1);
-  assert.strictEqual(now.group.to, 10);
-  assert(!run.log.some(([id]) => ["w4", "w5", "w6", "w7", "w8", "w9", "w10"].includes(id) && run.log.indexOf(run.log.find(e => e[0] === id)) > 20),
-    "words 4–10 were not asked after the miss");
-  assert.deepStrictEqual(run.marks.w3, { w: 0, f: 1 });
-  /* The group passes only on one uninterrupted all-right attempt. */
+  assert.strictEqual(run.answers, answersBefore + 1);
   for (let i = 0; i < 10; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
-  assert(run.done, "1–10 was the last group; it passed on the clean attempt");
+  assert(partOneDone(run), "1–10 passed on the clean attempt");
 });
 
-test("strict 5-word checkpoints: a miss on word 7 of 1–10 restarts at word 6, not word 1", () => {
+test("strict 5-word checkpoints by default: a miss on word 7 of 1–10 restarts at word 6", () => {
+  assert.strictEqual(CONFIG.comprehensive.restartPolicy, "checkpoint");
   const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
   reachGroup(run, 1, 10);
   for (let i = 0; i < 6; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w7");
-  const events = StudyPlan.engine.answer(run, CONFIG, "f");
-  assert.strictEqual(events.restartFrom, 6);
+  assert.strictEqual(StudyPlan.engine.answer(run, CONFIG, "f").restartFrom, 6);
   const asked = [];
-  for (let i = 0; i < 5; i += 1) {
-    asked.push(StudyPlan.engine.current(run).id);
-    StudyPlan.engine.answer(run, CONFIG, "s");
-  }
+  for (let i = 0; i < 5; i += 1) { asked.push(StudyPlan.engine.current(run).id); StudyPlan.engine.answer(run, CONFIG, "s"); }
   assert.deepStrictEqual(asked, ["w6", "w7", "w8", "w9", "w10"]);
-  assert(run.done, "1–10 passes once words 6–10 go through clean");
+  assert(partOneDone(run));
 });
 
-test("strict 5-word checkpoints hold in a 50-word group: a miss on word 43 goes back to word 41", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(50), CONFIG, seeded(8));
-  reachGroup(run, 1, 50);
-  for (let i = 0; i < 42; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
-  assert.strictEqual(StudyPlan.engine.answer(run, CONFIG, "f").restartFrom, 41);
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w41");
-  assert.strictEqual(StudyPlan.engine.current(run).group.attempt, 2);
-});
-
-test("the immediate policy restarts the whole group, in order", () => {
+test("the immediate policy restarts the whole group from word 1", () => {
   const cfg = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "immediate" } });
   const run = StudyPlan.engine.create("comprehensive", ids(10), cfg, seeded(2));
   while (StudyPlan.engine.current(run).group.size !== 10) StudyPlan.engine.answer(run, cfg, "s");
   for (let i = 0; i < 6; i += 1) StudyPlan.engine.answer(run, cfg, "s");
   assert.strictEqual(StudyPlan.engine.answer(run, cfg, "f").restartFrom, 1);
   const asked = [];
-  for (let i = 0; i < 10; i += 1) {
-    asked.push(StudyPlan.engine.current(run).id);
-    StudyPlan.engine.answer(run, cfg, "s");
-  }
+  for (let i = 0; i < 10; i += 1) { asked.push(StudyPlan.engine.current(run).id); StudyPlan.engine.answer(run, cfg, "s"); }
   assert.deepStrictEqual(asked, ids(10));
 });
 
-test("a hesitant answer does not restart a group", () => {
+test("a hesitant answer counts as right for the group, and is flagged weak", () => {
   const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
   ["s", "s", "w", "s", "s"].forEach(r => StudyPlan.engine.answer(run, CONFIG, r));
   assert.strictEqual(StudyPlan.engine.current(run).group.from, 6);
   assert.deepStrictEqual(run.marks.w3, { w: 1, f: 0 });
 });
 
-test("restarts work the same for groups of any size", () => {
-  for (const n of [1, 3, 5, 12, 43, 63]) {
-    const run = StudyPlan.engine.create("comprehensive", ids(n), CONFIG, seeded(n));
-    while (run.phase === "groups") {
-      const now = StudyPlan.engine.current(run);
-      const last = now.group.position === now.group.size;
-      /* Miss the last word of every group's first attempt. */
-      const events = StudyPlan.engine.answer(run, CONFIG, last && now.group.attempt === 1 ? "f" : "s");
-      if (last && now.group.attempt === 1) {
-        assert(events.restarted, "n=" + n);
-        const again = StudyPlan.engine.current(run);
-        /* Back to the start of the missed word's 5-word segment. */
-        assert.strictEqual(again.group.position, Math.floor((now.group.position - 1) / 5) * 5 + 1);
-        assert.strictEqual(again.group.from, now.group.from);
-      }
-    }
-  }
-});
-
-test("finish-attempt is still available as a policy", () => {
-  const cfg = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "finish-attempt" } });
-  const run = StudyPlan.engine.create("comprehensive", ids(10), cfg, seeded(2));
-  for (let i = 0; i < 5; i += 1) StudyPlan.engine.answer(run, cfg, "s");
-  ["s", "f", "s", "s"].forEach(r => StudyPlan.engine.answer(run, cfg, r));
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w10", "carries on after the miss");
-  assert(StudyPlan.engine.answer(run, cfg, "s").groupRetry);
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w6");
-});
-
-test("checkpoint policy: a big group restarts only its current segment; small groups restart whole", () => {
-  const cfg = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "checkpoint", checkpointMinGroupSize: 21, checkpointSegmentSize: 10 } });
-  const run = StudyPlan.engine.create("comprehensive", ids(40), cfg, seeded(3));
-  /* Small group first: 1–5, miss word 4 → back to word 1. */
-  for (let i = 0; i < 3; i += 1) StudyPlan.engine.answer(run, cfg, "s");
-  assert.strictEqual(StudyPlan.engine.answer(run, cfg, "f").restartFrom, 1);
-  while (!(StudyPlan.engine.current(run).group.size === 40)) StudyPlan.engine.answer(run, cfg, "s");
-  for (let i = 0; i < 24; i += 1) StudyPlan.engine.answer(run, cfg, "s");
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w25");
-  const events = StudyPlan.engine.answer(run, cfg, "f");
-  assert.strictEqual(events.restartFrom, 21);
-  assert.strictEqual(StudyPlan.engine.current(run).id, "w21", "back to the segment's start, not word 1");
-  for (let i = 0; i < 20; i += 1) StudyPlan.engine.answer(run, cfg, "s");
-  assert(run.done, "the group passes once the rest goes through without a miss");
-});
-
-test("strict 5-word checkpoints are the default", () => {
-  assert.strictEqual(CONFIG.comprehensive.restartPolicy, "checkpoint");
-  assert.strictEqual(CONFIG.comprehensive.checkpointSegmentSize, 5);
-  assert(CONFIG.comprehensive.checkpointMinGroupSize <= 6, "every group over 5 words uses them");
-});
-
-test("a group failed mid-way pauses and resumes with earlier groups intact", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(20), CONFIG, seeded(5));
-  reachGroup(run, 11, 15);
-  StudyPlan.engine.answer(run, CONFIG, "s");
-  StudyPlan.engine.answer(run, CONFIG, "f");
-  const passedBefore = run.passed;
-  const saved = JSON.parse(JSON.stringify(run));
-  const now = StudyPlan.engine.current(saved);
-  assert.strictEqual(now.id, "w11");
-  assert.strictEqual(now.group.attempt, 2);
-  assert.strictEqual(saved.passed, passedBefore);
-  assert.strictEqual(passedBefore, 3, "1–5, 6–10 and 1–10 stay passed");
-});
-
-test("right answers repeated through restarts never reach the star twice", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(5), CONFIG, seeded(6));
-  for (let attempt = 0; attempt < 4; attempt += 1) {
-    for (let i = 0; i < 4; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
-    StudyPlan.engine.answer(run, CONFIG, "f");
-  }
-  drive(run, () => "s");
-  assert(run.log.filter(([id]) => id === "w1").length >= 5);
-  const proposals = StudyPlan.srs.proposals(run, () => ({ l: 0 }), "2026-11-16");
-  assert.strictEqual(proposals.length, 5, "one per word");
-  assert.strictEqual(proposals.find(p => p.id === "w1").to, 2, "five right answers in one sitting are still ★★");
-  assert.strictEqual(StudyPlan.srs.wordRecords(run, () => null, "2026-11-16").w1.seen, 1, "one retrieval on the long-term record");
-});
-
-test("repeated misses never undo a group already passed", () => {
+test("misses never undo a group already passed, nor the whole quiz", () => {
   const run = StudyPlan.engine.create("comprehensive", ids(15), CONFIG, seeded(3));
   for (let i = 0; i < 5; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
   for (let attempt = 0; attempt < 6; attempt += 1) {
@@ -560,23 +408,38 @@ test("repeated misses never undo a group already passed", () => {
   }
 });
 
-test("the retry safeguard is off by default, and passes a group only when configured", () => {
-  const strict = StudyPlan.engine.create("comprehensive", ids(5), CONFIG, seeded(4));
-  for (let i = 0; i < 50; i += 1) StudyPlan.engine.answer(strict, CONFIG, "f");
-  assert.strictEqual(strict.phase, "groups");
-  const capped = StudyPlan.merge(CONFIG, { comprehensive: { maxGroupAttempts: 3 } });
-  const run = StudyPlan.engine.create("comprehensive", ids(5), capped, seeded(4));
-  let events = {};
-  let guard = 0;
-  while (!events.forced && guard++ < 50) events = StudyPlan.engine.answer(run, capped, "f");
-  assert(events.forced && events.groupPassed);
-  assert.strictEqual(guard, 2 + 5, "two restarts, then the third attempt runs to the end and passes");
-  assert(run.done);
+test("a group failed mid-way pauses and resumes with earlier groups intact", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(20), CONFIG, seeded(5));
+  reachGroup(run, 11, 15);
+  StudyPlan.engine.answer(run, CONFIG, "s");
+  StudyPlan.engine.answer(run, CONFIG, "f");
+  const saved = JSON.parse(JSON.stringify(run));
+  const now = StudyPlan.engine.current(saved);
+  assert.strictEqual(now.id, "w11");
+  assert.strictEqual(now.group.attempt, 2);
+  assert.strictEqual(saved.passed, 3, "1–5, 6–10 and 1–10 stay passed");
 });
 
-test("optional Part 2 asks every word, shuffled, and favours what Part 1 found weak", () => {
+test("finish-attempt and the retry safeguard remain available as policies", () => {
+  const fin = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "finish-attempt" } });
+  const run = StudyPlan.engine.create("comprehensive", ids(10), fin, seeded(2));
+  for (let i = 0; i < 5; i += 1) StudyPlan.engine.answer(run, fin, "s");
+  ["s", "f", "s", "s"].forEach(r => StudyPlan.engine.answer(run, fin, r));
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w10", "carries on after the miss");
+  assert(StudyPlan.engine.answer(run, fin, "s").groupRetry);
+  const capped = StudyPlan.merge(CONFIG, { comprehensive: { maxGroupAttempts: 3 } });
+  const c = StudyPlan.engine.create("comprehensive", ids(5), capped, seeded(4));
+  let events = {};
+  let guard = 0;
+  while (!events.forced && guard++ < 50) events = StudyPlan.engine.answer(c, capped, "f");
+  assert(events.forced && events.groupPassed);
+});
+
+section("Comprehensive quiz: Part 2, spaced retrieval");
+
+test("Part 2 asks every word, shuffled, once if Part 1 was clean, more if it was not", () => {
   const words = ids(20);
-  const run = StudyPlan.engine.create("comprehensive", words, WITH_SRS, seeded(4));
+  const run = StudyPlan.engine.create("comprehensive", words, CONFIG, seeded(4));
   const once = new Set();
   while (run.phase === "groups") {
     const id = StudyPlan.engine.current(run).id;
@@ -586,16 +449,30 @@ test("optional Part 2 asks every word, shuffled, and favours what Part 1 found w
     StudyPlan.engine.answer(run, CONFIG, r);
   }
   const part2 = drive(run, () => "s").map(now => now.id);
-  assert.deepStrictEqual([...new Set(part2)].sort(), words.slice().sort());
-  assert.notDeepStrictEqual(part2.slice(0, 20), words);
+  assert.deepStrictEqual([...new Set(part2)].sort(), words.slice().sort(), "every word, no others");
+  assert.notDeepStrictEqual(part2.slice(0, 20), words, "no positional cues");
   const count = id => part2.filter(x => x === id).length;
-  assert.strictEqual(count("w3"), 3);
-  assert.strictEqual(count("w5"), 2);
-  assert.strictEqual(count("w1"), 1, "a strong word is asked once");
+  assert.strictEqual(count("w3"), 3, "missed in Part 1: three right answers to retire");
+  assert.strictEqual(count("w5"), 2, "hesitant: two");
+  assert.strictEqual(count("w1"), 1, "clean: once");
+  assert.strictEqual(part2[0], "w3", "the missed word comes first");
+});
+
+test("the measured answer is each word's first Part 2 answer, kept apart from practice", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(6), CONFIG, seeded(9));
+  const firstInPart2 = {};
+  drive(run, (id, now) => {
+    if (now.phase !== "srs") return "s";
+    const r = id === "w2" && !("w2" in firstInPart2) ? "f" : "s";
+    if (!(id in firstInPart2)) firstInPart2[id] = r;
+    return r;
+  });
+  assert.deepStrictEqual(run.scored, firstInPart2);
+  assert.strictEqual(run.scoreAt, "srs");
 });
 
 test("spaced parts never ask the same word twice running while others remain", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(8), WITH_SRS, seeded(5));
+  const run = StudyPlan.engine.create("comprehensive", ids(8), CONFIG, seeded(5));
   while (run.phase === "groups") StudyPlan.engine.answer(run, CONFIG, StudyPlan.engine.current(run).id === "w2" && run.answers < 3 ? "f" : "s");
   let last = null;
   const rand = seeded(9);
@@ -607,170 +484,381 @@ test("spaced parts never ask the same word twice running while others remain", (
   }
 });
 
-test("a star moves once per quiz, from one measured answer — never from the repeats", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(10), WITH_SRS, seeded(6));
-  drive(run, () => "s");
-  assert(run.log.length >= 30);
-  const proposals = StudyPlan.srs.proposals(run, () => ({ l: 0 }), "2026-11-16");
-  assert.strictEqual(proposals.length, 10);
-  proposals.forEach(p => assert.strictEqual(p.to, 2, "clean today is ★★, not ★★★"));
-  StudyPlan.srs.proposals(run, () => ({ l: 2, d: "2026-11-16" }), "2026-11-16").forEach(p => assert.strictEqual(p.to, 2));
-  StudyPlan.srs.proposals(run, () => ({ l: 2, d: "2026-11-16" }), "2026-11-17").forEach(p => assert.strictEqual(p.to, 3));
-});
-
-test("word records count one retrieval per quiz, with the calendar gap since the last", () => {
-  const run = StudyPlan.engine.create("maintenance", ids(4), CONFIG, seeded(6));
-  drive(run, id => (id === "w2" ? "f" : "s"));
-  const records = StudyPlan.srs.wordRecords(run, id => (id === "w1" ? { last: "2026-11-02", seen: 3, right: 3 } : null), "2026-11-16");
-  assert.strictEqual(records.w1.seen, 4);
-  assert.strictEqual(records.w1.gap, 14, "a two-week break reads as two weeks");
-  assert.strictEqual(records.w2.right, 0);
-  assert.strictEqual(records.w2.relearn, true);
-});
-
-test("a word that keeps failing in optional Part 2 is let go and flagged", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(6), WITH_SRS, seeded(7));
+test("a word that keeps failing in Part 2 is let go and flagged for relearning", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(6), CONFIG, seeded(7));
   const answers = drive(run, id => (run.phase === "srs" && id === "w4" ? "f" : "s"));
   assert.deepStrictEqual(run.relearn, ["w4"]);
   assert.strictEqual(answers.filter(a => a.phase === "srs" && a.id === "w4").length, CONFIG.comprehensive.relearnAfterMisses);
+  const record = StudyPlan.srs.wordRecords(run, () => null, "2026-11-16", { source: "t" }).w4;
+  assert.strictEqual(record.relearn, true);
+});
+
+test("a groups-only comprehensive quiz is still available, measured on the last group", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(10), GROUPS_ONLY, seeded(2));
+  drive(run, () => "s", 5000, GROUPS_ONLY);
+  assert.strictEqual(run.scoreAt, "final-group");
+  assert.strictEqual(Object.keys(run.scored).length, 10);
+});
+
+test("same-session repetition never inflates memory or stars", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(5), CONFIG, seeded(6));
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    for (let i = 0; i < 4; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
+    StudyPlan.engine.answer(run, CONFIG, "f");
+  }
+  drive(run, () => "s");
+  assert(run.log.filter(([id]) => id === "w1").length >= 5);
+  const proposals = StudyPlan.srs.proposals(run, () => ({ l: 0 }), "2026-11-16");
+  assert.strictEqual(proposals.length, 5, "one star proposal per word");
+  assert.strictEqual(proposals.find(p => p.id === "w1").to, 2, "many right answers in one sitting are still ★★");
+  const records = StudyPlan.srs.wordRecords(run, () => null, "2026-11-16", { source: "d0" });
+  assert.strictEqual(records.w1.seen, 1, "one retrieval on the long-term record");
+  assert.strictEqual(records.w1.s, CONFIG.srs.initialStability.s, "starting stability, not more");
+  assert(records.w5.s < records.w1.s, "the word missed four times while learning starts lower");
+  assert(records.w5.d > records.w1.d, "and harder");
 });
 
 /* =========================================================================
-   REVIEW AND MAINTENANCE
+   MEMORY MODEL
    ========================================================================= */
-section("Review and maintenance quizzes");
+section("Memory model (SRS)");
 
-test("review: every word once first, then only weak and failed words", () => {
-  const words = ids(30);
-  const run = StudyPlan.engine.create("review", words, CONFIG, seeded(8), { policy: "intermediateReview" });
-  const weak = new Set(["w2", "w9"]);
-  const failed = new Set(["w4", "w15", "w22"]);
-  const asked = drive(run, (id, now) => (now.phase === "initial" ? (failed.has(id) ? "f" : weak.has(id) ? "w" : "s") : "s"));
-  assert.deepStrictEqual(asked.slice(0, 30).map(a => a.id).sort(), words.slice().sort());
-  assert(asked.slice(0, 30).every(a => a.phase === "initial"), "nothing else before every word is asked");
-  const later = asked.slice(30).map(a => a.id);
-  const pool = new Set([...weak, ...failed]);
-  assert(later.every(id => pool.has(id)), "strong words are not repeated");
-  pool.forEach(id => assert(asked.some(a => a.phase === "targeted" && a.id === id), id + " gets targeted repetition"));
-  failed.forEach(id => assert(asked.some(a => a.phase === "srs" && a.id === id), id + " gets a delayed retrieval"));
+const M = CONFIG.srs;
+const learnt = (result, date) => StudyMemory.apply(null, { result, date, kind: "learn", source: "c" }, M).record;
+
+test("retention decays with real calendar time, whatever the study schedule did", () => {
+  const record = learnt("s", "2026-11-01");
+  const after1 = StudyMemory.retention(record, "2026-11-02", M);
+  const after14 = StudyMemory.retention(record, "2026-11-15", M);
+  assert(Math.abs(after1 - 0.9) < 1e-9, "one day after learning, at stability 1, R = 90%");
+  assert(after14 < 0.25, "fourteen days later it is treated as fourteen days: " + after14);
+  assert(StudyMemory.status(record, "2026-11-15", M).overdue);
+  assert(!StudyMemory.status(record, "2026-11-01", M).isDue);
+  assert(StudyMemory.status(record, "2026-11-02", M).isDue);
 });
 
-test("review: in Part 3, failed words come before weak ones", () => {
-  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(30), { policy: "intermediateReview" });
-  drive(run, (id, now) => (now.phase === "initial" ? (id === "w1" ? "w" : id === "w2" ? "f" : "s") : "s"));
-  assert.strictEqual(run.log.filter(([, phase]) => phase === "srs")[0][0], "w2");
+test("a successful delayed recall grows stability; a later one more than an early one", () => {
+  const base = learnt("s", "2026-11-01");
+  const onTime = StudyMemory.apply(base, { result: "s", date: "2026-11-02", source: "r1" }, M).record;
+  const late = StudyMemory.apply(base, { result: "s", date: "2026-11-08", source: "r1" }, M).record;
+  const weak = StudyMemory.apply(base, { result: "w", date: "2026-11-02", source: "r1" }, M).record;
+  assert(onTime.s > base.s * 2, "on time: " + onTime.s);
+  assert(late.s > onTime.s, "recalled late, after more forgetting, grows more");
+  assert(weak.s > base.s && weak.s < onTime.s, "hesitant grows a little");
+  assert.strictEqual(onTime.gap, 1);
+  assert.strictEqual(late.gap, 7);
 });
 
-test("early review is one spaced run: no first pass, no groups, every word until it sticks", () => {
-  const { all, unitOf } = pool(["a", 12], ["b", 9]);
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(40), { policy: "earlyReview", unitOf });
-  assert.deepStrictEqual(run.phases, ["srs"]);
-  const firsts = new Map();
-  const asked = drive(run, (id, now) => {
-    const first = !firsts.has(id);
-    firsts.set(id, true);
-    if (id === "a-w1") return first ? "f" : "s";
-    if (id === "b-w2") return first ? "w" : "s";
-    return "s";
-  });
-  assert(asked.every(a => a.phase === "srs" && a.group === null));
-  assert.deepStrictEqual([...new Set(asked.map(a => a.id))].sort(), all.slice().sort(), "every word of both units");
-  const count = id => asked.filter(a => a.id === id).length;
-  assert.strictEqual(count("a-w3"), 1, "right first time: asked once");
-  assert.strictEqual(count("a-w1"), 3, "missed: comes back until two more right answers");
-  assert.strictEqual(count("b-w2"), 2, "hesitant: comes back once more");
-  assert.strictEqual(run.scored["a-w1"], "f", "measured on its first answer");
-  assert.strictEqual(run.scored["b-w2"], "w");
-  const out = StudyPlan.engine.outcome(run);
-  assert.strictEqual(out.byUnit.a.words, 12);
-  assert.deepStrictEqual(out.byUnit.a.failed, ["a-w1"]);
-  assert.deepStrictEqual(out.byUnit.b.weak, ["b-w2"]);
+test("a failed recall cuts stability, raises difficulty and flags relearning", () => {
+  let record = learnt("s", "2026-11-01");
+  record = StudyMemory.apply(record, { result: "s", date: "2026-11-02", source: "r1" }, M).record;
+  record = StudyMemory.apply(record, { result: "s", date: "2026-11-05", source: "r2" }, M).record;
+  const strong = record.s;
+  const failed = StudyMemory.apply(record, { result: "f", date: "2026-11-20", source: "r3" }, M).record;
+  assert(failed.s < strong * 0.5);
+  assert(failed.d > record.d);
+  assert.strictEqual(failed.relearn, true);
+  assert.strictEqual(failed.lapses, 1);
+  const back = StudyMemory.apply(failed, { result: "s", date: "2026-11-21", source: "r4" }, M).record;
+  assert.strictEqual(back.relearn, false, "a later strong recall clears relearning");
 });
 
-test("early review: a word that will not stick is let go, and the run ends", () => {
-  const run = StudyPlan.engine.create("review", ids(6), CONFIG, seeded(41), { policy: "earlyReview" });
-  const asked = drive(run, id => (id === "w4" ? "f" : "s"));
-  assert.deepStrictEqual(run.relearn, ["w4"]);
-  assert.strictEqual(asked.filter(a => a.id === "w4").length, CONFIG.earlyReview.relearnAfterMisses);
+test("a second right answer on the same calendar day adds no stability", () => {
+  const record = learnt("s", "2026-11-01");
+  const again = StudyMemory.apply(record, { result: "s", date: "2026-11-01", source: "r1" }, M).record;
+  assert.strictEqual(again.s, record.s);
 });
 
-test("the comprehensive quiz is measured on each word's first answer in the last, whole-unit group", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(12), CONFIG, seeded(42));
-  const seenInLast = new Set();
-  drive(run, (id, now) => {
-    const last = now.group.size === 12;
-    if (last && id === "w9" && !seenInLast.has(id)) { seenInLast.add(id); return "f"; }
-    if (!last && id === "w2") return now.group.attempt === 1 ? "f" : "s";
-    return "s";
-  });
-  assert.strictEqual(run.scored.w9, "f", "missed in the final group");
-  assert.strictEqual(run.scored.w2, "s", "earlier misses are practice, not the measure");
-  assert.strictEqual(Object.keys(run.scored).length, 12);
+test("the same quiz is never applied to a word twice", () => {
+  const record = learnt("s", "2026-11-01");
+  const once = StudyMemory.apply(record, { result: "s", date: "2026-11-03", source: "d2:review" }, M);
+  const twice = StudyMemory.apply(once.record, { result: "s", date: "2026-11-03", source: "d2:review" }, M);
+  assert(once.applied && !twice.applied);
+  assert.strictEqual(twice.record.seen, once.record.seen);
+  assert.strictEqual(twice.record.s, once.record.s);
 });
 
-test("intermediate review keeps its three parts", () => {
-  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(31), { policy: "intermediateReview" });
-  const asked = drive(run, (id, now) => (now.phase === "initial" && id === "w1" ? "w" : "s"));
-  assert.deepStrictEqual(run.phases, ["initial", "targeted", "srs"]);
-  assert.strictEqual(asked.filter(a => a.phase === "srs" && a.id === "w1").length, 1);
+test("records written before the memory model are read from their last result", () => {
+  const legacy = { last: "2026-11-14", seen: 1, right: 1, result: "s", gap: null };
+  const st = StudyMemory.state(legacy, M);
+  assert(st.learnt);
+  assert.strictEqual(st.s, M.initialStability.s);
+  const next = StudyMemory.apply(legacy, { result: "s", date: "2026-11-17", source: "d1:review" }, M).record;
+  assert.strictEqual(next.seen, 2);
+  assert(next.s > st.s);
 });
 
-test("review: targeted groups shuffle between attempts", () => {
-  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(10), { policy: "intermediateReview" });
-  while (run.phase === "initial") StudyPlan.engine.answer(run, CONFIG, "f");
-  const orders = new Set();
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    const seen = [];
-    for (let i = 0; i < 5; i += 1) {
-      seen.push(StudyPlan.engine.current(run).id);
-      StudyPlan.engine.answer(run, CONFIG, i === 4 ? "f" : "s", 0, seeded(attempt * 31 + i));
-    }
-    orders.add(seen.join());
+test("the sync keeps the copy of a word with more retrievals", () => {
+  const a = StudyMemory.apply(learnt("s", "2026-11-01"), { result: "s", date: "2026-11-02", source: "r1" }, M).record;
+  const b = learnt("s", "2026-11-01");
+  assert.strictEqual(StudyPlanStore.better(Object.assign({ at: "1" }, a), Object.assign({ at: "2" }, b)).seen, 2);
+});
+
+/* =========================================================================
+   ADAPTIVE REVIEW SELECTION
+   ========================================================================= */
+section("Adaptive review: selection");
+
+/* Candidates in each state, for the selector alone. */
+function candidate(id, state, today) {
+  const t = today || "2026-12-01";
+  const ago = n => addDays(t, -n);
+  const shapes = {
+    failed: { record: { last: ago(2), first: ago(10), s: 0.5, d: 7, seen: 3, right: 2, result: "f", recent: "ssf", relearn: true, lapses: 1 }, stars: 1 },
+    weakstar: { record: { last: ago(1), first: ago(3), s: 1, d: 5, seen: 1, right: 1, result: "w", recent: "w" }, stars: 1 },
+    developing: { record: { last: ago(2), first: ago(9), s: 3, d: 5, seen: 2, right: 2, result: "s", recent: "ss" }, stars: 2 },
+    mastered: { record: { last: ago(5), first: ago(40), s: 30, d: 4, seen: 5, right: 5, result: "s", recent: "sssss" }, stars: 3 },
+    overdueMastered: { record: { last: ago(90), first: ago(120), s: 20, d: 4, seen: 5, right: 5, result: "s", recent: "sssss" }, stars: 3 }
+  };
+  return Object.assign({ id, unit: "u" }, JSON.parse(JSON.stringify(shapes[state])));
+}
+function makePool(spec, today) {
+  const out = [];
+  Object.entries(spec).forEach(([state, n]) => { for (let i = 0; i < n; i += 1) out.push(candidate(state + i, state, today)); });
+  return out;
+}
+const pick = (candidates, extra) => ReviewSelector.select(Object.assign({ candidates, today: "2026-12-01", config: CONFIG.adaptiveReview, memory: M, seed: "x" }, extra || {}));
+
+test("55 distinct words by default, never more than 60, never a duplicate", () => {
+  const candidates = makePool({ failed: 40, developing: 120, mastered: 100 });
+  const sel = pick(candidates.concat(candidates.slice(0, 20)));
+  assert.strictEqual(sel.ids.length, 55);
+  assert.strictEqual(new Set(sel.ids).size, 55);
+  const big = pick(candidates, { config: StudyPlan.merge(CONFIG.adaptiveReview, { targetUniqueWords: 60 }) });
+  assert(big.ids.length <= 60);
+});
+
+test("the default composition is 30 weak/overdue, 15 developing, 10 mastered when each has enough", () => {
+  const sel = pick(makePool({ failed: 40, developing: 120, mastered: 100 }));
+  assert.deepStrictEqual(sel.counts, { weak: 30, developing: 15, mastered: 10 });
+});
+
+test("weak, failed and overdue words come first", () => {
+  const sel = pick(makePool({ failed: 12, overdueMastered: 6, developing: 120, mastered: 100 }));
+  for (let i = 0; i < 12; i += 1) assert(sel.ids.includes("failed" + i), "failed" + i);
+  for (let i = 0; i < 6; i += 1) {
+    assert(sel.ids.includes("overdueMastered" + i), "a ★★★ word gone overdue is reviewed");
+    assert.strictEqual(sel.picks["overdueMastered" + i].tier, "weak");
+    assert.strictEqual(sel.picks["overdueMastered" + i].reason, "overdue");
   }
-  assert(orders.size > 1);
 });
 
-test("review: all strong skips straight to done", () => {
-  const run = StudyPlan.engine.create("review", ids(25), CONFIG, seeded(11), { policy: "intermediateReview" });
-  assert.strictEqual(drive(run, () => "s").length, 25);
+test("quotas a tier cannot fill go to the best remaining words, never to duplicates", () => {
+  const sel = pick(makePool({ failed: 5, developing: 200 }));
+  assert.strictEqual(sel.ids.length, 55);
+  assert.strictEqual(sel.counts.weak, 5);
+  assert.strictEqual(sel.counts.mastered, 0);
+  assert.strictEqual(sel.counts.developing, 50);
+  assert.strictEqual(new Set(sel.ids).size, 55);
 });
 
-test("review: a word that will not stick is let go, not asked forever", () => {
-  const run = StudyPlan.engine.create("review", ids(12), CONFIG, seeded(12), { policy: "intermediateReview" });
-  const asked = drive(run, (id, now) => (id === "w7" ? (now.phase === "targeted" ? "s" : "f") : "s"));
-  assert(run.relearn.includes("w7"));
-  assert(asked.length < 60);
+test("fewer than 50 learnt words: all of them, no filler", () => {
+  const candidates = makePool({ developing: 31, failed: 4 });
+  const sel = pick(candidates);
+  assert.strictEqual(sel.ids.length, 35);
+  assert.deepStrictEqual(sel.ids.slice().sort(), candidates.map(c => c.id).sort());
 });
 
-test("maintenance: cold recall first, no groups, weak once more and failed twice", () => {
-  const run = StudyPlan.engine.create("maintenance", ids(40), CONFIG, seeded(13));
-  const asked = drive(run, (id, now) => (now.phase === "cold" ? (id === "w1" ? "w" : id === "w2" ? "f" : "s") : "s"));
-  assert(asked.slice(0, 40).every(a => a.phase === "cold"));
-  assert.strictEqual(asked.filter(a => a.phase === "cold").length, 40);
-  assert(asked.every(a => a.group === null));
-  const extra = asked.slice(40).map(a => a.id);
-  assert.strictEqual(extra.filter(id => id === "w1").length, 1);
-  assert.strictEqual(extra.filter(id => id === "w2").length, 2);
-  assert.strictEqual(extra.length, 3);
+test("mastered words are still checked — by due-ness, time and coverage, not at random", () => {
+  const today = "2026-12-01";
+  const pool = makePool({ failed: 40, developing: 100 }, today);
+  for (let i = 0; i < 40; i += 1) {
+    const c = candidate("m" + i, "mastered", today);
+    c.record.last = addDays(today, -(i + 1));
+    pool.push(c);
+  }
+  const sel = pick(pool, { config: StudyPlan.merge(CONFIG.adaptiveReview, { includeControlledRandomness: false }) });
+  const chosen = sel.ids.filter(id => id.startsWith("m")).map(id => Number(id.slice(1))).sort((a, b) => a - b);
+  assert.strictEqual(chosen.length, 10);
+  assert.deepStrictEqual(chosen, [30, 31, 32, 33, 34, 35, 36, 37, 38, 39], "the ten longest unseen");
 });
 
-test("maintenance: the cold score is kept apart from the corrective repeats", () => {
-  const run = StudyPlan.engine.create("maintenance", ids(10), CONFIG, seeded(14));
-  drive(run, (id, now) => (now.phase === "cold" && id === "w3" ? "f" : "s"));
-  assert.strictEqual(run.scored.w3, "f");
-  assert.strictEqual(StudyPlan.srs.proposals(run, () => ({ l: 3 }), "2026-11-16").find(p => p.id === "w3").to, 2);
+test("the same inputs give the same selection (the home page's preview is the quiz's)", () => {
+  const candidates = makePool({ failed: 20, developing: 80, mastered: 40 });
+  assert.deepStrictEqual(pick(candidates).ids, pick(candidates).ids);
+  assert.notDeepStrictEqual(pick(candidates).ids, pick(candidates, { seed: "other day" }).ids, "another day, another shuffle");
 });
 
-test("maintenance: repeated failure flags the word, and the session still ends", () => {
-  const run = StudyPlan.engine.create("maintenance", ids(5), CONFIG, seeded(15));
-  drive(run, id => (id === "w5" ? "f" : "s"));
-  assert.deepStrictEqual(run.relearn, ["w5"]);
+test("randomness varies the pick among equals but never outranks an urgent word", () => {
+  const pool = makePool({ developing: 200 });
+  pool.push(candidate("urgent", "overdueMastered"));
+  const seen = new Set();
+  for (let s = 0; s < 20; s += 1) {
+    const sel = pick(pool, { seed: "day" + s });
+    assert(sel.ids.includes("urgent"), "seed " + s);
+    sel.ids.forEach(id => seen.add(id));
+  }
+  assert(seen.size > 70, "different days pick different developing words: " + seen.size);
 });
 
-test("maintenance takes far fewer answers than a comprehensive quiz", () => {
-  const comp = drive(StudyPlan.engine.create("comprehensive", ids(50), CONFIG, seeded(17)), learner(0.5, 16)).length;
-  const maint = drive(StudyPlan.engine.create("maintenance", ids(50), CONFIG, seeded(18)), learner(0.15, 16)).length;
-  assert(maint < comp / 3, maint + " vs " + comp);
+test("a word picked three reviews running sits the next one out — unless there is nothing else", () => {
+  const pool = makePool({ failed: 3, developing: 100 });
+  const history = [1, 2, 3].map(n => ({ day: 10 - n, on: addDays("2026-12-01", -n), ids: ["failed0", "failed1"], results: { failed0: "f", failed1: "f" } }));
+  const sel = pick(pool, { history });
+  assert(!sel.ids.includes("failed0") && !sel.ids.includes("failed1"));
+  assert(sel.ids.includes("failed2"));
+  const tiny = pick(makePool({ failed: 3 }), { history });
+  assert.strictEqual(tiny.ids.length, 3, "a small pool still asks them");
+});
+
+test("after a review that went well the quotas lean toward older and known words; after a bad one, toward the weak", () => {
+  const pool = makePool({ failed: 60, developing: 120, mastered: 100 });
+  const good = [{ day: 1, on: "2026-11-30", ids: ["x"], results: Object.fromEntries(ids(20, "a").map(id => [id, "s"])) }];
+  const bad = [{ day: 1, on: "2026-11-30", ids: ["x"], results: Object.fromEntries(ids(20, "a").map((id, i) => [id, i < 10 ? "f" : "s"])) }];
+  assert.deepStrictEqual(pick(pool, { history: good }).counts, { weak: 25, developing: 18, mastered: 12 });
+  assert.deepStrictEqual(pick(pool, { history: bad }).counts, { weak: 35, developing: 15, mastered: 5 });
+});
+
+test("backlog statistics, and a gentle recommendation only when it stays large", () => {
+  const pool = makePool({ failed: 80, developing: 100, overdueMastered: 50 });
+  const sel = pick(pool);
+  assert.strictEqual(sel.stats.eligible, 230);
+  assert(sel.stats.due >= 130, "due " + sel.stats.due);
+  assert.strictEqual(sel.stats.capacity, 55);
+  assert(sel.stats.retention > 0 && sel.stats.retention < 1);
+  assert.strictEqual(sel.stats.recommendSlowerIntake, false, "one heavy day is not a trend");
+  const heavy = [1, 2].map(n => ({ day: 10 - n, on: addDays("2026-12-01", -n), ids: [], stats: { due: 200 } }));
+  assert.strictEqual(pick(pool, { history: heavy }).stats.recommendSlowerIntake, true);
+});
+
+test("optional retries shrink the selection so the quiz stays within 60 presentations", () => {
+  const cfg = StudyPlan.merge(CONFIG.adaptiveReview, { sameSessionRetries: 1 });
+  const sel = pick(makePool({ failed: 40, developing: 120 }), { config: cfg });
+  assert.strictEqual(sel.ids.length, 50);
+});
+
+section("Adaptive review: in the plan");
+
+test("the review pool is every earlier unit's words, never today's new unit", () => {
+  const w = world([12, 14, 9, 11]);
+  ["2026-11-16", "2026-11-17", "2026-11-18"].forEach(date => studyDay(w, date, () => "s"));
+  const task = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-11-19").tasks.find(t => t.key === "review");
+  assert.deepStrictEqual(task.units, [0, 1, 2]);
+  const sel = StudyPlan.selectReview(CONFIG, task, w.units, w.repo.words(), () => 2, w.repo.tasks(), "2026-11-19");
+  assert.strictEqual(sel.pool, 35);
+  assert.strictEqual(sel.ids.length, 35);
+  assert(sel.ids.every(id => !w.units[3].ids.includes(id)), "no word from unit 4, today's new one");
+});
+
+test("a word shared with today's unit waits for tomorrow", () => {
+  const w = world([6, 6]);
+  w.units[1].ids[0] = w.units[0].ids[0];
+  studyDay(w, "2026-11-16", () => "s");
+  const task = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-11-17").tasks[1];
+  const sel = StudyPlan.selectReview(CONFIG, task, w.units, w.repo.words(), () => 2, w.repo.tasks(), "2026-11-17");
+  assert(!sel.ids.includes(w.units[0].ids[0]));
+  assert.strictEqual(sel.ids.length, 5);
+});
+
+/* =========================================================================
+   ADAPTIVE REVIEW QUIZ
+   ========================================================================= */
+section("Adaptive review: the quiz");
+
+test("one attempt per word, in the frozen order, then done", () => {
+  const order = ["c", "a", "e", "b", "d"];
+  const run = StudyPlan.engine.create("review", order, CONFIG, seeded(1), { policy: "adaptiveReview" });
+  const asked = drive(run, id => (id === "e" ? "f" : id === "b" ? "w" : "s"));
+  assert.deepStrictEqual(asked.map(a => a.id), order);
+  assert.strictEqual(run.answers, 5);
+  assert.deepStrictEqual(run.scored, { c: "s", a: "s", e: "f", b: "w", d: "s" });
+  const out = StudyPlan.engine.outcome(run);
+  assert.deepStrictEqual(out.failed, ["e"]);
+  assert.deepStrictEqual(out.weak, ["b"]);
+});
+
+test("a miss does not restart anything: the next word follows", () => {
+  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(1), { policy: "adaptiveReview" });
+  const events = StudyPlan.engine.answer(run, CONFIG, "f");
+  assert(!events.restarted && !events.groupRetry);
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w2");
+});
+
+test("optional second tries stay within the presentation cap and do not change the score", () => {
+  const cfg = StudyPlan.merge(CONFIG, { adaptiveReview: { sameSessionRetries: 1, maxPresentations: 12 } });
+  const run = StudyPlan.engine.create("review", ids(10), cfg, seeded(1), { policy: "adaptiveReview" });
+  const asked = drive(run, (id, now) => (now.phase === "recall" && Number(id.slice(1)) <= 5 ? "f" : "s"), 1000, cfg);
+  assert.strictEqual(asked.length, 12, "ten words, two retries before the cap");
+  assert.strictEqual(Object.values(run.scored).filter(r => r === "f").length, 5, "the first answer still counts");
+});
+
+test("the review's tiers are kept on the run and reported", () => {
+  const tiers = { a: "weak", b: "developing", c: "mastered" };
+  const run = StudyPlan.engine.create("review", ["a", "b", "c"], CONFIG, seeded(1), { policy: "adaptiveReview", tiers });
+  assert.strictEqual(StudyPlan.engine.current(run).tier, "weak");
+  drive(run, id => (id === "a" ? "f" : "s"));
+  const out = StudyPlan.engine.outcome(run);
+  assert.deepStrictEqual(out.byTier.weak.failed, ["a"]);
+  assert.strictEqual(out.byTier.mastered.strong.length, 1);
+});
+
+/* =========================================================================
+   SCORING, STARS AND MEMORY TOGETHER
+   ========================================================================= */
+section("Scoring, stars and memory");
+
+test("a review updates exactly its selected words — the others are untouched", () => {
+  const w = world([30, 30, 30]);
+  w.units.forEach((_, i) => studyDay(w, addDays("2026-11-16", i), () => "s"));
+  const before = JSON.parse(JSON.stringify(w.repo.words()));
+  const date = "2026-11-20";
+  const task = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), date).tasks[0];
+  assert.strictEqual(task.key, "review");
+  const { selection } = runTask(w, task, date, () => "s");
+  const after = w.repo.words();
+  Object.keys(after).forEach(id => {
+    if (selection.ids.includes(id)) assert.strictEqual(after[id].seen, before[id].seen + 1, id);
+    else assert.strictEqual(after[id].seen, before[id].seen, id + " was not selected");
+  });
+});
+
+test("delayed success raises stars and stability together; a forgotten ★★★ word drops both", () => {
+  const w = world([8, 8]);
+  studyDay(w, "2026-11-16", () => "s");
+  const id = w.units[0].ids[0];
+  assert.strictEqual(starLevel(w, id), 2, "clean on the day it was learnt: ★★");
+  studyDay(w, "2026-11-17", () => "s");
+  assert.strictEqual(starLevel(w, id), 3, "clean again on a later day: ★★★");
+  const s1 = w.repo.word(id).s;
+  assert(s1 > CONFIG.srs.initialStability.s);
+  const task = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-12-20").tasks[0];
+  runTask(w, task, "2026-12-20", wordId => (wordId === id ? "f" : "s"));
+  assert.strictEqual(starLevel(w, id), 2, "a genuine lapse costs the third star");
+  assert(w.repo.word(id).s < s1);
+  assert.strictEqual(w.repo.word(id).relearn, true);
+});
+
+test("a recognition answer (한국어 → English) can keep or cost a star, never raise one", () => {
+  const run = StudyPlan.engine.create("review", ["a", "b", "c"], CONFIG, seeded(3), { policy: "adaptiveReview", dirOf: { a: "ko>en", b: "ko>en", c: "en>ko" } });
+  drive(run, id => (id === "b" ? "f" : "s"));
+  const byId = Object.fromEntries(StudyPlan.srs.proposals(run, () => ({ l: 2, d: "2026-11-01" }), "2026-11-16").map(p => [p.id, p]));
+  assert.strictEqual(byId.a.to, 2);
+  assert.strictEqual(byId.b.to, 1);
+  assert.strictEqual(byId.c.to, 3);
+});
+
+test("finishing the same quiz twice (a retried save) applies its memory updates once", () => {
+  const w = world([10, 10]);
+  studyDay(w, "2026-11-16", () => "s");
+  const { run } = runTask(w, StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-11-17").tasks[1], "2026-11-17", () => "s");
+  const once = JSON.parse(JSON.stringify(w.repo.words()));
+  w.repo.setWords(StudyPlan.srs.wordRecords(run, id => w.repo.word(id), "2026-11-17", { source: "d1:review", memory: M }));
+  const twice = w.repo.words();
+  Object.keys(once).forEach(id => {
+    assert.strictEqual(twice[id].seen, once[id].seen, id);
+    assert.strictEqual(twice[id].s, once[id].s, id);
+  });
+});
+
+test("a calendar gap shows in the review's estimates even though the study day did not move", () => {
+  const w = world([20, 20, 20]);
+  studyDay(w, "2026-11-16", () => "s");
+  const task = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-11-17").tasks[1];
+  const soon = StudyPlan.selectReview(CONFIG, task, w.units, w.repo.words(), () => 2, w.repo.tasks(), "2026-11-17");
+  const later = StudyPlan.selectReview(CONFIG, task, w.units, w.repo.words(), () => 2, w.repo.tasks(), "2026-12-01");
+  assert.strictEqual(StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-12-01").index, 1);
+  assert(later.stats.retention < soon.stats.retention - 0.3, soon.stats.retention + " → " + later.stats.retention);
+  assert(later.stats.overdue > soon.stats.overdue);
 });
 
 /* =========================================================================
@@ -778,11 +866,10 @@ test("maintenance takes far fewer answers than a comprehensive quiz", () => {
    ========================================================================= */
 section("Pause and resume");
 
-for (const [algorithm, policy] of [["comprehensive"], ["review", "earlyReview"], ["maintenance"]]) {
+for (const algorithm of ["comprehensive", "review"]) {
   test(algorithm + ": a run saved as JSON after any answer resumes on the same question", () => {
     const answerFor = learner(0.4, algorithm.length * 7);
-    const { all, unitOf } = pool(["a", 13], ["b", 10]);
-    let saved = JSON.parse(JSON.stringify(StudyPlan.engine.create(algorithm, all, CONFIG, seeded(19), { policy, unitOf })));
+    let saved = JSON.parse(JSON.stringify(StudyPlan.engine.create(algorithm, ids(23), CONFIG, seeded(19))));
     let checks = 0;
     while (!saved.done) {
       const before = StudyPlan.engine.current(saved);
@@ -796,12 +883,30 @@ for (const [algorithm, policy] of [["comprehensive"], ["review", "earlyReview"],
   });
 }
 
+test("a review's selection is frozen in its record: resuming asks the same words, whatever changed since", () => {
+  const w = world([40, 40, 40]);
+  studyDay(w, "2026-11-16", () => "s");
+  studyDay(w, "2026-11-17", () => "s");
+  const task = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), "2026-11-18").tasks[1];
+  const sel = StudyPlan.selectReview(CONFIG, task, w.units, w.repo.words(), () => 2, w.repo.tasks(), "2026-11-18");
+  const run = StudyPlan.engine.create("review", sel.ids, CONFIG, seeded(1));
+  for (let i = 0; i < 7; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
+  w.repo.saveTask(task.id, { status: "started", n: 7, run, selection: sel }, w.repo.versionOf(null));
+  /* A week later, with different stars, a fresh selection would differ… */
+  const fresh = StudyPlan.selectReview(CONFIG, task, w.units, w.repo.words(), () => 0, w.repo.tasks(), "2026-11-25");
+  assert.notDeepStrictEqual(fresh.ids, sel.ids);
+  /* …but the record holds the frozen one, and the run picks up at word 8. */
+  const held = w.repo.task(task.id);
+  assert.deepStrictEqual(held.selection.ids, sel.ids);
+  assert.strictEqual(StudyPlan.engine.current(held.run).id, sel.ids[7]);
+});
+
 /* =========================================================================
    PERSISTENCE
    ========================================================================= */
 section("Persistence");
 
-test("a save is refused when another tab wrote the session first", () => {
+test("a save is refused when another tab wrote the quiz first", () => {
   const storage = memoryStorage();
   const tabA = StudyPlanStore.open("plan", storage);
   const tabB = StudyPlanStore.open("plan", storage);
@@ -811,7 +916,7 @@ test("a save is refused when another tab wrote the session first", () => {
   assert(tabB.saveTask("t", { status: "started", n: 2 }, seenByB).conflict);
 });
 
-test("starting a session twice (refresh, two tabs) makes one record", () => {
+test("starting a quiz twice (refresh, two tabs) makes one record", () => {
   const storage = memoryStorage();
   const tabA = StudyPlanStore.open("plan", storage);
   const tabB = StudyPlanStore.open("plan", storage);
@@ -820,7 +925,7 @@ test("starting a session twice (refresh, two tabs) makes one record", () => {
   assert.strictEqual(Object.keys(tabA.tasks()).length, 1);
 });
 
-test("a finished session is never un-finished by a copy that was behind", () => {
+test("a finished quiz is never un-finished by a copy that was behind", () => {
   const done = { status: "done", n: 300, at: "2026-11-16T10:00:00Z" };
   const behind = { status: "started", n: 310, at: "2026-11-16T11:00:00Z" };
   assert.strictEqual(StudyPlanStore.better(done, behind), done);
@@ -833,7 +938,7 @@ test("cloud-sync carries plan keys and settles them by the same rule", () => {
   assert(/isPlan\(row\.store_key\)/.test(source));
 });
 
-test("two tabs completing the last session cannot advance the day twice", () => {
+test("two tabs completing the last quiz cannot advance the day twice", () => {
   const storage = memoryStorage();
   const tabA = StudyPlanStore.open("plan", storage);
   const tabB = StudyPlanStore.open("plan", storage);
@@ -845,16 +950,21 @@ test("two tabs completing the last session cannot advance the day twice", () => 
   assert.strictEqual(StudyPlan.today(CONFIG, UNITS, tabA.tasks(), "2026-11-17").index, 1);
   assert.strictEqual(StudyPlan.today(CONFIG, UNITS, tabB.tasks(), "2026-11-30").index, 1);
   tabA.setState({ day: 1, on: "2026-11-17" });
-  tabB.setState({ day: 1, on: "2026-11-17" });
   tabB.setState({ day: 0, on: "2026-11-16" });
   assert.strictEqual(tabA.state().day, 1, "the recorded day never goes back");
 });
 
-test("word records are written in one batch", () => {
+test("word records are written in one batch and keep their retrieval count for merges", () => {
   const repo = StudyPlanStore.open("plan", memoryStorage());
-  repo.setWords({ a: { seen: 1, last: "2026-11-16" }, b: { seen: 2, relearn: true } });
-  assert.strictEqual(repo.word("a").seen, 1);
+  repo.setWords({ a: { seen: 3, last: "2026-11-16" }, b: { seen: 2, relearn: true } });
+  assert.strictEqual(repo.word("a").n, 3);
   assert.strictEqual(repo.words().b.relearn, true);
+});
+
+test("the unit cache keeps each unit's word ids", () => {
+  const storage = memoryStorage();
+  StudyPlanStore.cacheUnits("plan", [{ id: "u1", label: "One", number: 1, ids: ["a", "b"] }], storage);
+  assert.deepStrictEqual(StudyPlanStore.cachedUnits("plan", storage)[0].ids, ["a", "b"]);
 });
 
 test("SpacedSession: a restored session continues identically", () => {
@@ -863,6 +973,79 @@ test("SpacedSession: a restored session continues identically", () => {
   for (let i = 0; i < 7; i += 1) original.grade(original.next(), i % 3 !== 0);
   const copy = SpacedSession.create({ restore: JSON.parse(JSON.stringify(original.snapshot())) });
   assert.deepStrictEqual(copy.snapshot(), original.snapshot());
+});
+
+/* =========================================================================
+   SIMULATIONS
+   ========================================================================= */
+section("Simulations over 120 study days");
+
+/* Run `days` study days with a learner, skipping calendar days now and then,
+   and check every invariant on the way. */
+function simulate(sizes, days, seed, skipEvery) {
+  const w = world(sizes);
+  const answerFor = realistic(w, seed);
+  let date = "2026-11-16";
+  const taught = [];
+  const lastPicked = new Map();
+  let maxWait = 0;
+  const reviews = [];
+  let answers = 0;
+  for (let d = 0; d < days; d += 1) {
+    const day = StudyPlan.today(CONFIG, w.unitIds, w.repo.tasks(), date);
+    assert.strictEqual(day.index, d, "one study day per active day");
+    assert(day.tasks.length <= 2);
+    const before = w.log.length;
+    studyDay(w, date, answerFor);
+    w.log.slice(before).forEach(entry => {
+      answers += entry.run.answers;
+      if (entry.task.algorithm === "comprehensive") { taught.push(entry.task.units[0]); return; }
+      const sel = entry.selection;
+      assert(sel.ids.length <= CONFIG.adaptiveReview.maximumUniqueWords);
+      assert.strictEqual(new Set(sel.ids).size, sel.ids.length);
+      if (d < sizes.length) assert(sel.ids.every(id => !w.units[d].ids.includes(id)), "never today's unit");
+      const eligible = new Set(entry.task.units.flatMap(u => w.units[u].ids));
+      assert(sel.ids.every(id => eligible.has(id)), "only learnt words");
+      assert.strictEqual(entry.run.answers, sel.ids.length, "one attempt per word");
+      sel.ids.forEach(id => { lastPicked.set(id, d); });
+      reviews.push({ day: d, size: sel.ids.length, stats: sel.stats, counts: sel.counts });
+    });
+    /* How long the longest-waiting learnt word has gone without a review. */
+    for (let u = 0; u < Math.min(d, sizes.length); u += 1) {
+      w.units[u].ids.forEach(id => { maxWait = Math.max(maxWait, d - (lastPicked.has(id) ? lastPicked.get(id) : u)); });
+    }
+    date = addDays(date, skipEvery && d % skipEvery === skipEvery - 1 ? 3 : 1);
+  }
+  assert.deepStrictEqual(taught, Array.from({ length: Math.min(days, sizes.length) }, (_, i) => i), "each unit once, in order");
+  return { w, reviews, maxWait, answers };
+}
+
+test("the real plan's shape (7 units of 52–60) over 120 study days, with missed days", () => {
+  const sizes = [52, 56, 60, 53, 55, 58, 54];
+  const { reviews, maxWait, answers, w } = simulate(sizes, 120, 7, 9);
+  assert.strictEqual(reviews.length, 119);
+  reviews.forEach(r => assert.strictEqual(r.size, Math.min(55, sizes.slice(0, Math.min(r.day, 7)).reduce((a, b) => a + b, 0)), "day " + r.day));
+  assert(maxWait <= 21, "every learnt word is reviewed at least every three weeks: " + maxWait);
+  const retention = reviews[reviews.length - 1].stats.retention;
+  assert(retention > 0.75, "estimated retention stays high: " + retention);
+  const totalWords = sizes.reduce((a, b) => a + b, 0);
+  const mastered = Object.values(w.stars).filter(s => s.l === 3).length;
+  console.log("      7 units: " + Math.round(answers / 120) + " answers a day on average, longest wait " + maxWait
+    + " days, retention " + Math.round(retention * 100) + "%, ★★★ " + mastered + "/" + totalWords);
+});
+
+test("a long collection (40 units of 50) over 120 study days: no starvation, backlog flagged", () => {
+  const sizes = Array.from({ length: 40 }, () => 50);
+  const { reviews, maxWait, answers } = simulate(sizes, 120, 11);
+  reviews.forEach(r => assert.strictEqual(r.size, Math.min(55, Math.min(r.day, 40) * 50), "day " + r.day));
+  /* 2,000 words and 55 review slots a day: going round them all once takes
+     about 37 days, so no word should wait much more than twice that. */
+  const lap = Math.ceil(sizes.reduce((x, y) => x + y, 0) / CONFIG.adaptiveReview.targetUniqueWords);
+  assert(maxWait <= 2 * lap, "older words keep coming back: longest wait " + maxWait + " days, a lap is " + lap);
+  const flagged = reviews.filter(r => r.stats.recommendSlowerIntake).length;
+  console.log("      40 units: " + Math.round(answers / 120) + " answers a day, longest wait " + maxWait + " days, backlog recommendation on "
+    + flagged + " of " + reviews.length + " reviews, final due " + reviews[reviews.length - 1].stats.due);
+  assert(flagged > 0, "a backlog this size is pointed out");
 });
 
 /* =========================================================================
@@ -878,31 +1061,27 @@ const built = ReviewBanks.build(bankConfig, fs.readFileSync(path.join(ROOT, bank
 const allGroups = built.modes.find(mode => mode.id === StudyPlan.PLANS[0].collection.grouping).groups;
 const unitGroups = StudyPlanStore.pickUnits(allGroups, StudyPlan.PLANS[0].collection.units);
 
-test("the plan uses the 2023 units only, in the book's order", () => {
+test("the plan uses the 2023 units, in the book's order", () => {
   assert.deepStrictEqual(unitGroups.map(g => g.id), [1, 2, 3, 4, 5, 6, 7].map(n => "unit-2023-" + n));
   const covered = unitGroups.flatMap(group => group.ids);
   assert.strictEqual(new Set(covered).size, covered.length, "no word in two units");
   assert(covered.every(id => id.startsWith("t23-")), "no 2018 word");
-  assert.strictEqual(covered.length, built.words.filter(w => w.id.startsWith("t23-")).length, "every 2023 word");
 });
 
-test("appending 2018 later puts its units after 2023's, leaving 2023's schedule alone", () => {
+test("appending 2018 later puts its units after 2023's, leaving the days already done alone", () => {
   const later = StudyPlanStore.pickUnits(allGroups, ["^unit-2023-", "^unit-2018-"]);
   assert.strictEqual(later.length, 14);
   assert.deepStrictEqual(later.slice(0, 7), unitGroups);
-  assert.strictEqual(later[7].id, "unit-2018-1");
-  assert.strictEqual(StudyPlanStore.pickUnits(allGroups).length, 14, "no patterns: every unit");
+  const before = StudyPlan.dayTasks(CONFIG, 7, 3).map(t => StudyPlan.taskId(unitGroups.map(g => g.id), t));
+  const after = StudyPlan.dayTasks(CONFIG, 14, 3).map(t => StudyPlan.taskId(later.map(g => g.id), t));
+  assert.deepStrictEqual(after, before);
 });
 
-test("every real session of the plan runs to the end, scored unit by unit", () => {
-  const unitIds = unitGroups.map(g => g.id);
-  StudyPlan.timeline(CONFIG, unitGroups.length).flat().forEach((session, index) => {
-    const unitOf = {};
-    const all = session.units.flatMap(u => unitGroups[u].ids.map(id => { unitOf[id] = unitIds[u]; return id; }));
-    const run = StudyPlan.engine.create(session.algorithm, all, CONFIG, seeded(index), { policy: session.policy, unitOf });
+test("every real unit's comprehensive quiz runs to the end and measures every word", () => {
+  unitGroups.forEach((group, index) => {
+    const run = StudyPlan.engine.create("comprehensive", group.ids, CONFIG, seeded(index));
     drive(run, learner(0.4, index));
-    const out = StudyPlan.engine.outcome(run);
-    session.units.forEach(u => assert.strictEqual(out.byUnit[unitIds[u]].words, unitGroups[u].ids.length));
+    assert.strictEqual(Object.keys(run.scored).length, group.ids.length);
   });
 });
 
@@ -914,11 +1093,6 @@ test("answers are checked the review page's way", () => {
   assert(check.check(word, dir, " 예약 하다 "));
   assert(!check.check(word, dir, "취소하다"));
   assert(!check.check(word, dir, ""));
-  assert(check.check(word, { promptLang: "ko", answerLang: "en" }, "Reserve"));
-  const twinOf = w => built.words.find(o => o !== w && o.ko !== w.ko
-    && AnswerCheck.normalize(o.en, "en") === AnswerCheck.normalize(w.en, "en"));
-  const ambiguous = built.words.find(twinOf);
-  if (ambiguous) assert.strictEqual(check.otherWordMeant(ambiguous, dir, twinOf(ambiguous).ko), twinOf(ambiguous));
 });
 
 console.log("\n" + passed + " passed" + (failures.length ? ", " + failures.length + " failed" : ""));

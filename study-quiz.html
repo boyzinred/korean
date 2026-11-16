@@ -1796,7 +1796,7 @@ html.has-quiz-popout .utility-controls { display: none; }
               <h4 id="menuTitle">Before you start</h4>
               <p id="menuNote"></p>
               <ul class="session-units" id="menuUnits"></ul>
-              <p class="wordbank-count">The words, their order and the parts are set by the schedule. What you choose is how you answer: a question shows the English and you answer in 한국어, except on a unit's Review 3, which shows the 한국어 and you answer in English (each question says which). Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
+              <p class="wordbank-count">The words and their order are set by the schedule. What you choose is how you answer: each question shows the English and you answer in 한국어. Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button" data-mode="typed">Typed test</button>
                 <button class="btn handwrite begin" type="button" data-mode="handwriting">&#9998; Handwriting test</button>
@@ -1848,18 +1848,22 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script src="./shared-vocab/review-banks.js?v=1.1.0"></script>
   <script src="./shared-vocab/answer-check.js?v=1.0.0"></script>
-  <script src="./shared-vocab/study-plan.js?v=2.5.0"></script>
-  <script src="./shared-vocab/study-plan-store.js?v=2.1.0"></script>
+  <script src="./shared-vocab/study-memory.js?v=1.0.0"></script>
+  <script src="./shared-vocab/review-selector.js?v=1.0.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=3.0.0"></script>
+  <script src="./shared-vocab/study-plan-store.js?v=3.0.0"></script>
   <script>
   (() => {
     "use strict";
 
     /* -----------------------------------------------------------------------
-       ONE DAILY SESSION
+       ONE DAILY QUIZ
        study-quiz.html?plan=<plan id>&task=<task id>, opened from Today's
-       Tasks on the home page. A session is one unit (the comprehensive quiz)
-       or two units' words in one pool (the reviews and maintenance); the quiz
-       itself is shared-vocab/study-plan.js. This page asks its questions the
+       Tasks on the home page. A quiz is one new unit (the Comprehensive
+       Quiz) or about 55 words picked from every unit learnt before today
+       (the Adaptive Review Quiz, review-selector.js — picked when it is first
+       started and frozen in its record, so resuming asks the same words);
+       the quiz itself is shared-vocab/study-plan.js. This page asks its questions the
        way the other vocabulary tests do — typed, handwriting or speaking, with
        pop out, Enter to check and Enter to move on, immediate feedback and
        Count as correct — marks typed answers the way the review page does
@@ -1875,9 +1879,9 @@ html.has-quiz-popout .utility-controls { display: none; }
     const plan = StudyPlan.planById(params.get("plan") || "");
     const taskId = params.get("task") || "";
     const config = StudyPlan.configFor(plan);
-    /* Each word is asked the way its unit's exposure says (directionFor in
-       study-plan.js): English → 한국어 by default, 한국어 → English on a
-       unit's Review 2. A combined session can hold both. */
+    /* Each word is asked the way its quiz kind says (directionFor in
+       study-plan.js): English → 한국어. A run keeps each word's direction,
+       so one started under other settings is asked as it began. */
     const asDir = text => { const [promptLang, answerLang] = String(text).split(">"); return { promptLang, answerLang }; };
     function dirFor(id) {
       const held = state.run && state.run.dirOf && state.run.dirOf[id];
@@ -1887,17 +1891,18 @@ html.has-quiz-popout .utility-controls { display: none; }
     const MODE_KEY = "korean.studyQuizMode";
     const MODE_NAMES = { typed: "Typed test", handwriting: "Handwriting test", speaking: "Speaking test" };
     const PART_TEXT = {
-      comprehensive: "Builds the unit up five words at a time, in the book's order: a group comes round until every word in it goes right in one attempt, then groups join into bigger ones until the whole unit goes right at once. A miss sends you back to the start of its five-word stretch.",
-      earlyReview: "One spaced run over every word of both units, shuffled. A word you get right is done; one you miss comes back after a few others until you get it right twice; a hesitant one comes back once more.",
-      review: "Part 1 asks every word of both units once, shuffled. Part 2 practises the ones you missed or hesitated on, in small groups, until each group goes right in one attempt. Part 3 brings them back once more, spaced out.",
-      maintenance: "Every word of both units once, cold: this is the score that says what stuck. A word you miss comes back twice, a hesitant one once, and the rest are left alone."
+      comprehensive: "Part 1 builds the unit up five words at a time, in the book's order: a group comes round until every word in it goes right in one attempt, then groups join into bigger ones until the whole unit goes right at once. A miss sends you back to the start of its five-word stretch. Part 2 asks every word again, shuffled: one you never slipped on is asked once, the rest until they stick. Your first Part 2 answer for each word is the one that counts.",
+      comprehensiveGroupsOnly: "Builds the unit up five words at a time, in the book's order: a group comes round until every word in it goes right in one attempt, then groups join into bigger ones until the whole unit goes right at once. A miss sends you back to the start of its five-word stretch.",
+      review: "Each word once, shuffled, from every unit you have learnt so far — the ones most likely to be slipping, plus a few you know well to check they have stuck. A miss shows the answer and moves on; it will come back on a later day."
     };
+    const TIER_NAMES = ReviewSelector.TIER_LABELS;
 
     const state = {
       collection: null, units: [], task: null, repo: null, check: null,
       run: null, seen: null, record: null, mode: "typed",
       shownAt: 0, locked: false, result: null, ms: 0, given: "",
-      conflict: false, asked: {}, logRun: {}, pad: null
+      conflict: false, asked: {}, logRun: {}, pad: null,
+      selection: null, pool: [], unitOf: {}, dirOf: {}
     };
 
     function esc(value) {
@@ -1925,20 +1930,18 @@ html.has-quiz-popout .utility-controls { display: none; }
       $("loading").classList.add("hidden");
     }
 
-    /* ---- the session's labels ------------------------------------------------ */
+    /* ---- the quiz's labels -------------------------------------------------- */
     const unitById = id => state.collection.units.find(unit => unit.id === id);
-    const sessionWords = () => state.units.reduce((sum, unit) => sum + unit.ids.length, 0);
-    function exposureLabel(task, exposure) {
-      if (task.algorithm === "comprehensive") return "new today";
-      return (task.algorithm === "review" ? "Review " : "Maintenance ") + exposure.n
-        + " · learnt " + plural(exposure.offset, "study day", "study days") + " ago";
-    }
-    function directionLabel(exposure) {
-      const dir = StudyPlan.directionFor(config, state.task.algorithm, exposure.n);
-      return (dir.promptLang === "en" ? "English" : "한국어") + " → " + (dir.answerLang === "en" ? "English" : "한국어");
-    }
+    const isReview = () => state.task.algorithm === "review";
+    const sessionWords = () => state.pool.length;
     function unitsLabel() {
-      return state.units.map(unit => "Unit " + unit.number).join(" + ");
+      if (!isReview()) return state.units.map(unit => "Unit " + unit.number).join(" + ");
+      const numbers = state.units.map(unit => unit.number);
+      return numbers.length === 1 ? "Unit " + numbers[0] : "Units " + numbers[0] + "–" + numbers[numbers.length - 1];
+    }
+    function tierCounts(selection) {
+      const counts = (selection && selection.counts) || {};
+      return ReviewSelector.TIERS.filter(tier => counts[tier]).map(tier => counts[tier] + " " + TIER_NAMES[tier].toLowerCase()).join(" · ");
     }
 
     function paintHeader() {
@@ -1946,13 +1949,16 @@ html.has-quiz-popout .utility-controls { display: none; }
       document.title = task.label + " · " + unitsLabel();
       $("heroKicker").textContent = "Today's Tasks · Study day " + (task.day + 1);
       $("page-title").textContent = task.label;
-      $("heroText").textContent = plan.title + " — " + state.units.map(unit => "Unit " + unit.number + ": " + unit.label).join("; ");
+      $("heroText").textContent = isReview()
+        ? plan.title + " — " + plural(sessionWords(), "word", "words") + " picked from " + unitsLabel() + (state.selection ? " (" + tierCounts(state.selection) + ")" : "")
+        : plan.title + " — " + state.units.map(unit => "Unit " + unit.number + ": " + unit.label).join("; ");
       $("heroMeta").innerHTML = '<span class="task-chip">' + esc(unitsLabel()) + '</span>'
         + '<span class="task-chip">' + plural(sessionWords(), "word", "words") + '</span>';
       $("quizSummary").textContent = task.label + " · " + unitsLabel();
       $("quizKicker").textContent = plan.title + " · " + unitsLabel();
       $("quizTitle").textContent = task.label;
-      $("quizParts").textContent = PART_TEXT[task.policy] || PART_TEXT[task.algorithm];
+      const groupsOnly = task.algorithm === "comprehensive" && state.run && state.run.phases.length === 1;
+      $("quizParts").textContent = groupsOnly ? PART_TEXT.comprehensiveGroupsOnly : PART_TEXT[task.algorithm];
     }
 
     /* ---- stars: the bank's own key and record, as on the review page ----- */
@@ -2004,7 +2010,8 @@ html.has-quiz-popout .utility-controls { display: none; }
         p: StudyPlan.engine.progress(state.run),
         phase: state.run.phase,
         mode: state.mode,
-        run: state.run
+        run: state.run,
+        selection: state.selection || null
       });
     }
 
@@ -2046,11 +2053,19 @@ html.has-quiz-popout .utility-controls { display: none; }
       $("menuTitle").textContent = going ? "Pick up where you left off" : "Before you start";
       $("menuNote").textContent = going
         ? "Answered " + plural(state.record.run.answers, "question", "questions") + " so far (" + Math.max(1, Math.floor((state.record.p || 0) * 100)) + "%). The next question is the one you stopped on."
-        : plural(sessionWords(), "word", "words") + " in this session.";
-      $("menuUnits").innerHTML = state.task.exposures.map(exposure => {
-        const unit = state.collection.units[exposure.unit];
-        return "<li><strong>Unit " + unit.number + "</strong><span>" + esc(unit.label) + "</span><span>" + esc(exposureLabel(state.task, exposure)) + '</span><span>' + esc(directionLabel(exposure)) + '</span><span class="count">' + plural(unit.ids.length, "word", "words") + "</span></li>";
-      }).join("");
+        : isReview()
+          ? plural(sessionWords(), "word", "words") + ", each asked once, picked from the " + plural(state.selection ? state.selection.pool : 0, "word", "words") + " you have learnt in " + unitsLabel() + "."
+          : plural(sessionWords(), "word", "words") + " in this unit.";
+      if (isReview()) {
+        const sel = state.selection || {};
+        const counts = sel.counts || {};
+        const byUnit = {};
+        state.pool.forEach(id => { const unit = state.unitOf[id]; byUnit[unit] = (byUnit[unit] || 0) + 1; });
+        $("menuUnits").innerHTML = ReviewSelector.TIERS.map(tier => "<li><strong>" + esc(TIER_NAMES[tier]) + '</strong><span class="count">' + plural(counts[tier] || 0, "word", "words") + "</span></li>").join("")
+          + "<li><strong>From</strong><span>" + state.units.filter(unit => byUnit[unit.id]).map(unit => "Unit " + unit.number + " (" + byUnit[unit.id] + ")").join(", ") + "</span></li>";
+      } else {
+        $("menuUnits").innerHTML = state.units.map(unit => "<li><strong>Unit " + unit.number + "</strong><span>" + esc(unit.label) + '</span><span>new today</span><span class="count">' + plural(unit.ids.length, "word", "words") + "</span></li>").join("");
+      }
       let saved = "";
       try { saved = localStorage.getItem(MODE_KEY) || ""; } catch (_) {}
       const preferred = (state.record && state.record.mode) || saved || "typed";
@@ -2068,9 +2083,12 @@ html.has-quiz-popout .utility-controls { display: none; }
 
     function begin() {
       if (!state.run) {
+        const tiers = {};
+        if (state.selection) Object.keys(state.selection.picks).forEach(id => { tiers[id] = state.selection.picks[id].tier; });
         state.run = StudyPlan.engine.create(state.task.algorithm, state.pool, config, undefined,
-          { policy: state.task.policy, unitOf: state.unitOf, dirOf: state.dirOf });
-        if (!checkpoint()) return;
+          { policy: state.task.policy, unitOf: state.unitOf, dirOf: state.dirOf, tiers });
+        /* The first save freezes a review's words in its record. */
+        if (!checkpoint()) { state.run = null; return; }
       }
       if (window.KoreanStudy) window.KoreanStudy.start(state.logRun);
       $("menu").classList.add("hidden");
@@ -2121,6 +2139,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       $("groupNote").textContent = describeGroup(now);
       const unit = unitById(now.unit);
       $("unitTag").textContent = state.units.length > 1 && unit ? "Unit " + unit.number : "";
+      if (now.parts === 1) $("phaseName").textContent = now.phaseName;
       $("promptLabel").textContent = (state.mode === "handwriting" ? "Write the answer" : state.mode === "speaking" ? "Say the answer" : "Type the answer")
         + " in " + LANG_NAMES[direction.answerLang];
       $("prompt").textContent = state.check.wordIn(entry, direction.promptLang);
@@ -2413,18 +2432,30 @@ html.has-quiz-popout .utility-controls { display: none; }
         phase: "done",
         mode: state.mode,
         run: state.run,
+        selection: state.selection || null,
         outcome,
         stars: { state: "pending", list: proposals }
       });
       if (!saved) return;
-      /* The long-term record of each word: its measured retrieval, on the
-         calendar, and whether it is set aside for relearning. */
-      state.repo.setWords(StudyPlan.srs.wordRecords(state.run, id => state.repo.word(id), date));
+      applyMemory();
       const day = StudyPlan.today(config, state.collection.units.map(u => u.id), state.repo.tasks(), date);
       const held = state.repo.state();
       if (!held || held.day < day.index) state.repo.setState({ day: day.index, on: date, startedOn: (held && held.startedOn) || date });
       if (window.KoreanStudy) window.KoreanStudy.flush();
       showResults();
+    }
+
+    /* Each measured word's memory record (study-memory.js), once: a word
+       remembers which quizzes it has had, so a page that stopped between
+       finishing and writing this can safely write it again on reopening. */
+    function applyMemory() {
+      const date = (state.record && state.record.completedOn) || today();
+      state.repo.setWords(StudyPlan.srs.wordRecords(state.run, id => state.repo.word(id), date,
+        { source: state.task.id, memory: config.srs }));
+      const fresh = state.repo.task(state.task.id) || state.record;
+      state.seen = state.repo.versionOf(fresh);
+      state.conflict = false;
+      save(Object.assign({}, fresh, { applied: true }));
     }
 
     function wordCards(ids, relearn) {
@@ -2458,8 +2489,8 @@ html.has-quiz-popout .utility-controls { display: none; }
       const starsState = record.stars || { state: "confirmed", list: [] };
       $("quizScore").textContent = "Done";
       const measured = run.scoreAt === "final-group" ? "each word's first answer in the last group (the whole unit)"
-        : run.scoreAt === "srs" && state.task.algorithm === "comprehensive" ? "each word's first shuffled answer in Part 2"
-        : "each word's first answer";
+        : run.scoreAt === "srs" ? "each word's first shuffled answer in Part 2"
+        : "each word's one answer";
       const tiles = [
         [outcome.strong.length, "Strong"],
         [outcome.weak.length, "Hesitant"],
@@ -2468,18 +2499,33 @@ html.has-quiz-popout .utility-controls { display: none; }
       ];
       if (state.task.algorithm === "comprehensive") tiles.push([run.passed, "Groups passed"]);
       let html = "<h4>" + esc(state.task.label) + " · " + esc(unitsLabel()) + " is done ✓</h4>"
-        + "<p>Scored on " + measured + "; everything after it was practice. Completed " + esc(record.completedOn || "") + ".</p>"
+        + "<p>Scored on " + measured + (run.answers > Object.keys(run.scored).length ? "; everything after it was practice" : "") + ". Completed " + esc(record.completedOn || "") + ".</p>"
         + '<div class="summary-grid">' + tiles.map(([n, label]) => '<div class="summary-tile"><strong>' + n + "</strong><small>" + label + "</small></div>").join("") + "</div>";
-      if (state.units.length > 1 && outcome.byUnit) {
-        html += '<div class="unit-results">' + state.units.map(unit => {
-          const part = outcome.byUnit[unit.id];
-          if (!part) return "";
-          return '<div class="skill-row"><span>Unit ' + unit.number + " · " + esc(unit.label) + "</span><span>"
-            + part.strong.length + " strong · " + part.weak.length + " hesitant · " + part.failed.length + " missed of " + part.words + "</span></div>";
+      const line = part => part.strong.length + " strong · " + part.weak.length + " hesitant · " + part.failed.length + " missed of " + part.words;
+      if (outcome.byTier && Object.keys(outcome.byTier).length) {
+        html += "<h4>By familiarity</h4>" + '<div class="unit-results">' + ReviewSelector.TIERS.map(tier => {
+          const part = outcome.byTier[tier];
+          return part ? '<div class="skill-row"><span>' + esc(TIER_NAMES[tier]) + "</span><span>" + line(part) + "</span></div>" : "";
         }).join("") + "</div>";
       }
+      if (state.units.length > 1 && outcome.byUnit) {
+        html += (isReview() ? "<h4>By unit</h4>" : "") + '<div class="unit-results">' + state.units.map(unit => {
+          const part = outcome.byUnit[unit.id];
+          if (!part) return "";
+          return '<div class="skill-row"><span>Unit ' + unit.number + " · " + esc(unit.label) + "</span><span>" + line(part) + "</span></div>";
+        }).join("") + "</div>";
+      }
+      const stats = record.selection && record.selection.stats;
+      if (stats) {
+        html += "<p>When this review was picked: " + plural(stats.eligible, "learnt word", "learnt words") + ", " + stats.due + " due and "
+          + stats.overdue + " overdue" + (stats.retention !== null ? ", estimated retention " + Math.round(stats.retention * 100) + "%" : "")
+          + ". This review held " + plural(run.ids.length, "word", "words") + (stats.eligible > run.ids.length ? "; the rest wait their turn" : "") + ".</p>";
+        if (stats.recommendSlowerIntake) {
+          html += '<p class="task-notice">More words have been due than a review can hold for a few days running. Taking a day or two with only the review (leave the Comprehensive Quiz for later) would let it catch up.</p>';
+        }
+      }
       if (outcome.relearn.length) html += "<h4>Set aside for relearning</h4><p>These kept slipping, so the quiz let them go rather than ask them forever. They stay flagged until a later quiz gets them right first time.</p>" + wordCards(outcome.relearn, true);
-      if (outcome.failed.length) html += "<h4>Missed first time</h4>" + wordCards(outcome.failed);
+      if (outcome.failed.length) html += "<h4>" + (isReview() ? "Missed — these come back on a later day" : "Missed first time") + "</h4>" + wordCards(outcome.failed);
       if (outcome.weak.length) html += "<h4>Right, but hesitant</h4>" + wordCards(outcome.weak);
 
       const list = starsState.list || [];
@@ -2562,25 +2608,47 @@ html.has-quiz-popout .utility-controls { display: none; }
       }
       state.task = task;
       state.units = task.units.map(index => state.collection.units[index]);
-      /* The pool: the units' words one after the other, each knowing its unit. */
       state.unitOf = {};
       state.pool = [];
       state.dirOf = {};
-      task.exposures.forEach(exposure => {
-        const unit = state.collection.units[exposure.unit];
-        const dir = StudyPlan.directionFor(config, task.algorithm, exposure.n);
-        unit.ids.forEach(id => {
-          if (state.unitOf[id]) return;
-          state.unitOf[id] = unit.id;
-          state.dirOf[id] = dir.promptLang + ">" + dir.answerLang;
-          state.pool.push(id);
-        });
-      });
+      const dir = StudyPlan.directionFor(config, task.algorithm);
+      const dirText = dir.promptLang + ">" + dir.answerLang;
+      const add = (id, unitId) => {
+        if (state.unitOf[id] || !state.collection.byId.has(id)) return;
+        state.unitOf[id] = unitId;
+        state.dirOf[id] = dirText;
+        state.pool.push(id);
+      };
+      if (task.algorithm === "review") {
+        /* The words picked when the review was first started, or — not
+           started yet — the ones it would pick now (the same ones the home
+           page previews), frozen by the first save. */
+        state.selection = (record && record.selection)
+          || StudyPlan.selectReview(config, task, state.collection.units, state.repo.words(),
+            id => Number(starOf(id).l) || 0, state.repo.tasks(), today());
+        state.selection.ids.forEach(id => add(id, state.selection.picks[id] ? state.selection.picks[id].unit : ""));
+      } else {
+        /* The unit's words in the book's order. */
+        state.units.forEach(unit => unit.ids.forEach(id => add(id, unit.id)));
+      }
+      if (record && record.run) {
+        state.pool = record.run.ids.slice();
+        Object.assign(state.unitOf, record.run.unitOf || {});
+      }
+      state.record = record;
+      state.run = record && record.run && !record.run.done ? record.run : null;
       paintHeader();
       watchOthers();
-      state.record = record;
       state.seen = state.repo.versionOf(record);
-      if (record && record.status === "done") { showResults(); return; }
+      if (record && record.status === "done") {
+        state.run = record.run;
+        /* Finished but its memory updates never written (the page closed in
+           between). Runs from before the memory model wrote theirs the old
+           way already. */
+        if (!record.applied && record.run && record.run.v >= 3) applyMemory();
+        showResults();
+        return;
+      }
       if (record && record.run && !record.run.done) {
         state.run = record.run;
         /* A run saved before directions were per word takes today's rule. */

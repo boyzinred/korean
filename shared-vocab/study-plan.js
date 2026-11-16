@@ -1,85 +1,72 @@
 /*
   study-plan.js
   ----------------------------------------------------------------------------
-  The daily tasks: which vocabulary units each study day quizzes, and how each
-  of the three quizzes runs. No DOM, no storage, no network — the home page's
-  Today's Tasks card and study-quiz.html drive it, study-plan-store.js keeps
-  what it produces, and shared-vocab/test-study-plan.js tests it.
-
-  Four parts, each usable on its own:
+  The daily tasks: what each study day asks, and how its two quizzes run. No
+  DOM, no storage, no network — the home page's Today's Tasks card and
+  study-quiz.html drive it, study-plan-store.js keeps what it produces,
+  study-memory.js is the memory model, review-selector.js picks the review's
+  words, and shared-vocab/test-study-plan.js tests it all.
 
   1. CONFIG — StudyPlan.PLANS, StudyPlan.DEFAULTS
      A plan is a collection (a word bank from review-banks.js, cut into units
-     by one of its groupings) plus the policies below. Nothing in the
-     scheduler or the quizzes knows which collection it is running, or how
-     many words a unit has: sizes come from the data. A second plan is one
-     more entry in PLANS.
+     by one of its groupings) plus the policies below. Nothing here knows
+     which collection it is running or how many words a unit has: sizes come
+     from the data. A second plan is one more entry in PLANS.
 
-  2. SCHEDULER — StudyPlan.timeline(config, unitCount), StudyPlan.today(…)
-     One new unit per study day: unit k is learnt on study day k. A unit is
-     then quizzed at study days 0, 1, 3, 7, 14, 21 and 29 after that — seven
-     exposures over 30 study days. The exposures are grouped into four
-     sessions, each one quiz on screen:
+  2. SCHEDULER — StudyPlan.dayTasks(…), StudyPlan.today(…)
+     At most two quizzes a study day, in this order:
 
-       Comprehensive         offset 0      today's unit
-       Early Review          offsets 1, 3  the units learnt 1 and 3 days ago
-       Intermediate Review   offsets 7, 14
-       Maintenance Review    offsets 21, 29
+       Comprehensive Quiz     the next unit, learnt from scratch
+       Adaptive Review Quiz   ~55 words picked from every unit learnt on an
+                              earlier study day (review-selector.js)
 
-     A review that covers two units is one session and one exposure for each
-     of them. A session only exists on a day that has at least one unit for
-     it, so the first days ramp up from one session to four, and from study
-     day 29 every day has exactly four until the units run out. More session
-     types than the daily maximum is a configuration error, thrown at once.
+     Study day k learns unit k. Day 0 has no review (nothing learnt yet);
+     once every unit is learnt the days carry on with the review alone.
 
-     A study day is a batch of sessions, not a date. The day you are on is
-     worked out from which sessions are finished, every time, rather than
-     counted up: day d is finished when all of its sessions are, and the next
-     one opens on a later local date than the one d was finished on. So a
-     missed week leaves you on the same day, nothing ever goes overdue, and
-     refreshing, two tabs or a retried save cannot move the day twice.
+     A study day is a batch of quizzes, not a date. The day you are on is
+     worked out from which quizzes are finished, every time, rather than
+     counted up: day d is finished when both of its quizzes are, and the next
+     one opens on a later local date than the one d was finished on. A missed
+     week leaves you on the same day, nothing goes overdue, and a refresh, two
+     tabs or a retried save cannot move the day twice. The memory model, on
+     the other hand, runs on real calendar days: a two-week break reads as
+     two weeks when the review picks its words.
 
   3. QUIZ ENGINE — StudyPlan.engine
      A run is a plain object (a checkpoint) that survives JSON, so it can be
-     paused after any answer and resumed anywhere. Its pool is one unit's
-     words, or two units' words one after the other; every word keeps its
-     unit (run.unitOf) so results can be read unit by unit. Each answer is
-     graded by the page as "s" strong (right and sure), "w" weak (right but
-     hesitant) or "f" failed (wrong, skipped or not known).
+     paused after any answer and resumed anywhere. Each answer is graded by
+     the page as "s" strong (right and sure), "w" weak (right but hesitant)
+     or "f" failed (wrong, skipped or not known).
 
-       comprehensive  Regular repetition: the unit in its own order, five
+       comprehensive  Part 1, building up: the unit in its own order, five
                       words at a time, merged into ever larger groups
                       (hierarchy()), each repeated until one attempt is all
-                      right. A miss stops the attempt at once and the group
-                      starts again from the start of its current 5-word
-                      segment (restartPolicy). (A spaced Part 2 after the
-                      groups is available, includeSRSPhase, and off.)
-       review         Early review: one spaced run over every word of both
-                      units, through SpacedSession, until each sticks.
-                      Intermediate review: Part 1 every word once, shuffled.
-                      Part 2 the weak and failed ones only, in groups
-                      (shuffled each attempt). Part 3 those again, spaced.
-       maintenance    Part 1 every word once, cold. Part 2 spaced, weak once
-                      more and failed twice; no grouping.
-
-     A word that keeps failing in a spaced part is let go after a few misses
-     and flagged for relearning rather than holding the run hostage.
+                      right. A miss stops the attempt at once and restarts
+                      the group (restartPolicy: by default from the start of
+                      the missed word's 5-word stretch).
+                      Part 2, spaced retrieval: every word shuffled, no
+                      positional cues, through SpacedSession; a word Part 1
+                      found clean is asked once, a hesitant or missed one
+                      until it sticks. Each word's first Part 2 answer is its
+                      measured, independent retrieval.
+       review         Every selected word once, in a frozen shuffled order,
+                      with the answer shown after it. That one answer is the
+                      measurement. (Optional second tries for misses,
+                      sameSessionRetries, are off.)
 
   4. SRS ADAPTER — StudyPlan.srs
-     The site's spaced repetition is SpacedSession (the in-sitting ladder) and
-     its star rules (★ to ★★★, ★★★ only on a later calendar day than the last
-     clean run). A run moves each word's star at most once, from one measured
-     answer: the first spaced retrieval in a comprehensive quiz, the first
-     answer in a review or maintenance quiz. Everything else in the run is
-     practice and never reaches the star — which is what keeps a hundred right
-     answers in one evening from counting as a hundred days of memory. Those
-     rules, and the per-word retrieval log, run on calendar dates, not study
-     days: a two-week break reads as two weeks.
+     A run moves each word at most once, from its one measured answer: one
+     update to its memory record (study-memory.js) and one proposed star
+     change (the site's own rules, SpacedSession.stars), which the learner
+     confirms. Everything else in a run is practice and never reaches either
+     — which is what keeps a hundred right answers in one evening from
+     counting as a hundred days of memory.
 */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./spaced-session.js"));
-  else root.StudyPlan = factory(root.SpacedSession);
-}(typeof self !== "undefined" ? self : this, function (SpacedSession) {
+  if (typeof module === "object" && module.exports) {
+    module.exports = factory(require("./spaced-session.js"), require("./study-memory.js"), require("./review-selector.js"));
+  } else root.StudyPlan = factory(root.SpacedSession, root.StudyMemory, root.ReviewSelector);
+}(typeof self !== "undefined" ? self : this, function (SpacedSession, StudyMemory, ReviewSelector) {
   "use strict";
 
   /* ======================================================================
@@ -94,104 +81,61 @@
     },
     scheduling: {
       newUnitsPerStudyDay: 1,
-      maximumSessionsPerStudyDay: 4,
-      calendarMode: "completed-study-days",
+      maxDailyQuizSessions: 2,
       missedDaysPauseSchedule: true,
       allowMultipleStudyDaysPerCalendarDay: false
     },
-    /* The day's sessions, in the order they are shown and done. offsets are
-       study days after a unit is learnt; policy names the settings block the
-       session's quiz runs with. */
+    /* The day's quizzes, in the order they are shown and done; policy names
+       the settings block each runs with. */
     sessions: [
-      { key: "comprehensive", label: "Comprehensive Quiz", algorithm: "comprehensive", policy: "comprehensive", offsets: [0] },
-      { key: "earlyReview", label: "Early Review", algorithm: "review", policy: "earlyReview", offsets: [1, 3] },
-      { key: "intermediateReview", label: "Intermediate Review", algorithm: "review", policy: "intermediateReview", offsets: [7, 14] },
-      { key: "maintenance", label: "Maintenance Review", algorithm: "maintenance", policy: "maintenance", offsets: [21, 29] }
+      { key: "comprehensive", label: "Comprehensive Quiz", algorithm: "comprehensive", policy: "comprehensive" },
+      { key: "review", label: "Adaptive Review Quiz", algorithm: "review", policy: "adaptiveReview" }
     ],
     comprehensive: {
       baseGroupSize: 5,
       cumulativeGrouping: true,
       preserveOriginalOrder: true,
+      immediateRestartOnError: true,
+      strictPerfectGroupPass: true,
       requirePerfectGroupPass: true,
-      /* What a miss inside a group does:
-           "checkpoint"      stop the attempt there, show the answer, and
-                             start again from the first word of the current
-                             checkpointSegmentSize-word segment, in groups of
+      /* What a miss inside a group does — it always ends the attempt there
+         and shows the answer; then:
+           "checkpoint"      start again from the first word of the current
+                             checkpointSegmentSize-word stretch, in groups of
                              checkpointMinGroupSize words or more (smaller
-                             groups restart whole). The default: strict
-                             5-word checkpoints, so a miss on word 7 of 1–10
-                             goes back to word 6, and a miss on word 3 to
-                             word 1
-           "immediate"       stop there and start the whole group again from
-                             its first word
+                             groups restart whole): a miss on word 7 of 1–10
+                             goes back to word 6, on word 3 to word 1
+           "immediate"       start the whole group again from its first word
            "finish-attempt"  finish the attempt, then repeat the whole group
-         Whichever it is, a group passes only once every word in it has been
-         answered right with no miss since its segment (or the group) began. */
+         Either way a group passes only once every word in it has gone right
+         with no miss since its stretch (or the group) began. */
       restartPolicy: "checkpoint",
       checkpointMinGroupSize: 6,
       checkpointSegmentSize: 5,
-      /* A safeguard, off by default: after this many failed attempts at one
-         group, pass it anyway (its misses stay recorded). null = never. */
+      /* A safeguard, off: after this many failed attempts at one group, pass
+         it anyway (its misses stay recorded). null = never. */
       maxGroupAttempts: null,
-      /* Regular repetition only: the cumulative groups, no spaced part
-         after them. Each word's measured answer is then its first answer
-         in the last group, the whole unit. true brings Part 2 back. */
-      includeSRSPhase: false,
+      /* Part 2, the spaced retrieval. A word retires after srsRetireAt rungs;
+         one Part 1 never missed or hesitated on starts one right answer
+         from retiring. */
+      includeSRSPhase: true,
       srsRetireAt: 3,
       relearnAfterMisses: 3
     },
-    /* Days 1 and 3: one spaced run over both units' words — no separate
-       first pass and no grouped drill. Every word starts one right answer
-       from leaving; a miss drops it to the bottom, so it needs two more, and
-       a hesitant answer does not count as leaving, so it comes back. Each
-       word's measured answer is its first one in the run. */
-    earlyReview: {
-      combineEligibleUnits: true,
-      spacedOnly: true,
-      includeSRSPhase: true,
-      srsRetireAt: 2,
-      spacedStartBox: 1,
-      weakClimbs: false,
-      relearnAfterMisses: 3
+    adaptiveReview: ReviewSelector.DEFAULTS,
+    srs: StudyMemory.DEFAULTS,
+    familiarity: {
+      useExistingStarSystem: true,
+      reflectLongTermRetention: true,
+      allowMasteryDowngrades: true
     },
-    /* Days 7 and 14: independent retrieval. A hesitant word needs one
-       delayed right answer, and nothing strong is asked again. */
-    intermediateReview: {
-      combineEligibleUnits: true,
-      initialFullRecall: true,
-      repeatWeakWords: true,
-      targetedGroupSize: 5,
-      restartPolicy: "finish-attempt",
-      maxGroupAttempts: null,
-      includeSRSPhase: true,
-      srsRetireAt: 2,
-      weakStart: "top",
-      relearnAfterMisses: 2
-    },
-    maintenance: {
-      combineEligibleUnits: true,
-      initialColdRecall: true,
-      cumulativeGrouping: false,
-      selectiveRemediation: true,
-      includeSRSPhase: true,
-      srsRetireAt: 2,
-      weakStart: "top",
-      relearnAfterMisses: 1
-    },
-    /* Asked in English, answered in 한국어: a production answer, which is
-       the only kind the star rules let raise a star. A typed answer slower
-       than hesitantAfterMs starts out marked hesitant; the learner can
-       unmark it. */
+    /* Asked in English, answered in 한국어: a production answer, the only
+       kind the star rules let raise a star. A typed answer slower than
+       hesitantAfterMs starts out marked hesitant; the learner can unmark it. */
     answer: { promptLang: "en", answerLang: "ko", hesitantAfterMs: 8000 },
-    /* Exposures asked the other way, by algorithm and exposure number. Each
-       unit's Review 3 (7 study days after it is learnt) shows the 한국어 and
-       is answered in English: a recognition check between the production
-       ones. In a combined session only that unit's words turn round; each
-       question says which way it goes. A recognition answer can keep or cost
-       a star but never raise one (the site's star rule). */
-    exposureDirections: {
-      review: { 3: { promptLang: "ko", answerLang: "en" } }
-    }
+    /* A quiz kind asked the other way round, e.g.
+       { review: { promptLang: "ko", answerLang: "en" } }. None by default. */
+    directions: {}
   };
 
   const PLANS = [
@@ -203,15 +147,14 @@
          first pattern (in the bank's own order), then the second, … The units
          themselves are used as they are: same words, same order inside.
 
-         2023 only for now. To add the 2018 workbook later, append
-         "^unit-2018-" — its units then follow 2023's rather than coming
-         first, so the schedule already walked is not disturbed. Only ever
-         append: a unit put ahead of ones already learnt would shift them. */
+         2023 only for now. To add the 2018 workbook, append "^unit-2018-":
+         its units then follow 2023's. Only ever append — a unit put ahead of
+         ones already learnt would shift them. */
       collection: { bank: "topik-ii-vocab", grouping: "unit", units: ["^unit-2023-"] }
     }
   ];
 
-  const ALGORITHMS = ["comprehensive", "review", "maintenance"];
+  const ALGORITHMS = ["comprehensive", "review"];
 
   function isObject(value) { return value && typeof value === "object" && !Array.isArray(value); }
   function merge(base, extra) {
@@ -224,35 +167,33 @@
 
   /* Throws on a configuration the scheduler cannot honour. */
   function validate(cfg) {
-    const max = cfg.scheduling.maximumSessionsPerStudyDay;
+    const max = cfg.scheduling.maxDailyQuizSessions;
     if (cfg.sessions.length > max) {
-      throw new Error("Study plan configuration: " + cfg.sessions.length + " session types ("
-        + cfg.sessions.map(s => s.key).join(", ") + ") can fall on one study day, but maximumSessionsPerStudyDay is "
-        + max + ". Merge offsets into fewer sessions or raise the maximum.");
+      throw new Error("Study plan configuration: " + cfg.sessions.length + " quiz types ("
+        + cfg.sessions.map(s => s.key).join(", ") + ") can fall on one study day, but maxDailyQuizSessions is " + max + ".");
     }
     if (cfg.scheduling.newUnitsPerStudyDay !== 1) {
       throw new Error("Study plan configuration: only newUnitsPerStudyDay = 1 is supported (got "
         + cfg.scheduling.newUnitsPerStudyDay + ").");
     }
-    const seen = new Set();
     cfg.sessions.forEach(session => {
       if (!ALGORITHMS.includes(session.algorithm)) throw new Error("Study plan configuration: unknown algorithm " + session.algorithm);
       if (!cfg[session.policy]) throw new Error("Study plan configuration: no settings for policy " + session.policy);
-      session.offsets.forEach(offset => {
-        if (seen.has(offset)) throw new Error("Study plan configuration: offset " + offset + " is in two sessions");
-        seen.add(offset);
-      });
     });
-    if (!seen.has(0) || cfg.sessions[0].offsets[0] !== 0 || cfg.sessions[0].algorithm !== "comprehensive") {
-      throw new Error("Study plan configuration: the first session must be the comprehensive quiz at offset 0");
+    if (!cfg.sessions.length || cfg.sessions[0].algorithm !== "comprehensive") {
+      throw new Error("Study plan configuration: the first quiz must be the comprehensive one");
+    }
+    const review = cfg.adaptiveReview;
+    if (review.maximumUniqueWords < review.minimumUniqueWords || review.targetUniqueWords > review.maximumUniqueWords) {
+      throw new Error("Study plan configuration: adaptiveReview needs minimum ≤ target ≤ maximum unique words");
     }
     return cfg;
   }
 
-  /* The direction an exposure is asked in: { promptLang, answerLang }. */
-  function directionFor(config, algorithm, n) {
+  /* The direction a quiz kind is asked in: { promptLang, answerLang }. */
+  function directionFor(config, algorithm) {
     const cfg = config || DEFAULTS;
-    const special = cfg.exposureDirections && cfg.exposureDirections[algorithm] && cfg.exposureDirections[algorithm][n];
+    const special = cfg.directions && cfg.directions[algorithm];
     const base = special || cfg.answer;
     return { promptLang: base.promptLang, answerLang: base.answerLang };
   }
@@ -264,51 +205,32 @@
      2. SCHEDULER
      ====================================================================== */
 
-  /* Every study day's sessions, for a collection of unitCount units, as
-     [[session, …], …] indexed by study day. A session is
-       { key, label, algorithm, policy, day, units: [unit index, …],
-         exposures: [{ unit, offset, n }] }
-     with units in the order of the session's offsets (most recent first),
-     and n each unit's exposure number within the session's kind across its
-     schedule (Review 1–4 counts early and intermediate together,
-     Maintenance 1–2). */
-  function timeline(config, unitCount) {
-    const cfg = validate(config || DEFAULTS);
+  /* Study day `day`'s quizzes, for a collection of unitCount units:
+       [{ key, label, algorithm, policy, day, units: [unit index, …] }]
+     The comprehensive quiz's units are the one it teaches; the review's are
+     every unit learnt before this day (its pool). */
+  function dayTasks(config, unitCount, day) {
+    const cfg = config || DEFAULTS;
     const count = Math.max(0, unitCount | 0);
-    if (!count) return [];
-    const maxOffset = Math.max(...cfg.sessions.flatMap(s => s.offsets));
-    /* A unit's exposure number within its algorithm, over the offsets in
-       schedule order: review offsets 1, 3, 7, 14 are Review 1–4. */
-    const numberOf = {};
-    ALGORITHMS.forEach(algorithm => {
-      cfg.sessions.filter(s => s.algorithm === algorithm).flatMap(s => s.offsets)
-        .sort((a, b) => a - b).forEach((offset, index) => { numberOf[offset] = index + 1; });
-    });
-    const days = [];
-    for (let day = 0; day < count + maxOffset; day += 1) {
-      const sessions = [];
-      cfg.sessions.forEach(session => {
-        const exposures = session.offsets
-          .map(offset => ({ unit: day - offset, offset, n: numberOf[offset] }))
-          .filter(exposure => exposure.unit >= 0 && exposure.unit < count);
-        if (!exposures.length) return;
-        sessions.push({
-          key: session.key, label: session.label, algorithm: session.algorithm, policy: session.policy,
-          day, units: exposures.map(e => e.unit), exposures
-        });
-      });
-      if (sessions.length > cfg.scheduling.maximumSessionsPerStudyDay) {
-        throw new Error("Study plan: study day " + day + " has " + sessions.length + " sessions, over the maximum");
+    const out = [];
+    cfg.sessions.forEach(session => {
+      let units = null;
+      if (session.algorithm === "comprehensive") units = day < count ? [day] : null;
+      else {
+        const learnt = Math.min(day, count);
+        units = learnt > 0 ? Array.from({ length: learnt }, (_, i) => i) : null;
       }
-      days.push(sessions);
-    }
-    return days;
+      if (!units) return;
+      out.push({ key: session.key, label: session.label, algorithm: session.algorithm, policy: session.policy, day, units });
+    });
+    return out;
   }
 
-  /* A session's id names its day, its kind and its units by the units' own
-     ids, so a record keeps pointing at the right words. */
+  /* A comprehensive quiz's id names its day and unit, so its record keeps
+     pointing at the right words; a review's names its day. */
   function taskId(unitIds, session) {
-    return "d" + session.day + ":" + session.key + ":" + session.units.map(u => unitIds[u]).join("+");
+    if (session.algorithm === "comprehensive") return "d" + session.day + ":" + session.key + ":" + session.units.map(u => unitIds[u]).join("+");
+    return "d" + session.day + ":" + session.key;
   }
 
   /* Local calendar date, YYYY-MM-DD, in the browser's own time zone. */
@@ -322,52 +244,101 @@
     return record.status === "done" ? "completed" : "in-progress";
   }
 
-  /* The study day to show today, from the session records alone:
+  function shapeTask(session, units, records) {
+    const id = taskId(units, session);
+    const record = (records && records[id]) || null;
+    return Object.assign({}, session, { id, unitIds: session.units.map(u => units[u]), status: statusOf(record), record });
+  }
+
+  /* The study day to show today, from the task records alone:
        { index, tasks: [{ …session, id, unitIds, status, record }],
-         complete, finished, completedOn, total }
+         complete, finished, completedOn, unitsLearnt, unitCount }
      index    the study day (0-based)
-     complete every session of it is done (today: they stay on show, ticked,
-              until tomorrow)
-     finished the plan has no study days left
+     complete both quizzes are done (they stay on show, ticked, until a
+              later date)
+     finished there is nothing to schedule (an empty collection)
 
      records  { [task id]: record }, a record being { status, completedOn }
      units    the collection's unit ids, in order
      today    the local date, YYYY-MM-DD */
   function today(config, units, records, todayDate) {
     const cfg = validate(config || DEFAULTS);
-    const days = timeline(cfg, units.length);
+    const count = units.length;
     const sameDayLock = !cfg.scheduling.allowMultipleStudyDaysPerCalendarDay;
     const held = records || {};
-    const shape = session => {
-      const id = taskId(units, session);
-      const record = held[id] || null;
-      return Object.assign({}, session, { id, unitIds: session.units.map(u => units[u]), status: statusOf(record), record });
-    };
-    for (let index = 0; index < days.length; index += 1) {
-      const tasks = days[index].map(shape);
-      if (!tasks.length) continue;
+    for (let index = 0; ; index += 1) {
+      const tasks = dayTasks(cfg, count, index).map(session => shapeTask(session, units, held));
+      const meta = { index, unitsLearnt: Math.min(index, count), unitCount: count };
+      if (!tasks.length) return Object.assign(meta, { tasks: [], complete: true, finished: true });
       const complete = tasks.every(task => task.status === "completed");
-      if (!complete) return { index, tasks, complete: false, finished: false, total: days.length };
+      if (!complete) return Object.assign(meta, { tasks, complete: false, finished: false });
       const completedOn = tasks.reduce((latest, task) =>
         String(task.record.completedOn || "") > latest ? String(task.record.completedOn || "") : latest, "");
       /* Finished today (or on a clock ahead of this one): stay on it. */
-      if (sameDayLock && completedOn >= todayDate) {
-        return { index, tasks, complete: true, finished: false, completedOn, total: days.length };
-      }
+      if (sameDayLock && completedOn >= todayDate) return Object.assign(meta, { tasks, complete: true, finished: false, completedOn });
     }
-    return { index: days.length, tasks: [], complete: true, finished: true, total: days.length };
   }
 
-  /* A session found by id anywhere in the plan, for opening a finished one's
-     results after its day has passed. */
+  /* A quiz found by id, for opening a finished one's results after its day
+     has passed. */
   function findTask(config, units, id) {
-    const days = timeline(config, units.length);
-    for (const sessions of days) {
-      for (const session of sessions) {
-        if (taskId(units, session) === id) return Object.assign({}, session, { id, unitIds: session.units.map(u => units[u]) });
-      }
-    }
-    return null;
+    const match = /^d(\d+):([^:]+)/.exec(String(id || ""));
+    if (!match) return null;
+    const found = dayTasks(config || DEFAULTS, units.length, Number(match[1]))
+      .find(session => session.key === match[2] && taskId(units, session) === id);
+    return found ? Object.assign({}, found, { id, unitIds: found.units.map(u => units[u]) }) : null;
+  }
+
+  /* ---- the review's words ---------------------------------------------- */
+
+  /* The earlier reviews, newest first, as the selector reads them. */
+  function reviewHistory(records, beforeDay) {
+    const out = [];
+    Object.keys(records || {}).forEach(id => {
+      const match = /^d(\d+):review$/.exec(id);
+      const record = records[id];
+      if (!match || !record || !record.selection) return;
+      const day = Number(match[1]);
+      if (beforeDay !== undefined && day >= beforeDay) return;
+      const tiers = {};
+      Object.keys(record.selection.picks || {}).forEach(word => { tiers[word] = record.selection.picks[word].tier; });
+      out.push({
+        day,
+        on: record.selection.on || record.startedOn || "",
+        ids: record.selection.ids || [],
+        tiers,
+        stats: record.selection.stats || null,
+        results: record.status === "done" && record.run ? Object.assign({}, record.run.scored) : null
+      });
+    });
+    return out.sort((a, b) => b.day - a.day);
+  }
+
+  /* Pick a review task's words.
+       task       the review task (its units are the eligible ones)
+       units      [{ id, ids }] the collection's units, in order
+       words      { word id: memory record }
+       starOf     id -> 0–3
+       records    the plan's task records (for the earlier reviews)
+     -> ReviewSelector.select's result, plus `on` (the date) and `pool`. */
+  function selectReview(config, task, units, words, starOf, records, todayDate) {
+    const cfg = config || DEFAULTS;
+    const exclude = new Set(task.day < units.length ? units[task.day].ids : []);
+    const candidates = [];
+    const seen = new Set();
+    task.units.forEach(index => {
+      const unit = units[index];
+      (unit && unit.ids || []).forEach(id => {
+        if (seen.has(id) || exclude.has(id)) return;
+        seen.add(id);
+        candidates.push({ id, unit: unit.id, record: (words && words[id]) || null, stars: starOf ? starOf(id) : 0 });
+      });
+    });
+    const result = ReviewSelector.select({
+      candidates, today: todayDate, history: reviewHistory(records, task.day),
+      config: cfg.adaptiveReview, memory: cfg.srs, seed: task.id
+    });
+    return Object.assign(result, { on: todayDate, pool: candidates.length });
   }
 
   /* ======================================================================
@@ -422,53 +393,49 @@
 
   const PHASE_NAMES = {
     groups: "Building up",
-    initial: "Recall",
-    cold: "Cold recall",
-    targeted: "Weak words, in groups",
-    srs: "Spaced practice"
+    srs: "Spaced retrieval",
+    recall: "Recall",
+    retry: "Second tries"
   };
 
   function phasesFor(algorithm, settings) {
     if (algorithm === "comprehensive") return ["groups"].concat(settings.includeSRSPhase ? ["srs"] : []);
-    if (algorithm === "review") {
-      if (settings.spacedOnly) return ["srs"];
-      return ["initial"].concat(settings.repeatWeakWords ? ["targeted"] : [], settings.includeSRSPhase ? ["srs"] : []);
-    }
-    return ["cold"].concat(settings.selectiveRemediation && settings.includeSRSPhase ? ["srs"] : []);
+    return ["recall"].concat((settings.sameSessionRetries | 0) > 0 ? ["retry"] : []);
   }
 
   /* A fresh run.
-       algorithm  "comprehensive", "review" or "maintenance"
-       ids        the pool: one unit's word ids in the unit's order, or
-                  several units' concatenated (a word in two units is asked
-                  once, under the first)
+       algorithm  "comprehensive" or "review"
+       ids        the words: a unit's ids in the unit's order, or a review's
+                  selection in the order it is to be asked
        options    { policy: the settings block (default: the algorithm's),
-                    unitOf: { word id: unit id } } */
+                    unitOf: { word id: unit id }, dirOf: { word id: "en>ko" },
+                    tiers: { word id: tier } (a review's) } */
   function createRun(algorithm, ids, config, random, options) {
     if (!ALGORITHMS.includes(algorithm)) throw new Error("unknown quiz algorithm " + algorithm);
     const opts = options || {};
     const cfg = config || DEFAULTS;
-    const policy = opts.policy || (algorithm === "review" ? "earlyReview" : algorithm);
+    const policy = opts.policy || (algorithm === "review" ? "adaptiveReview" : algorithm);
     const settings = cfg[policy];
     if (!settings) throw new Error("no settings for policy " + policy);
     const pool = [...new Set(ids)];
     const unitOf = {};
-    /* dirOf: each word's direction as "en>ko", kept in the run so a resumed
-       run asks the same way and the stars know a recognition answer. */
     const dirOf = {};
-    pool.forEach(id => { if (opts.dirOf && opts.dirOf[id]) dirOf[id] = opts.dirOf[id]; });
-    pool.forEach(id => { unitOf[id] = (opts.unitOf && opts.unitOf[id]) || ""; });
+    pool.forEach(id => {
+      unitOf[id] = (opts.unitOf && opts.unitOf[id]) || "";
+      if (opts.dirOf && opts.dirOf[id]) dirOf[id] = opts.dirOf[id];
+    });
     const run = {
-      v: 2,
+      v: 3,
       kind: algorithm,
       policy,
       ids: pool,
       unitOf,
       dirOf,
+      tiers: Object.assign({}, opts.tiers || {}),
       phases: phasesFor(algorithm, settings),
-      /* Where each word's measured answer comes from: a first pass ("pass"),
-         the first spaced answer ("srs", when there is no first pass), or the
-         comprehensive quiz's last group when it has no spaced part. */
+      /* Where each word's measured answer comes from: a review's one pass
+         ("pass"), the comprehensive quiz's first spaced answer ("srs"), or
+         with no spaced part its first answer in the last group. */
       scoreAt: null,
       phase: null,
       group: null,
@@ -476,7 +443,8 @@
       srs: null,
       card: null,
       /* first   each word's first answer in this run, whatever the part
-         scored  the one measured answer per word that reaches the star
+         scored  the one measured answer per word that reaches memory and
+                 the star
          marks   { id: { w, f } } every weak and failed answer, kept apart
          relearn words let go after repeated misses */
       first: {},
@@ -489,9 +457,7 @@
       forced: 0,
       done: false
     };
-    const phases = run.phases;
-    run.scoreAt = phases.includes("initial") || phases.includes("cold") ? "pass"
-      : phases.includes("srs") ? "srs" : "final-group";
+    run.scoreAt = algorithm === "review" ? "pass" : run.phases.includes("srs") ? "srs" : "final-group";
     enter(run, settings, 0, random);
     return run;
   }
@@ -499,14 +465,7 @@
   function groupFrom(pool, seq, index, shuffled, random) {
     const range = seq[index];
     const words = pool.slice(range[0], range[1]);
-    /* targeted marks a review's weak-word groups, which shuffle every
-       attempt; a comprehensive group keeps the unit's order. */
-    return { pool, seq, gi: index, order: shuffled ? shuffle(words, random) : words, pos: 0, clean: true, tries: 1, shuffled, targeted: false };
-  }
-
-  /* Weak or failed on the measured answer. */
-  function needsWork(run) {
-    return run.ids.filter(id => run.scored[id] === "w" || run.scored[id] === "f");
+    return { pool, seq, gi: index, order: shuffled ? shuffle(words, random) : words, pos: 0, clean: true, tries: 1, shuffled };
   }
 
   function enter(run, settings, index, random) {
@@ -526,28 +485,31 @@
       run.group = groupFrom(run.ids, seq, 0, settings.preserveOriginalOrder === false, random);
       return;
     }
-    if (phase === "initial" || phase === "cold") {
-      run.pass = { order: shuffle(run.ids, random), pos: 0 };
+    if (phase === "recall") {
+      /* The selection's own (already shuffled, frozen) order. */
+      run.pass = { order: run.ids.slice(), pos: 0, scored: true };
       return;
     }
-    if (phase === "targeted") {
-      const pool = needsWork(run);
-      if (!pool.length) { enter(run, settings, index + 1, random); return; }
-      const seq = hierarchy(pool.length, settings.targetedGroupSize, true);
-      run.group = groupFrom(pool, seq, 0, true, random);
-      run.group.targeted = true;
+    if (phase === "retry") {
+      const missed = run.ids.filter(id => run.scored[id] === "f");
+      const tries = Math.max(0, settings.sameSessionRetries | 0);
+      const room = Math.max(0, (Number(settings.maxPresentations) || Infinity) - run.answers);
+      let order = [];
+      for (let i = 0; i < tries; i += 1) order = order.concat(shuffle(missed, random));
+      order = order.slice(0, room);
+      if (!order.length) { enter(run, settings, index + 1, random); return; }
+      run.pass = { order, pos: 0, scored: false };
       return;
     }
     if (phase === "srs") {
-      const pool = run.kind === "comprehensive" || settings.spacedOnly ? run.ids.slice() : needsWork(run);
-      if (!pool.length) { enter(run, settings, index + 1, random); return; }
+      const pool = run.ids.slice();
       const retireAt = Math.max(1, settings.srsRetireAt || 3);
       const session = SpacedSession.create({
-        items: pool.map(id => ({ id, item: id, box: srs.startBox(run, id, retireAt, settings) })),
+        items: pool.map(id => ({ id, item: id, box: srs.startBox(run, id, retireAt) })),
         retireAt
       });
       /* SpacedSession opens in a shuffled order; put the lowest rungs (the
-         failed words) first, keeping that shuffle among equals. */
+         missed words) first, keeping that shuffle among equals. */
       session.cards.slice().sort((a, b) => a.box - b.box || a.due - b.due)
         .forEach((card, order) => { card.due = order; });
       const card = session.next();
@@ -563,7 +525,7 @@
   function current(run) {
     if (!run || run.done) return null;
     const part = run.phases.indexOf(run.phase) + 1;
-    const base = { phase: run.phase, phaseName: PHASE_NAMES[run.phase], part, parts: run.phases.length };
+    const base = { phase: run.phase, phaseName: PHASE_NAMES[run.phase] || run.phase, part, parts: run.phases.length };
     let now = null;
     if (run.group) {
       const g = run.group;
@@ -584,7 +546,10 @@
       const stats = srs.stats(run.srs);
       now = Object.assign(base, { id: run.card, group: null, position: stats.asked, length: stats.total, srs: stats });
     }
-    if (now) now.unit = run.unitOf ? run.unitOf[now.id] || "" : "";
+    if (now) {
+      now.unit = run.unitOf ? run.unitOf[now.id] || "" : "";
+      now.tier = run.tiers ? run.tiers[now.id] || "" : "";
+    }
     return now;
   }
 
@@ -597,7 +562,7 @@
   function answer(run, config, result, ms, random) {
     if (!run || run.done) return { done: true };
     if (!RESULTS.includes(result)) throw new Error("result must be s, w or f");
-    const settings = (config || DEFAULTS)[run.policy || run.kind];
+    const settings = (config || DEFAULTS)[run.policy || run.kind] || {};
     const now = current(run);
     const id = now.id;
     const events = {};
@@ -612,16 +577,16 @@
 
     if (run.group) {
       const g = run.group;
-      const lenient = run.phase === "groups" && settings.requirePerfectGroupPass === false;
+      const lenient = settings.requirePerfectGroupPass === false;
       const limit = Number(settings.maxGroupAttempts) || 0;
       const policy = settings.restartPolicy || "finish-attempt";
       if (result === "f") g.clean = false;
       /* No spaced part: the measured answer is the word's first in the last
          group, the whole unit. */
-      if (run.scoreAt === "final-group" && !g.targeted && g.gi === g.seq.length - 1 && !(id in run.scored)) run.scored[id] = result;
+      if (run.scoreAt === "final-group" && g.gi === g.seq.length - 1 && !(id in run.scored)) run.scored[id] = result;
       /* A miss under "immediate" or "checkpoint" ends the attempt here: the
          rest of the group is not asked, and the next question is the group's
-         first word (or the current segment's). Groups already passed are
+         first word (or the current stretch's). Groups already passed are
          untouched. */
       if (result === "f" && !lenient && policy !== "finish-attempt" && !(limit > 0 && g.tries >= limit)) {
         const size = g.order.length;
@@ -653,9 +618,7 @@
           events.phaseDone = true;
           enter(run, settings, index + 1, random);
         } else {
-          const targeted = g.targeted;
           run.group = groupFrom(g.pool, g.seq, g.gi + 1, g.shuffled, random);
-          run.group.targeted = targeted;
         }
       } else {
         events.groupRetry = true;
@@ -667,7 +630,7 @@
         g.tries += 1;
       }
     } else if (run.pass) {
-      run.scored[id] = result;
+      if (run.pass.scored !== false && !(id in run.scored)) run.scored[id] = result;
       run.pass.pos += 1;
       if (run.pass.pos >= run.pass.order.length) {
         events.phaseDone = true;
@@ -680,10 +643,8 @@
       const card = session.cards.find(entry => entry.id === id);
       let outcome;
       if (result === "w" && settings.weakClimbs === false) {
-        /* Hesitant: not a miss, but not a step up either — it comes back
-           soon, on the rung it was on. */
         const box = card.box;
-        outcome = session.grade(card, false);
+        session.grade(card, false);
         card.missed -= 1;
         card.box = box;
         outcome = { retired: false, box };
@@ -741,7 +702,8 @@
        { strong, weak, failed }  the measured answer, word by word
        relearn                    let go after repeated misses
        practised                  words that had any weak or failed answer
-       byUnit                     the same, unit by unit */
+       byUnit, byTier             the same, unit by unit and (a review's)
+                                  tier by tier */
   function outcome(run) {
     const summarise = ids => {
       const pick = code => ids.filter(id => run.scored[id] === code);
@@ -756,10 +718,15 @@
       };
     };
     const all = summarise(run.ids);
-    const units = [];
-    run.ids.forEach(id => { const unit = (run.unitOf || {})[id] || ""; if (!units.includes(unit)) units.push(unit); });
-    all.byUnit = {};
-    units.forEach(unit => { all.byUnit[unit] = summarise(run.ids.filter(id => ((run.unitOf || {})[id] || "") === unit)); });
+    const groupBy = lookup => {
+      const keys = [];
+      run.ids.forEach(id => { const key = lookup[id] || ""; if (!keys.includes(key)) keys.push(key); });
+      const out = {};
+      keys.forEach(key => { out[key] = summarise(run.ids.filter(id => (lookup[id] || "") === key)); });
+      return out;
+    };
+    all.byUnit = groupBy(run.unitOf || {});
+    all.byTier = run.tiers && Object.keys(run.tiers).length ? groupBy(run.tiers) : {};
     all.answers = run.answers;
     return all;
   }
@@ -768,22 +735,15 @@
      4. SRS ADAPTER
      ====================================================================== */
   const srs = {
-    /* Where a word starts on the spaced ladder. In a comprehensive quiz,
-       from how Part 1 went: never wrong or slow → one right answer retires
-       it; ever slow → one rung up; ever wrong → the bottom. In a review or a
-       maintenance quiz only weak and failed words are in it: failed from the
-       bottom, weak from where the policy says (early review: the bottom). */
-    startBox(run, id, retireAt, settings) {
+    /* Where a word starts on Part 2's ladder, from how Part 1 went: never
+       wrong or slow → one right answer retires it; ever slow → one rung up;
+       ever wrong → the bottom. */
+    startBox(run, id, retireAt) {
       const top = Math.max(0, retireAt - 1);
-      if (settings && settings.spacedOnly) return Math.max(0, Math.min(top, Number(settings.spacedStartBox) || 0));
-      if (run.kind === "comprehensive") {
-        const mark = run.marks[id];
-        if (!mark) return top;
-        if (mark.f) return 0;
-        return Math.min(top, 1);
-      }
-      if (run.scored[id] === "w") return settings && settings.weakStart === "bottom" ? 0 : top;
-      return 0;
+      const mark = run.marks[id];
+      if (!mark) return top;
+      if (mark.f) return 0;
+      return Math.min(top, 1);
     },
 
     stats(snapshot) {
@@ -803,10 +763,10 @@
 
     /* The star each word should move to, as proposals for the page to show
        and the learner to confirm, using the site's own star rules:
-         strong  as a clean spaced run: up a rung (★★★ only if the last clean
-                 run was on an earlier calendar day), stamped clean today
+         strong  up a rung (★★★ only if the last clean answer was on an
+                 earlier calendar day), stamped clean today
          weak    right, so it never costs a star; an unstarred word gets ★
-         failed  a rung down
+         failed  a rung down — a ★★★ word forgotten loses its third star
        starOf(id) -> { l, d } the word's current star record. */
     proposals(run, starOf, todayDate) {
       const out = [];
@@ -833,31 +793,24 @@
       return out;
     },
 
-    /* The long-term record of each measured retrieval, on calendar dates:
-       { last, gap (calendar days since the previous one), seen, right,
-         weak, relearn, lapses }. held(id) -> the word's record so far. */
-    wordRecords(run, held, todayDate) {
+    /* Each word's memory record after this run: one update per word, from
+       its measured answer, on the calendar date. held(id) -> the record so
+       far. options: { source (the task id: a source already applied to a
+       word is skipped), memory (the srs settings) }. Only the run's own
+       words are touched. -> { id: record } for the words that changed. */
+    wordRecords(run, held, todayDate, options) {
+      const opts = options || {};
       const out = {};
-      const toDay = date => Math.round(new Date(date + "T12:00:00").getTime() / 86400000);
       run.ids.forEach(id => {
         const result = run.scored[id];
-        const before = held(id) || {};
-        const record = Object.assign({}, before);
-        if (result) {
-          record.gap = before.last ? toDay(todayDate) - toDay(before.last) : null;
-          record.last = todayDate;
-          record.seen = (Number(before.seen) || 0) + 1;
-          record.right = (Number(before.right) || 0) + (result === "f" ? 0 : 1);
-          record.weak = (Number(before.weak) || 0) + (result === "w" ? 1 : 0);
-          record.result = result;
-        }
-        if (run.relearn.includes(id)) {
-          record.relearn = true;
-          record.lapses = (Number(before.lapses) || 0) + 1;
-        } else if (result === "s" && before.relearn) {
-          record.relearn = false;
-        }
-        if (result || run.relearn.includes(id)) out[id] = record;
+        const relearn = run.relearn.includes(id);
+        if (!result && !relearn) return;
+        const applied = StudyMemory.apply(held(id), {
+          result, date: todayDate, source: opts.source || "",
+          kind: run.kind === "comprehensive" ? "learn" : "review",
+          marks: run.marks[id] || null, relearn
+        }, opts.memory);
+        if (applied.applied) out[id] = applied.record;
       });
       return out;
     }
@@ -868,7 +821,8 @@
   return {
     DEFAULTS, PLANS, ALGORITHMS,
     configFor, planById, merge, validate, directionFor,
-    timeline, taskId, today, findTask, localDate, statusOf,
+    dayTasks, taskId, today, findTask, localDate, statusOf,
+    reviewHistory, selectReview,
     engine, srs, hierarchy, shuffle
   };
 }));

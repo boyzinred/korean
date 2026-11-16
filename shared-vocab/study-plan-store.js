@@ -13,16 +13,21 @@
       t:<task id>  a task: { status: "started" | "done", startedOn,
                    completedOn, n (answers given), p (0–1 progress), run (the
                    quiz checkpoint, study-plan.js), stars (the proposed star
-                   changes and whether they were confirmed), outcome }
-      state        { day: the study day reached, on: the date it opened,
-                   startedOn }. A record of where you are, for history; the
-                   day itself is always worked out again from the tasks.
-      w:<word id>  the word's long-term record, on calendar dates: { last
-                   (date of its last measured retrieval), gap (calendar days
-                   since the one before), seen, right, weak, result, relearn,
-                   lapses }. relearn is set when a quiz lets the word go after
-                   repeated misses, and cleared when a later quiz gets it right
-                   first time.
+                   changes and whether they were confirmed), outcome,
+                   applied (its memory updates are written) }. A review's
+                   record also holds selection: the words picked for it,
+                   frozen when it was first started ({ ids, picks: { id:
+                   { tier, reason, score } }, counts, stats, on }), so a
+                   resumed review asks the very same words.
+      state        { day: the study day reached (studyDayIndex), on: the
+                   date it opened, startedOn }. A record of where you are; the
+                   day itself is always worked out again from the tasks, so
+                   it cannot drift from them.
+      w:<word id>  the word's memory record (study-memory.js): stability,
+                   difficulty, the dates of its first and last measured
+                   retrieval, its counts, recent results, relearn flag, and
+                   the quizzes already applied to it. n is its number of
+                   retrievals, so the sync keeps the copy with more history.
 
     Every record carries rev, by (the tab that wrote it) and at. A save says
     which rev and tab it last saw; if the stored record has moved on since —
@@ -48,7 +53,7 @@
 
   const PREFIX = "korean.studyPlan:";
   const keyOf = planId => PREFIX + planId + ":v1";
-  const unitsKeyOf = planId => "korean.studyPlanUnits:" + planId + ":v2";
+  const unitsKeyOf = planId => "korean.studyPlanUnits:" + planId + ":v3";
 
   function token() {
     return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -130,14 +135,15 @@
         Object.keys(all).forEach(item => { if (item.startsWith("w:") && all[item]) out[item.slice(2)] = all[item]; });
         return out;
       },
-      setWord: (id, record) => settle("w:" + id, Object.assign({ n: 0 }, record)),
+      setWord: (id, record) => settle("w:" + id, Object.assign({}, record, { n: Number(record.n) || Number(record.seen) || 0 })),
       /* Many words in one write: { id: record }. */
       setWords(records) {
         const all = readAll();
         const at = new Date().toISOString();
         Object.keys(records).forEach(id => {
           const item = "w:" + id;
-          all[item] = Object.assign({}, records[id], { n: 0, by: me, at, rev: ((all[item] && all[item].rev) || 0) + 1 });
+          const n = Number(records[id].n) || Number(records[id].seen) || 0;
+          all[item] = Object.assign({}, records[id], { n, by: me, at, rev: ((all[item] && all[item].rev) || 0) + 1 });
         });
         writeAll(all);
       }
@@ -178,8 +184,9 @@
     return out;
   }
 
-  /* The unit list, kept on this browser so the home page can draw today's
-     tasks before the bank's page has been fetched again. */
+  /* The unit list with each unit's word ids, kept on this browser so the
+     home page can draw today's tasks (and preview the review's words)
+     before the bank's page has been fetched again. */
   function cachedUnits(planId, storage) {
     try { return JSON.parse((storage || localStorage).getItem(unitsKeyOf(planId)) || "null"); }
     catch (_) { return null; }
@@ -187,7 +194,7 @@
   function cacheUnits(planId, units, storage) {
     try {
       (storage || localStorage).setItem(unitsKeyOf(planId),
-        JSON.stringify(units.map(unit => ({ id: unit.id, label: unit.label, number: unit.number, size: unit.ids.length }))));
+        JSON.stringify(units.map(unit => ({ id: unit.id, label: unit.label, number: unit.number, size: unit.ids.length, ids: unit.ids }))));
     } catch (_) {}
   }
 
