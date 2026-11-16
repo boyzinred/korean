@@ -49,7 +49,9 @@
 
        comprehensive  Part 1 groups: the unit in its own order, five words at
                       a time, merged into ever larger groups (hierarchy()),
-                      each repeated until one attempt is all right.
+                      each repeated until one attempt is all right. A miss
+                      stops the attempt at once and the group starts again
+                      from its first word (restartPolicy).
                       Part 2 spaced: every word once more, shuffled, through
                       SpacedSession; what Part 1 found weak starts lower on
                       the ladder and comes round more.
@@ -111,6 +113,19 @@
       cumulativeGrouping: true,
       preserveOriginalOrder: true,
       requirePerfectGroupPass: true,
+      /* What a miss inside a group does:
+           "immediate"       stop the attempt there, show the answer, and
+                             start the group again from its first word (the
+                             default)
+           "checkpoint"      the same, but a group of checkpointMinGroupSize
+                             words or more restarts only from the start of its
+                             current checkpointSegmentSize-word segment
+           "finish-attempt"  finish the attempt, then repeat the whole group
+         Whichever it is, a group passes only on an attempt with no miss in
+         it (in "checkpoint", no miss since the segment started). */
+      restartPolicy: "immediate",
+      checkpointMinGroupSize: 21,
+      checkpointSegmentSize: 10,
       /* A safeguard, off by default: after this many failed attempts at one
          group, pass it anyway (its misses stay recorded). null = never. */
       maxGroupAttempts: null,
@@ -126,6 +141,7 @@
       initialFullRecall: true,
       repeatWeakWords: true,
       targetedGroupSize: 5,
+      restartPolicy: "finish-attempt",
       maxGroupAttempts: null,
       includeSRSPhase: true,
       srsRetireAt: 2,
@@ -139,6 +155,7 @@
       initialFullRecall: true,
       repeatWeakWords: true,
       targetedGroupSize: 5,
+      restartPolicy: "finish-attempt",
       maxGroupAttempts: null,
       includeSRSPhase: true,
       srsRetireAt: 2,
@@ -489,13 +506,14 @@
       const pool = run.kind === "comprehensive" ? run.ids.slice() : needsWork(run);
       if (!pool.length) { enter(run, settings, index + 1, random); return; }
       const retireAt = Math.max(1, settings.srsRetireAt || 3);
-      /* Failed words first: of two cards due together, the failed one is
-         handed over first and so asked first. */
-      const ordered = pool.slice().sort((a, b) => srs.startBox(run, a, retireAt, settings) - srs.startBox(run, b, retireAt, settings));
       const session = SpacedSession.create({
-        items: ordered.map(id => ({ id, item: id, box: srs.startBox(run, id, retireAt, settings) })),
+        items: pool.map(id => ({ id, item: id, box: srs.startBox(run, id, retireAt, settings) })),
         retireAt
       });
+      /* SpacedSession opens in a shuffled order; put the lowest rungs (the
+         failed words) first, keeping that shuffle among equals. */
+      session.cards.slice().sort((a, b) => a.box - b.box || a.due - b.due)
+        .forEach((card, order) => { card.due = order; });
       const card = session.next();
       run.srs = session.snapshot();
       run.card = card ? card.id : null;
@@ -538,7 +556,8 @@
 
   /* Record one answer to the current word and move the run on. Returns what
      happened, for the page to say so:
-       { groupPassed, groupRetry, forced, phaseDone, done, relearn } */
+       { groupPassed, groupRetry, restarted, restartFrom (the 1-based word
+         the group starts again from), forced, phaseDone, done, relearn } */
   function answer(run, config, result, ms, random) {
     if (!run || run.done) return { done: true };
     if (!RESULTS.includes(result)) throw new Error("result must be s, w or f");
@@ -557,11 +576,35 @@
 
     if (run.group) {
       const g = run.group;
-      if (result === "f") g.clean = false;
-      g.pos += 1;
-      if (g.pos < g.order.length) return events;
       const lenient = run.phase === "groups" && settings.requirePerfectGroupPass === false;
       const limit = Number(settings.maxGroupAttempts) || 0;
+      const policy = settings.restartPolicy || "finish-attempt";
+      if (result === "f") g.clean = false;
+      /* A miss under "immediate" or "checkpoint" ends the attempt here: the
+         rest of the group is not asked, and the next question is the group's
+         first word (or the current segment's). Groups already passed are
+         untouched. */
+      if (result === "f" && !lenient && policy !== "finish-attempt" && !(limit > 0 && g.tries >= limit)) {
+        const size = g.order.length;
+        let from = 0;
+        if (policy === "checkpoint" && size >= (Number(settings.checkpointMinGroupSize) || 21)) {
+          const segment = Math.max(1, Number(settings.checkpointSegmentSize) || 10);
+          from = Math.floor(g.pos / segment) * segment;
+        }
+        if (from === 0 && g.shuffled) {
+          const range = g.seq[g.gi];
+          g.order = shuffle(g.pool.slice(range[0], range[1]), random);
+        }
+        events.groupRetry = true;
+        events.restarted = true;
+        events.restartFrom = from + 1;
+        g.pos = from;
+        g.clean = true;
+        g.tries += 1;
+        return events;
+      }
+      g.pos += 1;
+      if (g.pos < g.order.length) return events;
       const forced = !g.clean && !lenient && limit > 0 && g.tries >= limit;
       if (g.clean || lenient || forced) {
         events.groupPassed = true;

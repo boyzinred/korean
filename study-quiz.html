@@ -1848,7 +1848,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script src="./shared-vocab/review-banks.js?v=1.1.0"></script>
   <script src="./shared-vocab/answer-check.js?v=1.0.0"></script>
-  <script src="./shared-vocab/study-plan.js?v=2.1.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=2.2.0"></script>
   <script src="./shared-vocab/study-plan-store.js?v=2.1.0"></script>
   <script>
   (() => {
@@ -2295,15 +2295,35 @@ html.has-quiz-popout .utility-controls { display: none; }
           feedback.innerHTML = "<strong>Counted as correct.</strong>" + fullLine(entry) + '<span class="hesitate-note"></span>';
           hesitate.classList.remove("hidden");
           setHesitant(false, false);
+          $("next").textContent = "Next word";
           $("next").focus({ preventScroll: true });
         });
       }
       const next = $("next");
       next.classList.remove("hidden");
       next.disabled = false;
-      next.textContent = "Next word";
+      next.textContent = state.result === "f" ? restartLabel() || "Next word" : "Next word";
       next.focus({ preventScroll: true });
       next.scrollIntoView({ block: "nearest" });
+    }
+
+    /* What Next does after a miss in a group that restarts at once: the
+       group's first word, or (checkpoint policy, big group) its segment's. */
+    function restartLabel() {
+      const now = StudyPlan.engine.current(state.run);
+      const settings = config[state.run.policy || state.run.kind] || {};
+      const policy = settings.restartPolicy || "finish-attempt";
+      if (!now.group || policy === "finish-attempt") return "";
+      if (lenientGroups(settings)) return "";
+      let from = 1;
+      if (policy === "checkpoint" && now.group.size >= (Number(settings.checkpointMinGroupSize) || 21)) {
+        const segment = Math.max(1, Number(settings.checkpointSegmentSize) || 10);
+        from = Math.floor((now.group.position - 1) / segment) * segment + 1;
+      }
+      return "Restart from word " + from;
+    }
+    function lenientGroups(settings) {
+      return state.run.phase === "groups" && settings.requirePerfectGroupPass === false;
     }
 
     function logAnswer(entry, result, phase) {
@@ -2343,6 +2363,11 @@ html.has-quiz-popout .utility-controls { display: none; }
       } else if (events.groupPassed) {
         note.classList.add("is-good");
         note.textContent = "Group passed ✓ — every word right in one attempt.";
+      } else if (events.restarted) {
+        note.classList.add("is-retry");
+        note.textContent = events.restartFrom > 1
+          ? "Missed \u2014 this part of the group starts again from word " + events.restartFrom + ". The words before it stay done."
+          : "Missed \u2014 the group starts again from word 1. Groups you\u2019ve passed stay passed.";
       } else if (events.groupRetry) {
         note.classList.add("is-retry");
         note.textContent = "Not every word went right, so this group goes again from the top.";

@@ -363,17 +363,130 @@ test("in unit order within each group; Part 2 only after Part 1", () => {
   assert.strictEqual(run.phase, "srs");
 });
 
-test("a miss repeats the whole group; a hesitant answer does not", () => {
+/* Answer the comprehensive run until its current group is words from–to. */
+function reachGroup(run, from, to) {
+  while (!(StudyPlan.engine.current(run).group.from === from && StudyPlan.engine.current(run).group.to === to)) {
+    StudyPlan.engine.answer(run, CONFIG, "s");
+  }
+}
+
+test("a miss on word 3 of a 10-word group shows the answer and restarts at word 1 — words 4–10 are not asked", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
+  reachGroup(run, 1, 10);
+  StudyPlan.engine.answer(run, CONFIG, "s");
+  StudyPlan.engine.answer(run, CONFIG, "s");
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w3");
+  const events = StudyPlan.engine.answer(run, CONFIG, "f");
+  assert(events.groupRetry && events.restarted);
+  assert.strictEqual(events.restartFrom, 1);
+  const now = StudyPlan.engine.current(run);
+  assert.strictEqual(now.id, "w1", "straight back to word 1");
+  assert.strictEqual(now.group.attempt, 2);
+  assert.strictEqual(now.group.from, 1);
+  assert.strictEqual(now.group.to, 10);
+  assert(!run.log.some(([id]) => ["w4", "w5", "w6", "w7", "w8", "w9", "w10"].includes(id) && run.log.indexOf(run.log.find(e => e[0] === id)) > 20),
+    "words 4–10 were not asked after the miss");
+  assert.deepStrictEqual(run.marks.w3, { w: 0, f: 1 });
+  /* The group passes only on one uninterrupted all-right attempt. */
+  for (let i = 0; i < 10; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
+  assert.strictEqual(run.phase, "srs", "1–10 was the last group; it passed on the clean attempt");
+});
+
+test("the attempt after a restart is the whole group, in order", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
+  reachGroup(run, 1, 10);
+  for (let i = 0; i < 6; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
+  StudyPlan.engine.answer(run, CONFIG, "f");
+  const asked = [];
+  for (let i = 0; i < 10; i += 1) {
+    asked.push(StudyPlan.engine.current(run).id);
+    StudyPlan.engine.answer(run, CONFIG, "s");
+  }
+  assert.deepStrictEqual(asked, ids(10));
+});
+
+test("a hesitant answer does not restart a group", () => {
   const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(2));
   ["s", "s", "w", "s", "s"].forEach(r => StudyPlan.engine.answer(run, CONFIG, r));
   assert.strictEqual(StudyPlan.engine.current(run).group.from, 6);
-  ["s", "f", "s", "s"].forEach(r => StudyPlan.engine.answer(run, CONFIG, r));
-  assert(StudyPlan.engine.answer(run, CONFIG, "s").groupRetry);
-  const now = StudyPlan.engine.current(run);
-  assert.strictEqual(now.group.attempt, 2);
-  assert.strictEqual(now.id, "w6");
   assert.deepStrictEqual(run.marks.w3, { w: 1, f: 0 });
-  assert.deepStrictEqual(run.marks.w7, { w: 0, f: 1 });
+});
+
+test("restarts work the same for groups of any size", () => {
+  for (const n of [1, 3, 5, 12, 43, 63]) {
+    const run = StudyPlan.engine.create("comprehensive", ids(n), CONFIG, seeded(n));
+    while (run.phase === "groups") {
+      const now = StudyPlan.engine.current(run);
+      const last = now.group.position === now.group.size;
+      /* Miss the last word of every group's first attempt. */
+      const events = StudyPlan.engine.answer(run, CONFIG, last && now.group.attempt === 1 ? "f" : "s");
+      if (last && now.group.attempt === 1) {
+        assert(events.restarted, "n=" + n);
+        const again = StudyPlan.engine.current(run);
+        assert.strictEqual(again.group.position, 1);
+        assert.strictEqual(again.group.from, now.group.from);
+      }
+    }
+  }
+});
+
+test("finish-attempt is still available as a policy", () => {
+  const cfg = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "finish-attempt" } });
+  const run = StudyPlan.engine.create("comprehensive", ids(10), cfg, seeded(2));
+  for (let i = 0; i < 5; i += 1) StudyPlan.engine.answer(run, cfg, "s");
+  ["s", "f", "s", "s"].forEach(r => StudyPlan.engine.answer(run, cfg, r));
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w10", "carries on after the miss");
+  assert(StudyPlan.engine.answer(run, cfg, "s").groupRetry);
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w6");
+});
+
+test("checkpoint policy: a big group restarts only its current segment; small groups restart whole", () => {
+  const cfg = StudyPlan.merge(CONFIG, { comprehensive: { restartPolicy: "checkpoint", checkpointMinGroupSize: 21, checkpointSegmentSize: 10 } });
+  const run = StudyPlan.engine.create("comprehensive", ids(40), cfg, seeded(3));
+  /* Small group first: 1–5, miss word 4 → back to word 1. */
+  for (let i = 0; i < 3; i += 1) StudyPlan.engine.answer(run, cfg, "s");
+  assert.strictEqual(StudyPlan.engine.answer(run, cfg, "f").restartFrom, 1);
+  while (!(StudyPlan.engine.current(run).group.size === 40)) StudyPlan.engine.answer(run, cfg, "s");
+  for (let i = 0; i < 24; i += 1) StudyPlan.engine.answer(run, cfg, "s");
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w25");
+  const events = StudyPlan.engine.answer(run, cfg, "f");
+  assert.strictEqual(events.restartFrom, 21);
+  assert.strictEqual(StudyPlan.engine.current(run).id, "w21", "back to the segment's start, not word 1");
+  for (let i = 0; i < 20; i += 1) StudyPlan.engine.answer(run, cfg, "s");
+  assert.strictEqual(run.phase, "srs", "the group passes once the rest goes through without a miss");
+});
+
+test("strict full-group restart is the default", () => {
+  assert.strictEqual(StudyPlan.DEFAULTS.comprehensive.restartPolicy, "immediate");
+  assert.strictEqual(CONFIG.comprehensive.restartPolicy, "immediate");
+});
+
+test("a group failed mid-way pauses and resumes with earlier groups intact", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(20), CONFIG, seeded(5));
+  reachGroup(run, 11, 15);
+  StudyPlan.engine.answer(run, CONFIG, "s");
+  StudyPlan.engine.answer(run, CONFIG, "f");
+  const passedBefore = run.passed;
+  const saved = JSON.parse(JSON.stringify(run));
+  const now = StudyPlan.engine.current(saved);
+  assert.strictEqual(now.id, "w11");
+  assert.strictEqual(now.group.attempt, 2);
+  assert.strictEqual(saved.passed, passedBefore);
+  assert.strictEqual(passedBefore, 3, "1–5, 6–10 and 1–10 stay passed");
+});
+
+test("right answers repeated through restarts never reach the star twice", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(5), CONFIG, seeded(6));
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    for (let i = 0; i < 4; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
+    StudyPlan.engine.answer(run, CONFIG, "f");
+  }
+  drive(run, () => "s");
+  assert(run.log.filter(([id]) => id === "w1").length >= 5);
+  const proposals = StudyPlan.srs.proposals(run, () => ({ l: 0 }), "2026-11-16");
+  assert.strictEqual(proposals.length, 5, "one per word");
+  assert.strictEqual(proposals.find(p => p.id === "w1").to, 2, "five right answers in one sitting are still ★★");
+  assert.strictEqual(StudyPlan.srs.wordRecords(run, () => null, "2026-11-16").w1.seen, 1, "one retrieval on the long-term record");
 });
 
 test("repeated misses never undo a group already passed", () => {
@@ -393,8 +506,10 @@ test("the retry safeguard is off by default, and passes a group only when config
   const capped = StudyPlan.merge(CONFIG, { comprehensive: { maxGroupAttempts: 3 } });
   const run = StudyPlan.engine.create("comprehensive", ids(5), capped, seeded(4));
   let events = {};
-  for (let i = 0; i < 15; i += 1) events = StudyPlan.engine.answer(run, capped, "f");
+  let guard = 0;
+  while (!events.forced && guard++ < 50) events = StudyPlan.engine.answer(run, capped, "f");
   assert(events.forced && events.groupPassed);
+  assert.strictEqual(guard, 2 + 5, "two restarts, then the third attempt runs to the end and passes");
   assert.strictEqual(run.phase, "srs");
 });
 
