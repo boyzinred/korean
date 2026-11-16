@@ -509,6 +509,29 @@ textarea:disabled,
 }
 .utility-button.top { --btn-bg: var(--accent); --btn-ink: var(--on-accent); }
 
+/* ---- collapsing the dashboard and its rows ------------------------------ */
+.dash-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dash-title { margin: 0; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.02em; color: var(--foreground); }
+.dash-body { display: grid; gap: 18px; }
+.dashboard.is-collapsed .dash-body { display: none; }
+.dash-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dash-card.is-collapsed > :not(.dash-card-head) { display: none; }
+.dash-toggle {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--surface-text);
+  background: var(--surface);
+  border: 2px solid var(--surface-text);
+  border-radius: var(--radius-md);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.utility-button.nav { --btn-bg: var(--accent); --btn-ink: var(--on-accent); }
+.utility-button[disabled] { opacity: .4; cursor: default; }
+
 .hidden { display: none !important; }
 
 @media (max-width: 900px) {
@@ -1143,8 +1166,13 @@ html[data-theme='dark'] {
     </section>
 
     <section class="dashboard hidden" id="dashboard" aria-label="Your progress">
-      <article class="dash-card" id="activityCard">
-        <h2>Activity</h2>
+      <div class="dash-head">
+        <h2 class="dash-title">Dashboard</h2>
+        <button class="dash-toggle" type="button" data-dash-all aria-expanded="true" aria-controls="dashBody">Collapse</button>
+      </div>
+      <div class="dash-body" id="dashBody">
+      <article class="dash-card" id="activityCard" data-row="activity">
+        <div class="dash-card-head"><h2>Activity</h2><button class="dash-toggle" type="button" data-dash-row="activity" aria-expanded="true">Collapse</button></div>
         <p class="dash-sub">Questions answered each day over the last 26 weeks, on every page.</p>
         <div id="dashHeatmap"></div>
       </article>
@@ -1163,43 +1191,44 @@ html[data-theme='dark'] {
       <div class="dash-tiles" id="dashTiles"></div>
 
       <div class="dash-grid" id="dashGrid">
-        <article class="dash-card">
-          <h2>Questions per day</h2>
+        <article class="dash-card" data-row="trend">
+          <div class="dash-card-head"><h2>Questions per day</h2><button class="dash-toggle" type="button" data-dash-row="trend" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub" id="dayChartSub">First tries, on the pages you picked.</p>
           <div id="dashDayChart"></div>
         </article>
-        <article class="dash-card">
-          <h2>First-try accuracy</h2>
+        <article class="dash-card" data-row="trend">
+          <div class="dash-card-head"><h2>First-try accuracy</h2><button class="dash-toggle" type="button" data-dash-row="trend" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub" id="accChartSub">Share of questions right the first time, each day you studied.</p>
           <div id="dashAccChart"></div>
         </article>
-        <article class="dash-card dash-wide">
-          <h2>Your pages</h2>
+        <article class="dash-card dash-wide" data-row="pages">
+          <div class="dash-card-head"><h2>Your pages</h2><button class="dash-toggle" type="button" data-dash-row="pages" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub">Stars are where each page's words stand now; the rest is the time range above.</p>
           <div id="dashPages"></div>
         </article>
-        <article class="dash-card">
-          <h2>By exercise</h2>
+        <article class="dash-card" data-row="breakdown">
+          <div class="dash-card-head"><h2>By exercise</h2><button class="dash-toggle" type="button" data-dash-row="breakdown" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub">Questions, and how many were right first time.</p>
           <div id="dashExercises"></div>
         </article>
-        <article class="dash-card">
-          <h2>By direction</h2>
+        <article class="dash-card" data-row="breakdown">
+          <div class="dash-card-head"><h2>By direction</h2><button class="dash-toggle" type="button" data-dash-row="breakdown" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub">What you were shown → what you answered in.</p>
           <div id="dashDirections"></div>
         </article>
-        <article class="dash-card dash-wide">
-          <h2>Most missed</h2>
+        <article class="dash-card dash-wide" data-row="missed">
+          <div class="dash-card-head"><h2>Most missed</h2><button class="dash-toggle" type="button" data-dash-row="missed" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub">The words and questions you've got wrong most often, all time, on the pages you picked. Words you've since taken to ★★★ are left off.</p>
           <div id="dashMissed"></div>
         </article>
-        <article class="dash-card dash-wide">
-          <h2>Recent sessions</h2>
+        <article class="dash-card dash-wide" data-row="runs">
+          <div class="dash-card-head"><h2>Recent sessions</h2><button class="dash-toggle" type="button" data-dash-row="runs" aria-expanded="true">Collapse</button></div>
           <p class="dash-sub">Your last runs through an exercise, newest first.</p>
           <div id="dashRuns"></div>
         </article>
       </div>
       <div class="dash-tip hidden" id="dashTip" role="tooltip"></div>
+      </div>
     </section>
 
     <nav class="toc-card" id="toc" aria-label="Page groups">
@@ -1213,7 +1242,8 @@ html[data-theme='dark'] {
   </main>
 
   <div class="utility-controls" aria-label="Page utilities">
-    <a class="utility-button top" href="#top" aria-label="Back to top">↑</a>
+    <button class="utility-button nav" type="button" data-section-nav="prev" aria-label="Previous section" title="Previous section">↑</button>
+    <button class="utility-button nav" type="button" data-section-nav="next" aria-label="Next section" title="Next section">↓</button>
   </div>
 
   <script>
@@ -1236,8 +1266,8 @@ html[data-theme='dark'] {
       { id: "topik-i", title: "TOPIK I Word Bank (1358)", href: "tutoring-topik-i-word-bank.html", group: "TOPIK I", tag: "Vocabulary" },
       { id: "topik-tests", title: "TOPIK Practice Tests", href: "tutoring-topik-multiple-choice-test-library.html", group: "TOPIK I", tag: "Practice Test" },
 
-      { id: "topik-ii-vocab", title: "Workbook Vocabulary (2018 · 2023)", href: "topik-ii-workbook-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
-      { id: "topik-ii-grammar", title: "Workbook Grammar (2018 · 2023)", href: "topik-ii-workbook-grammar.html", group: "TOPIK II", tag: "Grammar" },
+      { id: "topik-ii-vocab", title: "Workbook Vocabulary", href: "topik-ii-workbook-vocab.html", group: "TOPIK II", tag: "Vocabulary" },
+      { id: "topik-ii-grammar", title: "Workbook Grammar", href: "topik-ii-workbook-grammar.html", group: "TOPIK II", tag: "Grammar" },
 
       { id: "reading-1", title: "읽고 답해요: Grade 1 Stories", href: "reading-comprehension-grade-1.html", group: "Reading comprehension", tag: "Grade 1" },
       { id: "reading-2", title: "깊이 읽고 답해요: Grade 2 Passages", href: "reading-comprehension-grade-2.html", group: "Reading comprehension", tag: "Grade 2" },
@@ -2243,5 +2273,144 @@ html[data-theme='dark'] {
   </script>
 
 
+
+  <script>
+    /* The dashboard folds away as a whole, and row by row: the cards that sit
+       side by side on a wide screen fold together. Remembered on this browser
+       only — how the page is laid out is not progress. */
+    (function () {
+      const KEY = "korean.dashboardLayout.v1";
+      const dashboard = document.getElementById("dashboard");
+      if (!dashboard) return;
+      let layout = {};
+      try { layout = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (_) { layout = {}; }
+      layout.rows = layout.rows || {};
+      const save = () => { try { localStorage.setItem(KEY, JSON.stringify(layout)); } catch (_) {} };
+      const label = (button, open) => {
+        button.textContent = open ? "Collapse" : "Expand";
+        button.setAttribute("aria-expanded", String(open));
+      };
+      function paint() {
+        dashboard.classList.toggle("is-collapsed", Boolean(layout.all));
+        label(dashboard.querySelector("[data-dash-all]"), !layout.all);
+        dashboard.querySelectorAll(".dash-card[data-row]").forEach(card => {
+          const shut = Boolean(layout.rows[card.dataset.row]);
+          card.classList.toggle("is-collapsed", shut);
+          const button = card.querySelector("[data-dash-row]");
+          if (button) label(button, !shut);
+        });
+      }
+      dashboard.addEventListener("click", event => {
+        const all = event.target.closest("[data-dash-all]");
+        const row = event.target.closest("[data-dash-row]");
+        if (all) layout.all = !layout.all;
+        else if (row) layout.rows[row.dataset.dashRow] = !layout.rows[row.dataset.dashRow];
+        else return;
+        save();
+        paint();
+      });
+      paint();
+    })();
+  </script>
+
+  <script>
+    /* The floating arrows walk the page's sections — the same list the "Jump to
+       a section" card holds — rather than only running back to the top. ↑ from
+       the first section still goes to the top of the page. */
+    (function () {
+      const buttons = [...document.querySelectorAll("[data-section-nav]")];
+      if (!buttons.length) return;
+
+      function stops() {
+        const seen = new Set();
+        const list = [];
+        document.querySelectorAll('.toc-link[href^="#"]').forEach(link => {
+          const hash = link.getAttribute("href");
+          const node = hash.length > 1 ? document.querySelector(hash) : null;
+          if (!node || seen.has(hash)) return;
+          seen.add(hash);
+          const span = link.querySelector("span");
+          list.push({ hash: hash, node: node, label: (span ? span.textContent : link.textContent).trim() });
+        });
+        return list;
+      }
+
+      /* The section being read is the last one whose top has passed the upper
+         third of the window, so a long section stays the current one well after
+         its heading has scrolled off. */
+      function measuredIndex(list) {
+        const line = window.innerHeight / 3;
+        let index = -1;
+        list.forEach((stop, position) => {
+          if (stop.node.getBoundingClientRect().top <= line) index = position;
+        });
+        return index;
+      }
+
+      /* A jump scrolls smoothly, so for a moment the page is still where it
+         was. Until the scroll lands, the section just jumped to is the current
+         one — otherwise two quick taps would both move one step. */
+      let jumped = null;
+      function currentIndex(list) {
+        const measured = measuredIndex(list);
+        if (!jumped) return measured;
+        if (measured === jumped.index || Date.now() - jumped.at > 2000) {
+          jumped = null;
+          return measured;
+        }
+        return jumped.index;
+      }
+
+      function targetOf(direction, list) {
+        const index = currentIndex(list);
+        if (direction === "next") return index + 1 < list.length ? index + 1 : -1;
+        return index > 0 ? index - 1 : -1;
+      }
+
+      function paint() {
+        const list = stops();
+        buttons.forEach(button => {
+          const direction = button.dataset.sectionNav;
+          const index = targetOf(direction, list);
+          const stop = index < 0 ? null : list[index];
+          const label = stop
+            ? (direction === "next" ? "Next section: " : "Previous section: ") + stop.label
+            : (direction === "next" ? "Last section" : "Back to the top");
+          button.title = label;
+          button.setAttribute("aria-label", label);
+          button.disabled = direction === "next" ? !stop : (!stop && window.scrollY <= 4);
+        });
+      }
+
+      buttons.forEach(button => button.addEventListener("click", () => {
+        const list = stops();
+        const direction = button.dataset.sectionNav;
+        const index = targetOf(direction, list);
+        if (index < 0) {
+          if (direction === "prev") window.scrollTo({ top: 0, behavior: "smooth" });
+          paint();
+          return;
+        }
+        const stop = list[index];
+        /* A collapsed section is left collapsed: the arrows move the page, they
+           do not decide what is open. The jump still lands on its heading. */
+        jumped = { index: index, at: Date.now() };
+        /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
+           section in the address bar, and lets anything watching for a hash
+           change see the move. */
+        location.hash = stop.hash;
+        paint();
+      }));
+
+      let frame = null;
+      window.addEventListener("scroll", () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => { frame = null; paint(); });
+      }, { passive: true });
+      window.addEventListener("resize", paint);
+      document.addEventListener("toggle", paint, true);
+      paint();
+    })();
+  </script>
 </body>
 </html>

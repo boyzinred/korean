@@ -1691,14 +1691,17 @@ html.has-quiz-popout .utility-controls { display: none; }
 .gb-list { display: grid; gap: 10px; padding: 14px; }
 .gb-card { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
 .gb-card.is-hidden { display: none; }
-.gb-card > summary { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: baseline; padding: 12px 16px; cursor: pointer; list-style: none; }
+.gb-card > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 14px; padding: 12px 16px; cursor: pointer; list-style: none; }
 .gb-card > summary::-webkit-details-marker { display: none; }
-.gb-code { grid-row: span 2; font-weight: 800; font-size: .82rem; color: var(--surface-kicker); white-space: nowrap; }
+.gb-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.gb-code { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; color: var(--surface-text); background: var(--surface-muted); border: 1px solid var(--border); border-radius: 999px; font-size: .7rem; font-weight: 800; white-space: nowrap; }
+.gb-code-year { opacity: .7; font-weight: 700; }
+.gb-code-year::after { content: "·"; margin-left: 6px; }
 .gb-title { font-weight: 800; font-size: calc(1.02rem * var(--ko-size, 1)); }
-.gb-meaning-short { font-size: .86rem; opacity: .8; }
+.gb-card > summary .familiarity-stars { justify-self: end; }
+.gb-meaning-short { grid-column: 1 / -1; font-size: .86rem; opacity: .8; }
 .gb-body { display: grid; gap: 12px; padding: 4px 16px 16px; }
 .gb-body p { margin: 0; }
-.gb-stars-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .gb-forms { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .gb-form { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 8px 12px; border-radius: var(--radius-md); background: var(--surface-muted); }
 .gb-form.is-match { outline: 2px solid var(--primary); outline-offset: -2px; }
@@ -2035,6 +2038,7 @@ html.has-quiz-popout .utility-controls { display: none; }
     document.addEventListener("click", event => {
       const star = event.target.closest(".familiarity-star");
       if (!star) return;
+      if (star.closest("summary")) event.preventDefault();
       const group = star.closest(".familiarity-stars");
       const chosen = Number(star.dataset.level) || 0;
       const next = Number(group.dataset.level) === chosen ? 0 : chosen;
@@ -2052,7 +2056,7 @@ html.has-quiz-popout .utility-controls { display: none; }
        Grammar bank
     ----------------------------------------------------------------------- */
     const BANK_MODES = ["year", "unit", "tag"];
-    const BANK_MODE_LABELS = { year: "TOPIK year", unit: "Unit", tag: "Function" };
+    const BANK_MODE_LABELS = { year: "Year", unit: "Unit", tag: "Function" };
     const BANK_MODE_KEY = "korean.topikIIGrammarBankMode";
     let bankMode = (() => { const saved = load(BANK_MODE_KEY, "year"); return BANK_MODES.includes(saved) ? saved : "year"; })();
 
@@ -2095,11 +2099,13 @@ html.has-quiz-popout .utility-controls { display: none; }
       const haystack = [bundle.title, bundle.meaning, bundle.form, bundle.ex.join(" "), bundle.dialogue.join(" "), bundle.compare,
         bundle.forms.map(form => form.label + " " + form.meaning + " " + tagName(form.tag)).join(" "), bundle.year, bundleCode(bundle)].join(" ").toLowerCase();
       return '<details class="gb-card" data-search="' + esc(haystack) + '">'
-        + '<summary><span class="gb-code">' + esc(bundle.year + " " + bundleCode(bundle)) + '</span>'
-        + '<span class="gb-title">' + esc(bundle.title) + '</span>'
+        + '<summary><span class="gb-head">'
+        + '<span class="gb-code" title="' + esc(bundle.year + " workbook, grammar " + bundleCode(bundle)) + '">'
+        + '<span class="gb-code-year">' + esc(bundle.year) + '</span>' + esc(bundleCode(bundle)) + '</span>'
+        + '<span class="gb-title">' + esc(bundle.title) + '</span></span>'
+        + starsHtml(bundle.id, bundle.title)
         + '<span class="gb-meaning-short">' + esc(bundle.meaning) + '</span></summary>'
         + '<div class="gb-body">'
-        + '<div class="gb-stars-row"><span class="word-note-label">Familiarity</span>' + starsHtml(bundle.id, bundle.title) + '</div>'
         + '<div class="yb-field"><span class="word-note-label">의미 · Meaning</span><p>' + esc(bundle.meaning) + '</p></div>'
         + '<div class="yb-field"><span class="word-note-label">형태 · Form</span><p>' + esc(bundle.form) + '</p></div>'
         + '<ul class="gb-forms">' + forms + '</ul>'
@@ -2118,7 +2124,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       const search = document.getElementById("bankSearch");
       const counter = document.getElementById("bankCount");
       const modes = document.getElementById("bankModes");
-      modes.insertAdjacentHTML("beforeend", BANK_MODES.map(mode =>
+      modes.innerHTML = (BANK_MODES.map(mode =>
         '<button class="mode-btn" type="button" data-mode="' + mode + '">' + BANK_MODE_LABELS[mode] + '</button>').join(""));
       function paintModes() {
         modes.querySelectorAll(".mode-btn").forEach(button => {
@@ -2173,7 +2179,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       const years = document.getElementById("compareYears");
       const host = document.getElementById("compareTables");
       let year = BOOKS[BOOKS.length - 1].year;
-      years.insertAdjacentHTML("beforeend", BOOKS.map(book =>
+      years.innerHTML = (BOOKS.map(book =>
         '<button class="mode-btn" type="button" data-year="' + book.year + '">' + book.year + '</button>').join(""));
       const table = (head, rows) => '<div class="table-wrap"><table class="gb-table"><thead><tr>'
         + head.map(h => '<th>' + esc(h) + '</th>').join("") + '</tr></thead><tbody>'
@@ -2339,7 +2345,7 @@ html.has-quiz-popout .utility-controls { display: none; }
     const qEl = document.getElementById("grammarQuiz");
     const $q = selector => qEl.querySelector(selector);
     const QUIZ_MODES = ["year", "unit", "tag"];
-    const QUIZ_MODE_LABELS = { year: "TOPIK year", unit: "Unit", tag: "Function" };
+    const QUIZ_MODE_LABELS = { year: "Year", unit: "Unit", tag: "Function" };
     const KINDS_KEY = "korean.topikIIGrammarQuizKinds";
     let quizMode = "unit";
     let state = null;
@@ -2681,25 +2687,124 @@ html.has-quiz-popout .utility-controls { display: none; }
       $q(".score").innerHTML = right + " / " + answered + " correct<br><small>" + percent + "%</small>";
     }
 
-    /* ---- section navigation (the ↑ ↓ buttons) ----------------------------- */
-    function sectionNav() {
-      const sections = () => [...document.querySelectorAll("main > details.section, main > section.hero")];
-      document.querySelectorAll("[data-section-nav]").forEach(button => button.addEventListener("click", () => {
-        const list = sections();
-        const y = window.scrollY + 80;
-        const tops = list.map(el => el.getBoundingClientRect().top + window.scrollY);
-        let target;
-        if (button.dataset.sectionNav === "next") target = tops.find(top => top > y + 4);
-        else target = [...tops].reverse().find(top => top < y - 4);
-        if (target !== undefined) window.scrollTo({ top: Math.max(0, target - 70), behavior: "smooth" });
-      }));
-    }
-
     buildBank();
     buildCompare();
     buildQuiz();
-    sectionNav();
   })();
   </script>
+  <script>
+    /* Quick navigation: open every collapsed section the target sits inside. */
+    (function () {
+      document.querySelectorAll(".toc-link").forEach(link => {
+        link.addEventListener("click", () => {
+          const target = document.querySelector(link.getAttribute("href"));
+          for (let node = target; node; node = node.parentElement) {
+            if (node.tagName === "DETAILS") node.open = true;
+          }
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    /* The floating arrows walk the page's sections — the same list the "Jump to
+       a section" card holds — rather than only running back to the top. ↑ from
+       the first section still goes to the top of the page. */
+    (function () {
+      const buttons = [...document.querySelectorAll("[data-section-nav]")];
+      if (!buttons.length) return;
+
+      function stops() {
+        const seen = new Set();
+        const list = [];
+        document.querySelectorAll('.toc-link[href^="#"]').forEach(link => {
+          const hash = link.getAttribute("href");
+          const node = hash.length > 1 ? document.querySelector(hash) : null;
+          if (!node || seen.has(hash)) return;
+          seen.add(hash);
+          const span = link.querySelector("span");
+          list.push({ hash: hash, node: node, label: (span ? span.textContent : link.textContent).trim() });
+        });
+        return list;
+      }
+
+      /* The section being read is the last one whose top has passed the upper
+         third of the window, so a long section stays the current one well after
+         its heading has scrolled off. */
+      function measuredIndex(list) {
+        const line = window.innerHeight / 3;
+        let index = -1;
+        list.forEach((stop, position) => {
+          if (stop.node.getBoundingClientRect().top <= line) index = position;
+        });
+        return index;
+      }
+
+      /* A jump scrolls smoothly, so for a moment the page is still where it
+         was. Until the scroll lands, the section just jumped to is the current
+         one — otherwise two quick taps would both move one step. */
+      let jumped = null;
+      function currentIndex(list) {
+        const measured = measuredIndex(list);
+        if (!jumped) return measured;
+        if (measured === jumped.index || Date.now() - jumped.at > 2000) {
+          jumped = null;
+          return measured;
+        }
+        return jumped.index;
+      }
+
+      function targetOf(direction, list) {
+        const index = currentIndex(list);
+        if (direction === "next") return index + 1 < list.length ? index + 1 : -1;
+        return index > 0 ? index - 1 : -1;
+      }
+
+      function paint() {
+        const list = stops();
+        buttons.forEach(button => {
+          const direction = button.dataset.sectionNav;
+          const index = targetOf(direction, list);
+          const stop = index < 0 ? null : list[index];
+          const label = stop
+            ? (direction === "next" ? "Next section: " : "Previous section: ") + stop.label
+            : (direction === "next" ? "Last section" : "Back to the top");
+          button.title = label;
+          button.setAttribute("aria-label", label);
+          button.disabled = direction === "next" ? !stop : (!stop && window.scrollY <= 4);
+        });
+      }
+
+      buttons.forEach(button => button.addEventListener("click", () => {
+        const list = stops();
+        const direction = button.dataset.sectionNav;
+        const index = targetOf(direction, list);
+        if (index < 0) {
+          if (direction === "prev") window.scrollTo({ top: 0, behavior: "smooth" });
+          paint();
+          return;
+        }
+        const stop = list[index];
+        /* A collapsed section is left collapsed: the arrows move the page, they
+           do not decide what is open. The jump still lands on its heading. */
+        jumped = { index: index, at: Date.now() };
+        /* Setting the hash scrolls (smoothly, from the stylesheet), keeps the
+           section in the address bar, and lets anything watching for a hash
+           change see the move. */
+        location.hash = stop.hash;
+        paint();
+      }));
+
+      let frame = null;
+      window.addEventListener("scroll", () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => { frame = null; paint(); });
+      }, { passive: true });
+      window.addEventListener("resize", paint);
+      document.addEventListener("toggle", paint, true);
+      paint();
+    })();
+  </script>
+
 </body>
 </html>
