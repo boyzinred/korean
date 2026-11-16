@@ -1796,7 +1796,7 @@ html.has-quiz-popout .utility-controls { display: none; }
               <h4 id="menuTitle">Before you start</h4>
               <p id="menuNote"></p>
               <ul class="session-units" id="menuUnits"></ul>
-              <p class="wordbank-count">The words, their order and the parts are set by the schedule. What you choose is how you answer: each question shows the English and you answer in 한국어. Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
+              <p class="wordbank-count">The words, their order and the parts are set by the schedule. What you choose is how you answer: a question shows the English and you answer in 한국어, except on a unit's Review 2, which shows the 한국어 and you answer in English (each question says which). Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button" data-mode="typed">Typed test</button>
                 <button class="btn handwrite begin" type="button" data-mode="handwriting">&#9998; Handwriting test</button>
@@ -1848,7 +1848,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script src="./shared-vocab/review-banks.js?v=1.1.0"></script>
   <script src="./shared-vocab/answer-check.js?v=1.0.0"></script>
-  <script src="./shared-vocab/study-plan.js?v=2.3.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=2.4.0"></script>
   <script src="./shared-vocab/study-plan-store.js?v=2.1.0"></script>
   <script>
   (() => {
@@ -1875,7 +1875,14 @@ html.has-quiz-popout .utility-controls { display: none; }
     const plan = StudyPlan.planById(params.get("plan") || "");
     const taskId = params.get("task") || "";
     const config = StudyPlan.configFor(plan);
-    const DIRECTION = { promptLang: config.answer.promptLang, answerLang: config.answer.answerLang };
+    /* Each word is asked the way its unit's exposure says (directionFor in
+       study-plan.js): English → 한국어 by default, 한국어 → English on a
+       unit's Review 2. A combined session can hold both. */
+    const asDir = text => { const [promptLang, answerLang] = String(text).split(">"); return { promptLang, answerLang }; };
+    function dirFor(id) {
+      const held = state.run && state.run.dirOf && state.run.dirOf[id];
+      return asDir(held || state.dirOf[id] || config.answer.promptLang + ">" + config.answer.answerLang);
+    }
     const LANG_NAMES = { ko: "한국어", ro: "romanization", en: "English" };
     const MODE_KEY = "korean.studyQuizMode";
     const MODE_NAMES = { typed: "Typed test", handwriting: "Handwriting test", speaking: "Speaking test" };
@@ -1924,6 +1931,10 @@ html.has-quiz-popout .utility-controls { display: none; }
       if (task.algorithm === "comprehensive") return "new today";
       return (task.algorithm === "review" ? "Review " : "Maintenance ") + exposure.n
         + " · learnt " + plural(exposure.offset, "study day", "study days") + " ago";
+    }
+    function directionLabel(exposure) {
+      const dir = StudyPlan.directionFor(config, state.task.algorithm, exposure.n);
+      return (dir.promptLang === "en" ? "English" : "한국어") + " → " + (dir.answerLang === "en" ? "English" : "한국어");
     }
     function unitsLabel() {
       return state.units.map(unit => "Unit " + unit.number).join(" + ");
@@ -2037,7 +2048,7 @@ html.has-quiz-popout .utility-controls { display: none; }
         : plural(sessionWords(), "word", "words") + " in this session.";
       $("menuUnits").innerHTML = state.task.exposures.map(exposure => {
         const unit = state.collection.units[exposure.unit];
-        return "<li><strong>Unit " + unit.number + "</strong><span>" + esc(unit.label) + "</span><span>" + esc(exposureLabel(state.task, exposure)) + '</span><span class="count">' + plural(unit.ids.length, "word", "words") + "</span></li>";
+        return "<li><strong>Unit " + unit.number + "</strong><span>" + esc(unit.label) + "</span><span>" + esc(exposureLabel(state.task, exposure)) + '</span><span>' + esc(directionLabel(exposure)) + '</span><span class="count">' + plural(unit.ids.length, "word", "words") + "</span></li>";
       }).join("");
       let saved = "";
       try { saved = localStorage.getItem(MODE_KEY) || ""; } catch (_) {}
@@ -2057,7 +2068,7 @@ html.has-quiz-popout .utility-controls { display: none; }
     function begin() {
       if (!state.run) {
         state.run = StudyPlan.engine.create(state.task.algorithm, state.pool, config, undefined,
-          { policy: state.task.policy, unitOf: state.unitOf });
+          { policy: state.task.policy, unitOf: state.unitOf, dirOf: state.dirOf });
         if (!checkpoint()) return;
       }
       if (window.KoreanStudy) window.KoreanStudy.start(state.logRun);
@@ -2097,6 +2108,7 @@ html.has-quiz-popout .utility-controls { display: none; }
     function showQuestion() {
       const now = StudyPlan.engine.current(state.run);
       const entry = wordOf(now.id);
+      const direction = dirFor(now.id);
       state.locked = false;
       state.result = null;
       state.given = "";
@@ -2109,15 +2121,15 @@ html.has-quiz-popout .utility-controls { display: none; }
       const unit = unitById(now.unit);
       $("unitTag").textContent = state.units.length > 1 && unit ? "Unit " + unit.number : "";
       $("promptLabel").textContent = (state.mode === "handwriting" ? "Write the answer" : state.mode === "speaking" ? "Say the answer" : "Type the answer")
-        + " in " + LANG_NAMES[DIRECTION.answerLang];
-      $("prompt").textContent = state.check.wordIn(entry, DIRECTION.promptLang);
-      $("prompt").lang = DIRECTION.promptLang === "en" ? "en" : "ko";
+        + " in " + LANG_NAMES[direction.answerLang];
+      $("prompt").textContent = state.check.wordIn(entry, direction.promptLang);
+      $("prompt").lang = direction.promptLang === "en" ? "en" : "ko";
       paintProgress();
 
       const zone = $("zone");
-      if (state.mode === "handwriting") showHandwritingPad(zone, entry);
-      else if (state.mode === "speaking") showSpeakingPrompt(zone, entry);
-      else showTyped(zone, entry);
+      if (state.mode === "handwriting") showHandwritingPad(zone, entry, direction);
+      else if (state.mode === "speaking") showSpeakingPrompt(zone, entry, direction);
+      else showTyped(zone, entry, direction);
       $("feedback").className = "feedback";
       $("feedback").innerHTML = "";
       $("next").classList.add("hidden");
@@ -2125,17 +2137,17 @@ html.has-quiz-popout .utility-controls { display: none; }
       state.shownAt = Date.now();
     }
 
-    function showTyped(zone, entry) {
+    function showTyped(zone, entry, direction) {
       zone.innerHTML = '<div class="answer-row">'
         + '<label class="sr-only" for="answer">Your answer</label>'
-        + '<input class="answer-input" id="answer" type="text" lang="ko" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(LANG_NAMES[DIRECTION.answerLang]) + '">'
+        + '<input class="answer-input" id="answer" type="text" lang="' + (direction.answerLang === "en" ? "en" : "ko") + '" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(LANG_NAMES[direction.answerLang]) + '">'
         + '<div class="answer-buttons"><button class="btn primary submit" type="button" id="check">Check</button>'
         + '<button class="btn secondary" type="button" id="dontKnow">I don’t know</button></div></div>';
       const input = $("answer");
       const submit = () => {
         if (state.locked || state.conflict) return;
         if (!input.value.trim()) { input.focus({ preventScroll: true }); return; }
-        const other = state.check.otherWordMeant(entry, DIRECTION, input.value);
+        const other = state.check.otherWordMeant(entry, direction, input.value);
         if (other) {
           const feedback = $("feedback");
           feedback.className = "feedback good";
@@ -2145,7 +2157,7 @@ html.has-quiz-popout .utility-controls { display: none; }
           input.focus({ preventScroll: true });
           return;
         }
-        lock(state.check.check(entry, DIRECTION, input.value) ? "right" : "wrong", input.value.trim());
+        lock(state.check.check(entry, direction, input.value) ? "right" : "wrong", input.value.trim());
       };
       $("check").addEventListener("click", submit);
       $("dontKnow").addEventListener("click", () => { if (!state.locked && !state.conflict) lock("unknown", ""); });
@@ -2159,11 +2171,13 @@ html.has-quiz-popout .utility-controls { display: none; }
        say the word, reveal, mark yourself. A self-marked right answer is a
        produced 한국어 answer like a typed one. */
     const PEN_ONLY_KEY = "korean.handwritingPenOnly";
-    function answerPanel(entry) {
+    function answerPanel(entry, direction) {
+      const english = direction && direction.answerLang === "en";
       return '<div class="hw-answer hidden" aria-live="polite">'
         + '<span class="word-note-label">Answer</span>'
-        + '<span class="hw-answer-ko" lang="ko">' + esc(entry.ko) + '</span>'
-        + '<span class="hw-answer-sub">' + esc(entry.ro) + ' · ' + esc(entry.en) + '</span>'
+        + (english
+          ? '<span class="hw-answer-ko" lang="en">' + esc(entry.en) + '</span><span class="hw-answer-sub"><span lang="ko">' + esc(entry.ko) + '</span> · ' + esc(entry.ro) + '</span>'
+          : '<span class="hw-answer-ko" lang="ko">' + esc(entry.ko) + '</span><span class="hw-answer-sub">' + esc(entry.ro) + ' · ' + esc(entry.en) + '</span>')
         + '<div class="hw-grade">'
         + '<button class="btn positive hw-got" type="button">✓ Got it</button>'
         + '<button class="btn warning hw-missed" type="button">✗ Missed it</button>'
@@ -2181,7 +2195,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       return answer;
     }
 
-    function showHandwritingPad(zone, entry) {
+    function showHandwritingPad(zone, entry, direction) {
       let penOnly = false;
       try { penOnly = localStorage.getItem(PEN_ONLY_KEY) === "1"; } catch (_) {}
       zone.innerHTML = '<div class="hw">'
@@ -2192,7 +2206,7 @@ html.has-quiz-popout .utility-controls { display: none; }
         + '<button class="btn secondary small hw-clear" type="button" disabled>Clear</button>'
         + '<label class="hw-pen-only"><input type="checkbox"' + (penOnly ? " checked" : "") + '><span>Pen only</span></label>'
         + '<button class="btn primary hw-reveal" type="button">Reveal answer</button>'
-        + '</div>' + answerPanel(entry) + '</div>';
+        + '</div>' + answerPanel(entry, direction) + '</div>';
       const box = zone.querySelector(".hw");
       const undo = zone.querySelector(".hw-undo");
       const clear = zone.querySelector(".hw-clear");
@@ -2227,11 +2241,11 @@ html.has-quiz-popout .utility-controls { display: none; }
       });
     }
 
-    function showSpeakingPrompt(zone, entry) {
+    function showSpeakingPrompt(zone, entry, direction) {
       zone.innerHTML = '<div class="sp">'
-        + '<p class="sp-hint">Say the word in 한국어, then reveal the answer and mark yourself.</p>'
+        + '<p class="sp-hint">' + (direction.answerLang === "en" ? "Say what it means in English" : "Say the word in 한국어") + ', then reveal the answer and mark yourself.</p>'
         + '<div class="sp-tools"><button class="btn primary sp-reveal" type="button">Reveal answer</button></div>'
-        + answerPanel(entry) + '</div>';
+        + answerPanel(entry, direction) + '</div>';
       const reveal = zone.querySelector(".sp-reveal");
       const answer = wireSelfMark(zone);
       reveal.addEventListener("click", () => {
@@ -2264,6 +2278,7 @@ html.has-quiz-popout .utility-controls { display: none; }
        the hesitation mark and Count as correct can still change it. */
     function lock(how, given) {
       const entry = wordOf(StudyPlan.engine.current(state.run).id);
+      const direction = dirFor(entry.id);
       state.locked = true;
       state.given = given;
       state.ms = Date.now() - state.shownAt;
@@ -2286,7 +2301,7 @@ html.has-quiz-popout .utility-controls { display: none; }
         const typedMiss = how === "wrong";
         feedback.innerHTML = '<div class="feedback-head"><strong>' + (how === "unknown" ? (state.mode === "typed" ? "Here it is." : "Marked as missed.") : "아니에요.") + '</strong>'
           + (typedMiss ? '<button class="btn secondary count-correct" type="button">Count as correct →</button>' : "")
-          + '</div>Answer: <em lang="ko">' + esc(state.check.wordIn(entry, DIRECTION.answerLang)) + "</em>. " + fullLine(entry)
+          + '</div>Answer: <em lang="' + (direction.answerLang === "en" ? "en" : "ko") + '">' + esc(state.check.wordIn(entry, direction.answerLang)) + "</em>. " + fullLine(entry)
           + (given ? "<br><small>You wrote: " + esc(given) + "</small>" : "");
         const override = feedback.querySelector(".count-correct");
         if (override) override.addEventListener("click", () => {
@@ -2335,7 +2350,7 @@ html.has-quiz-popout .utility-controls { display: none; }
         /* attempt 1 is the word's first answer in this quiz, so the
            dashboard's first-try accuracy is not padded by the repeats. */
         attempt: state.asked[entry.id],
-        given: state.given, mode: state.mode, dir: DIRECTION.promptLang + ">" + DIRECTION.answerLang,
+        given: state.given, mode: state.mode, dir: dirFor(entry.id).promptLang + ">" + dirFor(entry.id).answerLang,
         run: state.task.key,
         extra: { plan: plan.id, task: state.task.id, unit: state.run.unitOf[entry.id] || "", phase, result, overridden: Boolean(state.overridden) }
       });
@@ -2547,11 +2562,17 @@ html.has-quiz-popout .utility-controls { display: none; }
       /* The pool: the units' words one after the other, each knowing its unit. */
       state.unitOf = {};
       state.pool = [];
-      state.units.forEach(unit => unit.ids.forEach(id => {
-        if (state.unitOf[id]) return;
-        state.unitOf[id] = unit.id;
-        state.pool.push(id);
-      }));
+      state.dirOf = {};
+      task.exposures.forEach(exposure => {
+        const unit = state.collection.units[exposure.unit];
+        const dir = StudyPlan.directionFor(config, task.algorithm, exposure.n);
+        unit.ids.forEach(id => {
+          if (state.unitOf[id]) return;
+          state.unitOf[id] = unit.id;
+          state.dirOf[id] = dir.promptLang + ">" + dir.answerLang;
+          state.pool.push(id);
+        });
+      });
       paintHeader();
       watchOthers();
       state.record = record;
@@ -2559,6 +2580,8 @@ html.has-quiz-popout .utility-controls { display: none; }
       if (record && record.status === "done") { showResults(); return; }
       if (record && record.run && !record.run.done) {
         state.run = record.run;
+        /* A run saved before directions were per word takes today's rule. */
+        if (!state.run.dirOf || !Object.keys(state.run.dirOf).length) state.run.dirOf = Object.assign({}, state.dirOf);
         /* Answers already given in an earlier sitting still count as tried. */
         record.run.log.forEach(([id]) => { state.asked[id] = (state.asked[id] || 0) + 1; });
       }

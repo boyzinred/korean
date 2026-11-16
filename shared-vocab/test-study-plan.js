@@ -347,6 +347,37 @@ test("a session's word count is the sum of its units' sizes, and its id names bo
   assert.strictEqual(StudyPlan.taskId(["u1", "u2", "u3", "u4"], early), "d3:earlyReview:u3+u1");
 });
 
+test("each unit's Review 2 is 한국어 → English; every other exposure English → 한국어", () => {
+  const dirs = {};
+  ALL.forEach(session => session.exposures.forEach(e => {
+    const d = StudyPlan.directionFor(CONFIG, session.algorithm, e.n);
+    dirs[session.algorithm + e.n] = d.promptLang + ">" + d.answerLang;
+  }));
+  assert.deepStrictEqual(dirs, {
+    comprehensive1: "en>ko", review1: "en>ko", review2: "ko>en", review3: "en>ko", review4: "en>ko",
+    maintenance1: "en>ko", maintenance2: "en>ko"
+  });
+  /* Review 2 is the offset-3 unit of an Early Review: in a full session, one
+     unit each way. */
+  const early = DAYS[40].find(s => s.key === "earlyReview");
+  assert.deepStrictEqual(early.exposures.map(e => [e.unit, e.n]), [[39, 1], [37, 2]]);
+});
+
+test("a recognition answer (한국어 → English) can keep or cost a star, never raise one", () => {
+  const { all, unitOf } = pool(["a", 3], ["b", 3]);
+  const dirOf = {};
+  all.forEach(id => { dirOf[id] = unitOf[id] === "b" ? "ko>en" : "en>ko"; });
+  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(3), { policy: "earlyReview", unitOf, dirOf });
+  drive(run, (id, now) => (now.phase === "initial" && id === "b-w3" ? "f" : now.phase === "initial" && id === "b-w2" ? "w" : "s"));
+  const byId = Object.fromEntries(StudyPlan.srs.proposals(run, () => ({ l: 2, d: "2026-11-01" }), "2026-11-16").map(p => [p.id, p]));
+  assert.strictEqual(byId["a-w1"].to, 3, "production, clean on a later day: up");
+  assert.strictEqual(byId["b-w1"].to, 2, "recognition, clean: kept, not raised");
+  assert.strictEqual(byId["b-w1"].cleanDay, "2026-11-16", "still stamped clean");
+  assert.strictEqual(byId["b-w2"].to, 2, "recognition, hesitant: kept");
+  assert.strictEqual(byId["b-w3"].to, 1, "recognition, missed: down a rung");
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(run)).dirOf, dirOf, "a resumed run keeps each word's direction");
+});
+
 /* =========================================================================
    COMPREHENSIVE QUIZ
    ========================================================================= */

@@ -181,7 +181,16 @@
        the only kind the star rules let raise a star. A typed answer slower
        than hesitantAfterMs starts out marked hesitant; the learner can
        unmark it. */
-    answer: { promptLang: "en", answerLang: "ko", hesitantAfterMs: 8000 }
+    answer: { promptLang: "en", answerLang: "ko", hesitantAfterMs: 8000 },
+    /* Exposures asked the other way, by algorithm and exposure number. Each
+       unit's Review 2 (3 study days after it is learnt) shows the 한국어 and
+       is answered in English: a recognition check between the production
+       ones. In a combined session only that unit's words turn round; each
+       question says which way it goes. A recognition answer can keep or cost
+       a star but never raise one (the site's star rule). */
+    exposureDirections: {
+      review: { 2: { promptLang: "ko", answerLang: "en" } }
+    }
   };
 
   const PLANS = [
@@ -237,6 +246,14 @@
       throw new Error("Study plan configuration: the first session must be the comprehensive quiz at offset 0");
     }
     return cfg;
+  }
+
+  /* The direction an exposure is asked in: { promptLang, answerLang }. */
+  function directionFor(config, algorithm, n) {
+    const cfg = config || DEFAULTS;
+    const special = cfg.exposureDirections && cfg.exposureDirections[algorithm] && cfg.exposureDirections[algorithm][n];
+    const base = special || cfg.answer;
+    return { promptLang: base.promptLang, answerLang: base.answerLang };
   }
 
   function configFor(plan) { return validate(merge(DEFAULTS, (plan && plan.config) || {})); }
@@ -434,6 +451,10 @@
     if (!settings) throw new Error("no settings for policy " + policy);
     const pool = [...new Set(ids)];
     const unitOf = {};
+    /* dirOf: each word's direction as "en>ko", kept in the run so a resumed
+       run asks the same way and the stars know a recognition answer. */
+    const dirOf = {};
+    pool.forEach(id => { if (opts.dirOf && opts.dirOf[id]) dirOf[id] = opts.dirOf[id]; });
     pool.forEach(id => { unitOf[id] = (opts.unitOf && opts.unitOf[id]) || ""; });
     const run = {
       v: 2,
@@ -441,6 +462,7 @@
       policy,
       ids: pool,
       unitOf,
+      dirOf,
       phases: phasesFor(algorithm, settings),
       phase: null,
       group: null,
@@ -771,12 +793,14 @@
         const level = Math.max(0, Math.min(SpacedSession.stars.RUNGS, Number(held.l) || 0));
         let to = level;
         let cleanDay = "";
+        /* Only an answer given in 한국어 is production. */
+        const produced = String((run.dirOf || {})[id] || "en>ko").split(">")[1] === "ko";
         if (result === "s") {
           const earned = SpacedSession.stars.earned(true, held.d || "", todayDate);
-          to = SpacedSession.stars.after(level, earned, { produced: true });
+          to = SpacedSession.stars.after(level, earned, { produced });
           cleanDay = todayDate;
         } else if (result === "w") {
-          to = Math.max(level, 1);
+          to = produced ? Math.max(level, 1) : level;
         } else {
           to = SpacedSession.stars.after(level, 1, { produced: true });
         }
@@ -819,7 +843,7 @@
 
   return {
     DEFAULTS, PLANS, ALGORITHMS,
-    configFor, planById, merge, validate,
+    configFor, planById, merge, validate, directionFor,
     timeline, taskId, today, findTask, localDate, statusOf,
     engine, srs, hierarchy, shuffle
   };

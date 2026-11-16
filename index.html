@@ -2504,7 +2504,7 @@ html[data-theme='dark'] {
     })();
   </script>
   <script src="./shared-vocab/spaced-session.js?v=1.3.0"></script>
-  <script src="./shared-vocab/study-plan.js?v=2.3.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=2.4.0"></script>
   <script src="./shared-vocab/study-plan-store.js?v=2.1.0"></script>
   <script>
   /* -------------------------------------------------------------------------
@@ -2549,6 +2549,15 @@ html[data-theme='dark'] {
     /* One row per session: its mode, the collection, every unit in it (a
        review or maintenance session holds two) and the words they add up to,
        counted from the units themselves. */
+    /* An exposure asked the other way round (a unit's Review 2) says so. */
+    function directionNote(plan, task, exposure) {
+      const config = StudyPlan.configFor(plan);
+      const dir = StudyPlan.directionFor(config, task.algorithm, exposure.n);
+      if (dir.promptLang === config.answer.promptLang && dir.answerLang === config.answer.answerLang) return "";
+      const name = lang => (lang === "en" ? "English" : lang === "ro" ? "romanization" : "\ud55c\uad6d\uc5b4");
+      return " \u00b7 " + name(dir.promptLang) + " \u2192 " + name(dir.answerLang);
+    }
+
     function taskRow(plan, task) {
       const list = units.get(plan.id) || [];
       const record = task.record || {};
@@ -2570,6 +2579,7 @@ html[data-theme='dark'] {
       const unitLines = parts.map(({ unit, exposure }) => '<span class="task-unit">Unit ' + unit.number
         + (unit.label ? " \u00b7 " + esc(unit.label) : "")
         + (task.algorithm === "comprehensive" ? "" : " \u00b7 " + (task.algorithm === "review" ? "Review " : "Maintenance ") + exposure.n)
+        + directionNote(plan, task, exposure)
         + "</span>").join("");
       const unitNames = parts.map(part => "Unit " + part.unit.number).join(" and ");
       return '<li class="task-item' + (done ? " is-done" : going ? " is-going" : "") + '">'
