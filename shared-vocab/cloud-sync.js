@@ -9,7 +9,9 @@
   writes to any key with "Familiarity" in its name, and in the background
   pushes the words that changed and pulls the ones another device changed.
   The dashboard's settings key (korean.dashboard.v1: your name, the pages it
-  shows) rides along the same way, one row per setting.
+  shows) rides along the same way, one row per setting, and so does the
+  progress of the daily tasks (korean.studyPlan:<plan>:v1, one row per task,
+  see study-plan-store.js).
   Signed out, offline, or with no project configured, it does nothing and the
   page runs on this browser alone.
 
@@ -22,6 +24,9 @@
     cloud's value is taken. A word touched here since is kept and pushed —
     except the first time two devices meet, when neither has a shadow for it:
     then the higher star wins, and on a tie the later clean day.
+    A daily-task record is always settled by its own rule, touched here or
+    not: finished beats unfinished, then more answers, then the later write —
+    so a device that fell behind can never un-finish a quiz.
 
   API (window.KoreanCloud)
     configured            true once cloud-config.js holds a project
@@ -58,8 +63,10 @@
   const PUSH_CHUNK = 500;
 
   const SETTINGS_KEYS = ["korean.dashboard.v1"];
+  const PLAN_PREFIX = "korean.studyPlan:";
+  const isPlan = key => typeof key === "string" && key.startsWith(PLAN_PREFIX);
   const isSynced = key => typeof key === "string"
-    && (/familiarity/i.test(key) || SETTINGS_KEYS.includes(key));
+    && (/familiarity/i.test(key) || SETTINGS_KEYS.includes(key) || isPlan(key));
 
   /* ---- watching the page's writes --------------------------------------
      Patched on the prototype because localStorage itself cannot take an own
@@ -180,7 +187,21 @@
   const level = record => (record && typeof record === "object" ? Number(record.l) || 0 : Number(record) || 0);
   const cleanDay = record => (record && typeof record === "object" && record.d) || "";
 
-  function better(localStr, remoteStr) {
+  /* The same rule as StudyPlanStore.better. */
+  function planBetter(localStr, remoteStr) {
+    if (localStr === undefined) return remoteStr;
+    if (remoteStr === undefined) return localStr;
+    const a = JSON.parse(localStr);
+    const b = JSON.parse(remoteStr);
+    const rank = r => (r && r.status === "done" ? 2 : 1);
+    if (rank(a) !== rank(b)) return rank(a) > rank(b) ? localStr : remoteStr;
+    const n = r => Number(r && r.n) || 0;
+    if (n(a) !== n(b)) return n(a) > n(b) ? localStr : remoteStr;
+    return String((a && a.at) || "") >= String((b && b.at) || "") ? localStr : remoteStr;
+  }
+
+  function better(localStr, remoteStr, key) {
+    if (isPlan(key)) return planBetter(localStr, remoteStr);
     if (localStr === undefined) return remoteStr;
     if (remoteStr === undefined) return localStr;
     const local = JSON.parse(localStr);
@@ -218,7 +239,7 @@
 
       let keep;
       if (localStr === shadowStr) keep = remoteStr;
-      else if (shadowStr === undefined) keep = better(localStr, remoteStr);
+      else if (shadowStr === undefined || isPlan(row.store_key)) keep = better(localStr, remoteStr, row.store_key);
       else keep = localStr;
 
       if (keep !== localStr) {

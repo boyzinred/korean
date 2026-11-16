@@ -5,7 +5,7 @@
   <script src="./shared-vocab/site-theme.js?v=1.1.0"></script>
 
   <script src="./shared-vocab/cloud-config.js"></script>
-  <script src="./shared-vocab/cloud-sync.js?v=1.2.0"></script>
+  <script src="./shared-vocab/cloud-sync.js?v=1.3.0"></script>
   <script src="./shared-vocab/study-log.js?v=1.0.0"></script>
 
   <meta charset="UTF-8" />
@@ -1143,6 +1143,87 @@ html[data-theme='dark'] {
   .star-bar { min-width: 0; }
 }
 
+/* ---- Today's Tasks ---------------------------------------------------------
+   The daily vocabulary quizzes (shared-vocab/study-plan.js), above the
+   dashboard: one row per quiz on today's study day. */
+.today-tasks {
+  display: grid;
+  gap: 14px;
+  padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid var(--border);
+}
+.today-tasks .dash-title { color: var(--surface-text); }
+.today-day {
+  color: var(--dash-ink-soft);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.today-plan { display: grid; gap: 12px; }
+.today-plan + .today-plan { margin-top: 18px; }
+.today-plan-title { margin: 0; font-size: 1rem; font-weight: 800; }
+.today-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0; font-weight: 800; }
+.today-meter { flex: 1 1 160px; max-width: 320px; height: 10px; overflow: hidden; background: var(--muted-strong); border-radius: 999px; }
+.today-meter > span { display: block; height: 100%; background: var(--secondary); }
+.task-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.task-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 14px 16px;
+  color: var(--surface-text);
+  background: var(--dash-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.task-check {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface-text);
+  border-radius: 8px;
+  font-weight: 800;
+  line-height: 1;
+}
+.task-item.is-done .task-check { color: var(--on-secondary); background: var(--secondary); border-color: var(--secondary); }
+.task-item.is-done .task-name { text-decoration: line-through; text-decoration-thickness: 2px; }
+.task-name { display: block; font-weight: 800; }
+.task-sub { display: block; color: var(--dash-ink-soft); font-size: .88rem; }
+.task-unit { display: block; font-size: .92rem; font-weight: 700; }
+.task-status {
+  display: inline-flex;
+  margin-top: 6px;
+  padding: 2px 9px;
+  background: var(--surface-muted);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.task-item.is-going .task-status { color: var(--on-accent); background: var(--accent); }
+.task-item.is-done .task-status { color: var(--on-secondary); background: var(--secondary); }
+.task-bar { display: block; width: min(220px, 100%); height: 6px; margin-top: 8px; overflow: hidden; background: var(--muted-strong); border-radius: 999px; }
+.task-bar > span { display: block; height: 100%; background: var(--accent); }
+.today-done {
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--dash-card);
+  border-left: 6px solid var(--secondary);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+@media (max-width: 680px) {
+  /* The header has no room for a fourth link on a phone; the card is the
+     first thing under the greeting anyway. */
+  #todayLink { display: none !important; }
+  .task-item { grid-template-columns: auto minmax(0, 1fr); }
+  .task-item .btn { grid-column: 1 / -1; width: 100%; }
+}
+
 </style>
 </head>
 <body id="top">
@@ -1150,6 +1231,7 @@ html[data-theme='dark'] {
     <div class="header-inner">
       <a class="brand" href="./index.html">Korean Language Resources</a>
       <div class="header-actions">
+        <a class="header-link hidden" href="#todayTasks" id="todayLink">Today</a>
         <a class="header-link hidden" href="#dashboard" id="dashboardLink">Dashboard</a>
         <a class="header-link" href="#directory">Pages</a>
         <a class="header-link" href="./login.html" data-cloud-status>Sign in</a>
@@ -1163,6 +1245,14 @@ html[data-theme='dark'] {
       <h1 id="page-title">Hi there,</h1>
       <p class="greeting-line" id="greetingLine">Pick a page below to study.</p>
       <div id="greetingExtra"></div>
+    </section>
+
+    <section class="today-tasks hidden" id="todayTasks" aria-labelledby="todayTitle">
+      <div class="dash-head">
+        <h2 class="dash-title" id="todayTitle">Today's Tasks</h2>
+        <span class="today-day" id="todayDay"></span>
+      </div>
+      <div id="todayPlans" aria-live="polite"></div>
     </section>
 
     <section class="dashboard hidden" id="dashboard" aria-label="Your progress">
@@ -1399,6 +1489,7 @@ html[data-theme='dark'] {
     const EXERCISE_LABELS = {
       vocab: "Vocabulary tests",
       review: "Weak-words review",
+      plan: "Daily tasks",
       drill: "Drills",
       comprehension: "Story questions",
       sentence: "Sentences",
@@ -2411,6 +2502,171 @@ html[data-theme='dark'] {
       document.addEventListener("toggle", paint, true);
       paint();
     })();
+  </script>
+  <script src="./shared-vocab/spaced-session.js?v=1.3.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=2.0.0"></script>
+  <script src="./shared-vocab/study-plan-store.js?v=2.0.0"></script>
+  <script>
+  /* -------------------------------------------------------------------------
+     TODAY'S TASKS
+     Each study plan in shared-vocab/study-plan.js, on today's study day: its
+     quizzes in order (comprehensive, reviews, maintenance), each with its
+     status, progress and a Start / Continue button into study-quiz.html.
+
+     Signed in only, and only for a plan whose word bank this browser may see
+     (the TOPIK II section is private, see privateAccess in cloud-sync.js).
+     The study day comes from the task records (study-plan-store.js, synced
+     like the stars), so this card only ever reads them — a refresh or a
+     second tab cannot move it on. It repaints when a quiz in another tab
+     saves, when the sync brings another device's progress, and on coming
+     back to the tab, which is also how a new date opens the next study day.
+  ------------------------------------------------------------------------- */
+  (() => {
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+    const units = new Map();
+    let visiblePlans = [];
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "./" + src;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("could not load " + src));
+        document.head.appendChild(script);
+      });
+    }
+
+    const STATUS_TEXT = { "not-started": "Not started", "in-progress": "In progress", completed: "Completed" };
+
+    /* One row per session: its mode, the collection, every unit in it (a
+       review or maintenance session holds two) and the words they add up to,
+       counted from the units themselves. */
+    function taskRow(plan, task) {
+      const list = units.get(plan.id) || [];
+      const record = task.record || {};
+      const done = task.status === "completed";
+      const going = task.status === "in-progress";
+      const percent = going ? Math.max(record.n ? 1 : 0, Math.floor((Number(record.p) || 0) * 100)) : 0;
+      const href = "./study-quiz.html?plan=" + encodeURIComponent(plan.id) + "&task=" + encodeURIComponent(task.id);
+      const action = done ? "Results" : going ? "Continue" : "Start";
+      const name = task.label;
+      const parts = task.exposures.map(exposure => {
+        const unit = list[exposure.unit] || { number: exposure.unit + 1, label: "", size: 0 };
+        return { unit, exposure };
+      });
+      const words = parts.reduce((sum, part) => sum + (Number(part.unit.size) || 0), 0);
+      const when = task.algorithm === "comprehensive" ? "Today\u2019s new unit"
+        : task.exposures.length === 1
+          ? "Unit from " + task.exposures[0].offset + (task.exposures[0].offset === 1 ? " study day ago" : " study days ago")
+          : "Units from " + task.exposures.map(e => e.offset).join(" and ") + " study days ago";
+      const unitLines = parts.map(({ unit, exposure }) => '<span class="task-unit">Unit ' + unit.number
+        + (unit.label ? " \u00b7 " + esc(unit.label) : "")
+        + (task.algorithm === "comprehensive" ? "" : " \u00b7 " + (task.algorithm === "review" ? "Review " : "Maintenance ") + exposure.n)
+        + "</span>").join("");
+      const unitNames = parts.map(part => "Unit " + part.unit.number).join(" and ");
+      return '<li class="task-item' + (done ? " is-done" : going ? " is-going" : "") + '">'
+        + '<span class="task-check" aria-hidden="true">' + (done ? "\u2713" : "") + "</span>"
+        + "<div>"
+        + '<span class="task-name">' + esc(name) + "</span>"
+        + '<span class="task-sub">' + esc(plan.title) + " \u00b7 " + when + " \u00b7 " + words + " words</span>"
+        + unitLines
+        + '<span class="task-status">' + STATUS_TEXT[task.status] + (going ? " \u00b7 " + percent + "%" : "") + "</span>"
+        + (going ? '<span class="task-bar" role="progressbar" aria-label="' + esc(name) + ' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + percent + '"><span style="width:' + percent + '%"></span></span>' : "")
+        + "</div>"
+        + '<a class="btn ' + (done ? "secondary" : "primary") + '" href="' + href + '" aria-label="' + action + " " + esc(name) + ", " + unitNames + '">' + action + "</a>"
+        + "</li>";
+    }
+
+    function paintPlan(plan) {
+      const list = units.get(plan.id);
+      if (!list || !list.length) return "";
+      const config = StudyPlan.configFor(plan);
+      const repo = StudyPlanStore.open(plan.id);
+      const date = StudyPlan.localDate();
+      const day = StudyPlan.today(config, list.map(unit => unit.id), repo.tasks(), date);
+      /* Keep the record of where you are up to date; it never goes back. */
+      const held = repo.state();
+      if (!held || held.day < day.index) repo.setState({ day: day.index, on: date, startedOn: (held && held.startedOn) || date });
+      if (day.finished) {
+        return '<div class="today-plan" data-day=""><p class="today-done">' + esc(plan.title) + ": every unit has been through all seven of its quizzes. Nothing left to schedule.</p></div>";
+      }
+      const doneCount = day.tasks.filter(task => task.status === "completed").length;
+      const share = Math.round((doneCount / day.tasks.length) * 100);
+      let html = '<div class="today-plan" data-day="' + (day.index + 1) + '" data-total="' + day.total + '">'
+        + (visiblePlans.length > 1 ? '<h3 class="today-plan-title">' + esc(plan.title) + "</h3>" : "")
+        + '<p class="today-summary"><span>Progress: ' + doneCount + " / " + day.tasks.length + " completed</span>"
+        + '<span class="today-meter" role="progressbar" aria-label="Today’s tasks completed" aria-valuemin="0" aria-valuemax="' + day.tasks.length + '" aria-valuenow="' + doneCount + '"><span style="width:' + share + '%"></span></span></p>'
+        + '<ol class="task-list">' + day.tasks.map(task => taskRow(plan, task)).join("") + "</ol>";
+      if (day.complete) {
+        html += '<p class="today-done">All done for today ✓ Study day ' + (day.index + 2) + " opens tomorrow"
+          + " — or whenever you next come back; nothing piles up while you’re away.</p>";
+      }
+      return html + "</div>";
+    }
+
+    function paint() {
+      const section = $("todayTasks");
+      const html = visiblePlans.map(paintPlan).join("");
+      if (!html) { section.classList.add("hidden"); $("todayLink").classList.add("hidden"); return; }
+      $("todayPlans").innerHTML = html;
+      const first = $("todayPlans").querySelector(".today-plan[data-day]:not([data-day=''])");
+      $("todayDay").textContent = first && visiblePlans.length === 1
+        ? "Study day " + first.dataset.day + " of " + first.dataset.total : "";
+      section.classList.remove("hidden");
+      $("todayLink").classList.remove("hidden");
+    }
+
+    async function start() {
+      const cloud = window.KoreanCloud;
+      if (!cloud || !cloud.configured || !cloud.hasSavedSession() || !window.StudyPlan) return;
+      if (!window.ReviewBanks) {
+        try { await loadScript("shared-vocab/review-banks.js?v=1.1.0"); } catch (_) { return; }
+      }
+      /* Only plans whose bank this browser may see. */
+      visiblePlans = StudyPlan.PLANS.filter(plan => window.ReviewBanks.BANKS.some(bank => bank.id === plan.collection.bank));
+      visiblePlans.forEach(plan => {
+        const cached = StudyPlanStore.cachedUnits(plan.id);
+        if (cached) units.set(plan.id, cached);
+      });
+      paint();
+      await Promise.all(visiblePlans.map(async plan => {
+        try {
+          const collection = await StudyPlanStore.collection(plan, {
+            ReviewBanks: window.ReviewBanks, fetch: (url, init) => fetch(url, init), window, loadScript
+          });
+          StudyPlanStore.cacheUnits(plan.id, collection.units);
+          units.set(plan.id, StudyPlanStore.cachedUnits(plan.id));
+        } catch (error) {
+          console.warn("[today] " + plan.id + ": " + (error && error.message));
+        }
+      }));
+      paint();
+    }
+
+    window.addEventListener("storage", event => {
+      if (event.key && event.key.startsWith(StudyPlanStore.PREFIX)) paint();
+    });
+    window.addEventListener("korean-cloud-sync", event => {
+      if ((event.detail && event.detail.keys || []).some(key => key.startsWith(StudyPlanStore.PREFIX))) {
+        event.preventDefault();
+        paint();
+      }
+    });
+    /* Back from a quiz (the browser may restore this page as it was), or
+       back to the tab, perhaps on a new date. */
+    window.addEventListener("pageshow", event => { if (event.persisted) paint(); });
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") paint(); });
+
+    start();
+  })();
   </script>
 </body>
 </html>

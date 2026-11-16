@@ -53,6 +53,18 @@
 
   Cards are plain objects and the page is free to hang its own fields on them.
 
+  Pausing a run
+  -------------
+    session.snapshot()          -> a plain object, safe to JSON.stringify,
+                                   as long as each card's `item` is
+    SpacedSession.create({ restore: snapshot })
+                                -> the same run, picked up where it stopped:
+                                   same cards, same rungs, same question count
+
+  The daily tasks (study-plan.js) keep a run in a checkpoint between answers,
+  so it survives a closed tab or a change of device. A snapshot carries the
+  settings it was made with; anything else passed beside `restore` is ignored.
+
   The stars
   ---------
   A page decides for itself what a finished card is worth, but every page
@@ -101,10 +113,11 @@
   const MIN_GAP = 2;
 
   function create(config) {
-    const settings = config || {};
+    const settings = (config && config.restore) || config || {};
+    const restored = Boolean(config && config.restore);
     const retireAt = Math.max(1, Number(settings.retireAt) || 3);
     const spread = (settings.spread && settings.spread.length) ? settings.spread : DEFAULT_SPREAD;
-    const cards = shuffle(settings.items || []).map((entry, index) => ({
+    const cards = restored ? settings.cards.map(card => Object.assign({}, card)) : shuffle(settings.items || []).map((entry, index) => ({
       id: entry.id,
       item: entry.item,
       /* A card never starts on the rung that would retire it unasked: a word
@@ -124,8 +137,9 @@
     }));
     const cap = Math.max(1, Number(settings.cap) || cards.length * 6);
 
-    let asked = 0;
-    let last = null;
+    let asked = restored ? Math.max(0, Number(settings.asked) || 0) : 0;
+    let last = restored && settings.last !== null && settings.last !== undefined
+      ? cards.find(card => card.id === settings.last) || null : null;
 
     const live = () => cards.filter(card => !card.retired);
 
@@ -228,7 +242,15 @@
     }
 
 
-    return { cards, next, grade, stats, shortestRun };
+    function snapshot() {
+      return {
+        retireAt, spread: spread.slice(), cap, asked,
+        last: last ? last.id : null,
+        cards: cards.map(card => Object.assign({}, card))
+      };
+    }
+
+    return { cards, next, grade, stats, shortestRun, snapshot };
   }
 
   /* What a word is worth once a run is done with it. Clean on a day of its own
@@ -263,8 +285,11 @@
 
   const STAR_RUNGS = 3;
 
-  global.SpacedSession = {
+  const api = {
     create,
     stars: { earned: starEarned, after: starAfter, RUNGS: STAR_RUNGS }
   };
-})(window);
+  global.SpacedSession = api;
+  /* Node, for the tests in shared-vocab/test-study-plan.js. */
+  if (typeof module === "object" && module.exports) module.exports = api;
+})(typeof window !== "undefined" ? window : globalThis);
