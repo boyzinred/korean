@@ -154,6 +154,15 @@
       word: plain
     },
     {
+      id: "topik-ii-vocab",
+      title: "TOPIK II Workbook Vocabulary",
+      href: "topik-ii-workbook-vocab.html",
+      starKey: "koreanTopikIIWorkbookFamiliarity:v1",
+      exports: STANDARD,
+      shape: standard,
+      word: plain
+    },
+    {
       id: "yonsei-beginner",
       title: "Yonsei · Beginner",
       href: "yonsei-university-press-beginner.html",
