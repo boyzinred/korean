@@ -1796,7 +1796,7 @@ html.has-quiz-popout .utility-controls { display: none; }
               <h4 id="menuTitle">Before you start</h4>
               <p id="menuNote"></p>
               <ul class="session-units" id="menuUnits"></ul>
-              <p class="wordbank-count">The words, their order and the parts are set by the schedule. What you choose is how you answer: a question shows the English and you answer in 한국어, except on a unit's Review 2, which shows the 한국어 and you answer in English (each question says which). Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
+              <p class="wordbank-count">The words, their order and the parts are set by the schedule. What you choose is how you answer: a question shows the English and you answer in 한국어, except on a unit's Review 3, which shows the 한국어 and you answer in English (each question says which). Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button" data-mode="typed">Typed test</button>
                 <button class="btn handwrite begin" type="button" data-mode="handwriting">&#9998; Handwriting test</button>
@@ -1848,7 +1848,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script src="./shared-vocab/review-banks.js?v=1.1.0"></script>
   <script src="./shared-vocab/answer-check.js?v=1.0.0"></script>
-  <script src="./shared-vocab/study-plan.js?v=2.4.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=2.5.0"></script>
   <script src="./shared-vocab/study-plan-store.js?v=2.1.0"></script>
   <script>
   (() => {
@@ -1887,7 +1887,8 @@ html.has-quiz-popout .utility-controls { display: none; }
     const MODE_KEY = "korean.studyQuizMode";
     const MODE_NAMES = { typed: "Typed test", handwriting: "Handwriting test", speaking: "Speaking test" };
     const PART_TEXT = {
-      comprehensive: "Part 1 builds the unit up five words at a time, in the book's order: a group comes round until every word in it goes right in one attempt, then groups join into bigger ones until the whole unit goes right at once. Part 2 asks every word again, shuffled, and brings back the ones you found hard.",
+      comprehensive: "Builds the unit up five words at a time, in the book's order: a group comes round until every word in it goes right in one attempt, then groups join into bigger ones until the whole unit goes right at once. A miss sends you back to the start of its five-word stretch.",
+      earlyReview: "One spaced run over every word of both units, shuffled. A word you get right is done; one you miss comes back after a few others until you get it right twice; a hesitant one comes back once more.",
       review: "Part 1 asks every word of both units once, shuffled. Part 2 practises the ones you missed or hesitated on, in small groups, until each group goes right in one attempt. Part 3 brings them back once more, spaced out.",
       maintenance: "Every word of both units once, cold: this is the score that says what stuck. A word you miss comes back twice, a hesitant one once, and the rest are left alone."
     };
@@ -1951,7 +1952,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       $("quizSummary").textContent = task.label + " · " + unitsLabel();
       $("quizKicker").textContent = plan.title + " · " + unitsLabel();
       $("quizTitle").textContent = task.label;
-      $("quizParts").textContent = PART_TEXT[task.algorithm];
+      $("quizParts").textContent = PART_TEXT[task.policy] || PART_TEXT[task.algorithm];
     }
 
     /* ---- stars: the bank's own key and record, as on the review page ----- */
@@ -2456,7 +2457,9 @@ html.has-quiz-popout .utility-controls { display: none; }
       const outcome = record.outcome || StudyPlan.engine.outcome(run);
       const starsState = record.stars || { state: "confirmed", list: [] };
       $("quizScore").textContent = "Done";
-      const measured = state.task.algorithm === "comprehensive" ? "Part 2's first, shuffled answer" : "the first answer";
+      const measured = run.scoreAt === "final-group" ? "each word's first answer in the last group (the whole unit)"
+        : run.scoreAt === "srs" && state.task.algorithm === "comprehensive" ? "each word's first shuffled answer in Part 2"
+        : "each word's first answer";
       const tiles = [
         [outcome.strong.length, "Strong"],
         [outcome.weak.length, "Hesitant"],
@@ -2465,7 +2468,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       ];
       if (state.task.algorithm === "comprehensive") tiles.push([run.passed, "Groups passed"]);
       let html = "<h4>" + esc(state.task.label) + " · " + esc(unitsLabel()) + " is done ✓</h4>"
-        + "<p>Scored on " + measured + " to each word; everything after it was practice. Completed " + esc(record.completedOn || "") + ".</p>"
+        + "<p>Scored on " + measured + "; everything after it was practice. Completed " + esc(record.completedOn || "") + ".</p>"
         + '<div class="summary-grid">' + tiles.map(([n, label]) => '<div class="summary-tile"><strong>' + n + "</strong><small>" + label + "</small></div>").join("") + "</div>";
       if (state.units.length > 1 && outcome.byUnit) {
         html += '<div class="unit-results">' + state.units.map(unit => {

@@ -47,19 +47,18 @@
      graded by the page as "s" strong (right and sure), "w" weak (right but
      hesitant) or "f" failed (wrong, skipped or not known).
 
-       comprehensive  Part 1 groups: the unit in its own order, five words at
-                      a time, merged into ever larger groups (hierarchy()),
-                      each repeated until one attempt is all right. A miss
-                      stops the attempt at once and the group starts again
-                      from the start of its current 5-word segment
-                      (restartPolicy).
-                      Part 2 spaced: every word once more, shuffled, through
-                      SpacedSession; what Part 1 found weak starts lower on
-                      the ladder and comes round more.
-       review         Part 1 every word once, shuffled. Part 2 the weak and
-                      failed ones only, in groups (shuffled each attempt).
-                      Part 3 those again, spaced. Early and intermediate
-                      reviews run it with their own policy.
+       comprehensive  Regular repetition: the unit in its own order, five
+                      words at a time, merged into ever larger groups
+                      (hierarchy()), each repeated until one attempt is all
+                      right. A miss stops the attempt at once and the group
+                      starts again from the start of its current 5-word
+                      segment (restartPolicy). (A spaced Part 2 after the
+                      groups is available, includeSRSPhase, and off.)
+       review         Early review: one spaced run over every word of both
+                      units, through SpacedSession, until each sticks.
+                      Intermediate review: Part 1 every word once, shuffled.
+                      Part 2 the weak and failed ones only, in groups
+                      (shuffled each attempt). Part 3 those again, spaced.
        maintenance    Part 1 every word once, cold. Part 2 spaced, weak once
                       more and failed twice; no grouping.
 
@@ -134,23 +133,25 @@
       /* A safeguard, off by default: after this many failed attempts at one
          group, pass it anyway (its misses stay recorded). null = never. */
       maxGroupAttempts: null,
-      includeSRSPhase: true,
+      /* Regular repetition only: the cumulative groups, no spaced part
+         after them. Each word's measured answer is then its first answer
+         in the last group, the whole unit. true brings Part 2 back. */
+      includeSRSPhase: false,
       srsRetireAt: 3,
       relearnAfterMisses: 3
     },
-    /* Days 1 and 3: consolidation. A hesitant word starts at the bottom of
-       the spaced ladder, so it is asked twice more, and a word is given
-       more misses before it is set aside. */
+    /* Days 1 and 3: one spaced run over both units' words — no separate
+       first pass and no grouped drill. Every word starts one right answer
+       from leaving; a miss drops it to the bottom, so it needs two more, and
+       a hesitant answer does not count as leaving, so it comes back. Each
+       word's measured answer is its first one in the run. */
     earlyReview: {
       combineEligibleUnits: true,
-      initialFullRecall: true,
-      repeatWeakWords: true,
-      targetedGroupSize: 5,
-      restartPolicy: "finish-attempt",
-      maxGroupAttempts: null,
+      spacedOnly: true,
       includeSRSPhase: true,
       srsRetireAt: 2,
-      weakStart: "bottom",
+      spacedStartBox: 1,
+      weakClimbs: false,
       relearnAfterMisses: 3
     },
     /* Days 7 and 14: independent retrieval. A hesitant word needs one
@@ -183,13 +184,13 @@
        unmark it. */
     answer: { promptLang: "en", answerLang: "ko", hesitantAfterMs: 8000 },
     /* Exposures asked the other way, by algorithm and exposure number. Each
-       unit's Review 2 (3 study days after it is learnt) shows the 한국어 and
+       unit's Review 3 (7 study days after it is learnt) shows the 한국어 and
        is answered in English: a recognition check between the production
        ones. In a combined session only that unit's words turn round; each
        question says which way it goes. A recognition answer can keep or cost
        a star but never raise one (the site's star rule). */
     exposureDirections: {
-      review: { 2: { promptLang: "ko", answerLang: "en" } }
+      review: { 3: { promptLang: "ko", answerLang: "en" } }
     }
   };
 
@@ -430,6 +431,7 @@
   function phasesFor(algorithm, settings) {
     if (algorithm === "comprehensive") return ["groups"].concat(settings.includeSRSPhase ? ["srs"] : []);
     if (algorithm === "review") {
+      if (settings.spacedOnly) return ["srs"];
       return ["initial"].concat(settings.repeatWeakWords ? ["targeted"] : [], settings.includeSRSPhase ? ["srs"] : []);
     }
     return ["cold"].concat(settings.selectiveRemediation && settings.includeSRSPhase ? ["srs"] : []);
@@ -464,6 +466,10 @@
       unitOf,
       dirOf,
       phases: phasesFor(algorithm, settings),
+      /* Where each word's measured answer comes from: a first pass ("pass"),
+         the first spaced answer ("srs", when there is no first pass), or the
+         comprehensive quiz's last group when it has no spaced part. */
+      scoreAt: null,
       phase: null,
       group: null,
       pass: null,
@@ -483,6 +489,9 @@
       forced: 0,
       done: false
     };
+    const phases = run.phases;
+    run.scoreAt = phases.includes("initial") || phases.includes("cold") ? "pass"
+      : phases.includes("srs") ? "srs" : "final-group";
     enter(run, settings, 0, random);
     return run;
   }
@@ -530,7 +539,7 @@
       return;
     }
     if (phase === "srs") {
-      const pool = run.kind === "comprehensive" ? run.ids.slice() : needsWork(run);
+      const pool = run.kind === "comprehensive" || settings.spacedOnly ? run.ids.slice() : needsWork(run);
       if (!pool.length) { enter(run, settings, index + 1, random); return; }
       const retireAt = Math.max(1, settings.srsRetireAt || 3);
       const session = SpacedSession.create({
@@ -607,6 +616,9 @@
       const limit = Number(settings.maxGroupAttempts) || 0;
       const policy = settings.restartPolicy || "finish-attempt";
       if (result === "f") g.clean = false;
+      /* No spaced part: the measured answer is the word's first in the last
+         group, the whole unit. */
+      if (run.scoreAt === "final-group" && !g.targeted && g.gi === g.seq.length - 1 && !(id in run.scored)) run.scored[id] = result;
       /* A miss under "immediate" or "checkpoint" ends the attempt here: the
          rest of the group is not asked, and the next question is the group's
          first word (or the current segment's). Groups already passed are
@@ -663,10 +675,21 @@
       }
     } else if (run.phase === "srs") {
       /* The comprehensive quiz's measured answer is its first shuffled one. */
-      if (run.kind === "comprehensive" && !(id in run.scored)) run.scored[id] = result;
+      if (run.scoreAt === "srs" && !(id in run.scored)) run.scored[id] = result;
       const session = SpacedSession.create({ restore: run.srs });
       const card = session.cards.find(entry => entry.id === id);
-      const outcome = session.grade(card, result !== "f");
+      let outcome;
+      if (result === "w" && settings.weakClimbs === false) {
+        /* Hesitant: not a miss, but not a step up either — it comes back
+           soon, on the rung it was on. */
+        const box = card.box;
+        outcome = session.grade(card, false);
+        card.missed -= 1;
+        card.box = box;
+        outcome = { retired: false, box };
+      } else {
+        outcome = session.grade(card, result !== "f");
+      }
       if (!outcome.retired && card.missed >= Math.max(1, settings.relearnAfterMisses || 3)) {
         card.retired = true;
         card.gaveUp = true;
@@ -752,6 +775,7 @@
        bottom, weak from where the policy says (early review: the bottom). */
     startBox(run, id, retireAt, settings) {
       const top = Math.max(0, retireAt - 1);
+      if (settings && settings.spacedOnly) return Math.max(0, Math.min(top, Number(settings.spacedStartBox) || 0));
       if (run.kind === "comprehensive") {
         const mark = run.marks[id];
         if (!mark) return top;

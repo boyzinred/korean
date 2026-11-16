@@ -21,6 +21,8 @@ const ReviewBanks = require("./review-banks.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const CONFIG = StudyPlan.configFor(StudyPlan.PLANS[0]);
+/* The comprehensive quiz with its optional spaced Part 2 switched on. */
+const WITH_SRS = StudyPlan.merge(CONFIG, { comprehensive: { includeSRSPhase: true } });
 let passed = 0;
 const failures = [];
 
@@ -317,7 +319,7 @@ function pool(...units) {
 
 test("a 46-word and a 53-word unit make a 99-word pool, each word keeping its unit", () => {
   const { all, unitOf } = pool(["u5", 46], ["u3", 53]);
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(1), { policy: "earlyReview", unitOf });
+  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(1), { policy: "intermediateReview", unitOf });
   assert.strictEqual(run.ids.length, 99);
   const asked = drive(run, (id, now) => {
     assert.strictEqual(now.unit, unitOf[id]);
@@ -334,7 +336,7 @@ test("a 46-word and a 53-word unit make a 99-word pool, each word keeping its un
 
 test("the weak-word pool can mix both units", () => {
   const { all, unitOf } = pool(["a", 20], ["b", 20]);
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(2), { policy: "earlyReview", unitOf });
+  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(2), { policy: "intermediateReview", unitOf });
   const asked = drive(run, (id, now) => (now.phase === "initial" && /-w(3|9)$/.test(id) ? "w" : "s"));
   assert.deepStrictEqual([...new Set(asked.filter(a => a.phase === "targeted").map(a => a.id))].sort(), ["a-w3", "a-w9", "b-w3", "b-w9"]);
 });
@@ -347,27 +349,27 @@ test("a session's word count is the sum of its units' sizes, and its id names bo
   assert.strictEqual(StudyPlan.taskId(["u1", "u2", "u3", "u4"], early), "d3:earlyReview:u3+u1");
 });
 
-test("each unit's Review 2 is 한국어 → English; every other exposure English → 한국어", () => {
+test("each unit's Review 3 is 한국어 → English; every other exposure English → 한국어", () => {
   const dirs = {};
   ALL.forEach(session => session.exposures.forEach(e => {
     const d = StudyPlan.directionFor(CONFIG, session.algorithm, e.n);
     dirs[session.algorithm + e.n] = d.promptLang + ">" + d.answerLang;
   }));
   assert.deepStrictEqual(dirs, {
-    comprehensive1: "en>ko", review1: "en>ko", review2: "ko>en", review3: "en>ko", review4: "en>ko",
+    comprehensive1: "en>ko", review1: "en>ko", review2: "en>ko", review3: "ko>en", review4: "en>ko",
     maintenance1: "en>ko", maintenance2: "en>ko"
   });
-  /* Review 2 is the offset-3 unit of an Early Review: in a full session, one
-     unit each way. */
-  const early = DAYS[40].find(s => s.key === "earlyReview");
-  assert.deepStrictEqual(early.exposures.map(e => [e.unit, e.n]), [[39, 1], [37, 2]]);
+  /* Review 3 is the offset-7 unit of an Intermediate Review: in a full
+     session, one unit each way. */
+  const mid = DAYS[40].find(s => s.key === "intermediateReview");
+  assert.deepStrictEqual(mid.exposures.map(e => [e.unit, e.n]), [[33, 3], [26, 4]]);
 });
 
 test("a recognition answer (한국어 → English) can keep or cost a star, never raise one", () => {
   const { all, unitOf } = pool(["a", 3], ["b", 3]);
   const dirOf = {};
   all.forEach(id => { dirOf[id] = unitOf[id] === "b" ? "ko>en" : "en>ko"; });
-  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(3), { policy: "earlyReview", unitOf, dirOf });
+  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(3), { policy: "intermediateReview", unitOf, dirOf });
   drive(run, (id, now) => (now.phase === "initial" && id === "b-w3" ? "f" : now.phase === "initial" && id === "b-w2" ? "w" : "s"));
   const byId = Object.fromEntries(StudyPlan.srs.proposals(run, () => ({ l: 2, d: "2026-11-01" }), "2026-11-16").map(p => [p.id, p]));
   assert.strictEqual(byId["a-w1"].to, 3, "production, clean on a later day: up");
@@ -383,7 +385,7 @@ test("a recognition answer (한국어 → English) can keep or cost a star, neve
    ========================================================================= */
 section("Comprehensive quiz");
 
-test("in unit order within each group; Part 2 only after Part 1", () => {
+test("in unit order within each group, and the quiz is the groups alone", () => {
   const run = StudyPlan.engine.create("comprehensive", ids(12), CONFIG, seeded(1));
   const asked = [];
   while (run.phase === "groups") {
@@ -391,7 +393,7 @@ test("in unit order within each group; Part 2 only after Part 1", () => {
     StudyPlan.engine.answer(run, CONFIG, "s", 500);
   }
   assert.deepStrictEqual(asked, [].concat(ids(5), ids(10).slice(5), ids(10), ["w11", "w12"], ids(12)));
-  assert.strictEqual(run.phase, "srs");
+  assert(run.done, "regular repetition only: the quiz ends with the last group");
 });
 
 /* Answer the comprehensive run until its current group is words from–to. */
@@ -420,7 +422,7 @@ test("a miss on word 3 of a 10-word group shows the answer and restarts at word 
   assert.deepStrictEqual(run.marks.w3, { w: 0, f: 1 });
   /* The group passes only on one uninterrupted all-right attempt. */
   for (let i = 0; i < 10; i += 1) StudyPlan.engine.answer(run, CONFIG, "s");
-  assert.strictEqual(run.phase, "srs", "1–10 was the last group; it passed on the clean attempt");
+  assert(run.done, "1–10 was the last group; it passed on the clean attempt");
 });
 
 test("strict 5-word checkpoints: a miss on word 7 of 1–10 restarts at word 6, not word 1", () => {
@@ -436,7 +438,7 @@ test("strict 5-word checkpoints: a miss on word 7 of 1–10 restarts at word 6, 
     StudyPlan.engine.answer(run, CONFIG, "s");
   }
   assert.deepStrictEqual(asked, ["w6", "w7", "w8", "w9", "w10"]);
-  assert.strictEqual(run.phase, "srs", "1–10 passes once words 6–10 go through clean");
+  assert(run.done, "1–10 passes once words 6–10 go through clean");
 });
 
 test("strict 5-word checkpoints hold in a 50-word group: a miss on word 43 goes back to word 41", () => {
@@ -511,7 +513,7 @@ test("checkpoint policy: a big group restarts only its current segment; small gr
   assert.strictEqual(events.restartFrom, 21);
   assert.strictEqual(StudyPlan.engine.current(run).id, "w21", "back to the segment's start, not word 1");
   for (let i = 0; i < 20; i += 1) StudyPlan.engine.answer(run, cfg, "s");
-  assert.strictEqual(run.phase, "srs", "the group passes once the rest goes through without a miss");
+  assert(run.done, "the group passes once the rest goes through without a miss");
 });
 
 test("strict 5-word checkpoints are the default", () => {
@@ -569,12 +571,12 @@ test("the retry safeguard is off by default, and passes a group only when config
   while (!events.forced && guard++ < 50) events = StudyPlan.engine.answer(run, capped, "f");
   assert(events.forced && events.groupPassed);
   assert.strictEqual(guard, 2 + 5, "two restarts, then the third attempt runs to the end and passes");
-  assert.strictEqual(run.phase, "srs");
+  assert(run.done);
 });
 
-test("Part 2 asks every word, shuffled, and favours what Part 1 found weak", () => {
+test("optional Part 2 asks every word, shuffled, and favours what Part 1 found weak", () => {
   const words = ids(20);
-  const run = StudyPlan.engine.create("comprehensive", words, CONFIG, seeded(4));
+  const run = StudyPlan.engine.create("comprehensive", words, WITH_SRS, seeded(4));
   const once = new Set();
   while (run.phase === "groups") {
     const id = StudyPlan.engine.current(run).id;
@@ -593,7 +595,7 @@ test("Part 2 asks every word, shuffled, and favours what Part 1 found weak", () 
 });
 
 test("spaced parts never ask the same word twice running while others remain", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(8), CONFIG, seeded(5));
+  const run = StudyPlan.engine.create("comprehensive", ids(8), WITH_SRS, seeded(5));
   while (run.phase === "groups") StudyPlan.engine.answer(run, CONFIG, StudyPlan.engine.current(run).id === "w2" && run.answers < 3 ? "f" : "s");
   let last = null;
   const rand = seeded(9);
@@ -606,7 +608,7 @@ test("spaced parts never ask the same word twice running while others remain", (
 });
 
 test("a star moves once per quiz, from one measured answer — never from the repeats", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(10), CONFIG, seeded(6));
+  const run = StudyPlan.engine.create("comprehensive", ids(10), WITH_SRS, seeded(6));
   drive(run, () => "s");
   assert(run.log.length >= 30);
   const proposals = StudyPlan.srs.proposals(run, () => ({ l: 0 }), "2026-11-16");
@@ -626,8 +628,8 @@ test("word records count one retrieval per quiz, with the calendar gap since the
   assert.strictEqual(records.w2.relearn, true);
 });
 
-test("a word that keeps failing in Part 2 is let go and flagged", () => {
-  const run = StudyPlan.engine.create("comprehensive", ids(6), CONFIG, seeded(7));
+test("a word that keeps failing in optional Part 2 is let go and flagged", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(6), WITH_SRS, seeded(7));
   const answers = drive(run, id => (run.phase === "srs" && id === "w4" ? "f" : "s"));
   assert.deepStrictEqual(run.relearn, ["w4"]);
   assert.strictEqual(answers.filter(a => a.phase === "srs" && a.id === "w4").length, CONFIG.comprehensive.relearnAfterMisses);
@@ -640,7 +642,7 @@ section("Review and maintenance quizzes");
 
 test("review: every word once first, then only weak and failed words", () => {
   const words = ids(30);
-  const run = StudyPlan.engine.create("review", words, CONFIG, seeded(8), { policy: "earlyReview" });
+  const run = StudyPlan.engine.create("review", words, CONFIG, seeded(8), { policy: "intermediateReview" });
   const weak = new Set(["w2", "w9"]);
   const failed = new Set(["w4", "w15", "w22"]);
   const asked = drive(run, (id, now) => (now.phase === "initial" ? (failed.has(id) ? "f" : weak.has(id) ? "w" : "s") : "s"));
@@ -659,18 +661,62 @@ test("review: in Part 3, failed words come before weak ones", () => {
   assert.strictEqual(run.log.filter(([, phase]) => phase === "srs")[0][0], "w2");
 });
 
-test("early review drills a hesitant word more than intermediate review does", () => {
-  const count = policy => {
-    const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(31), { policy });
-    const asked = drive(run, (id, now) => (now.phase === "initial" && id === "w1" ? "w" : "s"));
-    return asked.filter(a => a.phase === "srs" && a.id === "w1").length;
-  };
-  assert.strictEqual(count("earlyReview"), 2);
-  assert.strictEqual(count("intermediateReview"), 1);
+test("early review is one spaced run: no first pass, no groups, every word until it sticks", () => {
+  const { all, unitOf } = pool(["a", 12], ["b", 9]);
+  const run = StudyPlan.engine.create("review", all, CONFIG, seeded(40), { policy: "earlyReview", unitOf });
+  assert.deepStrictEqual(run.phases, ["srs"]);
+  const firsts = new Map();
+  const asked = drive(run, (id, now) => {
+    const first = !firsts.has(id);
+    firsts.set(id, true);
+    if (id === "a-w1") return first ? "f" : "s";
+    if (id === "b-w2") return first ? "w" : "s";
+    return "s";
+  });
+  assert(asked.every(a => a.phase === "srs" && a.group === null));
+  assert.deepStrictEqual([...new Set(asked.map(a => a.id))].sort(), all.slice().sort(), "every word of both units");
+  const count = id => asked.filter(a => a.id === id).length;
+  assert.strictEqual(count("a-w3"), 1, "right first time: asked once");
+  assert.strictEqual(count("a-w1"), 3, "missed: comes back until two more right answers");
+  assert.strictEqual(count("b-w2"), 2, "hesitant: comes back once more");
+  assert.strictEqual(run.scored["a-w1"], "f", "measured on its first answer");
+  assert.strictEqual(run.scored["b-w2"], "w");
+  const out = StudyPlan.engine.outcome(run);
+  assert.strictEqual(out.byUnit.a.words, 12);
+  assert.deepStrictEqual(out.byUnit.a.failed, ["a-w1"]);
+  assert.deepStrictEqual(out.byUnit.b.weak, ["b-w2"]);
+});
+
+test("early review: a word that will not stick is let go, and the run ends", () => {
+  const run = StudyPlan.engine.create("review", ids(6), CONFIG, seeded(41), { policy: "earlyReview" });
+  const asked = drive(run, id => (id === "w4" ? "f" : "s"));
+  assert.deepStrictEqual(run.relearn, ["w4"]);
+  assert.strictEqual(asked.filter(a => a.id === "w4").length, CONFIG.earlyReview.relearnAfterMisses);
+});
+
+test("the comprehensive quiz is measured on each word's first answer in the last, whole-unit group", () => {
+  const run = StudyPlan.engine.create("comprehensive", ids(12), CONFIG, seeded(42));
+  const seenInLast = new Set();
+  drive(run, (id, now) => {
+    const last = now.group.size === 12;
+    if (last && id === "w9" && !seenInLast.has(id)) { seenInLast.add(id); return "f"; }
+    if (!last && id === "w2") return now.group.attempt === 1 ? "f" : "s";
+    return "s";
+  });
+  assert.strictEqual(run.scored.w9, "f", "missed in the final group");
+  assert.strictEqual(run.scored.w2, "s", "earlier misses are practice, not the measure");
+  assert.strictEqual(Object.keys(run.scored).length, 12);
+});
+
+test("intermediate review keeps its three parts", () => {
+  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(31), { policy: "intermediateReview" });
+  const asked = drive(run, (id, now) => (now.phase === "initial" && id === "w1" ? "w" : "s"));
+  assert.deepStrictEqual(run.phases, ["initial", "targeted", "srs"]);
+  assert.strictEqual(asked.filter(a => a.phase === "srs" && a.id === "w1").length, 1);
 });
 
 test("review: targeted groups shuffle between attempts", () => {
-  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(10), { policy: "earlyReview" });
+  const run = StudyPlan.engine.create("review", ids(10), CONFIG, seeded(10), { policy: "intermediateReview" });
   while (run.phase === "initial") StudyPlan.engine.answer(run, CONFIG, "f");
   const orders = new Set();
   for (let attempt = 0; attempt < 6; attempt += 1) {
@@ -685,12 +731,12 @@ test("review: targeted groups shuffle between attempts", () => {
 });
 
 test("review: all strong skips straight to done", () => {
-  const run = StudyPlan.engine.create("review", ids(25), CONFIG, seeded(11), { policy: "earlyReview" });
+  const run = StudyPlan.engine.create("review", ids(25), CONFIG, seeded(11), { policy: "intermediateReview" });
   assert.strictEqual(drive(run, () => "s").length, 25);
 });
 
 test("review: a word that will not stick is let go, not asked forever", () => {
-  const run = StudyPlan.engine.create("review", ids(12), CONFIG, seeded(12), { policy: "earlyReview" });
+  const run = StudyPlan.engine.create("review", ids(12), CONFIG, seeded(12), { policy: "intermediateReview" });
   const asked = drive(run, (id, now) => (id === "w7" ? (now.phase === "targeted" ? "s" : "f") : "s"));
   assert(run.relearn.includes("w7"));
   assert(asked.length < 60);
