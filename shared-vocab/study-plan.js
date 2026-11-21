@@ -140,18 +140,27 @@
 
   const PLANS = [
     {
-      id: "topik-ii-vocab",
-      title: "TOPIK II section vocab",
+      id: "topik-i-guide-vocab",
+      title: "TOPIK I · Complete Guide vocab",
       /* review-banks.js bank id, the grouping whose groups are the units,
          and which of those groups to use, in order: every group matching the
          first pattern (in the bank's own order), then the second, … The units
          themselves are used as they are: same words, same order inside.
 
-         2023 only for now. To add the 2018 workbook, append "^unit-2018-":
-         its units then follow 2023's. Only ever append — a unit put ahead of
-         ones already learnt would shift them. */
-      collection: { bank: "topik-ii-vocab", grouping: "unit", units: ["^unit-2023-"] }
+         The eight Complete Guide to the TOPIK I workbooks, one unit per
+         question type, in the book's order: Part 1 listening, Part 1
+         reading, Part 2 listening, Part 2 reading, then mock tests 1 and 2
+         (listening, reading) — 64 units of about 36 words. Only ever append
+         a pattern — a unit put ahead of ones already learnt would shift
+         them. */
+      collection: {
+        bank: "topik-i-guide-vocab", grouping: "unit",
+        units: ["^unit-p1l-", "^unit-p1r-", "^unit-p2l-", "^unit-p2r-", "^unit-m1l-", "^unit-m1r-", "^unit-m2l-", "^unit-m2r-"]
+      }
     }
+    /* The TOPIK II plan (its progress is kept under its own id, untouched):
+       { id: "topik-ii-vocab", title: "TOPIK II section vocab",
+         collection: { bank: "topik-ii-vocab", grouping: "unit", units: ["^unit-2023-"] } } */
   ];
 
   const ALGORITHMS = ["comprehensive", "review"];

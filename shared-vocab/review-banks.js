@@ -154,8 +154,18 @@
       word: plain
     },
     {
+      id: "topik-i-guide-vocab",
+      title: "Complete Guide to the TOPIK I · Vocabulary",
+      href: "topik-i-complete-guide-vocab.html",
+      starKey: "koreanTopikIGuideFamiliarity:v1",
+      private: true,
+      exports: STANDARD,
+      shape: standard,
+      word: plain
+    },
+    {
       id: "topik-ii-vocab",
-      title: "TOPIK II Workbook Vocabulary",
+      title: "TOPIK II Official TOPIK Test Vocabulary",
       href: "topik-ii-workbook-vocab.html",
       starKey: "koreanTopikIIWorkbookFamiliarity:v1",
       private: true,

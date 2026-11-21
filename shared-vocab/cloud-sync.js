@@ -124,10 +124,11 @@
     } catch (_) { return false; }
   }
 
-  /* The TOPIK II section is for one person only. This hides it from the home
-     page, the dashboard and the review and sends anyone else away from its
-     pages; it does not encrypt them, so it keeps the section out of sight
-     rather than secret. */
+  /* The private pages (the TOPIK II section and the Complete Guide to the
+     TOPIK I pages) are for one person only. This hides them from the home
+     page, the dashboard and the review and sends anyone else away from
+     them; it does not encrypt them, so it keeps them out of sight rather
+     than secret. */
   const PRIVATE_NAME = "rio";
   function privateAccess() {
     if (!configured || !hasSavedSession()) return false;

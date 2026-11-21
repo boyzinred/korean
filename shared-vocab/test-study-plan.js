@@ -1020,7 +1020,7 @@ function simulate(sizes, days, seed, skipEvery) {
   return { w, reviews, maxWait, answers };
 }
 
-test("the real plan's shape (7 units of 52–60) over 120 study days, with missed days", () => {
+test("the TOPIK II plan's shape (7 units of 52–60) over 120 study days, with missed days", () => {
   const sizes = [52, 56, 60, 53, 55, 58, 54];
   const { reviews, maxWait, answers, w } = simulate(sizes, 120, 7, 9);
   assert.strictEqual(reviews.length, 119);
@@ -1051,7 +1051,7 @@ test("a long collection (40 units of 50) over 120 study days: no starvation, bac
 /* =========================================================================
    THE REAL COLLECTION, AND ANSWER CHECKING
    ========================================================================= */
-section("TOPIK II section vocab");
+section("TOPIK I · Complete Guide vocab");
 
 const bankConfig = ReviewBanks.BANKS.find(bank => bank.id === StudyPlan.PLANS[0].collection.bank);
 const context = vm.createContext({});
@@ -1060,21 +1060,33 @@ const built = ReviewBanks.build(bankConfig, fs.readFileSync(path.join(ROOT, bank
   { window: context, Function: vm.runInContext("Function", context) });
 const allGroups = built.modes.find(mode => mode.id === StudyPlan.PLANS[0].collection.grouping).groups;
 const unitGroups = StudyPlanStore.pickUnits(allGroups, StudyPlan.PLANS[0].collection.units);
+const BOOK_ORDER = ["p1l", "p1r", "p2l", "p2r", "m1l", "m1r", "m2l", "m2r"];
 
-test("the plan uses the 2023 units, in the book's order", () => {
-  assert.deepStrictEqual(unitGroups.map(g => g.id), [1, 2, 3, 4, 5, 6, 7].map(n => "unit-2023-" + n));
+test("the plan uses all 64 units, book by book, type by type", () => {
+  assert.deepStrictEqual(unitGroups.map(g => g.id),
+    BOOK_ORDER.flatMap(book => [1, 2, 3, 4, 5, 6, 7, 8].map(n => "unit-" + book + "-" + n)));
   const covered = unitGroups.flatMap(group => group.ids);
   assert.strictEqual(new Set(covered).size, covered.length, "no word in two units");
-  assert(covered.every(id => id.startsWith("t23-")), "no 2018 word");
+  unitGroups.forEach(group => {
+    const book = group.id.split("-")[1];
+    assert(group.ids.every(id => id.startsWith(book + "-")), group.id + " holds only its own book's words");
+    assert(group.ids.length >= 30 && group.ids.length <= 40, group.id + " has " + group.ids.length + " words");
+  });
 });
 
-test("appending 2018 later puts its units after 2023's, leaving the days already done alone", () => {
-  const later = StudyPlanStore.pickUnits(allGroups, ["^unit-2023-", "^unit-2018-"]);
-  assert.strictEqual(later.length, 14);
-  assert.deepStrictEqual(later.slice(0, 7), unitGroups);
-  const before = StudyPlan.dayTasks(CONFIG, 7, 3).map(t => StudyPlan.taskId(unitGroups.map(g => g.id), t));
-  const after = StudyPlan.dayTasks(CONFIG, 14, 3).map(t => StudyPlan.taskId(later.map(g => g.id), t));
-  assert.deepStrictEqual(after, before);
+test("the TOPIK II plan is left out of Today's Tasks", () => {
+  assert.strictEqual(StudyPlan.PLANS.length, 1);
+  assert(!StudyPlan.planById("topik-ii-vocab"));
+});
+
+test("the real units' sizes over 120 study days, with missed days: every review full, nothing starves", () => {
+  const sizes = unitGroups.map(group => group.ids.length);
+  const { reviews, maxWait, answers } = simulate(sizes, 120, 5, 6);
+  assert.strictEqual(reviews.length, 119);
+  reviews.forEach(r => assert(r.size >= Math.min(50, sizes.slice(0, Math.min(r.day, sizes.length)).reduce((a, b) => a + b, 0)), "day " + r.day + ": " + r.size));
+  const lap = Math.ceil(sizes.reduce((x, y) => x + y, 0) / CONFIG.adaptiveReview.targetUniqueWords);
+  assert(maxWait <= 2 * lap, "longest wait " + maxWait + " days, a lap is " + lap);
+  console.log("      64 units: " + Math.round(answers / 120) + " answers a day, longest wait " + maxWait + " days");
 });
 
 test("every real unit's comprehensive quiz runs to the end and measures every word", () => {
@@ -1087,11 +1099,11 @@ test("every real unit's comprehensive quiz runs to the end and measures every wo
 
 test("answers are checked the review page's way", () => {
   const check = AnswerCheck.create(built.words, ReviewBanks.romanize);
-  const word = built.words.find(w => w.ko === "예약하다");
+  const word = built.words.find(w => w.ko === "공부하다");
   const dir = { promptLang: "en", answerLang: "ko" };
-  assert(check.check(word, dir, "예약하다"));
-  assert(check.check(word, dir, " 예약 하다 "));
-  assert(!check.check(word, dir, "취소하다"));
+  assert(check.check(word, dir, "공부하다"));
+  assert(check.check(word, dir, " 공부 하다 "));
+  assert(!check.check(word, dir, "좋아하다"));
   assert(!check.check(word, dir, ""));
 });
 
