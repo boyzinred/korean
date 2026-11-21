@@ -1748,7 +1748,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       <div class="hero-inner">
         <p class="hero-kicker">TOPIK I &middot; 일주일 종합 학습지 &middot; 문법</p>
         <h1 id="page-title">Complete Guide to the TOPIK I &middot; Grammar</h1>
-        <p>The 256 grammar bundles of the eight one-week workbooks that go with <em>Complete Guide to the TOPIK I</em> (3rd edition) &mdash; Part 1, Part 2 and the two mock tests, each in a listening and a reading book &mdash; with the book&rsquo;s meaning, formation, example, dialogue and comparison note. Each book has eight question types, and each type is one unit of four bundles. Group them by unit, by book, or by question type across the books. The quiz asks the workbooks&rsquo; own 1280 answer-keyed questions, and cards built from every bundle.</p>
+        <p>The 256 grammar bundles of the eight one-week workbooks that go with <em>Complete Guide to the TOPIK I</em> (3rd edition) &mdash; Part 1, Part 2 and the two mock tests, each in a listening and a reading book &mdash; with the book&rsquo;s meaning, formation, example, dialogue and comparison note. Each book has eight question types, and each type is one unit of four bundles. Group them by unit, filed under the book&rsquo;s own parts, or by question type across the books. The quiz asks the workbooks&rsquo; own 1280 answer-keyed questions, and cards built from every bundle.</p>
       </div>
     </section>
 
@@ -1819,7 +1819,7 @@ html.has-quiz-popout .utility-controls { display: none; }
                 <div class="ref-modes" id="quizModes" role="group" aria-label="Group the questions by">
                   <span class="ref-modes__label">Group by</span>
                 </div>
-                <div class="group-grid" id="quizGroupGrid"></div>
+                <div class="group-outline" id="quizGroupGrid"></div>
                 <div class="group-actions">
                   <button class="btn secondary small groups-all" type="button">Select all</button>
                   <button class="btn secondary small groups-none" type="button">Select none</button>
@@ -1902,6 +1902,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   </div>
 
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
+  <script src="./shared-vocab/topik-i-guide-outline.js?v=1.0.0"></script>
   <script>
   (() => {
     "use strict";
@@ -2044,19 +2045,12 @@ html.has-quiz-popout .utility-controls { display: none; }
     /* -----------------------------------------------------------------------
        Grammar bank
     ----------------------------------------------------------------------- */
-    const BANK_MODES = ["unit", "book", "type"];
-    const BANK_MODE_LABELS = { unit: "Unit", book: "Book", type: "Question type" };
+    const BANK_MODES = ["unit", "type"];
+    const BANK_MODE_LABELS = { unit: "Unit", type: "Question type" };
     const BANK_MODE_KEY = "korean.topikIGuideGrammarBankMode";
     let bankMode = (() => { const saved = load(BANK_MODE_KEY, "unit"); return BANK_MODES.includes(saved) ? saved : "unit"; })();
 
     function bankGroups(mode) {
-      if (mode === "book") {
-        return BOOKS.map(book => ({
-          id: "book-" + book.id,
-          label: book.ko + " · " + book.en + " · G01–G" + pad2(book.bundles.length),
-          bundles: book.bundles
-        }));
-      }
       if (mode === "type") {
         return TYPE_ORDER.map((type, i) => ({
           id: "type-" + i,
@@ -2066,7 +2060,9 @@ html.has-quiz-popout .utility-controls { display: none; }
       }
       return BOOKS.flatMap(book => book.units.map(unit => ({
         id: "unit-" + book.id + "-" + unit.n,
+        book: book.id,
         label: unitName(book.id, unit.n) + " · " + unit.en,
+        short: pad2(unit.n) + ". " + unit.ko + " · " + unit.en,
         bundles: book.bundles.filter(bundle => bundle.unit === unit.n)
       })));
     }
@@ -2118,12 +2114,14 @@ html.has-quiz-popout .utility-controls { display: none; }
       }
       function render() {
         paintModes();
-        host.innerHTML = '<div class="vocab-category-stack">' + bankGroups(bankMode).map(group =>
+        /* Units are filed under the book's parts (shared-vocab/topik-i-guide-outline.js);
+           question types run across the books, so they stay one list. */
+        host.innerHTML = GuideOutline.nest(bankGroups(bankMode), { leafClass: "vocab-category-stack", leaf: group =>
           '<details class="vocab-category" data-section-id="' + esc(group.id) + '">'
-          + '<summary><span>' + esc(group.label) + '<span class="vocab-category-count">'
+          + '<summary><span>' + esc(group.short || group.label) + '<span class="vocab-category-count">'
           + plural(group.bundles.length, "bundle", "bundles") + '</span></span></summary>'
           + '<div class="gb-list">' + group.bundles.map(bundle => bundleCard(bundle)).join("") + '</div>'
-          + '</details>').join("") + '</div>';
+          + '</details>' });
         filter();
       }
       function filter() {
@@ -2291,17 +2289,17 @@ html.has-quiz-popout .utility-controls { display: none; }
     ----------------------------------------------------------------------- */
     const qEl = document.getElementById("grammarQuiz");
     const $q = selector => qEl.querySelector(selector);
-    const QUIZ_MODES = ["unit", "book", "type"];
-    const QUIZ_MODE_LABELS = { unit: "Unit", book: "Book", type: "Question type" };
+    const QUIZ_MODES = ["unit", "type"];
+    const QUIZ_MODE_LABELS = { unit: "Unit", type: "Question type" };
     const KINDS_KEY = "korean.topikIGuideGrammarQuizKinds";
     let quizMode = "unit";
     let state = null;
 
     function quizGroups(mode) {
-      if (mode === "book") return BOOKS.map(book => ({ id: "b-" + book.id, label: book.ko + " · " + book.en, test: q => q.book === book.id }));
       if (mode === "type") return TYPE_ORDER.map((type, i) => ({ id: "t-" + i, label: type, test: q => q.type === type }));
       return BOOKS.flatMap(book => book.units.map(unit => ({
-        id: "u-" + book.id + "-" + unit.n, label: unitName(book.id, unit.n),
+        id: "u-" + book.id + "-" + unit.n, label: unitName(book.id, unit.n), book: book.id,
+        short: pad2(unit.n) + ". " + unit.ko,
         test: q => q.book === book.id && q.unit === unit.n
       })));
     }
@@ -2316,9 +2314,11 @@ html.has-quiz-popout .utility-controls { display: none; }
       }).join("");
     }
     function paintQuizGroups() {
-      document.getElementById("quizGroupGrid").innerHTML = quizGroups(quizMode).map(group =>
-        '<label class="exercise-option"><input class="quiz-group" type="checkbox" checked value="' + esc(group.id) + '"><span>' + esc(group.label)
-        + '<small>' + plural(ALL_QUESTIONS.filter(group.test).length, "question", "questions") + '</small></span></label>').join("");
+      const grid = document.getElementById("quizGroupGrid");
+      grid.innerHTML = GuideOutline.nest(quizGroups(quizMode), { checkboxes: true, leafClass: "group-grid", leaf: group =>
+        '<label class="exercise-option"><input class="quiz-group" type="checkbox" checked value="' + esc(group.id) + '"><span>' + esc(group.short || group.label)
+        + '<small>' + plural(ALL_QUESTIONS.filter(group.test).length, "question", "questions") + '</small></span></label>' });
+      GuideOutline.wire(grid);
     }
 
     function readSettings() {
@@ -2371,7 +2371,7 @@ html.has-quiz-popout .utility-controls { display: none; }
         }
         paintPoolNote();
       });
-      const tickAll = (selector, on) => { qEl.querySelectorAll(selector).forEach(input => { input.checked = on; }); menu.dispatchEvent(new Event("change", { bubbles: true })); };
+      const tickAll = (selector, on) => { qEl.querySelectorAll(selector).forEach(input => { input.checked = on; }); GuideOutline.sync(document.getElementById("quizGroupGrid")); menu.dispatchEvent(new Event("change", { bubbles: true })); };
       $q(".kinds-all").addEventListener("click", () => { tickAll(".quiz-kind-box", true); store(KINDS_KEY, KINDS); });
       $q(".kinds-none").addEventListener("click", () => { tickAll(".quiz-kind-box", false); store(KINDS_KEY, []); });
       $q(".groups-all").addEventListener("click", () => tickAll(".quiz-group", true));
