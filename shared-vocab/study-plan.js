@@ -132,7 +132,7 @@
     /* Asked in English, answered in 한국어: a production answer, the only
        kind the star rules let raise a star. A typed answer slower than
        hesitantAfterMs starts out marked hesitant; the learner can unmark it. */
-    answer: { promptLang: "en", answerLang: "ko", hesitantAfterMs: 8000 },
+    answer: { promptLang: "en", answerLang: "ko", hesitantAfterMs: 15000 },
     /* A quiz kind asked the other way round, e.g.
        { review: { promptLang: "ko", answerLang: "en" } }. None by default. */
     directions: {}

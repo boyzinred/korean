@@ -572,6 +572,8 @@ td .roman { opacity: .78; }
 .group-stack > .ref-modes__label:first-child { margin-top: 0; }
 .sentence-cue { margin: 6px 0 0; font-size: .86rem; font-weight: 700; opacity: .8; }
 .answer-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.enter-hint { margin: 6px 0 0; font-size: .8rem; opacity: .65; }
+.enter-hint.armed { opacity: 1; font-weight: 700; }
 .answer-input {
   width: 100%;
   min-height: 56px;
@@ -1847,10 +1849,10 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script src="./shared-vocab/review-banks.js?v=1.2.0"></script>
-  <script src="./shared-vocab/answer-check.js?v=1.0.0"></script>
+  <script src="./shared-vocab/answer-check.js?v=1.1.0"></script>
   <script src="./shared-vocab/study-memory.js?v=1.0.0"></script>
   <script src="./shared-vocab/review-selector.js?v=1.0.0"></script>
-  <script src="./shared-vocab/study-plan.js?v=3.1.0"></script>
+  <script src="./shared-vocab/study-plan.js?v=3.1.1"></script>
   <script src="./shared-vocab/study-plan-store.js?v=3.0.0"></script>
   <script>
   (() => {
@@ -1865,7 +1867,7 @@ html.has-quiz-popout .utility-controls { display: none; }
        started and frozen in its record, so resuming asks the same words);
        the quiz itself is shared-vocab/study-plan.js. This page asks its questions the
        way the other vocabulary tests do — typed, handwriting or speaking, with
-       pop out, Enter to check and Enter to move on, immediate feedback and
+       pop out, Enter twice to check and Enter to move on, immediate feedback and
        Count as correct — marks typed answers the way the review page does
        (answer-check.js), and saves a checkpoint after every answer
        (study-plan-store.js), so Pause, a closed tab or another device picks
@@ -2052,7 +2054,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       const going = state.record && state.record.run && !state.record.run.done;
       $("menuTitle").textContent = going ? "Pick up where you left off" : "Before you start";
       $("menuNote").textContent = going
-        ? "Answered " + plural(state.record.run.answers, "question", "questions") + " so far (" + Math.max(1, Math.floor((state.record.p || 0) * 100)) + "%). The next question is the one you stopped on."
+        ? "Answered " + plural(new Set(state.record.run.log.map(([id]) => id)).size, "question", "questions") + " of " + sessionWords() + " so far (" + Math.max(1, Math.floor((state.record.p || 0) * 100)) + "%). The next question is the one you stopped on."
         : isReview()
           ? plural(sessionWords(), "word", "words") + ", each asked once, picked from the " + plural(state.selection ? state.selection.pool : 0, "word", "words") + " you have learnt in " + unitsLabel() + "."
           : plural(sessionWords(), "word", "words") + " in this unit.";
@@ -2163,8 +2165,13 @@ html.has-quiz-popout .utility-controls { display: none; }
         + '<label class="sr-only" for="answer">Your answer</label>'
         + '<input class="answer-input" id="answer" type="text" lang="' + (direction.answerLang === "en" ? "en" : "ko") + '" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(LANG_NAMES[direction.answerLang]) + '">'
         + '<div class="answer-buttons"><button class="btn primary submit" type="button" id="check">Check</button>'
-        + '<button class="btn secondary" type="button" id="dontKnow" title="I don’t know (' + DONT_KNOW_KEY + ')" aria-keyshortcuts="Meta+I Control+I">I don’t know</button></div></div>';
+        + '<button class="btn secondary" type="button" id="dontKnow" title="I don’t know (' + DONT_KNOW_KEY + ')" aria-keyshortcuts="Meta+I Control+I">I don’t know</button></div></div>'
+        + '<p class="enter-hint" id="enterHint" aria-live="polite">Press Enter twice to check.</p>';
       const input = $("answer");
+      const hint = $("enterHint");
+      /* Enter twice checks: the first press arms it, typing disarms it. */
+      let armed = false;
+      const disarm = () => { armed = false; hint.classList.remove("armed"); hint.textContent = "Press Enter twice to check."; };
       const submit = () => {
         if (state.locked || state.conflict) return;
         if (!input.value.trim()) { input.focus({ preventScroll: true }); return; }
@@ -2182,8 +2189,15 @@ html.has-quiz-popout .utility-controls { display: none; }
       };
       $("check").addEventListener("click", submit);
       $("dontKnow").addEventListener("click", () => { if (!state.locked && !state.conflict) lock("unknown", ""); });
+      input.addEventListener("input", () => { if (armed) disarm(); });
       input.addEventListener("keydown", event => {
-        if (event.key === "Enter" && !event.isComposing) { event.preventDefault(); event.stopPropagation(); submit(); }
+        if (event.key !== "Enter" || event.isComposing) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (!input.value.trim()) return;
+        if (!armed) { armed = true; hint.classList.add("armed"); hint.textContent = "Press Enter again to check."; return; }
+        disarm();
+        submit();
       });
       input.focus({ preventScroll: true });
     }
@@ -2496,8 +2510,10 @@ html.has-quiz-popout .utility-controls { display: none; }
         [outcome.strong.length, "Strong"],
         [outcome.weak.length, "Hesitant"],
         [outcome.failed.length, "Missed"],
-        [outcome.answers, "Answers given"]
+        /* One word is one question; repeats and restarts are practice. */
+        [run.ids.length, "Questions"]
       ];
+      if (outcome.answers > run.ids.length) tiles.push([outcome.answers - run.ids.length, "Practice repeats"]);
       if (state.task.algorithm === "comprehensive") tiles.push([run.passed, "Groups passed"]);
       let html = "<h4>" + esc(state.task.label) + " · " + esc(unitsLabel()) + " is done ✓</h4>"
         + "<p>Scored on " + measured + (run.answers > Object.keys(run.scored).length ? "; everything after it was practice" : "") + ". Completed " + esc(record.completedOn || "") + ".</p>"

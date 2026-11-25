@@ -5,6 +5,7 @@
   through review-banks.js (study-quiz.html). The rules are progress-review's,
   which are the word bank pages' own:
 
+    all          punctuation ignored
     한국어        spaces ignored; "아래/밑" accepts either half, and any
                  spelling the bank lists in koAlts
     romanization dashes and spaces ignored; the bank's own and the site's
@@ -33,11 +34,13 @@
 }(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
+  /* Punctuation never counts, in any language: 봄·여름, "don't", "가요?" and
+     "to go!" match 봄여름, "dont", 가요 and "to go". */
+  const PUNCTUATION = /[\p{P}\p{S}]/gu;
   function normalize(text, lang) {
-    const value = String(text || "").trim().toLowerCase();
-    if (lang === "ko") return value.replace(/\s+/g, "");
-    if (lang === "ro") return value.replace(/[\s-]+/g, "");
-    return value.replace(/[.!?]/g, "").replace(/\s+/g, " ").trim();
+    const value = String(text || "").trim().toLowerCase().replace(/['’‘`]/g, "").replace(PUNCTUATION, " ");
+    if (lang === "ko" || lang === "ro") return value.replace(/\s+/g, "");
+    return value.replace(/\s+/g, " ").trim();
   }
 
   function create(words, romanize) {
