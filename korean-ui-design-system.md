@@ -313,7 +313,7 @@ A task-first, flat interface for interactive quizzes. The system prioritizes cle
 | **Instructions** | State exactly what to enter or choose. Mention comma separation or full-sentence requirements. |
 | **Feedback** | Use direct language: Correct, Incorrect, Model answer, Why, Focus. |
 | **Navigation** | Prefer short noun phrases. Preserve the same order as the sections below. |
-| **Brand** | Use a short, overarching topic like English Tutoring Resources or Korean Language Resources. |
+| **Brand** | Use a short, overarching name: this site is 한국어 (marked `lang="ko"`). |
 
 ## 11. CSS token starter
 

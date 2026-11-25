@@ -10,7 +10,9 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Korean Study Hub</title>
+  <title>한국어</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
@@ -1232,7 +1234,7 @@ html[data-theme='dark'] {
 <body id="top">
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="./index.html">Korean Language Resources</a>
+      <a class="brand" href="./index.html" lang="ko">한국어</a>
       <div class="header-actions">
         <a class="header-link hidden" href="#todayTasks" id="todayLink">Today</a>
         <a class="header-link hidden" href="#dashboard" id="dashboardLink">Dashboard</a>
@@ -1286,7 +1288,7 @@ html[data-theme='dark'] {
       <div class="dash-grid" id="dashGrid">
         <article class="dash-card" data-row="trend">
           <div class="dash-card-head"><h2>Questions per day</h2><button class="dash-toggle" type="button" data-dash-row="trend" aria-expanded="true">Collapse</button></div>
-          <p class="dash-sub" id="dayChartSub">First tries, on the pages you picked.</p>
+          <p class="dash-sub" id="dayChartSub">Every answer, on your pages and Today's Tasks.</p>
           <div id="dashDayChart"></div>
         </article>
         <article class="dash-card" data-row="trend">
@@ -1491,6 +1493,16 @@ html[data-theme='dark'] {
 
     const STUDY_PAGES = PAGES.filter(page => page.id);
     const PAGE_BY_ID = new Map(STUDY_PAGES.map(page => [page.id, page]));
+    /* The word banks Today's Tasks quizzes on always count, whatever is
+       picked in Customize. study-plan.js loads after this script, so this
+       is read when the dashboard paints. */
+    function planPages() {
+      const plans = window.StudyPlan && window.StudyPlan.PLANS ? window.StudyPlan.PLANS : [];
+      return plans.map(plan => plan.collection.bank).filter(id => PAGE_BY_ID.has(id));
+    }
+    function pickedPages() {
+      return new Set(state.prefs.pages.concat(planPages()));
+    }
     const EXERCISE_LABELS = {
       vocab: "Vocabulary tests",
       review: "Weak-words review",
@@ -1649,8 +1661,8 @@ html[data-theme='dark'] {
       }
       const parts = [];
       const day = stats.byDay.get(today());
-      if (day && day.questions) {
-        parts.push("Today you've answered " + plural(day.questions, "question", "questions")
+      if (day && day.answers) {
+        parts.push("Today you've answered " + plural(day.answers, "question", "questions")
           + ", " + fmtPct(day.right, day.questions) + " right first time, in " + fmtDuration(day.ms) + ".");
         if (stats.streak.current > 1) parts.push("That's " + stats.streak.current + " days in a row.");
       } else if (stats.streak.current > 0) {
@@ -1797,7 +1809,7 @@ html[data-theme='dark'] {
     }
 
     function computeStats() {
-      const picked = new Set(state.prefs.pages);
+      const picked = pickedPages();
       const end = today();
       const start = addDays(end, -(state.range - 1));
       const prevStart = addDays(start, -state.range);
@@ -1821,7 +1833,7 @@ html[data-theme='dark'] {
       let lastPage = "";
       state.daily.forEach(row => {
         if (row.day > lastDay && row.questions) { lastDay = row.day; lastPage = row.page; }
-        if (!picked.has(row.page)) return;
+        if (!picked.has(row.page) && row.exercise !== "plan") return;
         if (row.day >= prevStart && row.day < start) addTo(previous, row);
         if (row.day < start || row.day > end) return;
         addTo(total, row);
@@ -1839,7 +1851,7 @@ html[data-theme='dark'] {
       });
 
       let studiedDays = 0;
-      byDay.forEach(tally => { if (tally.questions) studiedDays += 1; });
+      byDay.forEach(tally => { if (tally.answers) studiedDays += 1; });
 
       /* Stars across the picked word banks. */
       let words = 0;
@@ -1851,7 +1863,7 @@ html[data-theme='dark'] {
         if (!seen.has(item.page)) seen.set(item.page, new Set());
         seen.get(item.page).add(item.item_id);
       });
-      const pages = state.prefs.pages.map(id => {
+      const pages = [...picked].map(id => {
         const bank = state.banks.get(id);
         const tally = byPage.get(id) || Object.assign(emptyTally(), { last: "" });
         const row = { id, questions: tally.questions, right: tally.right, ms: tally.ms, answers: tally.answers,
@@ -1929,8 +1941,8 @@ html[data-theme='dark'] {
         tile("Days studied", fmtInt(stats.studiedDays) + " / " + fmtInt(state.range), "in the last " + esc(rangeName)),
         tile("Study time", fmtDuration(t.ms),
           stats.studiedDays ? fmtDuration(t.ms / stats.studiedDays) + " a study day" : "in the last " + esc(rangeName)),
-        tile("Questions", fmtInt(t.questions),
-          t.answers > t.questions ? "+ " + plural(t.answers - t.questions, "retry", "retries") : "in the last " + esc(rangeName)),
+        tile("Questions answered", fmtInt(t.answers),
+          t.answers > t.questions ? plural(t.questions, "first try", "first tries") + " · " + plural(t.answers - t.questions, "repeat", "repeats") : "in the last " + esc(rangeName)),
         tile("Right first time", fmtPct(t.right, t.questions), accNote),
         tile("Words at ★★★", stats.words ? fmtInt(stats.mastered) : "—",
           stats.words ? "of " + fmtInt(stats.words) + " · " + fmtPct(stats.mastered, stats.words) : "Pick a word bank in Customize")
@@ -1948,16 +1960,16 @@ html[data-theme='dark'] {
         const tally = stats.allDays.get(day);
         counts.push({ day, tally, future: day > end });
       }
-      const max = Math.max(1, ...counts.map(cell => (cell.tally ? cell.tally.questions : 0)));
+      const max = Math.max(1, ...counts.map(cell => (cell.tally ? cell.tally.answers : 0)));
       const levelOf = n => (!n ? 0 : Math.min(4, Math.ceil((n / max) * 4)));
       let studied = 0;
       const cells = counts.map(cell => {
         if (cell.future) return '<div class="heat-cell future" aria-hidden="true"></div>';
-        const n = cell.tally ? cell.tally.questions : 0;
+        const n = cell.tally ? cell.tally.answers : 0;
         if (n) studied += 1;
         const tip = cell.tally
-          ? plural(n, "question", "questions") + "\n" + dateOf(cell.day).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })
-            + "\n" + fmtPct(cell.tally.right, n) + " right first time · " + fmtDuration(cell.tally.ms)
+          ? plural(n, "question", "questions") + " answered\n" + dateOf(cell.day).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })
+            + "\n" + fmtPct(cell.tally.right, cell.tally.questions) + " right first time · " + fmtDuration(cell.tally.ms)
           : "No study\n" + dateOf(cell.day).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
         return '<div class="heat-cell' + (cell.day === end ? " today" : "") + '" data-level="' + levelOf(n)
           + '" data-tip="' + esc(tip) + '"></div>';
@@ -2009,18 +2021,18 @@ html[data-theme='dark'] {
 
     function paintDayChart(stats) {
       const { weekly, list } = buckets(stats);
-      $("dayChartSub").textContent = (weekly ? "Each week" : "Each day") + ", first tries on the pages you picked.";
-      if (!stats.total.questions) {
+      $("dayChartSub").textContent = (weekly ? "Each week" : "Each day") + ", every answer on your pages and Today's Tasks.";
+      if (!stats.total.answers) {
         $("dashDayChart").innerHTML = '<div class="chart-empty">No questions in this range yet.</div>';
         return;
       }
-      const max = niceMax(Math.max(...list.map(bucket => bucket.tally.questions)));
+      const max = niceMax(Math.max(...list.map(bucket => bucket.tally.answers)));
       const grid = [0, 0.5, 1].map(share => '<div class="col-grid" style="bottom:' + share * 100 + '%"><span>'
         + fmtInt(Math.round(max * share)) + '</span></div>').join("");
       const bars = list.map(bucket => {
-        const n = bucket.tally.questions;
-        const tip = plural(n, "question", "questions") + "\n" + bucketLabel(bucket, weekly)
-          + (n ? "\n" + fmtPct(bucket.tally.right, n) + " right first time · " + fmtDuration(bucket.tally.ms) : "");
+        const n = bucket.tally.answers;
+        const tip = plural(n, "question", "questions") + " answered\n" + bucketLabel(bucket, weekly)
+          + (n ? "\n" + fmtPct(bucket.tally.right, bucket.tally.questions) + " right first time · " + fmtDuration(bucket.tally.ms) : "");
         return '<div class="col-slot" tabindex="0" data-tip="' + esc(tip) + '" aria-label="' + esc(tip.replace(/\n/g, ", ")) + '">'
           + '<div class="col-bar" style="height:' + (n ? Math.max(1.5, (n / max) * 100) : 0) + '%"></div></div>';
       }).join("");
@@ -2031,10 +2043,10 @@ html[data-theme='dark'] {
     }
 
     function chartTable(list, weekly) {
-      const rows = list.filter(bucket => bucket.tally.questions).reverse();
+      const rows = list.filter(bucket => bucket.tally.answers).reverse();
       return '<details class="chart-table"><summary>Show as a table</summary><div class="dash-table-wrap"><table class="dash-table">'
-        + '<thead><tr><th>' + (weekly ? "Week of" : "Day") + '</th><th class="num">Questions</th><th class="num">Right first time</th><th class="num">Time</th></tr></thead><tbody>'
-        + rows.map(bucket => '<tr><td>' + esc(fmtShortDate(bucket.from)) + '</td><td class="num">' + fmtInt(bucket.tally.questions)
+        + '<thead><tr><th>' + (weekly ? "Week of" : "Day") + '</th><th class="num">Answered</th><th class="num">Right first time</th><th class="num">Time</th></tr></thead><tbody>'
+        + rows.map(bucket => '<tr><td>' + esc(fmtShortDate(bucket.from)) + '</td><td class="num">' + fmtInt(bucket.tally.answers)
           + '</td><td class="num">' + fmtPct(bucket.tally.right, bucket.tally.questions) + '</td><td class="num">'
           + fmtDuration(bucket.tally.ms) + '</td></tr>').join("")
         + '</tbody></table></div></details>';
@@ -2132,7 +2144,7 @@ html[data-theme='dark'] {
     }
 
     function paintMissed() {
-      const picked = new Set(state.prefs.pages);
+      const picked = pickedPages();
       const levels = new Map();
       const levelFor = item => {
         const bank = state.banks.get(item.page);
@@ -2166,8 +2178,8 @@ html[data-theme='dark'] {
     }
 
     function paintRuns() {
-      const picked = new Set(state.prefs.pages);
-      const runs = state.runs.filter(run => picked.has(run.page)).slice(0, 12);
+      const picked = pickedPages();
+      const runs = state.runs.filter(run => picked.has(run.page) || run.exercise === "plan").slice(0, 12);
       if (!runs.length) {
         $("dashRuns").innerHTML = '<div class="chart-empty" style="height:auto;padding:24px 0">No sessions on these pages yet.</div>';
         return;
@@ -2188,14 +2200,17 @@ html[data-theme='dark'] {
     function paintCustomize() {
       const form = $("dashCustomize");
       const picked = new Set(state.prefs.pages);
+      const locked = new Set(planPages());
       const bankIds = new Set(window.ReviewBanks ? window.ReviewBanks.BANKS.map(bank => bank.id) : []);
       form.innerHTML = '<h2>Customize</h2>'
         + '<div class="name-row"><label for="prefName"><strong>Your name</strong></label>'
         + '<input id="prefName" type="text" maxlength="40" autocomplete="given-name" value="' + esc(state.prefs.name) + '"></div>'
         + '<fieldset><legend>Pages on the dashboard</legend><div class="pick-grid">'
         + STUDY_PAGES.map(page => '<label><input type="checkbox" name="page" value="' + esc(page.id) + '"'
-          + (picked.has(page.id) ? " checked" : "") + '><span>' + esc(page.title) + '<small>' + esc(page.group)
-          + (bankIds.has(page.id) ? " · stars" : "") + '</small></span></label>').join("")
+          + (picked.has(page.id) || locked.has(page.id) ? " checked" : "") + (locked.has(page.id) ? " disabled" : "")
+          + '><span>' + esc(page.title) + '<small>' + esc(page.group)
+          + (bankIds.has(page.id) ? " · stars" : "") + (locked.has(page.id) ? " · always on: Today's Tasks" : "")
+          + '</small></span></label>').join("")
         + '</div></fieldset>'
         + '<div class="form-actions"><button class="btn primary" type="submit">Save</button>'
         + '<button class="btn secondary" type="button" data-pick="all">Select all</button>'
