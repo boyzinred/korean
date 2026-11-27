@@ -1699,6 +1699,14 @@ html.has-quiz-popout .utility-controls { display: none; }
   border-radius: var(--radius-md);
 }
 .session-units strong { font-weight: 800; }
+.review-words { margin: 14px 0 0; }
+.review-words__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.review-words h5 { margin: 0; font-size: 1rem; font-weight: 800; }
+.review-words h6 { margin: 12px 0 6px; font-size: .82rem; font-weight: 800; opacity: .75; }
+.review-words__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 4px 16px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+.review-words__list li { display: flex; flex-wrap: wrap; gap: 2px 8px; min-width: 0; overflow-wrap: anywhere; }
+.review-words .rw-ko { display: none; font-weight: 700; }
+.review-words.show-ko .rw-ko { display: inline; }
 .session-units span { opacity: .82; }
 .session-units .count { margin-left: auto; font-weight: 800; opacity: 1; }
 .phase-name { font-size: .86rem; font-weight: 800; }
@@ -1738,6 +1746,7 @@ html.has-quiz-popout .utility-controls { display: none; }
 .answer-buttons { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 .next-row { gap: 10px; flex-wrap: wrap; }
 .hesitate[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); --btn-bg: var(--primary); }
+.check-note { display: block; margin-top: 6px; font-size: .82rem; opacity: .8; }
 .hesitate-note { display: block; margin-top: 6px; font-size: .82rem; font-weight: 700; opacity: .8; }
 .task-notice {
   padding: 16px 18px;
@@ -1800,6 +1809,7 @@ html.has-quiz-popout .utility-controls { display: none; }
               <h4 id="menuTitle">Before you start</h4>
               <p id="menuNote"></p>
               <ul class="session-units" id="menuUnits"></ul>
+              <div class="review-words hidden" id="menuWords"></div>
               <p class="wordbank-count">The words and their order are set by the schedule. What you choose is how you answer: each question shows the English and you answer in 한국어. Typed test: type the word. Handwriting test: write it on the screen, reveal the answer and mark yourself. Speaking test: say it, reveal the answer and mark yourself. You can switch whenever you come back to this quiz.</p>
               <div class="exercise-menu-actions">
                 <button class="btn primary begin" type="button" data-mode="typed">Typed test</button>
@@ -1851,7 +1861,7 @@ html.has-quiz-popout .utility-controls { display: none; }
   <script src="./shared-vocab/handwriting-pad.js?v=1.0.0"></script>
   <script src="./shared-vocab/quiz-popout.js?v=1.2.0"></script>
   <script src="./shared-vocab/review-banks.js?v=1.2.0"></script>
-  <script src="./shared-vocab/answer-check.js?v=1.1.0"></script>
+  <script src="./shared-vocab/answer-check.js?v=1.2.0"></script>
   <script src="./shared-vocab/study-memory.js?v=1.0.0"></script>
   <script src="./shared-vocab/review-selector.js?v=1.0.0"></script>
   <script src="./shared-vocab/study-plan.js?v=3.1.1"></script>
@@ -2067,7 +2077,9 @@ html.has-quiz-popout .utility-controls { display: none; }
         state.pool.forEach(id => { const unit = state.unitOf[id]; byUnit[unit] = (byUnit[unit] || 0) + 1; });
         $("menuUnits").innerHTML = ReviewSelector.TIERS.map(tier => "<li><strong>" + esc(TIER_NAMES[tier]) + '</strong><span class="count">' + plural(counts[tier] || 0, "word", "words") + "</span></li>").join("")
           + "<li><strong>From</strong><span>" + state.units.filter(unit => byUnit[unit.id]).map(unit => "Unit " + unit.number + " (" + byUnit[unit.id] + ")").join(", ") + "</span></li>";
+        showReviewWords();
       } else {
+        $("menuWords").classList.add("hidden");
         $("menuUnits").innerHTML = state.units.map(unit => "<li><strong>Unit " + unit.number + "</strong><span>" + esc(unit.label) + '</span><span>new today</span><span class="count">' + plural(unit.ids.length, "word", "words") + "</span></li>").join("");
       }
       let saved = "";
@@ -2075,6 +2087,37 @@ html.has-quiz-popout .utility-controls { display: none; }
       const preferred = (state.record && state.record.mode) || saved || "typed";
       const button = document.querySelector('#menu .begin[data-mode="' + preferred + '"]');
       if (button) button.focus({ preventScroll: true });
+    }
+
+    /* The review's words, by tier and then book order, before it starts:
+       the English you will be asked, with the 한국어 behind a toggle so the
+       list does not hand over the answers. */
+    function showReviewWords() {
+      const box = $("menuWords");
+      const picks = (state.selection && state.selection.picks) || {};
+      const order = new Map(state.collection.units.flatMap(unit => unit.ids).map((id, index) => [id, index]));
+      const groups = ReviewSelector.TIERS.map(tier => ({
+        tier,
+        ids: state.pool.filter(id => (picks[id] ? picks[id].tier : "") === tier)
+      }));
+      const untiered = state.pool.filter(id => !ReviewSelector.TIERS.includes(picks[id] ? picks[id].tier : ""));
+      if (untiered.length) groups.push({ tier: "", ids: untiered });
+      const row = id => {
+        const entry = wordOf(id);
+        if (!entry) return "";
+        return '<li><span class="rw-en">' + esc(entry.en) + '</span><span class="rw-ko" lang="ko">' + esc(entry.ko) + "</span></li>";
+      };
+      box.innerHTML = '<div class="review-words__head"><h5>Words in this review</h5>'
+        + '<button class="btn secondary small" type="button" id="toggleKo" aria-pressed="false">Show 한국어</button></div>'
+        + groups.filter(group => group.ids.length).map(group => "<h6>" + esc(group.tier ? TIER_NAMES[group.tier] : "Other") + " · " + group.ids.length + "</h6>"
+          + '<ul class="review-words__list">' + group.ids.slice().sort((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0)).map(row).join("") + "</ul>").join("");
+      box.classList.remove("hidden");
+      box.classList.remove("show-ko");
+      $("toggleKo").addEventListener("click", event => {
+        const on = box.classList.toggle("show-ko");
+        event.currentTarget.setAttribute("aria-pressed", on ? "true" : "false");
+        event.currentTarget.textContent = on ? "Hide 한국어" : "Show 한국어";
+      });
     }
 
     document.querySelectorAll("#menu .begin").forEach(button => {
@@ -2173,6 +2216,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       const hint = $("enterHint");
       /* Enter twice checks: the first press arms it, typing disarms it. */
       let armed = false;
+      let spacingRetried = false;
       const disarm = () => { armed = false; hint.classList.remove("armed"); hint.textContent = "Press Enter twice to check."; };
       const submit = () => {
         if (state.locked || state.conflict) return;
@@ -2187,7 +2231,19 @@ html.has-quiz-popout .utility-controls { display: none; }
           input.focus({ preventScroll: true });
           return;
         }
-        lock(state.check.check(entry, direction, input.value) ? "right" : "wrong", input.value.trim());
+        /* Right but for the spacing: one more try, uncounted; a second
+           slip is a miss. */
+        if (!spacingRetried && state.check.spacingOff(entry, direction, input.value)) {
+          spacingRetried = true;
+          const feedback = $("feedback");
+          feedback.className = "feedback bad";
+          feedback.innerHTML = "<strong>Almost — check the spacing.</strong>The letters are right but the spaces aren’t. Try once more; a second miss counts as wrong.";
+          input.focus({ preventScroll: true });
+          input.select();
+          return;
+        }
+        lock(state.check.check(entry, direction, input.value) ? "right" : "wrong", input.value.trim(),
+          { punctuation: AnswerCheck.punctuationIn(input.value), spacing: spacingRetried && state.check.spacingOff(entry, direction, input.value) });
       };
       $("check").addEventListener("click", submit);
       $("dontKnow").addEventListener("click", () => { if (!state.locked && !state.conflict) lock("unknown", ""); });
@@ -2313,7 +2369,16 @@ html.has-quiz-popout .utility-controls { display: none; }
 
     /* how: "right", "wrong" or "unknown". Nothing is recorded until Next, so
        the hesitation mark and Count as correct can still change it. */
-    function lock(how, given) {
+    /* What the checker let go or caught, said under the feedback. */
+    function checkNotes(how, notes) {
+      if (!notes) return "";
+      const lines = [];
+      if (notes.punctuation) lines.push("Punctuation doesn’t count, so " + notes.punctuation.split(" ").map(mark => "“" + esc(mark) + "”").join(" ") + " was ignored.");
+      if (notes.spacing && how === "wrong") lines.push("Only the spacing was off, on both tries.");
+      return lines.length ? '<small class="check-note">' + lines.join(" ") + "</small>" : "";
+    }
+
+    function lock(how, given, notes) {
       const entry = wordOf(StudyPlan.engine.current(state.run).id);
       const direction = dirFor(entry.id);
       state.locked = true;
@@ -2324,7 +2389,7 @@ html.has-quiz-popout .utility-controls { display: none; }
       const hesitate = $("hesitate");
       if (how === "right") {
         feedback.className = "feedback good";
-        feedback.innerHTML = "<strong>맞아요!</strong>" + fullLine(entry) + '<span class="hesitate-note"></span>';
+        feedback.innerHTML = "<strong>맞아요!</strong>" + fullLine(entry) + checkNotes(how, notes) + '<span class="hesitate-note"></span>';
         hesitate.classList.remove("hidden");
         hesitate.disabled = false;
         /* Only a typed answer's time says anything; writing and revealing
@@ -2339,7 +2404,7 @@ html.has-quiz-popout .utility-controls { display: none; }
         feedback.innerHTML = '<div class="feedback-head"><strong>' + (how === "unknown" ? (state.mode === "typed" ? "Here it is." : "Marked as missed.") : "아니에요.") + '</strong>'
           + (typedMiss ? '<button class="btn secondary count-correct" type="button">Count as correct →</button>' : "")
           + '</div>Answer: <em lang="' + (direction.answerLang === "en" ? "en" : "ko") + '">' + esc(state.check.wordIn(entry, direction.answerLang)) + "</em>. " + fullLine(entry)
-          + (given ? "<br><small>You wrote: " + esc(given) + "</small>" : "");
+          + (given ? "<br><small>You wrote: " + esc(given) + "</small>" : "") + checkNotes(how, notes);
         const override = feedback.querySelector(".count-correct");
         if (override) override.addEventListener("click", () => {
           if (window.KoreanStudy) state.overridden = true;

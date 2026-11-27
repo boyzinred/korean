@@ -1102,7 +1102,12 @@ test("answers are checked the review page's way", () => {
   const word = built.words.find(w => w.ko === "공부하다");
   const dir = { promptLang: "en", answerLang: "ko" };
   assert(check.check(word, dir, "공부하다"));
-  assert(check.check(word, dir, " 공부 하다 "));
+  assert(check.check(word, dir, " 공부하다? "));
+  assert(!check.check(word, dir, "공부 하다"));
+  assert(check.spacingOff(word, dir, "공부 하다"));
+  assert(!check.spacingOff(word, dir, "공부하다"));
+  assert(!check.spacingOff(word, dir, "좋아 하다"));
+  assert.strictEqual(AnswerCheck.punctuationIn("공부하다?!"), "? !");
   assert(!check.check(word, dir, "좋아하다"));
   assert(!check.check(word, dir, ""));
 });
